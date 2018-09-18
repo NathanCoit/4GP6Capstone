@@ -1,5 +1,5 @@
 # High Concept Doc
-Test merge asdasdasd
+
 ## Short Description
 
 ## Players Role/Goal/Motivation
@@ -15,7 +15,7 @@ Test merge asdasdasd
 ## Unique Selling Point
 
 ## Design Goals
-
+other test
 ## Design Overview
 
 ## Overview of Game World

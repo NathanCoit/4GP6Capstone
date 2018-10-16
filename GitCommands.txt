@@ -2,7 +2,7 @@ INITIALIZING
 git clone https://github.com/NathanCoit/4GP6Capstone.git
 git fetch origin
 git branch [You're Name] origin/[You're Name]
-git branch production origin/production
+git branch Production origin/Production
 git checkout [You're Name]
 git merge master
 git push
@@ -18,7 +18,7 @@ git push
 
 TO MERGE FROM PRODUCTION
 
-git checkout production
+git checkout Production
 git pull
 git checkout [You're Name]
 git merge production
@@ -26,17 +26,18 @@ git push
 
 
 TO MERGE TO PRODUCTION
-git checkout production
+git checkout Production
 git pull
 git checkout [You're Name]
 git pull
 git add .
 git commit -m "[commit message]"
 git push
-git checkout production
+git checkout Production
 git merge [You're Name]
 git push
 git checkout [You're Name]
 
 ALWAYS MAKE SURE YOU ARE IN YOUR OWN BRANCH WHEN MAKING CHANGES
 git checkout [You're Name]
+

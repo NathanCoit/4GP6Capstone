@@ -1,0 +1,41 @@
+INITIALIZING
+git clone https://github.com/NathanCoit/4GP6Capstone.git
+git fetch origin
+git branch [You're Name] origin/[You're Name]
+git checkout [You're Name]
+git merge master
+git push
+
+
+TO COMMIT A CHANGE
+
+git checkout [You're Name]
+git add . (If you've added new files)
+git commit -m "[Commit message]"
+git push
+
+
+TO MERGE FROM MASTER
+
+git checkout master
+git pull
+git checkout [You're Name]
+git merge master
+git push
+
+
+TO MERGE TO MASTER
+git checkout master
+git pull
+git checkout [You're Name]
+git pull
+git add . (If you've added any files)
+git commit -m "[commit message]"
+git push
+git checkout master
+git merge [You're Name]
+git push
+git checkout [You're Name]
+
+ALWAYS MAKE SURE YOU ARE IN YOUR OWN BRANCH WHEN MAKING CHANGES
+git checkout [You're Name]

@@ -18,19 +18,19 @@ public class MapManager : MonoBehaviour {
         //Create map terrain
         GameMap = new TerrainMap();
 
-        //Create and place player village
-        PlayerVillage = new Building(Building.BUILDING_TYPE.VILLAGE);
-        Vector2 vec2VillagePos = CalculateStartingPlayerPosition();
-        GameMap.PlaceBuilding(PlayerVillage, vec2VillagePos);
+        ////Create and place player village
+        //PlayerVillage = new Building(Building.BUILDING_TYPE.VILLAGE);
+        //Vector2 vec2VillagePos = CalculateStartingPlayerPosition();
+        //GameMap.PlaceBuilding(PlayerVillage, vec2VillagePos);
 
-        //Create and place enemy villages
-        for(int enemyCount = 0; enemyCount < TotalEnemies; enemyCount++)
-        {
-            bldEnemyBuilding = new Building(Building.BUILDING_TYPE.VILLAGE);
-            vec2VillagePos = CalculateStartingEnemyPosiion();
-            GameMap.PlaceBuilding(bldEnemyBuilding, vec2VillagePos);
-            EnemyVillages.Add(bldEnemyBuilding);
-        }
+        ////Create and place enemy villages
+        //for(int enemyCount = 0; enemyCount < TotalEnemies; enemyCount++)
+        //{
+        //    bldEnemyBuilding = new Building(Building.BUILDING_TYPE.VILLAGE);
+        //    vec2VillagePos = CalculateStartingEnemyPosiion();
+        //    GameMap.PlaceBuilding(bldEnemyBuilding, vec2VillagePos);
+        //    EnemyVillages.Add(bldEnemyBuilding);
+        //}
 	}
 
     private Vector2 CalculateStartingEnemyPosiion()

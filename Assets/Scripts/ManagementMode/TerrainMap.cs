@@ -18,8 +18,19 @@ public class TerrainMap : MonoBehaviour {
 
     private GameObject CreateTerrainObject()
     {
-        GameObject gobjMap = null;
+        GameObject gobjMap = new GameObject("gobjMap");
         // Create map
+        TerrainData _TerrainData = new TerrainData();
+        _TerrainData.size = new Vector3(10, 600, 10);
+        _TerrainData.heightmapResolution = 512;
+        _TerrainData.baseMapResolution = 1024;
+        _TerrainData.SetDetailResolution(1024, 16);
+
+        TerrainCollider _TerrainCollider = gobjMap.AddComponent<TerrainCollider>();
+        Terrain _Terrain2 = gobjMap.AddComponent<Terrain>();
+
+        _TerrainCollider.terrainData = _TerrainData;
+        _Terrain2.terrainData = _TerrainData;
 
         return gobjMap;
     }

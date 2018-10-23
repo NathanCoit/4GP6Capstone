@@ -5,7 +5,8 @@ using UnityEngine;
 /// <summary>
 /// The terrain map object holding methods for interacting with the map object
 /// </summary>
-public class TerrainMap : MonoBehaviour {
+public class TerrainMap
+{
     private GameObject mgobjTerrainMap;
     private List<Building> marrBuildingsOnMap;
 
@@ -14,14 +15,14 @@ public class TerrainMap : MonoBehaviour {
         mgobjTerrainMap = CreateTerrainObject();
         marrBuildingsOnMap = new List<Building>();
     }
-	
+
 
     private GameObject CreateTerrainObject()
     {
-        GameObject gobjMap = new GameObject("gobjMap");
+        GameObject gobjMap = new GameObject("GameMap");
         // Create map
         TerrainData _TerrainData = new TerrainData();
-        _TerrainData.size = new Vector3(10, 600, 10);
+        _TerrainData.size = new Vector3(10, 10, 10);
         _TerrainData.heightmapResolution = 512;
         _TerrainData.baseMapResolution = 1024;
         _TerrainData.SetDetailResolution(1024, 16);
@@ -35,15 +36,23 @@ public class TerrainMap : MonoBehaviour {
         return gobjMap;
     }
 
-    public bool PlaceBuilding(Building pBuildingToPlace, Vector2 pvec2PointToPlace)
+    public bool PlaceBuilding(Building pBuildingToPlace, Vector3 pvec3PointToPlace)
     {
-        bool blnCanPlace = false;
-        marrBuildingsOnMap.Add(pBuildingToPlace);
+        bool blnCanPlace = true;
+        float DistanceBetweenBuildings = 0f;
         //Attempt to place building and return result
-
-        if(blnCanPlace)
+        foreach (Building BuildingOnMap in marrBuildingsOnMap)
         {
-            pBuildingToPlace.BuildingPosition = pvec2PointToPlace;
+            DistanceBetweenBuildings = Vector3.Distance(pvec3PointToPlace, BuildingOnMap.BuildingPosition);
+            if (DistanceBetweenBuildings < 2.0f)
+            {
+                blnCanPlace = false;
+            }
+        }
+        if (blnCanPlace)
+        {
+            marrBuildingsOnMap.Add(pBuildingToPlace);
+            pBuildingToPlace.BuildingPosition = pvec3PointToPlace;
         }
         return blnCanPlace;
     }

@@ -60,12 +60,22 @@ public class Building{
             case BUILDING_TYPE.MATERIAL:
                 gobjBuilding = CreateMaterialBuildingObject();
                 break;
+            case BUILDING_TYPE.HOUSING:
+                gobjBuilding = CreateHousingBuildingObject();
+                break;
         }
         if(gobjBuilding != null)
         {
             gobjBuilding.AddComponent<LineRenderer>().positionCount = 0;
         }
         return gobjBuilding;
+    }
+
+    private GameObject CreateHousingBuildingObject()
+    {
+        GameObject gobjHousingBuilding = null;
+        gobjHousingBuilding = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+        return gobjHousingBuilding;
     }
 
     private GameObject CreateMaterialBuildingObject()
@@ -101,6 +111,7 @@ public class Building{
     public void ToggleBuildingOutlines(bool pblnTurnOn)
     {
         LineRenderer lineRenderer = mgobjBuilding.GetComponent<LineRenderer>();
+        Vector3 pos;
         // Turn on building outlines
         if (pblnTurnOn)
         {
@@ -117,7 +128,7 @@ public class Building{
             lineRenderer.positionCount = vertexCount;
             for (int i = 0; i < lineRenderer.positionCount; i++)
             {
-                Vector3 pos = new Vector3(radius * Mathf.Cos(theta), 0f, radius * Mathf.Sin(theta));
+                pos = new Vector3(radius * Mathf.Cos(theta), 0f, radius * Mathf.Sin(theta));
                 lineRenderer.SetPosition(i, pos);
                 theta += deltaTheta;
             }

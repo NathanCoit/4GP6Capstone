@@ -9,6 +9,7 @@ public class TerrainMap
 {
     private GameObject mgobjTerrainMap;
     private List<Building> marrBuildingsOnMap;
+    private Dictionary<Faction, float[]> marrFactionAreas; //Startingangle, ending angle, starting rad, ending rad 
 
     public TerrainMap()
     {
@@ -19,19 +20,20 @@ public class TerrainMap
 
     private GameObject CreateTerrainObject()
     {
-        GameObject gobjMap = new GameObject("GameMap");
+        GameObject gobjMap = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        gobjMap.transform.localScale = new Vector3(50, 0.1f, 50);
         // Create map
-        TerrainData _TerrainData = new TerrainData();
-        _TerrainData.size = new Vector3(10, 10, 10);
-        _TerrainData.heightmapResolution = 512;
-        _TerrainData.baseMapResolution = 1024;
-        _TerrainData.SetDetailResolution(1024, 16);
+        //TerrainData _TerrainData = new TerrainData();
+        //_TerrainData.size = new Vector3(10, 10, 10);
+        //_TerrainData.heightmapResolution = 512;
+        //_TerrainData.baseMapResolution = 1024;
+        //_TerrainData.SetDetailResolution(1024, 16);
 
-        TerrainCollider _TerrainCollider = gobjMap.AddComponent<TerrainCollider>();
-        Terrain _Terrain2 = gobjMap.AddComponent<Terrain>();
+        //TerrainCollider _TerrainCollider = gobjMap.AddComponent<TerrainCollider>();
+        //Terrain _Terrain2 = gobjMap.AddComponent<Terrain>();
 
-        _TerrainCollider.terrainData = _TerrainData;
-        _Terrain2.terrainData = _TerrainData;
+        //_TerrainCollider.terrainData = _TerrainData;
+        //_Terrain2.terrainData = _TerrainData;
 
         return gobjMap;
     }
@@ -60,5 +62,31 @@ public class TerrainMap
     public List<Building> GetBuildings()
     {
         return marrBuildingsOnMap;
+    }
+
+    public void DivideMap(List<Faction> parrCurrentFactions, float pfStartingRad, float pfEndingRad)
+    {
+
+        marrFactionAreas = new Dictionary<Faction, float[]>();
+        float fFullCircleRad = 2 * Mathf.PI;
+        float fAreaAngle = fFullCircleRad / parrCurrentFactions.Count;
+        float fAngle = 0;
+        foreach (Faction FactionToPlace in parrCurrentFactions)
+        {
+            marrFactionAreas.Add(FactionToPlace, new float[] { pfStartingRad, pfEndingRad, fAngle, fAngle + fAreaAngle });
+            fAngle += fAreaAngle;
+        }
+    }
+
+    public Vector3 CalculateStartingPosition(Faction pobjFactionToPlace)
+    {
+        Vector3 vec3StartingPosition = new Vector3(0, 0, 0);
+        float[] FactionArea = marrFactionAreas[pobjFactionToPlace];
+
+        float fAngle = Random.Range(FactionArea[2], FactionArea[3]);
+        float fRad = Random.Range(FactionArea[0] + 2f, FactionArea[1] - 2f);
+
+        vec3StartingPosition = new Vector3(fRad * Mathf.Cos(fAngle), 0.5f, fRad * Mathf.Sin(fAngle));
+        return vec3StartingPosition;
     }
 }

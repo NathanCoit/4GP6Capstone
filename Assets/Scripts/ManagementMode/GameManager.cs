@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     public TerrainMap GameMap;
     public Building PlayerVillage;
     public List<Building> EnemyVillages;
-    public int TotalEnemies;
+    public int TotalEnemies = 3;
     public List<Faction> CurrentFactions;
     public int BuildingCostModifier = 1;
     private int MenuState = 0;
@@ -26,29 +26,38 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         Building bldEnemyBuilding = null;
+        Faction facEnemyFaction = null;
+        Vector3 vec3VillagePos;
         CurrentFactions = new List<Faction>();
+        EnemyFactions = new List<Faction>();
         //Create map terrain
         GameMap = new TerrainMap();
 
         // Create the player Faction
         PlayerFaction = new Faction("YourGod");
         CurrentFactions.Add(PlayerFaction);
+        for (int enemyCount = 0; enemyCount < TotalEnemies; enemyCount++)
+        {
+            facEnemyFaction = new Faction("EnemyGod" + enemyCount);
+            CurrentFactions.Add(facEnemyFaction);
+            EnemyFactions.Add(facEnemyFaction);
+        }
 
+        GameMap.DivideMap(CurrentFactions, 0, 25f);
+        
         //Create and place player village
         PlayerVillage = new Building(Building.BUILDING_TYPE.VILLAGE, PlayerFaction, 0);
-        Vector3 vec3VillagePos = CalculateStartingPlayerPosition();
+        vec3VillagePos = GameMap.CalculateStartingPosition(PlayerFaction);
         GameMap.PlaceBuilding(PlayerVillage, vec3VillagePos);
 
-        ////Create and place enemy villages
-        //for (int enemyCount = 0; enemyCount < TotalEnemies; enemyCount++)
-        //{
-        //    PlayerFaction = new Faction("EnemyGod" + enemyCount);
-        //    CurrentFactions.Add(PlayerFaction);
-        //    bldEnemyBuilding = new Building(Building.BUILDING_TYPE.VILLAGE, PlayerFaction);
-        //    vec2VillagePos = CalculateStartingEnemyPosiion();
-        //    GameMap.PlaceBuilding(bldEnemyBuilding, vec2VillagePos);
-        //    EnemyVillages.Add(bldEnemyBuilding);
-        //}
+        //Create and place enemy villages
+        foreach(Faction enemyFaction in EnemyFactions)
+        {
+            bldEnemyBuilding = new Building(Building.BUILDING_TYPE.VILLAGE, enemyFaction, 0);
+            vec3VillagePos = GameMap.CalculateStartingPosition(enemyFaction);
+            GameMap.PlaceBuilding(bldEnemyBuilding, vec3VillagePos);
+        }
+
 
         InvokeRepeating("CalculateResources", 0.5f, 2.0f);
     }
@@ -219,6 +228,10 @@ public class GameManager : MonoBehaviour
             // Mine building
             BufferBuilding(Building.BUILDING_TYPE.MATERIAL);
         }
+        else if (Input.GetKeyDown(KeyCode.D))
+        {
+            BufferBuilding(Building.BUILDING_TYPE.HOUSING);
+        }
     }
     /// <summary>
     /// Function for calculating the cost of buildings
@@ -235,6 +248,9 @@ public class GameManager : MonoBehaviour
                 break;
             case (Building.BUILDING_TYPE.MATERIAL):
                 BuildingCost = 5 * BuildingCostModifier;
+                break;
+            case (Building.BUILDING_TYPE.HOUSING):
+                BuildingCost = 10 * BuildingCostModifier;
                 break;
         }
         return BuildingCost;

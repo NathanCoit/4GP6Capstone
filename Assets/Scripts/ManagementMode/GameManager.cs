@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     public Building PlayerVillage;
     public List<Building> EnemyVillages;
     public int TotalEnemies = 3;
+    public float MapRadius;
     public List<Faction> CurrentFactions;
     public int BuildingCostModifier = 1;
     private int MenuState = 0;
@@ -31,7 +32,7 @@ public class GameManager : MonoBehaviour
         CurrentFactions = new List<Faction>();
         EnemyFactions = new List<Faction>();
         //Create map terrain
-        GameMap = new TerrainMap();
+        GameMap = new TerrainMap(MapRadius);
 
         // Create the player Faction
         PlayerFaction = new Faction("YourGod");
@@ -43,7 +44,7 @@ public class GameManager : MonoBehaviour
             EnemyFactions.Add(facEnemyFaction);
         }
 
-        GameMap.DivideMap(CurrentFactions, 0, 25f);
+        GameMap.DivideMap(CurrentFactions, 0, MapRadius/2);
         
         //Create and place player village
         PlayerVillage = new Building(Building.BUILDING_TYPE.VILLAGE, PlayerFaction, 0);

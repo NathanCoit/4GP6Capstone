@@ -18,12 +18,13 @@ public class Cam : MonoBehaviour {
 	float minFov = 10.0f;
 	public float sensitivity = 5.0f;
 
-	float fov = Camera.main.fieldOfView;
+    float fov;
 
 
 	void Start() 
 	{
-		theScreenWidth = Screen.width;
+        fov = Camera.main.fieldOfView;
+        theScreenWidth = Screen.width;
 		theScreenHeight = Screen.height;
 	}
 

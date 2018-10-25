@@ -10,6 +10,14 @@ using UnityEngine;
 /// </summary>
 public class GameManager : MonoBehaviour
 {
+    public enum MENUSTATE
+    {
+        Default_State,
+        Building_State,
+        Buffered_Building_State, //BufferedBuilding != null
+        Building_Selected_State, //SelectedBuilding != null
+        Moving_Building_State //BufferedBuilding != null
+    }
 
     public TerrainMap GameMap;
     public Building PlayerVillage;
@@ -18,13 +26,17 @@ public class GameManager : MonoBehaviour
     public float MapRadius;
     public List<Faction> CurrentFactions;
     public int BuildingCostModifier = 1;
-    private int MenuState = 0;
+    private MENUSTATE CurrentMenuState = MENUSTATE.Default_State;
     private Building BufferedBuilding = null;
     private Faction PlayerFaction = null;
     private List<Faction> EnemyFactions = null;
+    private GameObject SelectedGameObject = null;
+    private Building SelectedBuilding = null;
+    private Vector3 OriginalBuildingPosition;
+    public float MinimumMorale = 0.2f;
 
-    // Use this for initialization
-    void Start()
+    // Use this for any initializations needed by other scripts
+    private void Awake()
     {
         Building bldEnemyBuilding = null;
         Faction facEnemyFaction = null;
@@ -44,114 +56,131 @@ public class GameManager : MonoBehaviour
             EnemyFactions.Add(facEnemyFaction);
         }
 
-        GameMap.DivideMap(CurrentFactions, 0, MapRadius/2);
-        
+        GameMap.DivideMap(CurrentFactions, 0, MapRadius / 2);
+
         //Create and place player village
-        PlayerVillage = new Building(Building.BUILDING_TYPE.VILLAGE, PlayerFaction, 0);
+        PlayerVillage = new Building(Building.BUILDING_TYPE.VILLAGE, PlayerFaction, BuildingCostModifier);
         vec3VillagePos = GameMap.CalculateStartingPosition(PlayerFaction);
         GameMap.PlaceBuilding(PlayerVillage, vec3VillagePos);
 
         //Create and place enemy villages
-        foreach(Faction enemyFaction in EnemyFactions)
+        foreach (Faction enemyFaction in EnemyFactions)
         {
-            bldEnemyBuilding = new Building(Building.BUILDING_TYPE.VILLAGE, enemyFaction, 0);
+            bldEnemyBuilding = new Building(Building.BUILDING_TYPE.VILLAGE, enemyFaction, BuildingCostModifier);
             vec3VillagePos = GameMap.CalculateStartingPosition(enemyFaction);
             GameMap.PlaceBuilding(bldEnemyBuilding, vec3VillagePos);
         }
-
-
+    }
+    // Use this for any initializations not needed by other scripts.
+    void Start()
+    {
         InvokeRepeating("CalculateResources", 0.5f, 2.0f);
-    }
-
-    private Vector3 CalculateStartingEnemyPosiion()
-    {
-        throw new NotImplementedException();
-    }
-
-    private Vector3 CalculateStartingPlayerPosition()
-    {
-        return new Vector3(2, 0.5f, 2);
     }
 
     // Update is called once per frame
     void Update()
     {
         // ########### Input section ###########
-        // Menu State Info
-        /*
-         * 0 - Main menu state: The main menu state
-         *  Can Access: 1,
-         * 1 - Building Menu State: The building menu state for selecting the different buildings to build
-         *  Can Access: 1, 10, 
-         *  
-         * 10 - Building Buffered State: The menu when a building has been selected to be built
-         *  Can Access: 1
-         */
-        switch (MenuState)
+        switch (CurrentMenuState)
         {
-            case 0:
-                // Default menu state
-                if (Input.GetKeyDown(KeyCode.B))
-                {
-                    MenuState = 1;
-                }
+            case MENUSTATE.Default_State:
+                CheckDefaultMenuStateInputs();
                 break;
-
-            case 1:
-                // Building state
+            case MENUSTATE.Building_State:
                 CheckBuildingStateInputs();
                 break;
-
-            case 10:
-                // Building selected to build state
-                if (Input.GetKeyDown(KeyCode.Escape))
-                {
-                    MenuState = 1;
-                    if (BufferedBuilding != null)
-                    {
-                        BufferedBuilding.Destroy();
-                        BufferedBuilding = null;
-                    }
-                    foreach (Building BuildingOnMap in GameMap.GetBuildings())
-                    {
-                        BuildingOnMap.ToggleBuildingOutlines(false);
-                    }
-                }
+            case MENUSTATE.Buffered_Building_State:
+                CheckBufferedBuildingStateInputs();
                 break;
-        }
+            case MENUSTATE.Moving_Building_State:
+                CheckMovingBuildingStateInputs();
+                break;
+            case MENUSTATE.Building_Selected_State:
+                CheckSelectedBuildingStateInputs();
+                break;
 
-        // ########### Building Placement section ###########
+        }
         if (BufferedBuilding != null)
         {
-            RaycastHit hitInfo;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            UpdateBufferedBuilding();
+        }
+        else
+        {
+            CheckForSelectedBuilding();
+        }
+    }
 
+    private void CheckForSelectedBuilding()
+    {
+        RaycastHit hitInfo;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        // User left clicked, check if they clicked a building object
+        if (Input.GetMouseButtonDown(0))
+        {
+            // Code for selecting a building
             if (Physics.Raycast(ray, out hitInfo))
             {
-                BufferedBuilding.BuildingPosition = new Vector3(hitInfo.point.x, 0.5f, hitInfo.point.z);
-            }
-            // User left clicked
-            if (Input.GetMouseButtonDown(0))
-            {
-                // Try to place the building
-                if (GameMap.PlaceBuilding(BufferedBuilding, new Vector3(hitInfo.point.x, 0.5f, hitInfo.point.z)))
+                SelectedGameObject = hitInfo.collider.gameObject;
+                // If the user clicked the map, do nothing
+                if (SelectedGameObject == GameMap.GetMapObject())
                 {
-                    // If the building did place, go back to building menu
-                    PlayerFaction.MaterialCount -= BufferedBuilding.BuildingCost;
-                    MenuState = 1;
-                    BufferedBuilding = null;
-                    foreach (Building BuildingOnMap in GameMap.GetBuildings())
+                    SelectedGameObject = null;
+                    if (SelectedBuilding != null)
                     {
-                        BuildingOnMap.ToggleBuildingOutlines(false);
+                        SelectedBuilding.ToggleBuildingOutlines(false);
+                        SelectedBuilding = null;
+                        if (CurrentMenuState == MENUSTATE.Building_Selected_State)
+                        {
+                            CurrentMenuState = MENUSTATE.Default_State;
+                        }
                     }
                 }
                 else
                 {
-                    // Play error noise, display error, something to say can't place building there
-                    Debug.Log("Can't build there");
+                    if (SelectedBuilding != null)
+                    {
+                        SelectedBuilding.ToggleBuildingOutlines(false);
+                    }
+                    SelectedBuilding = GameMap.GetBuildings().Find(ClickedBuilding => ClickedBuilding.OwningFaction == PlayerFaction && ClickedBuilding.BuildingObject == SelectedGameObject);
+                    if (SelectedBuilding != null)
+                    {
+                        Debug.Log(string.Format("Selected {0} type building", SelectedBuilding.BuildingType));
+                        CurrentMenuState = MENUSTATE.Building_Selected_State;
+                        SelectedBuilding.ToggleBuildingOutlines(true);
+                    }
                 }
             }
+        }
+    }
 
+    private void UpdateBufferedBuilding()
+    {
+        RaycastHit hitInfo;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hitInfo))
+        {
+            BufferedBuilding.BuildingPosition = new Vector3(hitInfo.point.x, 0.5f, hitInfo.point.z);
+        }
+        // User left clicked
+        if (Input.GetMouseButtonDown(0))
+        {
+            // Try to place the building
+            if (GameMap.PlaceBuilding(BufferedBuilding, new Vector3(hitInfo.point.x, 0.5f, hitInfo.point.z)))
+            {
+                // If the building did place, go back to building menu
+                PlayerFaction.MaterialCount -= BufferedBuilding.BuildingCost;
+                CurrentMenuState = MENUSTATE.Building_State;
+                BufferedBuilding = null;
+                foreach (Building BuildingOnMap in GameMap.GetBuildings())
+                {
+                    BuildingOnMap.ToggleBuildingOutlines(false);
+                }
+            }
+            else
+            {
+                // Play error noise, display error, something to say can't place building there
+                Debug.Log("Can't build there");
+            }
         }
     }
 
@@ -165,10 +194,13 @@ public class GameManager : MonoBehaviour
         List<Building> AltarBuildings = null;
         List<Building> VillageBuildings = null;
         List<Building> MaterialBuildings = null;
+        List<Building> HousingBuildings = null;
+        int intHousingTotal = 0;
         if (CurrentFactions != null)
         {
             foreach (Faction CurrentFaction in CurrentFactions)
             {
+                intHousingTotal = 0;
                 // Get all buildings belonging to this faction
                 OwnedBuildings = GameMap.GetBuildings().FindAll(MatchingBuild => MatchingBuild.OwningFaction == CurrentFaction);
 
@@ -180,7 +212,7 @@ public class GameManager : MonoBehaviour
                     foreach (Building AltarBuilding in AltarBuildings)
                     {
                         // Calculate worshipper growth
-                        CurrentFaction.WorshipperCount += (1 * AltarBuilding.UpgradeLevel);
+                        CurrentFaction.WorshipperCount += Mathf.CeilToInt((1 * AltarBuilding.UpgradeLevel) * CurrentFaction.Morale);
                     }
 
                     // Get all the village buildings
@@ -188,9 +220,10 @@ public class GameManager : MonoBehaviour
                     foreach (Building VillageBuilding in VillageBuildings)
                     {
                         // Calculate worshipper growth
-                        CurrentFaction.WorshipperCount += (1 * VillageBuilding.UpgradeLevel);
+                        CurrentFaction.WorshipperCount += Mathf.CeilToInt((20 * VillageBuilding.UpgradeLevel) * CurrentFaction.Morale);
                         // Calculatae Resource growth
-                        CurrentFaction.MaterialCount += (1 * VillageBuilding.UpgradeLevel);
+                        CurrentFaction.MaterialCount += Mathf.CeilToInt((1 * VillageBuilding.UpgradeLevel) * CurrentFaction.Morale);
+                        intHousingTotal += 100 * VillageBuilding.UpgradeLevel;
                     }
 
                     // Get all the material buildings
@@ -198,11 +231,43 @@ public class GameManager : MonoBehaviour
                     foreach (Building MaterialBuilding in MaterialBuildings)
                     {
                         // Calculatae Resource growth
-                        CurrentFaction.MaterialCount += (1 * MaterialBuilding.UpgradeLevel);
+                        CurrentFaction.MaterialCount += Mathf.CeilToInt((1 * MaterialBuilding.UpgradeLevel) * CurrentFaction.Morale);
+                    }
+                    HousingBuildings = OwnedBuildings.FindAll(HousingBuild => HousingBuild.BuildingType == Building.BUILDING_TYPE.HOUSING);
+                    foreach(Building HousingBuilding in HousingBuildings)
+                    {
+                        intHousingTotal += 100 * HousingBuilding.UpgradeLevel;
+                    }
+                    //Calculate morale losses/gains
+                    // Each housing/village building can hold 100 * upgrade level worshippers
+                    if (intHousingTotal > CurrentFaction.WorshipperCount)
+                    {
+                        // There is enough housing for the current population, morale goes towards 100%
+                        if (CurrentFaction.Morale <= 1)
+                        {
+                            CurrentFaction.Morale += 0.05f;
+                            if (CurrentFaction.Morale > 1)
+                            {
+                                CurrentFaction.Morale = 1;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Not enough housing for the population, morale will drop
+                        if (CurrentFaction.Morale >= MinimumMorale)
+                        {
+                            CurrentFaction.Morale -= 0.05f;
+                        }
                     }
                 }
-                Debug.Log(string.Format("{0}: Material Count({1}), Worshipper Count({2})", CurrentFaction.GodName, CurrentFaction.MaterialCount, CurrentFaction.WorshipperCount));
             }
+            Debug.Log(string.Format("{0}: Material Count({1}), Worshipper Count({2}), Morale({3}) , MenuState({4})",
+                PlayerFaction.GodName,
+                PlayerFaction.MaterialCount,
+                PlayerFaction.WorshipperCount,
+                PlayerFaction.Morale,
+                CurrentMenuState));
         }
 
 
@@ -217,7 +282,7 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            MenuState = 0;
+            CurrentMenuState = 0;
         }
         else if (Input.GetKeyDown(KeyCode.A))
         {
@@ -234,37 +299,126 @@ public class GameManager : MonoBehaviour
             BufferBuilding(Building.BUILDING_TYPE.HOUSING);
         }
     }
-    /// <summary>
-    /// Function for calculating the cost of buildings
-    /// </summary>
-    /// <param name="penumBuildingType"></param>
-    /// <returns></returns>
-    private int CalculateBuildingCost(Building.BUILDING_TYPE penumBuildingType)
+
+    private void CheckMovingBuildingStateInputs()
     {
-        int BuildingCost = int.MaxValue;
-        switch (penumBuildingType)
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            case (Building.BUILDING_TYPE.ALTAR):
-                BuildingCost = 10 * BuildingCostModifier;
-                break;
-            case (Building.BUILDING_TYPE.MATERIAL):
-                BuildingCost = 5 * BuildingCostModifier;
-                break;
-            case (Building.BUILDING_TYPE.HOUSING):
-                BuildingCost = 10 * BuildingCostModifier;
-                break;
+            CurrentMenuState = MENUSTATE.Building_Selected_State;
+            if (BufferedBuilding != null)
+            {
+                GameMap.PlaceBuilding(BufferedBuilding, OriginalBuildingPosition);
+            }
+            foreach (Building BuildingOnMap in GameMap.GetBuildings())
+            {
+                BuildingOnMap.ToggleBuildingOutlines(false);
+            }
+            SelectedBuilding = null;
+            BufferedBuilding = null;
         }
-        return BuildingCost;
+    }
+
+    private void CheckDefaultMenuStateInputs()
+    {
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            CurrentMenuState = MENUSTATE.Building_State;
+        }
+    }
+
+    private void CheckBufferedBuildingStateInputs()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            CurrentMenuState = MENUSTATE.Building_State;
+            if (BufferedBuilding != null)
+            {
+                BufferedBuilding.Destroy();
+                BufferedBuilding = null;
+            }
+            foreach (Building BuildingOnMap in GameMap.GetBuildings())
+            {
+                BuildingOnMap.ToggleBuildingOutlines(false);
+            }
+        }
+    }
+
+    private void CheckSelectedBuildingStateInputs()
+    {
+        int intUpgradeCost;
+        if (SelectedBuilding != null)
+        {
+            // Player's building
+            if (SelectedBuilding.OwningFaction == PlayerFaction)
+            {
+                // Global hotkey for a selected building
+                if (Input.GetKeyDown(KeyCode.U))
+                {
+                    // Attempt to upgrade selected building
+                    intUpgradeCost = Building.CalculateBuildingUpgradeCost(SelectedBuilding.BuildingType, BuildingCostModifier);
+                    // 3 is max upgrade level of a building
+                    if (PlayerFaction.MaterialCount >= intUpgradeCost)
+                    {
+                        if (SelectedBuilding.UpgradeLevel < 3)
+                        {
+                            SelectedBuilding.UpgradeBuilding();
+                        }
+                        else
+                        {
+                            Debug.Log("Building is at max upgrade level");
+                        }
+
+                    }
+                    else
+                    {
+                        Debug.Log(string.Format("Not enough materials to upgrade ({0} required)", intUpgradeCost));
+                    }
+
+                }
+                else if (Input.GetKeyDown(KeyCode.M))
+                {
+                    //Move player building if it isn't a village
+                    if (SelectedBuilding.BuildingType != Building.BUILDING_TYPE.VILLAGE)
+                    {
+                        BufferedBuilding = SelectedBuilding;
+                        SelectedBuilding = null;
+                        CurrentMenuState = MENUSTATE.Moving_Building_State;
+                        OriginalBuildingPosition = BufferedBuilding.BuildingPosition;
+                        GameMap.GetBuildings().Remove(BufferedBuilding);
+                        foreach (Building BuildingOnMap in GameMap.GetBuildings())
+                        {
+                            BuildingOnMap.ToggleBuildingOutlines(true);
+                        }
+                        BufferedBuilding.ToggleBuildingOutlines(true);
+                    }
+                    else
+                    {
+                        // TODO add cannot move feedback
+                    }
+
+                }
+                else if (Input.GetKeyDown(KeyCode.Escape))
+                {
+                    SelectedBuilding.ToggleBuildingOutlines(false);
+                    SelectedBuilding = null;
+                    CurrentMenuState = MENUSTATE.Default_State;
+                }
+            }
+            else
+            {
+                // TODO add options when selecting an enemy building (start battle, view stats)
+            }
+        }
     }
 
     private void BufferBuilding(Building.BUILDING_TYPE penumBuildingType)
     {
         // Check if user has enough resources to build the building
-        int BuildingCost = CalculateBuildingCost(penumBuildingType);
+        int BuildingCost = Building.CalculateBuildingCost(penumBuildingType, BuildingCostModifier);
         if (PlayerFaction.MaterialCount >= BuildingCost)
         {
-            BufferedBuilding = new Building(penumBuildingType, PlayerFaction, BuildingCost);
-            MenuState = 10;
+            BufferedBuilding = new Building(penumBuildingType, PlayerFaction, BuildingCostModifier);
+            CurrentMenuState = MENUSTATE.Buffered_Building_State;
             foreach (Building BuildingOnMap in GameMap.GetBuildings())
             {
                 BuildingOnMap.ToggleBuildingOutlines(true);

@@ -6,17 +6,17 @@ using UnityEngine;
 /// Class containing methods for creating, interacting with,and deleting building objects
 /// </summary>
 public class Building{
-    private GameObject mgobjBuilding;
+    public GameObject BuildingObject;
     public float BuildingRadiusSize = 1f; // Radius around a building that can not be built on
     public Vector3 BuildingPosition
     {
         get
         {
-            return mgobjBuilding.transform.position;
+            return BuildingObject.transform.position;
         }
         set
         {
-            mgobjBuilding.transform.position = value;
+            BuildingObject.transform.position = value;
         }
     }
 
@@ -35,13 +35,13 @@ public class Building{
 
     public int BuildingCost = 0;
 
-	public Building(BUILDING_TYPE penumBuildingType, Faction pFactionOwner, int pintBuildingCost)
+	public Building(BUILDING_TYPE penumBuildingType, Faction pFactionOwner, float pfBuildingCostModifier)
     {
-        mgobjBuilding = CreateBuildingObject(penumBuildingType);
+        BuildingObject = CreateBuildingObject(penumBuildingType);
         BuildingType = penumBuildingType;
         OwningFaction = pFactionOwner;
         OwningFaction.OwnedBuildings.Add(this);
-        BuildingCost = pintBuildingCost;
+        BuildingCost = CalculateBuildingCost(penumBuildingType, pfBuildingCostModifier);
     }
 
 
@@ -101,16 +101,17 @@ public class Building{
     public void UpgradeBuilding()
     {
         UpgradeLevel++;
+        BuildingObject.transform.localScale += new Vector3(1, 1, 1); //TODO Change the model upon upgrade
     }
 
     public void Destroy()
     {
-        GameObject.Destroy(mgobjBuilding);
+        GameObject.Destroy(BuildingObject);
     }
 
     public void ToggleBuildingOutlines(bool pblnTurnOn)
     {
-        LineRenderer lineRenderer = mgobjBuilding.GetComponent<LineRenderer>();
+        LineRenderer lineRenderer = BuildingObject.GetComponent<LineRenderer>();
         Vector3 pos;
         // Turn on building outlines
         if (pblnTurnOn)
@@ -139,5 +140,47 @@ public class Building{
         {
             lineRenderer.positionCount = 0;
         }
+    }
+
+    public static int CalculateBuildingCost(Building.BUILDING_TYPE penumBuildingType, float BuildingCostModifier)
+    {
+        int BuildingCost = int.MaxValue;
+        switch (penumBuildingType)
+        {
+            case (Building.BUILDING_TYPE.ALTAR):
+                BuildingCost = Convert.ToInt32(10 * BuildingCostModifier);
+                break;
+            case (Building.BUILDING_TYPE.MATERIAL):
+                BuildingCost = Convert.ToInt32(5 * BuildingCostModifier);
+                break;
+            case (Building.BUILDING_TYPE.HOUSING):
+                BuildingCost = Convert.ToInt32(10 * BuildingCostModifier);
+                break;
+            case (Building.BUILDING_TYPE.VILLAGE):
+                BuildingCost = Convert.ToInt32(10 * BuildingCostModifier);
+                break;
+        }
+        return BuildingCost;
+    }
+
+    public static int CalculateBuildingUpgradeCost(Building.BUILDING_TYPE penumBuildingType, float BuildingCostModifier)
+    {
+        int BuildingCost = int.MaxValue;
+        switch (penumBuildingType)
+        {
+            case (Building.BUILDING_TYPE.ALTAR):
+                BuildingCost = Convert.ToInt32(50 * BuildingCostModifier);
+                break;
+            case (Building.BUILDING_TYPE.MATERIAL):
+                BuildingCost = Convert.ToInt32(50 * BuildingCostModifier);
+                break;
+            case (Building.BUILDING_TYPE.HOUSING):
+                BuildingCost = Convert.ToInt32(50 * BuildingCostModifier);
+                break;
+            case (Building.BUILDING_TYPE.VILLAGE):
+                BuildingCost = Convert.ToInt32(50 * BuildingCostModifier);
+                break;
+        }
+        return BuildingCost;
     }
 }

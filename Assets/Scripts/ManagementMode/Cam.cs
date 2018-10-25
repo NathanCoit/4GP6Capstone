@@ -17,6 +17,8 @@ public class Cam : MonoBehaviour {
 	float maxFov = 60.0f;
 	float minFov = 10.0f;
 	public float sensitivity = 5.0f;
+    public GameObject gameManagerObject;
+    private GameManager gameManagerScript;
 
     float fov;
 
@@ -26,9 +28,17 @@ public class Cam : MonoBehaviour {
         fov = Camera.main.fieldOfView;
         theScreenWidth = Screen.width;
 		theScreenHeight = Screen.height;
+        // Move starting camera position to viewing player village
+        // -30 on the z coordinate points camera at starting village with current camera angle
+        transform.position = new Vector3(gameManagerScript.PlayerVillage.BuildingPosition.x, 50, gameManagerScript.PlayerVillage.BuildingPosition.z - 30f);
 	}
 
-	void Update() 
+    private void Awake()
+    {
+        gameManagerScript = gameManagerObject.GetComponent<GameManager>();
+    }
+
+    void Update() 
 	{
 		if (Input.GetKeyDown(KeyCode.RightArrow))
 		{

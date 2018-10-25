@@ -22,7 +22,11 @@ public class TerrainMap
     {
         GameObject gobjMap = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
         gobjMap.transform.localScale = new Vector3(pfMapRadius, 0.1f, pfMapRadius);
-        // Create map
+        GameObject.Destroy(gobjMap.GetComponent<CapsuleCollider>());
+        gobjMap.AddComponent<MeshCollider>();
+
+        ////Create map
+        //GameObject gobjMap = new GameObject("GameMap");
         //TerrainData _TerrainData = new TerrainData();
         //_TerrainData.size = new Vector3(10, 10, 10);
         //_TerrainData.heightmapResolution = 512;
@@ -64,6 +68,11 @@ public class TerrainMap
         return marrBuildingsOnMap;
     }
 
+    public GameObject GetMapObject()
+    {
+        return mgobjTerrainMap;
+    }
+
     public void DivideMap(List<Faction> parrCurrentFactions, float pfStartingRad, float pfEndingRad)
     {
 
@@ -83,8 +92,8 @@ public class TerrainMap
         Vector3 vec3StartingPosition = new Vector3(0, 0, 0);
         float[] FactionArea = marrFactionAreas[pobjFactionToPlace];
 
-        float fAngle = Random.Range(FactionArea[2], FactionArea[3]);
-        float fRad = Random.Range(FactionArea[0] + 2f, FactionArea[1] - 2f);
+        float fAngle = Random.Range(FactionArea[2] + 0.2f, FactionArea[3] - 0.2f);
+        float fRad = Random.Range(FactionArea[0] + 10f, FactionArea[1] - 2f);
 
         vec3StartingPosition = new Vector3(fRad * Mathf.Cos(fAngle), 0.5f, fRad * Mathf.Sin(fAngle));
         return vec3StartingPosition;

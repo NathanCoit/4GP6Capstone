@@ -167,6 +167,8 @@ public class GameManager : MonoBehaviour
             // Try to place the building
             if (GameMap.PlaceBuilding(BufferedBuilding, new Vector3(hitInfo.point.x, 0.5f, hitInfo.point.z)))
             {
+                // Reenable the collider component for selecting
+                BufferedBuilding.BuildingObject.GetComponent<Collider>().enabled = true;
                 // If the building did place, go back to building menu
                 PlayerFaction.MaterialCount -= BufferedBuilding.BuildingCost;
                 CurrentMenuState = MENUSTATE.Building_State;
@@ -196,11 +198,18 @@ public class GameManager : MonoBehaviour
         List<Building> MaterialBuildings = null;
         List<Building> HousingBuildings = null;
         int intHousingTotal = 0;
+        int intMaterialsToAdd = 0;
+        int intWorshippersToAdd = 0;
+
+        float WorPerSec = 0;
+        float MatPerSec = 0;
         if (CurrentFactions != null)
         {
             foreach (Faction CurrentFaction in CurrentFactions)
             {
                 intHousingTotal = 0;
+                intMaterialsToAdd = 0;
+                intWorshippersToAdd = 0;
                 // Get all buildings belonging to this faction
                 OwnedBuildings = GameMap.GetBuildings().FindAll(MatchingBuild => MatchingBuild.OwningFaction == CurrentFaction);
 
@@ -212,7 +221,7 @@ public class GameManager : MonoBehaviour
                     foreach (Building AltarBuilding in AltarBuildings)
                     {
                         // Calculate worshipper growth
-                        CurrentFaction.WorshipperCount += Mathf.CeilToInt((1 * AltarBuilding.UpgradeLevel) * CurrentFaction.Morale);
+                        intWorshippersToAdd += (1 * AltarBuilding.UpgradeLevel);
                     }
 
                     // Get all the village buildings
@@ -220,9 +229,9 @@ public class GameManager : MonoBehaviour
                     foreach (Building VillageBuilding in VillageBuildings)
                     {
                         // Calculate worshipper growth
-                        CurrentFaction.WorshipperCount += Mathf.CeilToInt((20 * VillageBuilding.UpgradeLevel) * CurrentFaction.Morale);
+                        intWorshippersToAdd += (1 * VillageBuilding.UpgradeLevel);
                         // Calculatae Resource growth
-                        CurrentFaction.MaterialCount += Mathf.CeilToInt((1 * VillageBuilding.UpgradeLevel) * CurrentFaction.Morale);
+                        intMaterialsToAdd += (1 * VillageBuilding.UpgradeLevel);
                         intHousingTotal += 100 * VillageBuilding.UpgradeLevel;
                     }
 
@@ -231,8 +240,24 @@ public class GameManager : MonoBehaviour
                     foreach (Building MaterialBuilding in MaterialBuildings)
                     {
                         // Calculatae Resource growth
-                        CurrentFaction.MaterialCount += Mathf.CeilToInt((1 * MaterialBuilding.UpgradeLevel) * CurrentFaction.Morale);
+                        intMaterialsToAdd += (1 * MaterialBuilding.UpgradeLevel);
                     }
+
+                    // Apply the morale modifier
+                    intMaterialsToAdd = Mathf.CeilToInt(intMaterialsToAdd * CurrentFaction.Morale);
+                    intWorshippersToAdd = Mathf.CeilToInt(intWorshippersToAdd * CurrentFaction.Morale);
+
+                    if(CurrentFaction == PlayerFaction)
+                    {
+                        WorPerSec = (float)intWorshippersToAdd / 2;
+                        MatPerSec = (float)intMaterialsToAdd / 2;
+                    }
+
+                    // Add the appropriate resources
+                    CurrentFaction.MaterialCount += intMaterialsToAdd;
+                    CurrentFaction.WorshipperCount += intWorshippersToAdd;
+
+                    // Get all the housing buildings
                     HousingBuildings = OwnedBuildings.FindAll(HousingBuild => HousingBuild.BuildingType == Building.BUILDING_TYPE.HOUSING);
                     foreach(Building HousingBuilding in HousingBuildings)
                     {
@@ -262,11 +287,13 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
-            Debug.Log(string.Format("{0}: Material Count({1}), Worshipper Count({2}), Morale({3}) , MenuState({4})",
+            Debug.Log(string.Format("{0}: Material Count({1}), Worshipper Count({2}), Morale({3}), Wor/sec({4}), Mat/sec({5}), MenuState({6})",
                 PlayerFaction.GodName,
                 PlayerFaction.MaterialCount,
                 PlayerFaction.WorshipperCount,
                 PlayerFaction.Morale,
+                WorPerSec,
+                MatPerSec,
                 CurrentMenuState));
         }
 
@@ -362,6 +389,7 @@ public class GameManager : MonoBehaviour
                         if (SelectedBuilding.UpgradeLevel < 3)
                         {
                             SelectedBuilding.UpgradeBuilding();
+                            PlayerFaction.MaterialCount -= Building.CalculateBuildingUpgradeCost(SelectedBuilding.BuildingType, BuildingCostModifier);
                         }
                         else
                         {
@@ -390,6 +418,8 @@ public class GameManager : MonoBehaviour
                             BuildingOnMap.ToggleBuildingOutlines(true);
                         }
                         BufferedBuilding.ToggleBuildingOutlines(true);
+                        // Disable the collider to have the raycasting ignore the held building for placement purposes
+                        BufferedBuilding.BuildingObject.GetComponent<Collider>().enabled = false;
                     }
                     else
                     {
@@ -424,6 +454,8 @@ public class GameManager : MonoBehaviour
                 BuildingOnMap.ToggleBuildingOutlines(true);
             }
             BufferedBuilding.ToggleBuildingOutlines(true);
+            // Disable the collider to have the raycasting ignore the held building for placement purposes
+            BufferedBuilding.BuildingObject.GetComponent<Collider>().enabled = false;
         }
         else
         {

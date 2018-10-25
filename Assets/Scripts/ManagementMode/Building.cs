@@ -7,7 +7,7 @@ using UnityEngine;
 /// </summary>
 public class Building{
     public GameObject BuildingObject;
-    public float BuildingRadiusSize = 1f; // Radius around a building that can not be built on
+    static public float BuildingRadiusSize = 1f; // Radius around a building that can not be built on
     public Vector3 BuildingPosition
     {
         get

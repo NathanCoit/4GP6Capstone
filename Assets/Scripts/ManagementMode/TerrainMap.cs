@@ -47,10 +47,11 @@ public class TerrainMap
         bool blnCanPlace = true;
         float DistanceBetweenBuildings = 0f;
         //Attempt to place building and return result
+        // Check if trying to place too close to another building
         foreach (Building BuildingOnMap in marrBuildingsOnMap)
         {
             DistanceBetweenBuildings = Vector3.Distance(pvec3PointToPlace, BuildingOnMap.BuildingPosition);
-            if (DistanceBetweenBuildings < 2.0f)
+            if (DistanceBetweenBuildings < Building.BuildingRadiusSize * 2)
             {
                 blnCanPlace = false;
             }

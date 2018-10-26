@@ -172,6 +172,7 @@ public class GameManager : MonoBehaviour
             {
                 // Reenable the collider component for selecting
                 BufferedBuilding.BuildingObject.GetComponent<Collider>().enabled = true;
+				sound.PlaySound("PlaceBuilding");
                 // If the building did place, go back to building menu
                 PlayerFaction.MaterialCount -= BufferedBuilding.BuildingCost;
                 CurrentMenuState = MENUSTATE.Building_State;
@@ -180,6 +181,7 @@ public class GameManager : MonoBehaviour
                 {
                     BuildingOnMap.ToggleBuildingOutlines(false);
                 }
+
             }
             else
             {

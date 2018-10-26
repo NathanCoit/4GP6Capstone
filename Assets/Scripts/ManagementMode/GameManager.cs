@@ -10,7 +10,8 @@ using UnityEngine;
 /// </summary>
 public class GameManager : MonoBehaviour
 {
-
+	public GameObject AudioObject;
+	private ExecuteSound sound;
     public TerrainMap GameMap;
     public Building PlayerVillage;
     public List<Building> EnemyVillages;
@@ -21,6 +22,10 @@ public class GameManager : MonoBehaviour
     private Building BufferedBuilding = null;
     private Faction PlayerFaction = null;
     private List<Faction> EnemyFactions = null;
+
+	void Awake() {
+		sound = AudioObject.GetComponent<ExecuteSound> ();
+	}
 
     // Use this for initialization
     void Start()
@@ -255,8 +260,8 @@ public class GameManager : MonoBehaviour
             BufferedBuilding.ToggleBuildingOutlines(true);
         }
         else
-        {
-            Debug.Log("Not enough materials!");
+		{       
+			sound.PlaySound ("NotMaterials");
         }
     }
 }

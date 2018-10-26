@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour
         Moving_Building_State //BufferedBuilding != null
     }
 
+    public GameObject AudioObject;
+    private ExecuteSound sound;
     public TerrainMap GameMap;
     public Building PlayerVillage;
     public List<Building> EnemyVillages;
@@ -36,8 +38,9 @@ public class GameManager : MonoBehaviour
     public float MinimumMorale = 0.2f;
 
     // Use this for any initializations needed by other scripts
-    private void Awake()
+    void Awake()
     {
+        sound = AudioObject.GetComponent<ExecuteSound>();
         Building bldEnemyBuilding = null;
         Faction facEnemyFaction = null;
         Vector3 vec3VillagePos;
@@ -247,7 +250,7 @@ public class GameManager : MonoBehaviour
                     intMaterialsToAdd = Mathf.CeilToInt(intMaterialsToAdd * CurrentFaction.Morale);
                     intWorshippersToAdd = Mathf.CeilToInt(intWorshippersToAdd * CurrentFaction.Morale);
 
-                    if(CurrentFaction == PlayerFaction)
+                    if (CurrentFaction == PlayerFaction)
                     {
                         WorPerSec = (float)intWorshippersToAdd / 2;
                         MatPerSec = (float)intMaterialsToAdd / 2;
@@ -259,7 +262,7 @@ public class GameManager : MonoBehaviour
 
                     // Get all the housing buildings
                     HousingBuildings = OwnedBuildings.FindAll(HousingBuild => HousingBuild.BuildingType == Building.BUILDING_TYPE.HOUSING);
-                    foreach(Building HousingBuilding in HousingBuildings)
+                    foreach (Building HousingBuilding in HousingBuildings)
                     {
                         intHousingTotal += 100 * HousingBuilding.UpgradeLevel;
                     }
@@ -459,7 +462,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("Not enough materials!");
+            sound.PlaySound("NotMaterials");
         }
     }
 }

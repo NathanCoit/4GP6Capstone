@@ -5,12 +5,14 @@ using UnityEngine;
 public class ExecuteSound : MonoBehaviour {
 
 	public AudioClip NotMaterials;
+	public AudioClip PlaceBuilding;
+	public AudioClip StartMusic;
 	public AudioSource musicSource;
 
 	// Use this for initialization
 	void Start () {
-//		musicSource.clip = Animosity;
-//		musicSource.Play();
+		musicSource.clip = StartMusic;
+		musicSource.Play ();
 	}
 	
 	// Update is called once per frame
@@ -29,6 +31,10 @@ public class ExecuteSound : MonoBehaviour {
 		{
 		case "NotMaterials":
 			musicSource.clip = NotMaterials;
+			musicSource.Play ();
+			break;
+		case "PlaceBuilding":
+			musicSource.clip = PlaceBuilding;
 			musicSource.Play ();
 			break;
 		}

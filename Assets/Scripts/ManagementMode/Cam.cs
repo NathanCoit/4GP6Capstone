@@ -101,7 +101,7 @@ public class Cam : MonoBehaviour {
 		}
 
 
-		fov += Input.GetAxis("Mouse ScrollWheel") * sensitivity;
+		fov -= Input.GetAxis("Mouse ScrollWheel") * sensitivity;
 		fov = Mathf.Clamp(fov, minFov, maxFov);
 		Camera.main.fieldOfView = fov;
 

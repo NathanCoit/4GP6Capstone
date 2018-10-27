@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 /// <summary>
@@ -19,6 +20,8 @@ public class GameManager : MonoBehaviour
         Moving_Building_State //BufferedBuilding != null
     }
 
+	modeTextScript text1;
+	resourceScript resourcetext;
     public GameObject AudioObject;
     private ExecuteSound sound;
     public TerrainMap GameMap;
@@ -41,6 +44,8 @@ public class GameManager : MonoBehaviour
     // Use this for any initializations needed by other scripts
     void Awake()
     {
+		text1 = FindObjectOfType<modeTextScript> ();
+		resourcetext = FindObjectOfType<resourceScript> ();
         sound = AudioObject.GetComponent<ExecuteSound>();
         Building bldEnemyBuilding = null;
         Faction facEnemyFaction = null;
@@ -305,7 +310,7 @@ public class GameManager : MonoBehaviour
         }
 
 
-
+		resourcetext.resourceUIUpdate (PlayerFaction.MaterialCount, PlayerFaction.WorshipperCount, PlayerFaction.Morale);
         // Update the player's UI with resource counts
         // UI1 = PlayerFaction.WorshipperCount;
         // UI2 = PlayerFaction.MaterialCount;
@@ -317,6 +322,7 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             CurrentMenuState = 0;
+			text1.textChange ("explore");
         }
         else if (Input.GetKeyDown(KeyCode.A))
         {
@@ -357,6 +363,7 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.B))
         {
             CurrentMenuState = MENUSTATE.Building_State;
+			text1.textChange ("building");
         }
     }
 

@@ -140,6 +140,7 @@ public class GameManager : MonoBehaviour
                         if (CurrentMenuState == MENUSTATE.Building_Selected_State)
                         {
                             CurrentMenuState = MENUSTATE.Default_State;
+							text1.textChange ("explore");
                         }
                     }
                 }
@@ -154,6 +155,7 @@ public class GameManager : MonoBehaviour
                     {
                         Debug.Log(string.Format("Selected {0} type building", SelectedBuilding.BuildingType));
                         CurrentMenuState = MENUSTATE.Building_Selected_State;
+						text1.textChange ("upgrade");
                         SelectedBuilding.ToggleBuildingOutlines(true);
                     }
                 }
@@ -181,6 +183,7 @@ public class GameManager : MonoBehaviour
                 // If the building did place, go back to building menu
                 PlayerFaction.MaterialCount -= BufferedBuilding.BuildingCost;
                 CurrentMenuState = MENUSTATE.Building_State;
+				text1.textChange ("building");
                 BufferedBuilding = null;
                 foreach (Building BuildingOnMap in GameMap.GetBuildings())
                 {
@@ -343,6 +346,7 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             CurrentMenuState = MENUSTATE.Building_Selected_State;
+			text1.textChange ("upgrade");
             if (BufferedBuilding != null)
             {
                 GameMap.PlaceBuilding(BufferedBuilding, OriginalBuildingPosition);
@@ -370,6 +374,7 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             CurrentMenuState = MENUSTATE.Building_State;
+			text1.textChange ("building");
             if (BufferedBuilding != null)
             {
                 BufferedBuilding.Destroy();
@@ -402,16 +407,19 @@ public class GameManager : MonoBehaviour
                         {
                             SelectedBuilding.UpgradeBuilding();
                             PlayerFaction.MaterialCount -= Building.CalculateBuildingUpgradeCost(SelectedBuilding.BuildingType, BuildingCostModifier);
+							sound.PlaySound ("PlaceBuilding");
                         }
                         else
                         {
                             Debug.Log("Building is at max upgrade level");
+							sound.PlaySound ("NotMaterials");
                         }
 
                     }
                     else
                     {
                         Debug.Log(string.Format("Not enough materials to upgrade ({0} required)", intUpgradeCost));
+						sound.PlaySound ("NotMaterials");
                     }
 
                 }
@@ -423,6 +431,7 @@ public class GameManager : MonoBehaviour
                         BufferedBuilding = SelectedBuilding;
                         SelectedBuilding = null;
                         CurrentMenuState = MENUSTATE.Moving_Building_State;
+						text1.textChange ("upgrade");
                         OriginalBuildingPosition = BufferedBuilding.BuildingPosition;
                         GameMap.GetBuildings().Remove(BufferedBuilding);
                         foreach (Building BuildingOnMap in GameMap.GetBuildings())
@@ -444,6 +453,7 @@ public class GameManager : MonoBehaviour
                     SelectedBuilding.ToggleBuildingOutlines(false);
                     SelectedBuilding = null;
                     CurrentMenuState = MENUSTATE.Default_State;
+					text1.textChange ("explore");
                 }
             }
             else

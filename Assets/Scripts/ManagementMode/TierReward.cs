@@ -15,6 +15,7 @@ public class TierReward{
     public string RewardName;
     public string RewardDescription;
     public TierReward PreviousRequiredReward;
+    public bool Unlocked = false;
 
     public Ability TierAbility;
     //public Buff TierBuff
@@ -34,4 +35,14 @@ public class TierReward{
     // Create a Buff tier reward
 
     // Create a Resource Tier reward
+
+    public Ability UnlockAbility()
+    {
+        // If you haven't unlocked the previous tier or this isnt an ability reward, return nothing
+        if ((PreviousRequiredReward != null && !PreviousRequiredReward.Unlocked) || RewardType != REWARDTYPE.Ability)
+        {
+            return null;
+        }
+        return TierAbility;
+    }
 }

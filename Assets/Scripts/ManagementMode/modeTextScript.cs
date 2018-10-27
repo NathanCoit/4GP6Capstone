@@ -27,4 +27,9 @@ public class modeTextScript : MonoBehaviour {
 			break;
 		}
 	}
+
+    public string GetText()
+    {
+        return modeText.text;
+    }
 }

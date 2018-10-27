@@ -12,7 +12,7 @@ public class Faction
     public int WorshipperCount = 0;
     public int MaterialCount = 0;
     public float Morale = 1.0f;
-    public int AbilityTierPoints = 1;
+    public int TierRewardPoints = 1;
     public List<Ability> CurrentAbilites;
     // public List<Upgrade> CurrentUpgrades;
     public List<Building> OwnedBuildings = new List<Building>();

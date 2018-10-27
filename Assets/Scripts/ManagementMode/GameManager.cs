@@ -17,11 +17,13 @@ public class GameManager : MonoBehaviour
         Building_State,
         Buffered_Building_State, //BufferedBuilding != null
         Building_Selected_State, //SelectedBuilding != null
-        Moving_Building_State //BufferedBuilding != null
+        Moving_Building_State, //BufferedBuilding != null
+        Tier_Reward_State
     }
 
 	modeTextScript text1;
 	resourceScript resourcetext;
+    public GameObject RewardUI;
     public GameObject AudioObject;
     private ExecuteSound sound;
     public TerrainMap GameMap;
@@ -40,6 +42,8 @@ public class GameManager : MonoBehaviour
     private Vector3 OriginalBuildingPosition;
     public float MinimumMorale = 0.2f;
     public List<TierReward> PlayerRewardTree;
+    public int TierWorshipperCount = 100; // Initial tier unlock count
+    public int TierWoshipperCountMultiplier = 2; // After every tier, tier count is multiplied by this
 
     // Use this for any initializations needed by other scripts
     void Awake()
@@ -84,6 +88,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         CreateRewardTree();
+        NotifyPlayerOfAvaiableRewards();
         InvokeRepeating("CalculateResources", 0.5f, 2.0f);
     }
 
@@ -107,6 +112,9 @@ public class GameManager : MonoBehaviour
                 break;
             case MENUSTATE.Building_Selected_State:
                 CheckSelectedBuildingStateInputs();
+                break;
+            case MENUSTATE.Tier_Reward_State:
+                CheckTierRewardStateInputs();
                 break;
 
         }
@@ -299,14 +307,24 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
-            Debug.Log(string.Format("{0}: Material Count({1}), Worshipper Count({2}), Morale({3}), Wor/sec({4}), Mat/sec({5}), MenuState({6})",
+
+            // Check if player has unlocked a new tier point
+            if(PlayerFaction.WorshipperCount > TierWorshipperCount)
+            {
+                // Player has unlocked a new reward tier point
+                PlayerFaction.TierRewardPoints++;
+                TierWorshipperCount *= TierWoshipperCountMultiplier;
+                NotifyPlayerOfAvaiableRewards();
+            }
+            Debug.Log(string.Format("{0}: Material Count({1}), Worshipper Count({2}), Morale({3}), Wor/sec({4}), Mat/sec({5}), MenuState({6}), RewardPoints({7})",
                 PlayerFaction.GodName,
                 PlayerFaction.MaterialCount,
                 PlayerFaction.WorshipperCount,
                 PlayerFaction.Morale,
                 WorPerSec,
                 MatPerSec,
-                CurrentMenuState));
+                CurrentMenuState,
+                PlayerFaction.TierRewardPoints));
         }
 
 
@@ -321,8 +339,7 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            CurrentMenuState = 0;
-			text1.textChange ("explore");
+            CurrentMenuState = MENUSTATE.Default_State;
         }
         else if (Input.GetKeyDown(KeyCode.A))
         {
@@ -363,7 +380,11 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.B))
         {
             CurrentMenuState = MENUSTATE.Building_State;
-			text1.textChange ("building");
+        }
+        else if (Input.GetKeyDown(KeyCode.V))
+        {
+            CurrentMenuState = MENUSTATE.Tier_Reward_State;
+            EnableRewardsUI();
         }
     }
 
@@ -455,6 +476,43 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void CheckTierRewardStateInputs()
+    {
+        List<TierReward> UnlockableRewards = null;
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            CurrentMenuState = MENUSTATE.Default_State;
+            DisableRewardsUI();
+        }
+
+        if(PlayerFaction.TierRewardPoints > 0)
+        {
+            // Check if the input is between 1-9
+            for (int intRewardNum = 1; intRewardNum < 9; intRewardNum++)
+            {
+                if (Input.GetKeyDown(Convert.ToString(intRewardNum)))
+                {
+                    UnlockableRewards = GetUnlockableRewards();
+                    // Check if the reward to unlock exists
+                    if (intRewardNum <= UnlockableRewards.Count)
+                    {
+                        // Player has selected a reward, and has enough to unlock it
+                        switch(UnlockableRewards[intRewardNum-1].RewardType)
+                        {
+                            case TierReward.REWARDTYPE.Ability:
+                                PlayerFaction.CurrentAbilites.Add(UnlockableRewards[intRewardNum-1].UnlockAbility());
+                                break;
+                        }
+                        UnlockableRewards[intRewardNum-1].Unlocked = true;
+                        PlayerFaction.TierRewardPoints--;
+                        EnableRewardsUI();
+                    }
+                }
+            }
+        }
+        
+    }
+
     private void BufferBuilding(Building.BUILDING_TYPE penumBuildingType)
     {
         // Check if user has enough resources to build the building
@@ -498,5 +556,45 @@ public class GameManager : MonoBehaviour
         // Third tier, unlocked at 2 * TierCount (200). Final tier for Demo
         NextPlayerTierReward = new TierReward(2, "ThirdAbility", "Third Ability", BasePlayerTierReward);
         PlayerRewardTree.Add(NextPlayerTierReward);
+    }
+
+    private List<TierReward> GetUnlockableRewards()
+    {
+        // Get this list of all rewards that can be unlocked now.
+        return PlayerRewardTree.FindAll(UnlockableReward => 
+        ((UnlockableReward.PreviousRequiredReward!= null 
+        && UnlockableReward.PreviousRequiredReward.Unlocked) 
+        || UnlockableReward.PreviousRequiredReward == null) 
+        && !UnlockableReward.Unlocked);
+    }
+
+    private void EnableRewardsUI()
+    {
+        string strRewardsText = string.Empty;
+        RewardUI.SetActive(true);
+        strRewardsText = string.Format("Current Reward Points: {0}, Next Point at {1} worshippers\n", PlayerFaction.TierRewardPoints, TierWorshipperCount);
+        if(PlayerFaction.TierRewardPoints > 0)
+        {
+            foreach (TierReward UnlockableReward in GetUnlockableRewards())
+            {
+                strRewardsText += string.Format("1. {0}\n", UnlockableReward.RewardName);
+            }
+        }
+        RewardUI.GetComponent<Text>().text = strRewardsText;
+    }
+
+    private void DisableRewardsUI()
+    {
+        RewardUI.GetComponent<Text>().text = "";
+        RewardUI.SetActive(false);
+    }
+
+    private void NotifyPlayerOfAvaiableRewards()
+    {
+        if(CurrentMenuState != MENUSTATE.Tier_Reward_State)
+        {
+            RewardUI.SetActive(true);
+            RewardUI.GetComponent<Text>().text = "A reward is available, Press 'V' to see!";
+        }
     }
 }

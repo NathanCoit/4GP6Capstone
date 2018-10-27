@@ -9,7 +9,7 @@ public class TerrainMap
 {
     private GameObject mgobjTerrainMap;
     private List<Building> marrBuildingsOnMap;
-    private Dictionary<Faction, float[]> marrFactionAreas; //Startingangle, ending angle, starting rad, ending rad 
+    private Dictionary<Faction, float[]> mdictFactionAreas; //Startingangle, ending angle, starting rad, ending rad 
 
     public TerrainMap(float pfMapRadius)
     {
@@ -24,6 +24,7 @@ public class TerrainMap
         gobjMap.transform.localScale = new Vector3(pfMapRadius, 0.1f, pfMapRadius);
         GameObject.Destroy(gobjMap.GetComponent<CapsuleCollider>());
         gobjMap.AddComponent<MeshCollider>();
+        gobjMap.AddComponent<LineRenderer>().positionCount = 0;
 
         ////Create map
         //GameObject gobjMap = new GameObject("GameMap");
@@ -46,6 +47,8 @@ public class TerrainMap
     {
         bool blnCanPlace = true;
         float DistanceBetweenBuildings = 0f;
+        float AngleOfPlacement = 0f;
+        float RadiusOfPlacement = 0f;
         //Attempt to place building and return result
         // Check if trying to place too close to another building
         foreach (Building BuildingOnMap in marrBuildingsOnMap)
@@ -55,6 +58,26 @@ public class TerrainMap
             {
                 blnCanPlace = false;
             }
+        }
+
+        RadiusOfPlacement = Vector3.Distance(new Vector3(0, 0.5f, 0), pvec3PointToPlace);
+
+        AngleOfPlacement = Vector3.Angle(new Vector3(100f, 0.5f, 0), pvec3PointToPlace) * Mathf.PI / 180;
+
+        // In third or fourth quadrant, add Pi as .angle will always return smallest vector
+        if(pvec3PointToPlace.z < 0)
+        {
+            AngleOfPlacement = 2* Mathf.PI - AngleOfPlacement;
+        }
+
+        // Check if you are placing in your own area.
+        if (AngleOfPlacement < mdictFactionAreas[pBuildingToPlace.OwningFaction][2] || AngleOfPlacement > mdictFactionAreas[pBuildingToPlace.OwningFaction][3])
+        {
+            blnCanPlace = false;
+        }
+        if (RadiusOfPlacement < mdictFactionAreas[pBuildingToPlace.OwningFaction][0] || RadiusOfPlacement > mdictFactionAreas[pBuildingToPlace.OwningFaction][1])
+        {
+            blnCanPlace = false;
         }
         if (blnCanPlace)
         {
@@ -74,24 +97,43 @@ public class TerrainMap
         return mgobjTerrainMap;
     }
 
-    public void DivideMap(List<Faction> parrCurrentFactions, float pfStartingRad, float pfEndingRad)
+    public void DivideMap(List<Faction> parrCurrentFactions, float pfStartingRad, float pfEndingRad, Faction PlayerFaction)
     {
-
-        marrFactionAreas = new Dictionary<Faction, float[]>();
+        LineRenderer PlayerBoundsLineRenderer = mgobjTerrainMap.GetComponent<LineRenderer>();
+        Vector3 vec3LinePosition;
+        mdictFactionAreas = new Dictionary<Faction, float[]>();
         float fFullCircleRad = 2 * Mathf.PI;
         float fAreaAngle = fFullCircleRad / parrCurrentFactions.Count;
         float fAngle = 0;
+        float[] PlayerArea;
         foreach (Faction FactionToPlace in parrCurrentFactions)
         {
-            marrFactionAreas.Add(FactionToPlace, new float[] { pfStartingRad, pfEndingRad, fAngle, fAngle + fAreaAngle });
+            mdictFactionAreas.Add(FactionToPlace, new float[] { pfStartingRad, pfEndingRad, fAngle, fAngle + fAreaAngle });
             fAngle += fAreaAngle;
         }
+        // Draw player's boundaries
+        PlayerArea = mdictFactionAreas[PlayerFaction];
+        PlayerBoundsLineRenderer.positionCount = 4;
+        PlayerBoundsLineRenderer.useWorldSpace = true;
+        PlayerBoundsLineRenderer.widthMultiplier = 0.2f;
+
+        vec3LinePosition = new Vector3(0, 0.5f, 0);
+        PlayerBoundsLineRenderer.SetPosition(0, vec3LinePosition);
+
+        vec3LinePosition = new Vector3(PlayerArea[1] * Mathf.Cos(PlayerArea[2]), 0.5f, PlayerArea[1] * Mathf.Sin(PlayerArea[2]));
+        PlayerBoundsLineRenderer.SetPosition(1, vec3LinePosition);
+
+        vec3LinePosition = new Vector3(0, 0.5f, 0);
+        PlayerBoundsLineRenderer.SetPosition(2, vec3LinePosition);
+
+        vec3LinePosition = new Vector3(PlayerArea[1] * Mathf.Cos(PlayerArea[3]), 0.5f, PlayerArea[1] * Mathf.Sin(PlayerArea[3]));
+        PlayerBoundsLineRenderer.SetPosition(3, vec3LinePosition);
     }
 
     public Vector3 CalculateStartingPosition(Faction pobjFactionToPlace)
     {
         Vector3 vec3StartingPosition = new Vector3(0, 0, 0);
-        float[] FactionArea = marrFactionAreas[pobjFactionToPlace];
+        float[] FactionArea = mdictFactionAreas[pobjFactionToPlace];
 
         float fAngle = Random.Range(FactionArea[2] + 0.2f, FactionArea[3] - 0.2f);
         float fRad = Random.Range(FactionArea[0] + 10f, FactionArea[1] - 2f);

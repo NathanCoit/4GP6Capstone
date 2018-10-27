@@ -59,7 +59,7 @@ public class GameManager : MonoBehaviour
             EnemyFactions.Add(facEnemyFaction);
         }
 
-        GameMap.DivideMap(CurrentFactions, 0, MapRadius / 2);
+        GameMap.DivideMap(CurrentFactions, 0, MapRadius / 2, PlayerFaction);
 
         //Create and place player village
         PlayerVillage = new Building(Building.BUILDING_TYPE.VILLAGE, PlayerFaction, BuildingCostModifier);

@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
     private Building SelectedBuilding = null;
     private Vector3 OriginalBuildingPosition;
     public float MinimumMorale = 0.2f;
+    public List<TierReward> PlayerRewardTree;
 
     // Use this for any initializations needed by other scripts
     void Awake()
@@ -77,6 +78,7 @@ public class GameManager : MonoBehaviour
     // Use this for any initializations not needed by other scripts.
     void Start()
     {
+        CreateRewardTree();
         InvokeRepeating("CalculateResources", 0.5f, 2.0f);
     }
 
@@ -466,5 +468,28 @@ public class GameManager : MonoBehaviour
         {
             sound.PlaySound("NotMaterials");
         }
+    }
+
+    private void CreateRewardTree()
+    {
+        // Create a reward tree for the player
+        // Static at the moment since only one player god is defined
+        // Single line tree for demo, only one tree path for now
+        TierReward BasePlayerTierReward;
+        TierReward NextPlayerTierReward;
+        PlayerRewardTree = new List<TierReward>();
+
+        // First tier, player gets this tier upon game start
+        BasePlayerTierReward = new TierReward(0, "ThrowMushroom", "Starting Mushroom God ability to smite enemies with divine mushroom punishment.");
+        PlayerRewardTree.Add(BasePlayerTierReward);
+
+        // Second tier, unlocked at 1 * TierCount (100)
+        NextPlayerTierReward = new TierReward(1, "SecondAbility", "Second Ability", BasePlayerTierReward);
+        PlayerRewardTree.Add(NextPlayerTierReward);
+        BasePlayerTierReward = NextPlayerTierReward;
+
+        // Third tier, unlocked at 2 * TierCount (200). Final tier for Demo
+        NextPlayerTierReward = new TierReward(2, "ThirdAbility", "Third Ability", BasePlayerTierReward);
+        PlayerRewardTree.Add(NextPlayerTierReward);
     }
 }

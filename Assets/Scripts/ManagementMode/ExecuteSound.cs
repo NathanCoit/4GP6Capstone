@@ -17,12 +17,6 @@ public class ExecuteSound : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKeyDown (KeyCode.Space)) {
-			PlaySound ("PlaceBuilding");
-		}
-		if (Input.GetKeyDown (KeyCode.P)) {
-			PlaySound ("NotMaterials");
-		}
 	}
 
 

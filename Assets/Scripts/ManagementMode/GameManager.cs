@@ -116,6 +116,18 @@ public class GameManager : MonoBehaviour
         {
             CheckForSelectedBuilding();
         }
+
+		if (CurrentMenuState == MENUSTATE.Default_State) {
+			text1.textChange ("explore");
+		}
+		else if (CurrentMenuState == MENUSTATE.Building_State || CurrentMenuState == MENUSTATE.Buffered_Building_State) {
+			text1.textChange ("building");
+		}
+		else if (CurrentMenuState == MENUSTATE.Moving_Building_State || CurrentMenuState == MENUSTATE.Building_Selected_State) {
+			text1.textChange ("upgrade");
+		}
+
+		resourcetext.resourceUIUpdate (PlayerFaction.MaterialCount, PlayerFaction.WorshipperCount, PlayerFaction.Morale);
     }
 
     private void CheckForSelectedBuilding()
@@ -140,7 +152,6 @@ public class GameManager : MonoBehaviour
                         if (CurrentMenuState == MENUSTATE.Building_Selected_State)
                         {
                             CurrentMenuState = MENUSTATE.Default_State;
-							text1.textChange ("explore");
                         }
                     }
                 }
@@ -155,7 +166,6 @@ public class GameManager : MonoBehaviour
                     {
                         Debug.Log(string.Format("Selected {0} type building", SelectedBuilding.BuildingType));
                         CurrentMenuState = MENUSTATE.Building_Selected_State;
-						text1.textChange ("upgrade");
                         SelectedBuilding.ToggleBuildingOutlines(true);
                     }
                 }
@@ -183,7 +193,6 @@ public class GameManager : MonoBehaviour
                 // If the building did place, go back to building menu
                 PlayerFaction.MaterialCount -= BufferedBuilding.BuildingCost;
                 CurrentMenuState = MENUSTATE.Building_State;
-				text1.textChange ("building");
                 BufferedBuilding = null;
                 foreach (Building BuildingOnMap in GameMap.GetBuildings())
                 {
@@ -310,12 +319,6 @@ public class GameManager : MonoBehaviour
                 CurrentMenuState));
         }
 
-
-		resourcetext.resourceUIUpdate (PlayerFaction.MaterialCount, PlayerFaction.WorshipperCount, PlayerFaction.Morale);
-        // Update the player's UI with resource counts
-        // UI1 = PlayerFaction.WorshipperCount;
-        // UI2 = PlayerFaction.MaterialCount;
-        // UI3 = PlayerFaction.Morale;
     }
 
     private void CheckBuildingStateInputs()
@@ -323,7 +326,6 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             CurrentMenuState = 0;
-			text1.textChange ("explore");
         }
         else if (Input.GetKeyDown(KeyCode.A))
         {
@@ -346,7 +348,6 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             CurrentMenuState = MENUSTATE.Building_Selected_State;
-			text1.textChange ("upgrade");
             if (BufferedBuilding != null)
             {
                 GameMap.PlaceBuilding(BufferedBuilding, OriginalBuildingPosition);
@@ -365,7 +366,6 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.B))
         {
             CurrentMenuState = MENUSTATE.Building_State;
-			text1.textChange ("building");
         }
     }
 
@@ -374,7 +374,6 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             CurrentMenuState = MENUSTATE.Building_State;
-			text1.textChange ("building");
             if (BufferedBuilding != null)
             {
                 BufferedBuilding.Destroy();
@@ -431,7 +430,6 @@ public class GameManager : MonoBehaviour
                         BufferedBuilding = SelectedBuilding;
                         SelectedBuilding = null;
                         CurrentMenuState = MENUSTATE.Moving_Building_State;
-						text1.textChange ("upgrade");
                         OriginalBuildingPosition = BufferedBuilding.BuildingPosition;
                         GameMap.GetBuildings().Remove(BufferedBuilding);
                         foreach (Building BuildingOnMap in GameMap.GetBuildings())
@@ -453,7 +451,6 @@ public class GameManager : MonoBehaviour
                     SelectedBuilding.ToggleBuildingOutlines(false);
                     SelectedBuilding = null;
                     CurrentMenuState = MENUSTATE.Default_State;
-					text1.textChange ("explore");
                 }
             }
             else

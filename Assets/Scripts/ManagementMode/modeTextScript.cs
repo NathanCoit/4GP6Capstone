@@ -9,7 +9,7 @@ public class modeTextScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		modeText = gameObject.GetComponent<Text> ();
-		modeText.text = "Explore Mode";
+		modeText.text = "EXPLORE MODE";
 	}
 
 	// Update is called once per frame
@@ -20,10 +20,13 @@ public class modeTextScript : MonoBehaviour {
 		switch (text) 
 		{
 		case "explore":
-			modeText.text = "Explore Mode";
+			modeText.text = "EXPLORE MODE";
 			break;
 		case "building":
-			modeText.text = "Building Mode";
+			modeText.text = "BUILD MODE";
+			break;
+		case "upgrade":
+			modeText.text = "UPGRADE/EDIT MODE";
 			break;
 		}
 	}

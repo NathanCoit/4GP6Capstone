@@ -126,6 +126,18 @@ public class GameManager : MonoBehaviour
         {
             CheckForSelectedBuilding();
         }
+
+		if (CurrentMenuState == MENUSTATE.Default_State) {
+			text1.textChange ("explore");
+		}
+		else if (CurrentMenuState == MENUSTATE.Building_State || CurrentMenuState == MENUSTATE.Buffered_Building_State) {
+			text1.textChange ("building");
+		}
+		else if (CurrentMenuState == MENUSTATE.Moving_Building_State || CurrentMenuState == MENUSTATE.Building_Selected_State) {
+			text1.textChange ("upgrade");
+		}
+
+		resourcetext.resourceUIUpdate (PlayerFaction.MaterialCount, PlayerFaction.WorshipperCount, PlayerFaction.Morale);
     }
 
     private void CheckForSelectedBuilding()
@@ -327,12 +339,6 @@ public class GameManager : MonoBehaviour
                 PlayerFaction.TierRewardPoints));
         }
 
-
-		resourcetext.resourceUIUpdate (PlayerFaction.MaterialCount, PlayerFaction.WorshipperCount, PlayerFaction.Morale);
-        // Update the player's UI with resource counts
-        // UI1 = PlayerFaction.WorshipperCount;
-        // UI2 = PlayerFaction.MaterialCount;
-        // UI3 = PlayerFaction.Morale;
     }
 
     private void CheckBuildingStateInputs()
@@ -425,16 +431,19 @@ public class GameManager : MonoBehaviour
                         {
                             SelectedBuilding.UpgradeBuilding();
                             PlayerFaction.MaterialCount -= Building.CalculateBuildingUpgradeCost(SelectedBuilding.BuildingType, BuildingCostModifier);
+							sound.PlaySound ("PlaceBuilding");
                         }
                         else
                         {
                             Debug.Log("Building is at max upgrade level");
+							sound.PlaySound ("NotMaterials");
                         }
 
                     }
                     else
                     {
                         Debug.Log(string.Format("Not enough materials to upgrade ({0} required)", intUpgradeCost));
+						sound.PlaySound ("NotMaterials");
                     }
 
                 }

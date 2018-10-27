@@ -126,7 +126,7 @@ public class Building{
             float deltaTheta = (2f * Mathf.PI) / vertexCount;
             float theta = 0f;
 
-            lineRenderer.positionCount = vertexCount;
+            lineRenderer.positionCount = vertexCount + 2;
             for (int i = 0; i < lineRenderer.positionCount; i++)
             {
                 pos = new Vector3(radius * Mathf.Cos(theta), 0f, radius * Mathf.Sin(theta));

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
@@ -20,8 +21,9 @@ public class GameManager : MonoBehaviour
         Moving_Building_State, //BufferedBuilding != null
         Tier_Reward_State
     }
-
-	modeTextScript text1;
+    public GameObject GameInfoObjectPrefab;
+    private GameInfo gameInfo;
+    modeTextScript text1;
 	resourceScript resourcetext;
     public GameObject RewardUI;
     public GameObject AudioObject;
@@ -51,39 +53,91 @@ public class GameManager : MonoBehaviour
 		text1 = FindObjectOfType<modeTextScript> ();
 		resourcetext = FindObjectOfType<resourceScript> ();
         sound = AudioObject.GetComponent<ExecuteSound>();
-        Building bldEnemyBuilding = null;
-        Faction facEnemyFaction = null;
-        Vector3 vec3VillagePos;
-        CurrentFactions = new List<Faction>();
-        EnemyFactions = new List<Faction>();
-        //Create map terrain
-        GameMap = new TerrainMap(MapRadius);
-
-        // Create the player Faction
-        PlayerFaction = new Faction("YourGod");
-        CurrentFactions.Add(PlayerFaction);
-        for (int enemyCount = 0; enemyCount < TotalEnemies; enemyCount++)
+        if (!InitializeGameInfoObject())
         {
-            facEnemyFaction = new Faction("EnemyGod" + enemyCount);
-            CurrentFactions.Add(facEnemyFaction);
-            EnemyFactions.Add(facEnemyFaction);
-        }
+            // Starting new game scene, initialize map, players, and buildings
+            Building bldEnemyBuilding = null;
+            Faction facEnemyFaction = null;
+            Vector3 vec3VillagePos;
+            CurrentFactions = new List<Faction>();
+            EnemyFactions = new List<Faction>();
+            //Create map terrain
+            GameMap = new TerrainMap(MapRadius);
 
-        GameMap.DivideMap(CurrentFactions, 0, MapRadius / 2, PlayerFaction);
+            // Create the player Faction
+            PlayerFaction = new Faction("YourGod");
+            CurrentFactions.Add(PlayerFaction);
+            for (int enemyCount = 0; enemyCount < TotalEnemies; enemyCount++)
+            {
+                facEnemyFaction = new Faction("EnemyGod" + enemyCount);
+                CurrentFactions.Add(facEnemyFaction);
+                EnemyFactions.Add(facEnemyFaction);
+            }
 
-        //Create and place player village
-        PlayerVillage = new Building(Building.BUILDING_TYPE.VILLAGE, PlayerFaction, BuildingCostModifier);
-        vec3VillagePos = GameMap.CalculateStartingPosition(PlayerFaction);
-        GameMap.PlaceBuilding(PlayerVillage, vec3VillagePos);
+            GameMap.DivideMap(CurrentFactions, 0, MapRadius / 2, PlayerFaction);
 
-        //Create and place enemy villages
-        foreach (Faction enemyFaction in EnemyFactions)
-        {
-            bldEnemyBuilding = new Building(Building.BUILDING_TYPE.VILLAGE, enemyFaction, BuildingCostModifier);
-            vec3VillagePos = GameMap.CalculateStartingPosition(enemyFaction);
-            GameMap.PlaceBuilding(bldEnemyBuilding, vec3VillagePos);
+            //Create and place player village
+            PlayerVillage = new Building(Building.BUILDING_TYPE.VILLAGE, PlayerFaction, BuildingCostModifier);
+            vec3VillagePos = GameMap.CalculateStartingPosition(PlayerFaction);
+            GameMap.PlaceBuilding(PlayerVillage, vec3VillagePos);
+
+            //Create and place enemy villages
+            foreach (Faction enemyFaction in EnemyFactions)
+            {
+                bldEnemyBuilding = new Building(Building.BUILDING_TYPE.VILLAGE, enemyFaction, BuildingCostModifier);
+                vec3VillagePos = GameMap.CalculateStartingPosition(enemyFaction);
+                GameMap.PlaceBuilding(bldEnemyBuilding, vec3VillagePos);
+            }
         }
     }
+
+    /// <summary>
+    /// Method for initializing the gameinfo object
+    /// Either creates a gameinfo object if one does not exist, or reads the values if one does
+    /// </summary>
+    private bool InitializeGameInfoObject()
+    {
+        GameObject GameInfoObject = GameObject.Find("GameInfo");
+        if (GameInfoObject != null)
+        {
+            // Found a gameinfo object, load values
+            gameInfo = GameInfoObject.GetComponent<GameInfo>();
+            
+            // Create scene with values from gameInfo
+            // TODO 
+            return true;
+        }
+        else
+        {
+            // Couldn't find gameinfo object, create new game scene
+            GameObject NewGameInfoObject = (GameObject)Instantiate(GameInfoObjectPrefab);
+            NewGameInfoObject.name = "GameInfo";
+            gameInfo = NewGameInfoObject.GetComponent<GameInfo>();
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Method for setting the gameInfo values needed to go to/from management mode scenes
+    /// </summary>
+    private void EnterCombatMode(Faction EnemyFaction)
+    {
+        gameInfo.PlayerWorshipperCount = PlayerFaction.WorshipperCount;
+        gameInfo.PlayerMorale = PlayerFaction.Morale;
+        foreach(Ability PlayerAbility in PlayerFaction.CurrentAbilites)
+        {
+            gameInfo.PlayerAbilities.Add(PlayerAbility.AbilityName);
+        }
+        gameInfo.EnemyWorshipperCount = EnemyFaction.WorshipperCount;
+        gameInfo.EnemyMorale = EnemyFaction.Morale;
+        foreach (Ability PlayerAbility in EnemyFaction.CurrentAbilites)
+        {
+            gameInfo.EnemyAbilites.Add(PlayerAbility.AbilityName);
+        }
+
+        SceneManager.LoadScene("CombatMode");
+    }
+
     // Use this for any initializations not needed by other scripts.
     void Start()
     {
@@ -171,7 +225,7 @@ public class GameManager : MonoBehaviour
                     {
                         SelectedBuilding.ToggleBuildingOutlines(false);
                     }
-                    SelectedBuilding = GameMap.GetBuildings().Find(ClickedBuilding => ClickedBuilding.OwningFaction == PlayerFaction && ClickedBuilding.BuildingObject == SelectedGameObject);
+                    SelectedBuilding = GameMap.GetBuildings().Find(ClickedBuilding => ClickedBuilding.BuildingObject == SelectedGameObject);
                     if (SelectedBuilding != null)
                     {
                         Debug.Log(string.Format("Selected {0} type building", SelectedBuilding.BuildingType));
@@ -477,10 +531,32 @@ public class GameManager : MonoBehaviour
                     SelectedBuilding = null;
                     CurrentMenuState = MENUSTATE.Default_State;
                 }
+                // Add custom building menu options here
+                switch(SelectedBuilding.BuildingType)
+                {
+                    case Building.BUILDING_TYPE.ALTAR:
+                        break;
+                    case Building.BUILDING_TYPE.HOUSING:
+                        break;
+                    case Building.BUILDING_TYPE.MATERIAL:
+                        break;
+                    case Building.BUILDING_TYPE.VILLAGE:
+                        break;
+                }
             }
             else
             {
                 // TODO add options when selecting an enemy building (start battle, view stats)
+                // Owning faction is not player faction, enemy building
+                if(SelectedBuilding.BuildingType == Building.BUILDING_TYPE.VILLAGE)
+                {
+                    // Enemy Village building, can start battle here
+                    if(Input.GetKeyDown(KeyCode.B))
+                    {
+                        // Initialize info file variables, save game state, move to combat mode scene
+                        EnterCombatMode(SelectedBuilding.OwningFaction);
+                    }
+                }
             }
         }
     }

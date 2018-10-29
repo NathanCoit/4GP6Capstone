@@ -21,6 +21,8 @@ public class GameManager : MonoBehaviour
         Moving_Building_State, //BufferedBuilding != null
         Tier_Reward_State
     }
+
+	public Texture mapTexture;
     public GameObject GameInfoObjectPrefab;
     private GameInfo gameInfo;
     modeTextScript text1;
@@ -62,7 +64,7 @@ public class GameManager : MonoBehaviour
             CurrentFactions = new List<Faction>();
             EnemyFactions = new List<Faction>();
             //Create map terrain
-            GameMap = new TerrainMap(MapRadius);
+			GameMap = new TerrainMap(MapRadius, mapTexture);
 
             // Create the player Faction
             PlayerFaction = new Faction("YourGod");

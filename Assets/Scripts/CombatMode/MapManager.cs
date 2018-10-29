@@ -8,25 +8,28 @@ public class MapManager : MonoBehaviour
 
     private List<GameObject> Movable;
     private GameObject SelectionIndicator;
+    public int tileX = 10;
+    public int tileY = 10;
 
     public GameObject Unit;
     public GameObject MovableTile;
     public GameObject Selected;
+    private GameObject BoardMan;
     public bool newSelected = false;
 
     // Use this for initialization
     void Start ()
     {
         //Initiliaze Grid
-        for (int x = 0; x < 10; x++)
-            for (int y = 0; y < 10; y++)
+        for (int x = 0; x < tileX; x++)
+            for (int y = 0; y < tileY; y++)
             {
                 tiles[x, y] = new Tile(new Vector3(x, 0, y));
             }
 
         //Define Connections
-        for (int x = 0; x < 10; x++)
-            for (int y = 0; y < 10; y++)
+        for (int x = 0; x < tileX; x++)
+            for (int y = 0; y < tileY; y++)
             {
                 Tile temp = tiles[x, y];
                 List<Tile> tempConnections = new List<Tile>();
@@ -44,6 +47,7 @@ public class MapManager : MonoBehaviour
             }
 
         Movable = new List<GameObject>();
+        BoardMan = GameObject.FindGameObjectWithTag("BoardManager");
 
         /*
         foreach (Tile t in tiles[5, 5].findAtDistance(2))
@@ -79,12 +83,35 @@ public class MapManager : MonoBehaviour
 
         if(Selected != null && newSelected)
         {
+            HashSet<Tile> MovableTiles = new HashSet<Tile>();
             ClearSelection();
             Destroy(SelectionIndicator);
             SelectionIndicator = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             SelectionIndicator.transform.position = new Vector3(Selected.transform.position.x, Selected.transform.position.y + 2, Selected.transform.position.z);
             Movable = new List<GameObject>();
-            HashSet<Tile> MovableTiles = tiles[(int)Selected.GetComponent<Units>().getPos().x, (int)Selected.GetComponent<Units>().getPos().y].findAtDistance(2);
+
+            List<GameObject> invalidTiles = new List<GameObject>(BoardMan.GetComponent<BoardManager>().enemyUnits);
+            invalidTiles.AddRange(BoardMan.GetComponent<BoardManager>().playerUnits);
+            invalidTiles.Remove(Selected);
+
+            MovableTiles = tiles[(int)Selected.GetComponent<Units>().getPos().x, (int)Selected.GetComponent<Units>().getPos().y].findAtDistance(2, invalidTiles, tiles);
+            for (int x = 0; x < tileX; x++)
+                for (int y = 0; y < tileY; y++)
+                {
+                    Tile temp = tiles[x, y];
+                    List<Tile> tempConnections = new List<Tile>();
+                    if (y < tiles.GetLength(1) - 1)
+                        tempConnections.Add(tiles[x, y + 1]);
+                    if (x < tiles.GetLength(0) - 1)
+                        tempConnections.Add(tiles[x + 1, y]);
+                    if (y > 0)
+                        tempConnections.Add(tiles[x, y - 1]);
+                    if (x > 0)
+                        tempConnections.Add(tiles[x - 1, y]);
+                    temp.updateConnections(tempConnections);
+                    tiles[x, y] = temp;
+
+                }
             foreach (Tile t in MovableTiles)
             {
                 GameObject temp = Instantiate(MovableTile);
@@ -133,11 +160,25 @@ public class Tile
     }
 
     //Code from https://stackoverflow.com/questions/10258305/how-to-implement-a-breadth-first-search-to-a-certain-depth
-    public HashSet<Tile> findAtDistance(int distance)
+    public HashSet<Tile> findAtDistance(int distance, List<GameObject> invalidTiles, Tile[,] tiles)
     {
         HashSet<Tile> visited = new HashSet<Tile>();
         Queue<Tile> queue = new Queue<Tile>();
+        List<Tile> toBeRemoved = new List<Tile>();
         Tile root = this;
+
+        //Removing invalid tiles connections
+        foreach(Tile t in tiles)
+        {
+            foreach (GameObject g in invalidTiles)
+                if (g.GetComponent<Units>().getPos() == new Vector2(t.getX(), t.getZ()))
+                {
+                    t.Connected = new List<Tile>();
+                    foreach (Tile t1 in tiles)
+                        if (t1.Connected.Contains(t))
+                            t1.Connected.Remove(t);
+                }
+        }
 
         int currentDepth = 0;
         int elementsToNextDepth = 1;
@@ -163,7 +204,20 @@ public class Tile
             if (--elementsToNextDepth == 0)
             {
                 if (++currentDepth > distance)
+                {
+                    /*
+                    foreach (GameObject g in opposingTeam)
+                    {
+                        foreach (Tile t in visited)
+                            if (g.GetComponent<Units>().getPos() == new Vector2(t.getX(), t.getZ()))
+                                toBeRemoved.Add(t);
+
+                    }
+                    foreach (Tile t in toBeRemoved)
+                        visited.Remove(t);
+                    */
                     return visited;
+                }
                 elementsToNextDepth = nextElementsToDepthIncrease;
                 nextElementsToDepthIncrease = 0;
             }
@@ -199,35 +253,3 @@ public class Tile
     }
 
 }
-
-/*
-public class Unit
-{
-    private GameObject untiGO;
-    private Vector2 pos;
-
-    public Unit(Vector2 pos, Tile[,] tiles)
-    {
-        this.pos = pos;
-        untiGO = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-        untiGO.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
-        this.Draw(tiles);
-    }
-
-    public void Draw(Tile[,] tiles)
-    {
-        //Centers Unit on tile (I know it looks ugly but it SHOULD work for any model)
-        untiGO.transform.position = new Vector3(tiles[(int)pos.x, (int)pos.y].getX() + ((1 - untiGO.transform.lossyScale.x) / 2) + untiGO.transform.lossyScale.x / 2, tiles[(int)pos.x, (int)pos.y].getY() + untiGO.transform.lossyScale.y + 0.5f, tiles[(int)pos.x, (int)pos.y].getZ() + ((1 - untiGO.transform.lossyScale.z) / 2) + untiGO.transform.lossyScale.x / 2);
-    }
-
-    public void Move(Vector2 amount, Tile[,] tiles)
-    {
-        //Check array bounds on tiles
-        if(pos.x + amount.x < tiles.GetLength(0) && pos.y + amount.y < tiles.GetLength(1))
-            if(pos.x + amount.x >= 0 && pos.y + amount.y >= 0)
-            this.pos += amount;
-
-        this.Draw(tiles);
-    }
-}
-*/

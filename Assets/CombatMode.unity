@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -283,8 +283,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c5f9c20565d250428b027535fd0c01d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerTurn: 1
   playerUnits: []
-  numActionsLeft: 0
   enemyUnits: []
 --- !u!4 &734046508
 Transform:
@@ -326,6 +326,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 283d92cb0e3681a44a4045ce6c4a7604, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tileX: 10
+  tileY: 10
   Unit: {fileID: 1538335793867966, guid: 446eb2a43afbfd945bdfcdca97fc42c3, type: 2}
   MovableTile: {fileID: 1671741471656716, guid: 5ea76647790eee4489bf8024aee91866,
     type: 2}

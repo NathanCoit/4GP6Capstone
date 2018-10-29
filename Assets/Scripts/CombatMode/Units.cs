@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Units : MonoBehaviour {
 
-    bool canAct = true;
+    public bool canAct;
 
     private GameObject MapMan;
     private Vector2 pos;
@@ -21,7 +21,8 @@ public class Units : MonoBehaviour {
         //You know who to call, ITS MAP MAN!
         MapMan = GameObject.FindGameObjectWithTag("MapManager");
 
-        AllowAct();
+        //AllowAct();
+        GetComponent<MeshRenderer>().material = NotAvailable;
     }
 	
 	// Update is called once per frame
@@ -70,7 +71,7 @@ public class Units : MonoBehaviour {
 
     public void setWorshiperCount(int count)
     {
-        count = WorshiperCount;
+        WorshiperCount = count;
     }
 
     public void AllowAct() //this Unit has not yet acted in this round

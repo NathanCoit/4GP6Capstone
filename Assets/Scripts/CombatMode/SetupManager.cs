@@ -50,6 +50,7 @@ public class SetupManager : MonoBehaviour {
         GameObject temp = Instantiate(Unit);
         temp.GetComponent<Units>().setWorshiperCount(WorshiperCount);
         temp.GetComponent<Units>().Move(new Vector2(pos.x, pos.y), tiles);
+        temp.GetComponent<Units>().EndAct();
         BoardMan.GetComponent<BoardManager>().enemyUnits.Add(temp);
     }
 

@@ -4,25 +4,19 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour {
 
-    bool playerTurn = true;
+    public bool playerTurn = true;
     private GameObject MapMan;
 
-    //CombatGrid combatGrid;
-
     public List<GameObject> playerUnits; //List of player's units, element 0 is player's God Unit
-    int playerActionsLeft;
-    //Units[] playerUnits = combatGrid.getPlayerUnits();
-    public List<GameObject> enemyUnits; //array of enemy's worshipper units, element 0 is enemy's God Unit
-    int enemyActionsLeft;
-    //Units[] enemyUnits = combatGrid.getEnemyUnits();
+    public int numActionsLeft;
+    public List<GameObject> enemyUnits; //List of enemy's worshipper units, element 0 is enemy's God Unit
 
 	// Use this for initialization
 	void Start ()
     {
         playerUnits = new List<GameObject>();
         enemyUnits = new List<GameObject>();
-        playerActionsLeft = playerUnits.Count;
-        enemyActionsLeft = enemyUnits.Count;
+        numActionsLeft = playerUnits.Count; //since player always starts first
 
         //It's ya boi, Map man.
         MapMan = GameObject.FindGameObjectWithTag("MapManager");
@@ -32,12 +26,17 @@ public class BoardManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (!HasActionsLeft()) //any actions left to take?
+            SwitchTurns();
+
+        //Don't think the if statement below is ever true, for some weird reason
+
         //Note new selected is only ever true on the frame when a new unit is selected. No trouble.
-        if (MapMan.GetComponent<MapManager>().newSelected)
+        /*if (MapMan.GetComponent<MapManager>().newSelected)
         {
-            CheckHasActionsLeft();
+            HasActionsLeft();
             Debug.Log("Selectrorama");
-        }
+        }*/
 	}
 
     void SwitchTurns()
@@ -46,22 +45,26 @@ public class BoardManager : MonoBehaviour {
         { //it was player's turn
             foreach (GameObject i in enemyUnits) //allow each of enemy units to act
                 i.GetComponent<Units>().AllowAct();
+            numActionsLeft = enemyUnits.Count;
         }
         else
         { //it was the enemy's turn
             foreach (GameObject i in playerUnits) //allow each of player's units to act
                 i.GetComponent<Units>().AllowAct();
+            numActionsLeft = playerUnits.Count;
         }
         playerTurn = !playerTurn; //switch turn
+
     }
 
-    //presumably, the combatGrid (or whatever you call it) will call Units.EndAct() whenever that unit does their action
-
-    bool CheckHasActionsLeft()
+    bool HasActionsLeft()
     {
-        if (playerTurn && playerActionsLeft > 0) return true;
-        else if (!playerTurn && enemyActionsLeft > 0) return true;
+        if (numActionsLeft > 0) return true;
+        else return false;
+    }
 
-        return false;
+    public void DecreaseNumActions()
+    {
+        numActionsLeft--;
     }
 }

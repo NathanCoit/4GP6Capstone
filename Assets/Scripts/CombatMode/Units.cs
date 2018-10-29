@@ -12,6 +12,7 @@ public class Units : MonoBehaviour {
     //For use without models, can be removed later
     public Material Available;
     public Material NotAvailable;
+    private int WorshiperCount;
 
  
 	// Use this for initialization
@@ -60,6 +61,16 @@ public class Units : MonoBehaviour {
     public bool HasAct()
     {
         return canAct;
+    }
+
+    public int getWorhsiperCount()
+    {
+        return WorshiperCount;
+    }
+
+    public void setWorshiperCount(int count)
+    {
+        count = WorshiperCount;
     }
 
     public void AllowAct() //this Unit has not yet acted in this round

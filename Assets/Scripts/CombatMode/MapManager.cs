@@ -45,12 +45,13 @@ public class MapManager : MonoBehaviour
 
         Movable = new List<GameObject>();
 
-        //test = new Unit(new Vector2(0, 0), tiles);
+        /*
         foreach (Tile t in tiles[5, 5].findAtDistance(2))
         {
             GameObject temp = Instantiate(Unit);
             temp.GetComponent<Units>().Move(new Vector2(t.getX(), t.getZ()), tiles);
         }
+        */
     }
 	
 	// Update is called once per frame
@@ -111,14 +112,7 @@ public class Tile
 {
     private Vector3 pos;
 
-    //private Tile[] Connected = new Tile[4];
     private List<Tile> Connected = new List<Tile>();
-    /*
-     * 0 = Up
-     * 1 = Right
-     * 2 = Down
-     * 3 = Left
-     */
 
     public Tile(Vector3 pos)
     {

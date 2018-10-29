@@ -30,6 +30,33 @@ public class Movable : MonoBehaviour {
             //Move the selected unit
             MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().MoveTo(pos, MapMan.GetComponent<MapManager>().tiles);
 
+            //check selected unit's MoveTo pos against all opposing team's Unit's pos' and Destroy(enemy Unit) if they're on that tile
+            //make it chess-like for now and then factor in stats in a later implementation/refinement
+            if (BoardMan.GetComponent<BoardManager>().playerTurn)
+            {
+                foreach (GameObject i in BoardMan.GetComponent<BoardManager>().enemyUnits)
+                {
+                    if (this.pos.x == i.GetComponent<Units>().getPos().x && this.pos.y == i.GetComponent<Units>().getPos().y)
+                    {
+                        BoardMan.GetComponent<BoardManager>().enemyUnits.Remove(i);
+                        Destroy(i);
+                        break;
+                    }
+                }
+            }
+            else if (!BoardMan.GetComponent<BoardManager>().playerTurn)
+            {
+                foreach (GameObject i in BoardMan.GetComponent<BoardManager>().playerUnits)
+                {
+                    if (this.pos.x == i.GetComponent<Units>().getPos().x && this.pos.y == i.GetComponent<Units>().getPos().y)
+                    {
+                        BoardMan.GetComponent<BoardManager>().playerUnits.Remove(i);
+                        Destroy(i);
+                        break;
+                    }
+                }
+            }
+
             //End unit's action
             MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().EndAct();
 

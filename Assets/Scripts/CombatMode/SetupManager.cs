@@ -25,13 +25,13 @@ public class SetupManager : MonoBehaviour {
         {
             tiles = Mapman.GetComponent<MapManager>().tiles;
             //Test Setup
-            CreatePlayerUnit(new Vector2(0, 3), tiles, 100);
-            CreatePlayerUnit(new Vector2(0, 4), tiles, 100);
-            CreatePlayerUnit(new Vector2(0, 5), tiles, 100);
+            CreatePlayerUnit(new Vector2(4, 3), tiles, 100);
+            CreatePlayerUnit(new Vector2(4, 4), tiles, 100);
+            CreatePlayerUnit(new Vector2(4, 5), tiles, 100);
 
-            CreateEnemyUnit(new Vector2(9, 3), tiles, 100);
-            CreateEnemyUnit(new Vector2(9, 4), tiles, 100);
-            CreateEnemyUnit(new Vector2(9, 5), tiles, 100);
+            CreateEnemyUnit(new Vector2(5, 3), tiles, 100);
+            CreateEnemyUnit(new Vector2(5, 4), tiles, 100);
+            CreateEnemyUnit(new Vector2(5, 5), tiles, 100);
             startup = false;
         }
     }
@@ -50,6 +50,7 @@ public class SetupManager : MonoBehaviour {
         GameObject temp = Instantiate(Unit);
         temp.GetComponent<Units>().setWorshiperCount(WorshiperCount);
         temp.GetComponent<Units>().Move(new Vector2(pos.x, pos.y), tiles);
+        //Set so the players turn is first
         temp.GetComponent<Units>().EndAct();
         BoardMan.GetComponent<BoardManager>().enemyUnits.Add(temp);
     }

@@ -51,6 +51,8 @@ public class BoardManager : MonoBehaviour {
         }*/
 	}
 
+    //Post fight stuff
+
     //to be sent back to setup manager?
     int GetRemainingWorshipers(bool player)
     {
@@ -93,5 +95,10 @@ public class BoardManager : MonoBehaviour {
     public void DecreaseNumActions()
     {
         numActionsLeft--;
+    }
+
+    public bool isPlayerTurn()
+    {
+        return playerTurn;
     }
 }

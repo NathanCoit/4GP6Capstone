@@ -21,7 +21,7 @@ public class Units : MonoBehaviour {
         //You know who to call, ITS MAP MAN!
         MapMan = GameObject.FindGameObjectWithTag("MapManager");
 
-        //AllowAct();
+        //AllowAct(); //this actually broke it for the longest time but i FOUND IT 
         GetComponent<MeshRenderer>().material = NotAvailable;
     }
 	
@@ -64,7 +64,7 @@ public class Units : MonoBehaviour {
         return canAct;
     }
 
-    public int getWorhsiperCount()
+    public int getWorshiperCount()
     {
         return WorshiperCount;
     }

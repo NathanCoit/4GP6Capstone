@@ -8,11 +8,11 @@ public class BoardManager : MonoBehaviour {
     private GameObject MapMan;
 
     public List<GameObject> playerUnits; //List of player's units, element 0 is player's God Unit
-    public int numActionsLeft;
     public List<GameObject> enemyUnits; //List of enemy's worshipper units, element 0 is enemy's God Unit
+    int numActionsLeft;
 
-	// Use this for initialization
-	void Start ()
+    // Use this for initialization
+    void Start ()
     {
         playerUnits = new List<GameObject>();
         enemyUnits = new List<GameObject>();
@@ -20,14 +20,26 @@ public class BoardManager : MonoBehaviour {
 
         //It's ya boi, Map man.
         MapMan = GameObject.FindGameObjectWithTag("MapManager");
-
-
     }
 	
 	// Update is called once per frame
 	void Update () {
         if (!HasActionsLeft()) //any actions left to take?
             SwitchTurns();
+
+        if (enemyUnits.Count == 0)
+        {
+            //wow much win such proud of u
+            //insert wonderful text box appearing saying you win
+            //insert delightful victory music
+        } else if (playerUnits.Count == 0)
+        {
+            //much disappoint such loss
+            //pepehands
+            
+            //loss text box
+            //loss music
+        }
 
         //Don't think the if statement below is ever true, for some weird reason
 
@@ -38,6 +50,21 @@ public class BoardManager : MonoBehaviour {
             Debug.Log("Selectrorama");
         }*/
 	}
+
+    //to be sent back to setup manager?
+    int GetRemainingWorshipers(bool player)
+    {
+        int worshipers = 0;
+        if (player) {
+            foreach (GameObject i in playerUnits)
+                worshipers += i.GetComponent<Units>().getWorshiperCount();
+        } else //need to calculate enemy worshiper count if player decided to kill enemy god first/early
+        {
+            foreach (GameObject i in enemyUnits)
+                worshipers += i.GetComponent<Units>().getWorshiperCount();
+        }
+        return worshipers;
+    }
 
     void SwitchTurns()
     {

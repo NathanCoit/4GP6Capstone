@@ -7,6 +7,7 @@ public class ExecuteSound : MonoBehaviour {
 	public AudioClip NotMaterials;
 	public AudioClip PlaceBuilding;
 	public AudioClip StartMusic;
+
 	public AudioSource musicSource;
 
 	// Use this for initialization
@@ -31,6 +32,7 @@ public class ExecuteSound : MonoBehaviour {
 			musicSource.clip = PlaceBuilding;
 			musicSource.Play ();
 			break;
+
 		}
 	}
 

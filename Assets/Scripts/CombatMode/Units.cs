@@ -8,28 +8,41 @@ public class Units : MonoBehaviour {
 
     private GameObject MapMan;
     private Vector2 pos;
+    private GameObject BoardMan;
+    private List<int> depths = new List<int>();
+    private HashSet<Tile> visited = new HashSet<Tile>();
+
+
+    public GameObject MovableTile;
+    public GameObject AttackableTile;
+    public int Movement = 2;
 
     //For use without models, can be removed later
     public Material Available;
     public Material NotAvailable;
     private int WorshiperCount;
+    private float AttackStrength;
 
- 
-	// Use this for initialization
-	void Start ()
+
+    // Use this for initialization
+    void Start()
     {
         //You know who to call, ITS MAP MAN!
         MapMan = GameObject.FindGameObjectWithTag("MapManager");
 
+        BoardMan = GameObject.FindGameObjectWithTag("BoardManager");
+
         //AllowAct(); //this actually broke it for the longest time but i FOUND IT 
         GetComponent<MeshRenderer>().material = NotAvailable;
+
+        AttackStrength = WorshiperCount * 0.25f;
     }
-	
-	// Update is called once per frame
-	void Update ()
+
+    // Update is called once per frame
+    void Update()
     {
-		
-	}
+
+    }
 
     public void Draw(Tile[,] tiles)
     {
@@ -74,6 +87,11 @@ public class Units : MonoBehaviour {
         WorshiperCount = count;
     }
 
+    public float getAttackStrength()
+    {
+        return AttackStrength;
+    }
+
     public void AllowAct() //this Unit has not yet acted in this round
     {
         canAct = true;
@@ -99,4 +117,83 @@ public class Units : MonoBehaviour {
         }
             
     }
+
+    private Tile[,] getTiles()
+    {
+        return MapMan.GetComponent<MapManager>().tiles;
+    }
+
+    public void showMovable()
+    {
+        Tile[,] tiles = getTiles();
+
+        HashSet<Tile> MovableTiles = new HashSet<Tile>();
+
+        //Setup Invalid Tiles (the one with units on)
+        List<GameObject> invalidTiles = new List<GameObject>(BoardMan.GetComponent<BoardManager>().enemyUnits);
+        invalidTiles.AddRange(BoardMan.GetComponent<BoardManager>().playerUnits);
+        invalidTiles.Remove(this.gameObject);
+
+        //Calculate Movable Tiles
+        MovableTiles = tiles[(int)getPos().x, (int)getPos().y].findAtDistance(Movement, invalidTiles, tiles);
+
+
+        //Restore Connections
+        for (int x = 0; x < tiles.GetLength(0); x++)
+            for (int y = 0; y < tiles.GetLength(1); y++)
+            {
+                Tile temp = tiles[x, y];
+                List<Tile> tempConnections = new List<Tile>();
+                if (y < tiles.GetLength(1) - 1)
+                    tempConnections.Add(tiles[x, y + 1]);
+                if (x < tiles.GetLength(0) - 1)
+                    tempConnections.Add(tiles[x + 1, y]);
+                if (y > 0)
+                    tempConnections.Add(tiles[x, y - 1]);
+                if (x > 0)
+                    tempConnections.Add(tiles[x - 1, y]);
+                temp.updateConnections(tempConnections);
+                tiles[x, y] = temp;
+
+            }
+
+        //Draw movable tiles
+        MapMan.GetComponent<MapManager>().ClearSelection();
+
+        foreach (Tile t in MovableTiles)
+        {
+            GameObject temp = Instantiate(MovableTile);
+            temp.GetComponent<Movable>().pos = new Vector2((int)t.getX(), (int)t.getZ());
+            temp.transform.position = new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2, t.getY() + 0.5f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
+            //temp.GetComponent<Renderer>().material.color = new Color(0, 0, 1, 0.5f);
+            //Movable.Add(temp);
+        }
+    }
+
+    public void showAttackable()
+    {
+        Tile[,] tiles = getTiles();
+        HashSet<Tile> AttackableTiles = new HashSet<Tile>();
+        List<Tile> ConnectedTiles = tiles[(int)getPos().x, (int)getPos().y].getConnected();
+
+        foreach(Tile t in ConnectedTiles)
+            foreach (GameObject g in BoardMan.GetComponent<BoardManager>().enemyUnits)
+                if (new Vector2(t.getX(), t.getZ()) == g.GetComponent<Units>().getPos())
+                    AttackableTiles.Add(t);
+
+
+        //Draw movable tiles
+        MapMan.GetComponent<MapManager>().ClearSelection();
+
+        foreach (Tile t in AttackableTiles)
+        {
+            GameObject temp = Instantiate(AttackableTile);
+            temp.GetComponent<Attackable>().pos = new Vector2((int)t.getX(), (int)t.getZ());
+            temp.transform.position = new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2, t.getY() + 0.5f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
+            //temp.GetComponent<Renderer>().material.color = new Color(0, 0, 1, 0.5f);
+            //Movable.Add(temp);
+        }
+
+    }
+
 }

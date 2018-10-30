@@ -15,6 +15,7 @@ public class MapManager : MonoBehaviour
     public GameObject MovableTile;
     public GameObject Selected;
     private GameObject BoardMan;
+    private GameObject previousSelected;
     public bool newSelected = false;
 
     // Use this for initialization
@@ -81,20 +82,34 @@ public class MapManager : MonoBehaviour
         }
         */
 
+        //For Selected Unit
+
         if(Selected != null && newSelected)
         {
-            HashSet<Tile> MovableTiles = new HashSet<Tile>();
+            //Clean up Previous selection
             ClearSelection();
             Destroy(SelectionIndicator);
+            if(previousSelected != null)
+                previousSelected.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
+
+            //Selection Indicator
             SelectionIndicator = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             SelectionIndicator.transform.position = new Vector3(Selected.transform.position.x, Selected.transform.position.y + 2, Selected.transform.position.z);
-            Movable = new List<GameObject>();
+            //Movable = new List<GameObject>();
 
+            //Setup Invalid Tiles (the one with units on)
             List<GameObject> invalidTiles = new List<GameObject>(BoardMan.GetComponent<BoardManager>().enemyUnits);
             invalidTiles.AddRange(BoardMan.GetComponent<BoardManager>().playerUnits);
             invalidTiles.Remove(Selected);
 
+            //Show Menu
+            Selected.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(true);
+
+            /*
+            //Calculate Movable Tiles
             MovableTiles = tiles[(int)Selected.GetComponent<Units>().getPos().x, (int)Selected.GetComponent<Units>().getPos().y].findAtDistance(2, invalidTiles, tiles);
+
+            //Restore Connections
             for (int x = 0; x < tileX; x++)
                 for (int y = 0; y < tileY; y++)
                 {
@@ -112,6 +127,8 @@ public class MapManager : MonoBehaviour
                     tiles[x, y] = temp;
 
                 }
+
+            //Draw movable tiles
             foreach (Tile t in MovableTiles)
             {
                 GameObject temp = Instantiate(MovableTile);
@@ -120,6 +137,11 @@ public class MapManager : MonoBehaviour
                 temp.GetComponent<Renderer>().material.color = new Color(0, 0, 1, 0.5f);
                 Movable.Add(temp);
             }
+            */
+
+            previousSelected = Selected;
+
+            //So we don't do this every frame
             newSelected = false;
             
         }
@@ -129,9 +151,10 @@ public class MapManager : MonoBehaviour
 
     public void ClearSelection()
     {
-        foreach (GameObject g in Movable)
-            Destroy(g);
-        Destroy(SelectionIndicator);
+        //Clean up tiles
+        GameObject[] movableTiles = GameObject.FindGameObjectsWithTag("MoveableTile");
+        for (var i = 0; i < movableTiles.GetLength(0); i++)
+            Destroy(movableTiles[i]); ;
     }
 }
 
@@ -140,6 +163,10 @@ public class Tile
     private Vector3 pos;
 
     private List<Tile> Connected = new List<Tile>();
+
+    private List<int> depths = new List<int>();
+
+    private HashSet<Tile> visited = new HashSet<Tile>();
 
     public Tile(Vector3 pos)
     {
@@ -162,7 +189,8 @@ public class Tile
     //Code from https://stackoverflow.com/questions/10258305/how-to-implement-a-breadth-first-search-to-a-certain-depth
     public HashSet<Tile> findAtDistance(int distance, List<GameObject> invalidTiles, Tile[,] tiles)
     {
-        HashSet<Tile> visited = new HashSet<Tile>();
+        visited = new HashSet<Tile>();
+        depths = new List<int>();
         Queue<Tile> queue = new Queue<Tile>();
         List<Tile> toBeRemoved = new List<Tile>();
         Tile root = this;
@@ -197,7 +225,10 @@ public class Tile
 
 
             //If we have not visited, add to visited
+            if(!visited.Contains(current))
+                depths.Add(currentDepth);
             visited.Add(current);
+            
             nextElementsToDepthIncrease += current.getConnected().Count;
 
             
@@ -229,6 +260,16 @@ public class Tile
                     queue.Enqueue(connect);
             }
         }
+        return visited;
+    }
+
+    public List<int> getDepths()
+    {
+        return depths;
+    }
+
+    public HashSet<Tile> getVisited()
+    {
         return visited;
     }
 

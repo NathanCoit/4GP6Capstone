@@ -16,12 +16,13 @@ public class Units : MonoBehaviour {
     public GameObject MovableTile;
     public GameObject AttackableTile;
     public int Movement = 2;
+    public float morale;
 
     //For use without models, can be removed later
     public Material Available;
     public Material NotAvailable;
-    private int WorshiperCount;
-    private float AttackStrength;
+    public int WorshiperCount;
+    public float AttackStrength;
 
 
     // Use this for initialization
@@ -87,9 +88,23 @@ public class Units : MonoBehaviour {
         WorshiperCount = count;
     }
 
+    public float getMorale()
+    {
+        return morale;
+    }
+    public void setMorale(float mor)
+    {
+        morale = mor;
+    }
+
     public float getAttackStrength()
     {
         return AttackStrength;
+    }
+
+    public void updateAttackStrength()
+    {
+        AttackStrength = AttackStrength * morale;
     }
 
     public void AllowAct() //this Unit has not yet acted in this round
@@ -106,6 +121,24 @@ public class Units : MonoBehaviour {
 
         //Render stuff for use without proper models, can be removed later
         GetComponent<MeshRenderer>().material = NotAvailable;
+        transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
+
+    }
+
+    public void EndTurnButton()
+    {
+        //check if somebody won
+        if (BoardMan.GetComponent<BoardManager>().playerUnits.Count == 0)
+        {
+            BoardMan.GetComponent<BoardManager>().Defeat();
+        }
+        else if (BoardMan.GetComponent<BoardManager>().enemyUnits.Count == 0)
+        {
+            BoardMan.GetComponent<BoardManager>().Victory();
+        }
+
+        EndAct();
+        BoardMan.GetComponent<BoardManager>().DecreaseNumActions();
     }
 
     private void OnMouseOver()
@@ -175,9 +208,18 @@ public class Units : MonoBehaviour {
         Tile[,] tiles = getTiles();
         HashSet<Tile> AttackableTiles = new HashSet<Tile>();
         List<Tile> ConnectedTiles = tiles[(int)getPos().x, (int)getPos().y].getConnected();
+        List<GameObject> targets = new List<GameObject>();
+        if (BoardMan.GetComponent<BoardManager>().playerUnits.Contains(MapMan.GetComponent<MapManager>().Selected))
+        {
+            targets = BoardMan.GetComponent<BoardManager>().enemyUnits;
+        }
+        else
+        {
+            targets = BoardMan.GetComponent<BoardManager>().playerUnits;
+        }
 
-        foreach(Tile t in ConnectedTiles)
-            foreach (GameObject g in BoardMan.GetComponent<BoardManager>().enemyUnits)
+        foreach (Tile t in ConnectedTiles)
+            foreach (GameObject g in targets)
                 if (new Vector2(t.getX(), t.getZ()) == g.GetComponent<Units>().getPos())
                     AttackableTiles.Add(t);
 

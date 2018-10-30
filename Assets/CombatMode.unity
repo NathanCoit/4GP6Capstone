@@ -373,9 +373,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e6692295c19afa40b982e5e9727def2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GameInfoObjectPrefab: {fileID: 1318629568701984, guid: 2c6d0661dcadf034f9fccf79768afba7,
+    type: 2}
   BoardMan: {fileID: 734046506}
   Mapman: {fileID: 763523741}
   Unit: {fileID: 1538335793867966, guid: 446eb2a43afbfd945bdfcdca97fc42c3, type: 2}
+  playerWorshiperCount: 0
+  enemyWorshiperCount: 0
 --- !u!4 &878365385
 Transform:
   m_ObjectHideFlags: 0

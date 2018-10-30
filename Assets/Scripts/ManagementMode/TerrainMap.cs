@@ -11,21 +11,24 @@ public class TerrainMap
     private List<Building> marrBuildingsOnMap;
     private Dictionary<Faction, float[]> mdictFactionAreas; //Startingangle, ending angle, starting rad, ending rad 
 
-    public TerrainMap(float pfMapRadius)
+
+
+	public TerrainMap(float pfMapRadius, Texture mapTexture)
     {
-        mgobjTerrainMap = CreateTerrainObject(pfMapRadius);
+		mgobjTerrainMap = CreateTerrainObject(pfMapRadius, mapTexture);
         marrBuildingsOnMap = new List<Building>();
     }
 
 
-    private GameObject CreateTerrainObject(float pfMapRadius)
+	private GameObject CreateTerrainObject(float pfMapRadius, Texture mapTexture)
     {
         GameObject gobjMap = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
         gobjMap.transform.localScale = new Vector3(pfMapRadius, 0.1f, pfMapRadius);
         GameObject.Destroy(gobjMap.GetComponent<CapsuleCollider>());
         gobjMap.AddComponent<MeshCollider>();
         gobjMap.AddComponent<LineRenderer>().positionCount = 0;
-
+		gobjMap.GetComponent<Renderer> ().material.mainTexture = mapTexture;
+		gobjMap.GetComponent<Renderer> ().material.SetTextureScale ("_MainTex", new Vector2 (20, 20));
         ////Create map
         //GameObject gobjMap = new GameObject("GameMap");
         //TerrainData _TerrainData = new TerrainData();

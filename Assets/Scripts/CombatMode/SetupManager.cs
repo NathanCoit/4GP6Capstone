@@ -100,12 +100,12 @@ public class SetupManager : MonoBehaviour {
             tiles = Mapman.GetComponent<MapManager>().tiles;
             //Test Setup
             CreatePlayerUnit(new Vector2(4, 3), tiles, playerWorshiperCount/3, playerMorale); //hello integer division
-            //CreatePlayerUnit(new Vector2(4, 4), tiles, playerWorshiperCount/3, playerMorale); //also assumes we have 3 units per team
-            //CreatePlayerUnit(new Vector2(4, 5), tiles, playerWorshiperCount/3, playerMorale);
+            CreatePlayerUnit(new Vector2(4, 4), tiles, playerWorshiperCount/3, playerMorale); //also assumes we have 3 units per team
+            CreatePlayerUnit(new Vector2(4, 5), tiles, playerWorshiperCount/3, playerMorale);
 
             CreateEnemyUnit(new Vector2(6, 3), tiles, enemyWorshiperCount/3, enemyMorale);
-            //CreateEnemyUnit(new Vector2(6, 4), tiles, enemyWorshiperCount/3, enemyMorale);
-            //CreateEnemyUnit(new Vector2(6, 5), tiles, enemyWorshiperCount/3, enemyMorale);
+            CreateEnemyUnit(new Vector2(6, 4), tiles, enemyWorshiperCount/3, enemyMorale);
+            CreateEnemyUnit(new Vector2(6, 5), tiles, enemyWorshiperCount/3, enemyMorale);
 
             startup = false;
         }

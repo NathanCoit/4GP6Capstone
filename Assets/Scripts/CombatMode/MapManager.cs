@@ -88,13 +88,13 @@ public class MapManager : MonoBehaviour
         {
             //Clean up Previous selection
             ClearSelection();
-            Destroy(SelectionIndicator);
+            //Destroy(SelectionIndicator);
             if(previousSelected != null)
                 previousSelected.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
 
             //Selection Indicator
-            SelectionIndicator = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            SelectionIndicator.transform.position = new Vector3(Selected.transform.position.x, Selected.transform.position.y + 2, Selected.transform.position.z);
+            //SelectionIndicator = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            //SelectionIndicator.transform.position = new Vector3(Selected.transform.position.x, Selected.transform.position.y + 2, Selected.transform.position.z);
             //Movable = new List<GameObject>();
 
             //Setup Invalid Tiles (the one with units on)

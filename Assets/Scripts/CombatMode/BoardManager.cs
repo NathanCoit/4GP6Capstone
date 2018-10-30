@@ -14,6 +14,8 @@ public class BoardManager : MonoBehaviour {
     int numActionsLeft;
 
     public bool endBattle = false;
+    public float playerMorale;
+    public float enemyMorale;
 
     // Use this for initialization
     void Start ()
@@ -25,6 +27,8 @@ public class BoardManager : MonoBehaviour {
         //It's ya boi, Map man.
         //MapMan = GameObject.FindGameObjectWithTag("MapManager");
         SetupMan = GameObject.Find("SetupManager").GetComponent<SetupManager>();
+        this.playerMorale = SetupMan.playerMorale;
+        enemyMorale = SetupMan.enemyMorale;
     }
 	
 	// Update is called once per frame
@@ -59,6 +63,24 @@ public class BoardManager : MonoBehaviour {
         }*/
 	}
 
+    public void Victory()
+    {
+        SetupMan.battleResult = 0;
+        SetupMan.finishedBattle = true;
+    }
+
+    public void Defeat()
+    {
+        SetupMan.battleResult = 1;
+        SetupMan.finishedBattle = true;
+    }
+
+    public void Retreat()
+    {
+        SetupMan.battleResult = 2;
+        SetupMan.finishedBattle = true;
+    }
+
     //Post fight stuff
 
     //to be sent back to setup manager?
@@ -76,6 +98,26 @@ public class BoardManager : MonoBehaviour {
             }
         }
         return worshipers;
+    }
+
+    public float getPlayerMorale()
+    {
+        return playerMorale;
+    }
+
+    public float getEnemyMorale()
+    {
+        return enemyMorale;
+    }
+
+    public void setPlayerMorale(float m)
+    {
+        playerMorale = m;
+    }
+
+    public void setEnemyMorale(float m)
+    {
+        enemyMorale = m;
     }
 
     void SwitchTurns()

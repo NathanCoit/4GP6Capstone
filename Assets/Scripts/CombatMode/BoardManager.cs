@@ -5,11 +5,15 @@ using UnityEngine;
 public class BoardManager : MonoBehaviour {
 
     public bool playerTurn = true;
-    private GameObject MapMan;
+    //private GameObject MapMan;
+
+    private SetupManager SetupMan;
 
     public List<GameObject> playerUnits; //List of player's units, element 0 is player's God Unit
     public List<GameObject> enemyUnits; //List of enemy's worshipper units, element 0 is enemy's God Unit
     int numActionsLeft;
+
+    public bool endBattle = false;
 
     // Use this for initialization
     void Start ()
@@ -19,7 +23,8 @@ public class BoardManager : MonoBehaviour {
         numActionsLeft = playerUnits.Count; //since player always starts first
 
         //It's ya boi, Map man.
-        MapMan = GameObject.FindGameObjectWithTag("MapManager");
+        //MapMan = GameObject.FindGameObjectWithTag("MapManager");
+        SetupMan = GameObject.Find("SetupManager").GetComponent<SetupManager>();
     }
 	
 	// Update is called once per frame
@@ -27,8 +32,11 @@ public class BoardManager : MonoBehaviour {
         if (!HasActionsLeft()) //any actions left to take?
             SwitchTurns();
 
-        if (enemyUnits.Count == 0)
-        {
+        if (endBattle) //need to have units check if there are any enemies left after each attack
+        { //right now, endBattle will only be true if you click it in the inspector
+            SetupMan.finishedBattle = true;
+            endBattle = false; //don't want this to loop infinitely
+
             //wow much win such proud of u
             //insert wonderful text box appearing saying you win
             //insert delightful victory music
@@ -52,16 +60,18 @@ public class BoardManager : MonoBehaviour {
 	}
 
     //to be sent back to setup manager?
-    int GetRemainingWorshipers(bool player)
+    public int GetRemainingWorshipers(bool player)
     {
         int worshipers = 0;
         if (player) {
-            foreach (GameObject i in playerUnits)
+            foreach (GameObject i in playerUnits) {
                 worshipers += i.GetComponent<Units>().getWorshiperCount();
+            }
         } else //need to calculate enemy worshiper count if player decided to kill enemy god first/early
         {
-            foreach (GameObject i in enemyUnits)
+            foreach (GameObject i in enemyUnits) { 
                 worshipers += i.GetComponent<Units>().getWorshiperCount();
+            }
         }
         return worshipers;
     }

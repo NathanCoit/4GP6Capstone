@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class SetupManager : MonoBehaviour {
 
-    GameObject GameInfoObject;
+    public GameObject GameInfoObjectPrefab;
+    private GameInfo gameInfo;
 
     public GameObject BoardMan;
     public GameObject Mapman;
@@ -17,7 +18,7 @@ public class SetupManager : MonoBehaviour {
     private float playerMorale;
     private int enemyWorshiperCount;
     private float enemyMorale;
-    private bool finishedBattle = false;
+    public bool finishedBattle = false;
 
     private double worshiperPercentage = 0.80;
 
@@ -26,18 +27,25 @@ public class SetupManager : MonoBehaviour {
 
 	void Start ()
     {
-        GameInfoObject = GameObject.Find("GameInfo");
+        GameObject GameInfoObject = GameObject.Find("GameInfo");
         if (GameInfoObject != null)
         {
+            gameInfo = GameInfoObject.GetComponent<GameInfo>();
             //Found a game object, load values
             //Since only 80% of the worshippers go to war
-            double a = GameInfoObject.GetComponent<GameInfo>().PlayerWorshipperCount * worshiperPercentage;
+            double a = gameInfo.PlayerWorshipperCount * worshiperPercentage;
             this.playerWorshiperCount = (int) a;
             
             //Since only 80% of the worshippers go to war
-            double b = GameInfoObject.GetComponent<GameInfo>().EnemyWorshipperCount * worshiperPercentage;
+            double b = gameInfo.EnemyWorshipperCount * worshiperPercentage;
             //and then truncate it so you don't have a partial worshiper lol
             this.enemyWorshiperCount = (int) b;
+        } else
+        {
+            GameObject NewGameInfoObject = (GameObject)Instantiate(GameInfoObjectPrefab);
+            NewGameInfoObject.name = "GameInfo";
+            gameInfo = NewGameInfoObject.GetComponent<GameInfo>();
+            Start();
         }
     }
 	
@@ -47,13 +55,22 @@ public class SetupManager : MonoBehaviour {
         if (finishedBattle)
         {
             //get remaining worshiper count for both sides
-            //int playWorLeft = BoardMan.GetComponent<BoardManager>().GetRemainingWorshipers(true); //need this to be public
-            //int enemWorLeft = BoardMan.GetComponent<BoardManager>().GetRemainingWorshipers(false);
+            int playWorLeft = BoardMan.GetComponent<BoardManager>().GetRemainingWorshipers(true);
+            int eneWorLeft = BoardMan.GetComponent<BoardManager>().GetRemainingWorshipers(false);
             //load back into GameInfoObject
 
-            //GameInfoObject.GetComponent<GameInfo>().PlayerWorshiperCount -= playWorLeft;
-            //GameInfoObject.GetComponent<GameInfo>().EnemyWorshiperCount -= enemyWorLeft*1.0;
-            GameInfoObject.GetComponent<GameInfo>().FinishedBattle = true;
+            //Take original amount of worshipers and add how many worshipers are left after the war
+            this.gameInfo.PlayerWorshipperCount = playWorLeft + System.Convert.ToInt32(this.gameInfo.PlayerWorshipperCount*(1 - worshiperPercentage));
+            this.gameInfo.EnemyWorshipperCount = eneWorLeft + System.Convert.ToInt32(this.gameInfo.EnemyWorshipperCount*(1 - worshiperPercentage));
+
+            //Missing:
+            // Change in Morale
+            // Change in Player's abilities? (Do they gain them here?)
+            // TO DO
+
+            //The battle has been finished
+            gameInfo.FinishedBattle = true;
+            this.finishedBattle = false; //to avoid decrementing things FOREVER
         }
 
         //Note this can't be done in start as tiles hasn't been made yet.
@@ -61,13 +78,13 @@ public class SetupManager : MonoBehaviour {
         {
             tiles = Mapman.GetComponent<MapManager>().tiles;
             //Test Setup
-            CreatePlayerUnit(new Vector2(0, 3), tiles, playerWorshiperCount/3); //hello integer division
-            CreatePlayerUnit(new Vector2(0, 4), tiles, playerWorshiperCount/3); //also assumes we have 3 units per team
-            CreatePlayerUnit(new Vector2(0, 5), tiles, playerWorshiperCount/3);
+            CreatePlayerUnit(new Vector2(4, 3), tiles, playerWorshiperCount/3); //hello integer division
+            CreatePlayerUnit(new Vector2(4, 4), tiles, playerWorshiperCount/3); //also assumes we have 3 units per team
+            CreatePlayerUnit(new Vector2(4, 5), tiles, playerWorshiperCount/3);
 
-            CreateEnemyUnit(new Vector2(9, 3), tiles, enemyWorshiperCount/3);
-            CreateEnemyUnit(new Vector2(9, 4), tiles, enemyWorshiperCount/3);
-            CreateEnemyUnit(new Vector2(9, 5), tiles, enemyWorshiperCount/3);
+            CreateEnemyUnit(new Vector2(5, 3), tiles, enemyWorshiperCount/3);
+            CreateEnemyUnit(new Vector2(5, 4), tiles, enemyWorshiperCount/3);
+            CreateEnemyUnit(new Vector2(5, 5), tiles, enemyWorshiperCount/3);
             startup = false;
         }
     }

@@ -17,10 +17,10 @@ public class GameInfo : MonoBehaviour {
 
     // Initialize any variables that need to be stored here, give each a default value.
     // Variables shared by combat and management mode
-    public int PlayerWorshipperCount = 0;
+    public int PlayerWorshipperCount = 300;
     public float PlayerMorale = 0;
     public List<string> PlayerAbilities = new List<string>();
-    public int EnemyWorshipperCount = 0;
+    public int EnemyWorshipperCount = 200;
     public float EnemyMorale = 0;
     public List<string> EnemyAbilites = new List<string>();
     public bool FinishedBattle = false;

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SetupManager : MonoBehaviour {
 
@@ -14,11 +15,12 @@ public class SetupManager : MonoBehaviour {
     private Tile[,] tiles;
     private bool startup = true;
     
-    private int playerWorshiperCount;
-    private float playerMorale;
-    private int enemyWorshiperCount;
-    private float enemyMorale;
+    public int playerWorshiperCount;
+    public float playerMorale;
+    public int enemyWorshiperCount;
+    public float enemyMorale;
     public bool finishedBattle = false;
+    public int battleResult; //0 for victory, 1 for defeat, 2 for retreat
 
     private double worshiperPercentage = 0.80;
 
@@ -40,6 +42,13 @@ public class SetupManager : MonoBehaviour {
             double b = gameInfo.EnemyWorshipperCount * worshiperPercentage;
             //and then truncate it so you don't have a partial worshiper lol
             this.enemyWorshiperCount = (int) b;
+
+            //this.playerMorale = gameInfo.PlayerMorale;
+            // not yet
+            //this.enemyMorale = gameInfo.EnemyMorale;
+            playerMorale = 1;
+            enemyMorale = 1;
+
         } else
         {
             GameObject NewGameInfoObject = (GameObject)Instantiate(GameInfoObjectPrefab);
@@ -63,14 +72,26 @@ public class SetupManager : MonoBehaviour {
             this.gameInfo.PlayerWorshipperCount = playWorLeft + System.Convert.ToInt32(this.gameInfo.PlayerWorshipperCount*(1 - worshiperPercentage));
             this.gameInfo.EnemyWorshipperCount = eneWorLeft + System.Convert.ToInt32(this.gameInfo.EnemyWorshipperCount*(1 - worshiperPercentage));
 
-            //Missing:
-            // Change in Morale
-            // Change in Player's abilities? (Do they gain them here?)
-            // TO DO
+            this.gameInfo.PlayerMorale = BoardMan.GetComponent<BoardManager>().getPlayerMorale();
+            this.gameInfo.EnemyMorale = BoardMan.GetComponent<BoardManager>().getEnemyMorale();
 
             //The battle has been finished
             gameInfo.FinishedBattle = true;
+
+            if (battleResult == 0)
+                this.gameInfo.LastBattleStatus = GameInfo.BATTLESTATUS.Victory;
+            else if (battleResult == 1)
+                this.gameInfo.LastBattleStatus = GameInfo.BATTLESTATUS.Defeat;
+            else if (battleResult == 2)
+                this.gameInfo.LastBattleStatus = GameInfo.BATTLESTATUS.Retreat;
+
+            //Missing:
+            // Change in Player's abilities? (Do they gain them here?)
+            // TO DO
+
             this.finishedBattle = false; //to avoid decrementing things FOREVER
+
+            SceneManager.LoadScene("UnderGodScene"); //¿¿¿presumably loads back to management mode???
         }
 
         //Note this can't be done in start as tiles hasn't been made yet.
@@ -78,31 +99,33 @@ public class SetupManager : MonoBehaviour {
         {
             tiles = Mapman.GetComponent<MapManager>().tiles;
             //Test Setup
-            CreatePlayerUnit(new Vector2(0, 3), tiles, playerWorshiperCount/3); //hello integer division
-            CreatePlayerUnit(new Vector2(0, 4), tiles, playerWorshiperCount/3); //also assumes we have 3 units per team
-            CreatePlayerUnit(new Vector2(0, 5), tiles, playerWorshiperCount/3);
+            CreatePlayerUnit(new Vector2(4, 3), tiles, playerWorshiperCount/3, playerMorale); //hello integer division
+            CreatePlayerUnit(new Vector2(4, 4), tiles, playerWorshiperCount/3, playerMorale); //also assumes we have 3 units per team
+            CreatePlayerUnit(new Vector2(4, 5), tiles, playerWorshiperCount/3, playerMorale);
 
-            CreateEnemyUnit(new Vector2(9, 3), tiles, enemyWorshiperCount/3);
-            CreateEnemyUnit(new Vector2(9, 4), tiles, enemyWorshiperCount/3);
-            CreateEnemyUnit(new Vector2(9, 5), tiles, enemyWorshiperCount/3);
+            CreateEnemyUnit(new Vector2(6, 3), tiles, enemyWorshiperCount/3, enemyMorale);
+            CreateEnemyUnit(new Vector2(6, 4), tiles, enemyWorshiperCount/3, enemyMorale);
+            CreateEnemyUnit(new Vector2(6, 5), tiles, enemyWorshiperCount/3, enemyMorale);
 
             startup = false;
         }
     }
 
 
-    public void CreatePlayerUnit(Vector2 pos, Tile[,] tiles, int WorshiperCount)
+    public void CreatePlayerUnit(Vector2 pos, Tile[,] tiles, int WorshiperCount, float morale)
     {
         GameObject temp = Instantiate(Unit);
         temp.GetComponent<Units>().setWorshiperCount(WorshiperCount);
+        temp.GetComponent<Units>().setMorale(morale);
         temp.GetComponent<Units>().Move(new Vector2(pos.x, pos.y), tiles);
         BoardMan.GetComponent<BoardManager>().playerUnits.Add(temp);
     }
 
-    public void CreateEnemyUnit(Vector2 pos, Tile[,] tiles, int WorshiperCount)
+    public void CreateEnemyUnit(Vector2 pos, Tile[,] tiles, int WorshiperCount, float morale)
     {
         GameObject temp = Instantiate(Unit);
         temp.GetComponent<Units>().setWorshiperCount(WorshiperCount);
+        temp.GetComponent<Units>().setMorale(morale);
         temp.GetComponent<Units>().Move(new Vector2(pos.x, pos.y), tiles);
         //Set so the players turn is first
         temp.GetComponent<Units>().EndAct();

@@ -10,7 +10,7 @@ public class Faction
 {
     public string GodName { get; private set; }
     public int WorshipperCount = 0;
-    public int MaterialCount = 0;
+    public int MaterialCount = 10;
     public float Morale = 1.0f;
     public int TierRewardPoints = 1;
     public List<Ability> CurrentAbilites;

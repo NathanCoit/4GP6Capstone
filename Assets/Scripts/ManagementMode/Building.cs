@@ -80,9 +80,9 @@ public class Building{
 
     private GameObject CreateMaterialBuildingObject()
     {
-        GameObject gobjVillageBuilding = null;
-        gobjVillageBuilding = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        return gobjVillageBuilding;
+        GameObject gobjMaterialBuilding = null;
+		gobjMaterialBuilding = (GameObject)GameObject.Instantiate(Resources.Load("MineObject"));
+		return gobjMaterialBuilding;
     }
 
     private GameObject CreateVillageBuildingObject()
@@ -94,7 +94,7 @@ public class Building{
     private GameObject CreateAltarBuildingObject()
     {
         GameObject gobjAltarBuilding = null;
-        gobjAltarBuilding = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+		gobjAltarBuilding = (GameObject)GameObject.Instantiate(Resources.Load("AltarObject"));
         return gobjAltarBuilding;
     }
 

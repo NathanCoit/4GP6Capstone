@@ -99,14 +99,94 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private bool InitializeGameInfoObject()
     {
+        Faction InitFaction = null;
+        Faction EnemyFaction = null;
+        Building InitBuilding = null;
         GameObject GameInfoObject = GameObject.Find("GameInfo");
         if (GameInfoObject != null)
         {
             // Found a gameinfo object, load values
             gameInfo = GameInfoObject.GetComponent<GameInfo>();
-            
+            CurrentFactions = new List<Faction>();
+            EnemyFactions = new List<Faction>();
             // Create scene with values from gameInfo
-            // TODO 
+            // Load Game Map
+            GameMap = new TerrainMap(gameInfo.MapRadius, mapTexture);
+            // Load factions
+            foreach(GameInfo.SavedFaction savedFaction in gameInfo.SavedFactions)
+            {
+                InitFaction = new Faction(savedFaction.GodName)
+                {
+                    MaterialCount = savedFaction.MatieralCount,
+                    Morale = savedFaction.Morale,
+                    WorshipperCount = savedFaction.WorshipperCount,
+                    FactionArea = savedFaction.FactionArea
+                };
+                CurrentFactions.Add(InitFaction);
+                EnemyFactions.Add(InitFaction);
+                foreach(GameInfo.SavedBuilding building in savedFaction.OwnedBuildings)
+                {
+                    InitBuilding = new Building(building.BuildingType, InitFaction);
+                    GameMap.PlaceBuilding(InitBuilding, building.BuildingPosition);
+                }
+            }
+            PlayerFaction = new Faction(gameInfo.PlayerFaction.GodName)
+            {
+                MaterialCount = gameInfo.PlayerFaction.MatieralCount,
+                Morale = gameInfo.PlayerFaction.Morale,
+                WorshipperCount = gameInfo.PlayerFaction.WorshipperCount,
+                FactionArea = gameInfo.PlayerFaction.FactionArea
+            };
+            foreach (GameInfo.SavedBuilding building in gameInfo.PlayerFaction.OwnedBuildings)
+            {
+                InitBuilding = new Building(building.BuildingType, PlayerFaction);
+                GameMap.PlaceBuilding(InitBuilding, building.BuildingPosition);
+                if (building.BuildingType == Building.BUILDING_TYPE.VILLAGE)
+                {
+                    PlayerVillage = InitBuilding;
+                }
+            }
+            CurrentFactions.Add(PlayerFaction);
+
+            EnemyFaction = new Faction(gameInfo.EnemyFaction.GodName)
+            {
+                MaterialCount = gameInfo.EnemyFaction.MatieralCount,
+                Morale = gameInfo.EnemyFaction.Morale,
+                WorshipperCount = gameInfo.EnemyFaction.WorshipperCount,
+                FactionArea = gameInfo.EnemyFaction.FactionArea
+            };
+            foreach (GameInfo.SavedBuilding building in gameInfo.EnemyFaction.OwnedBuildings)
+            {
+                InitBuilding = new Building(building.BuildingType, EnemyFaction);
+                GameMap.PlaceBuilding(InitBuilding, building.BuildingPosition);
+            }
+
+            // Load tech tree
+
+
+            if(gameInfo.LastBattleStatus == GameInfo.BATTLESTATUS.Victory)
+            {
+                // Take over enemy factions buildings, area, and resources
+                foreach(float[] enemyArea in gameInfo.EnemyFaction.FactionArea)
+                {
+                    PlayerFaction.FactionArea.Add(enemyArea);
+                }
+                PlayerFaction.MaterialCount += EnemyFaction.MaterialCount;
+                foreach(Building building in EnemyFaction.OwnedBuildings)
+                {
+                    building.OwningFaction = PlayerFaction;
+                }
+            }
+            else if (gameInfo.LastBattleStatus == GameInfo.BATTLESTATUS.Retreat)
+            {
+                // Lower morale
+                CurrentFactions.Add(EnemyFaction);
+            }
+            else
+            {
+                // Run defeat animation/reset to tier checkpoint
+            }
+            GameMap.DrawFactionArea(PlayerFaction);
             return true;
         }
         else
@@ -124,9 +204,79 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void EnterCombatMode(Faction EnemyFaction)
     {
-        gameInfo.PlayerWorshipperCount = PlayerFaction.WorshipperCount;
-        gameInfo.PlayerMorale = PlayerFaction.Morale;
-        foreach(Ability PlayerAbility in PlayerFaction.CurrentAbilites)
+        GameInfo.SavedFaction initFaction;
+        // save player faction
+        gameInfo.PlayerFaction = new GameInfo.SavedFaction
+        {
+            GodName = PlayerFaction.GodName,
+            MatieralCount = PlayerFaction.MaterialCount,
+            Morale = PlayerFaction.Morale,
+            WorshipperCount = PlayerFaction.WorshipperCount,
+            FactionArea = PlayerFaction.FactionArea,
+            OwnedBuildings = new List<GameInfo.SavedBuilding>()
+        };
+        foreach(Building building in PlayerFaction.OwnedBuildings)
+        {
+            gameInfo.PlayerFaction.OwnedBuildings.Add(
+                new GameInfo.SavedBuilding
+                {
+                    BuildingPosition = building.BuildingPosition,
+                    BuildingType = building.BuildingType,
+                    UpgradeLevel = building.UpgradeLevel
+                });
+        }
+
+        // save challenging faction
+        gameInfo.EnemyFaction= new GameInfo.SavedFaction
+        {
+            GodName = EnemyFaction.GodName,
+            MatieralCount = EnemyFaction.MaterialCount,
+            Morale = EnemyFaction.Morale,
+            WorshipperCount = EnemyFaction.WorshipperCount,
+            FactionArea = EnemyFaction.FactionArea,
+            OwnedBuildings = new List<GameInfo.SavedBuilding>()
+        };
+        foreach (Building building in EnemyFaction.OwnedBuildings)
+        {
+            gameInfo.EnemyFaction.OwnedBuildings.Add(
+                new GameInfo.SavedBuilding
+                {
+                    BuildingPosition = building.BuildingPosition,
+                    BuildingType = building.BuildingType,
+                    UpgradeLevel = building.UpgradeLevel
+                });
+        }
+
+        gameInfo.SavedFactions = new List<GameInfo.SavedFaction>();
+        // Save the rest of the factions
+        foreach(Faction faction in EnemyFactions)
+        {
+            if(faction != EnemyFaction)
+            {
+                initFaction = new GameInfo.SavedFaction
+                {
+                    GodName = faction.GodName,
+                    MatieralCount = faction.MaterialCount,
+                    Morale = faction.Morale,
+                    WorshipperCount = faction.WorshipperCount,
+                    FactionArea = faction.FactionArea,
+                    OwnedBuildings = new List<GameInfo.SavedBuilding>()
+                };
+                foreach (Building building in faction.OwnedBuildings)
+                {
+                    initFaction.OwnedBuildings.Add(
+                        new GameInfo.SavedBuilding
+                        {
+                            BuildingPosition = building.BuildingPosition,
+                            BuildingType = building.BuildingType,
+                            UpgradeLevel = building.UpgradeLevel
+                        });
+                }
+                gameInfo.SavedFactions.Add(initFaction);
+            }
+        }
+
+        foreach (Ability PlayerAbility in PlayerFaction.CurrentAbilites)
         {
             gameInfo.PlayerAbilities.Add(PlayerAbility.AbilityName);
         }
@@ -532,18 +682,6 @@ public class GameManager : MonoBehaviour
                     SelectedBuilding.ToggleBuildingOutlines(false);
                     SelectedBuilding = null;
                     CurrentMenuState = MENUSTATE.Default_State;
-                }
-                // Add custom building menu options here
-                switch(SelectedBuilding.BuildingType)
-                {
-                    case Building.BUILDING_TYPE.ALTAR:
-                        break;
-                    case Building.BUILDING_TYPE.HOUSING:
-                        break;
-                    case Building.BUILDING_TYPE.MATERIAL:
-                        break;
-                    case Building.BUILDING_TYPE.VILLAGE:
-                        break;
                 }
             }
             else

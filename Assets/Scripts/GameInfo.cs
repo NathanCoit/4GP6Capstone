@@ -15,6 +15,21 @@ public class GameInfo : MonoBehaviour {
         Retreat
     }
 
+    public struct SavedBuilding
+    {
+        public Vector3 BuildingPosition;
+        public Building.BUILDING_TYPE BuildingType;
+        public int UpgradeLevel;
+    }
+    public struct SavedFaction
+    {
+        public string GodName;
+        public int MatieralCount;
+        public int WorshipperCount;
+        public float Morale;
+        public List<SavedBuilding> OwnedBuildings;
+        public List<float[]> FactionArea;
+    }
     // Initialize any variables that need to be stored here, give each a default value.
     // Variables shared by combat and management mode
     public int PlayerWorshipperCount = 300;
@@ -24,12 +39,15 @@ public class GameInfo : MonoBehaviour {
     public float EnemyMorale = 0;
     public List<string> EnemyAbilites = new List<string>();
     public bool FinishedBattle = false;
+    public SavedFaction EnemyFaction;
+    public SavedFaction PlayerFaction;
 
     // Combat mode variables
     public BATTLESTATUS LastBattleStatus = BATTLESTATUS.Victory;
 
     // Management mode variables for loading scene
-
+    public List<SavedFaction> SavedFactions = new List<SavedFaction>();
+    public float MapRadius = 100f;
 	// Use this for initialization
 	void Start () {
         DontDestroyOnLoad(gameObject);

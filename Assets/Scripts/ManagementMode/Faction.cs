@@ -16,6 +16,7 @@ public class Faction
     public List<Ability> CurrentAbilites;
     // public List<Upgrade> CurrentUpgrades;
     public List<Building> OwnedBuildings = new List<Building>();
+    public List<float[]> FactionArea; //Startingangle, ending angle, starting rad, ending rad
 
     public Faction(string pstrGodName)
     {

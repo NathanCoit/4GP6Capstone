@@ -35,7 +35,7 @@ public class Building{
 
     public int BuildingCost = 0;
 
-	public Building(BUILDING_TYPE penumBuildingType, Faction pFactionOwner, float pfBuildingCostModifier)
+	public Building(BUILDING_TYPE penumBuildingType, Faction pFactionOwner, float pfBuildingCostModifier = 1.0f)
     {
         BuildingObject = CreateBuildingObject(penumBuildingType);
         BuildingType = penumBuildingType;

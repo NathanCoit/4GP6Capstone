@@ -8,7 +8,43 @@ using System.Text;
 /// </summary>
 public class Faction
 {
+    public enum GodType
+    {
+        Mushroom,
+        Shoe,
+        Fork,
+        Duck,
+        Jazz,
+        Hounds,
+        Love,
+        Fire,
+        Water,
+        Earth //etc.
+    }
+    public static List<GodType> TierOneGods = new List<GodType>
+    {
+        GodType.Mushroom,
+        GodType.Shoe,
+        GodType.Fork,
+        GodType.Duck
+    };
+
+    public static List<GodType> TierTwoGods = new List<GodType>
+    {
+        GodType.Jazz,
+        GodType.Hounds,
+        GodType.Love
+    };
+
+    public static List<GodType> TierThreeGods = new List<GodType>
+    {
+        GodType.Fire,
+        GodType.Water,
+        GodType.Earth
+    };
+
     public string GodName { get; private set; }
+    public GodType Type { get; private set; }
     public int WorshipperCount = 0;
     public int MaterialCount = 10;
     public float Morale = 1.0f;
@@ -16,12 +52,32 @@ public class Faction
     public List<Ability> CurrentAbilites;
     // public List<Upgrade> CurrentUpgrades;
     public List<Building> OwnedBuildings = new List<Building>();
-    public List<float[]> FactionArea; //Startingangle, ending angle, starting rad, ending rad
+    public List<float[]> FactionArea; //Starting Radius, ending Radius, starting angle, ending angle
+    public int FactionDifficulty = 0;
 
-    public Faction(string pstrGodName)
+    public Faction(string pstrGodName, GodType penumGodType)
     {
         GodName = pstrGodName;
         CurrentAbilites = new List<Ability>();
+        Type = penumGodType;
+    }
+
+    public void SetHidden(bool pblnHide = true)
+    {
+        if(pblnHide)
+        {
+            foreach(Building buildingToHide in OwnedBuildings)
+            {
+                buildingToHide.BuildingObject.SetActive(false);
+            }
+        }
+        else
+        {
+            foreach(Building buildingToShow in OwnedBuildings)
+            {
+                buildingToShow.BuildingObject.SetActive(true);
+            }
+        }
     }
 }
 

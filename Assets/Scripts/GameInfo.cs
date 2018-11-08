@@ -29,6 +29,7 @@ public class GameInfo : MonoBehaviour {
         public float Morale;
         public List<SavedBuilding> OwnedBuildings;
         public List<float[]> FactionArea;
+        public Faction.GodType Type;
     }
     // Initialize any variables that need to be stored here, give each a default value.
     // Variables shared by combat and management mode
@@ -47,6 +48,7 @@ public class GameInfo : MonoBehaviour {
 
     // Management mode variables for loading scene
     public List<SavedFaction> SavedFactions = new List<SavedFaction>();
+    public int CurrentTier = 0;
     public float MapRadius = 100f;
 	// Use this for initialization
 	void Start () {

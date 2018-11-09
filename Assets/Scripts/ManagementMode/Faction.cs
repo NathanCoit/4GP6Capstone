@@ -46,7 +46,7 @@ public class Faction
     public string GodName { get; private set; }
     public GodType Type { get; private set; }
     public int WorshipperCount = 0;
-    public int MaterialCount = 10;
+    public int MaterialCount = 100;
     public float Morale = 1.0f;
     public int TierRewardPoints = 1;
     public List<Ability> CurrentAbilites;
@@ -54,12 +54,14 @@ public class Faction
     public List<Building> OwnedBuildings = new List<Building>();
     public List<float[]> FactionArea; //Starting Radius, ending Radius, starting angle, ending angle
     public int FactionDifficulty = 0;
+    public int GodTier = 0;
 
-    public Faction(string pstrGodName, GodType penumGodType)
+    public Faction(string pstrGodName, GodType penumGodType, int pintTier)
     {
         GodName = pstrGodName;
         CurrentAbilites = new List<Ability>();
         Type = penumGodType;
+        GodTier = pintTier;
     }
 
     public void SetHidden(bool pblnHide = true)

@@ -30,6 +30,7 @@ public class GameInfo : MonoBehaviour {
         public List<SavedBuilding> OwnedBuildings;
         public List<float[]> FactionArea;
         public Faction.GodType Type;
+        public int GodTier;
     }
     // Initialize any variables that need to be stored here, give each a default value.
     // Variables shared by combat and management mode
@@ -54,5 +55,39 @@ public class GameInfo : MonoBehaviour {
 	void Start () {
         DontDestroyOnLoad(gameObject);
 	}
+
+    public static SavedBuilding CreateSavedBuilding(Building buildingToSave)
+    {
+        SavedBuilding savedBuilding = new SavedBuilding
+        {
+            BuildingPosition = buildingToSave.BuildingPosition,
+            BuildingType = buildingToSave.BuildingType,
+            UpgradeLevel = buildingToSave.UpgradeLevel
+        };
+
+        return savedBuilding;
+    }
+
+    public static SavedFaction CreateSavedFaction(Faction factionToSave)
+    {
+        SavedFaction savedFaction = new SavedFaction
+        {
+            GodName = factionToSave.GodName,
+            MatieralCount = factionToSave.MaterialCount,
+            Morale = factionToSave.Morale,
+            WorshipperCount = factionToSave.WorshipperCount,
+            FactionArea = factionToSave.FactionArea,
+            Type = factionToSave.Type,
+            GodTier = factionToSave.GodTier,
+            OwnedBuildings = new List<GameInfo.SavedBuilding>()
+        };
+
+        foreach (Building building in factionToSave.OwnedBuildings)
+        {
+            savedFaction.OwnedBuildings.Add(CreateSavedBuilding(building));
+        }
+
+        return savedFaction;
+    }
 	
 }

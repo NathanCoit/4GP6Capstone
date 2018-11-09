@@ -45,7 +45,6 @@ public class GameManager : MonoBehaviour
     private Vector3 OriginalBuildingPosition;
     public float MinimumMorale = 0.2f;
     public List<TierReward> PlayerRewardTree;
-    private Dictionary<int, List<Faction>> FactionTiers = null;
     public int TierWorshipperCount = 100; // Initial tier unlock count
     public int TierWoshipperCountMultiplier = 2; // After every tier, tier count is multiplied by this
     public int MapTierCount = 3;
@@ -55,15 +54,15 @@ public class GameManager : MonoBehaviour
     // Use this for any initializations needed by other scripts
     void Awake()
     {
-		text1 = FindObjectOfType<modeTextScript> ();
-		resourcetext = FindObjectOfType<resourceScript> ();
+		text1 = FindObjectOfType<modeTextScript>();
+		resourcetext = FindObjectOfType<resourceScript>();
         sound = AudioObject.GetComponent<ExecuteSound>();
         Building bldEnemyBuilding = null;
         Faction facEnemyFaction = null;
         Building.BUILDING_TYPE RandomType;
         Vector3 vec3VillagePos;
-        FactionTiers = new Dictionary<int, List<Faction>>();
         List<Faction.GodType> GodTypes;
+        List<Faction> CurrentTierFactions;
         float TierRadius = (MapRadius / 2) / MapTierCount;
 
         if (!InitializeGameInfoObject())
@@ -76,47 +75,43 @@ public class GameManager : MonoBehaviour
 
             // Create the player Faction
             //Mushroom for now
-            PlayerFaction = new Faction("YourGod", Faction.GodType.Mushroom);
+            PlayerFaction = new Faction("YourGod", Faction.GodType.Mushroom, 0);
             CurrentFactions.Add(PlayerFaction);
             // Create tier one factions
-            FactionTiers.Add(0, new List<Faction>());
-            FactionTiers[0].Add(PlayerFaction);
 
             for(int TierIndex = 0; TierIndex < MapTierCount; TierIndex++)
             {
                 if(TierIndex == 0)
                 {
-                    GodTypes = Faction.TierOneGods;
+                    GodTypes = new List<Faction.GodType>(Faction.TierOneGods);
                     GodTypes.Remove(PlayerFaction.Type);
                 }
                 else if(TierIndex == 1)
                 {
-                    GodTypes = Faction.TierTwoGods;
+                    GodTypes = new List<Faction.GodType>(Faction.TierTwoGods);
                 }
                 else
                 {
-                    GodTypes = Faction.TierThreeGods;
-                }
-                if(!FactionTiers.ContainsKey(TierIndex))
-                {
-                    FactionTiers.Add(TierIndex, new List<Faction>());
+                    GodTypes = new List<Faction.GodType>(Faction.TierThreeGods);
                 }
                 for(int enemyCount = 0; enemyCount < EnemiesPerTier; enemyCount++)
                 {
-                    facEnemyFaction = new Faction("EnemyGod" + enemyCount, GodTypes[enemyCount])
+                    facEnemyFaction = new Faction("EnemyGod" + enemyCount, GodTypes[enemyCount], TierIndex)
                     {
                         FactionDifficulty = (enemyCount + 1) * ((TierIndex + 1) * TierDifficultyIncrease)
                     };
                     CurrentFactions.Add(facEnemyFaction);
                     EnemyFactions.Add(facEnemyFaction);
-                    FactionTiers[TierIndex].Add(facEnemyFaction);
                 }
-                GameMap.DivideMap(FactionTiers[TierIndex], TierRadius * TierIndex, TierRadius * (TierIndex + 1));
+                CurrentTierFactions = CurrentFactions.FindAll(MatchingFaction => MatchingFaction.GodTier == TierIndex);
+                GameMap.DivideMap(CurrentTierFactions, TierRadius * TierIndex, TierRadius * (TierIndex + 1));
             }
-            Faction.TierOneGods.Add(PlayerFaction.Type);
-            Building.LoadBuildingResources(Faction.TierOneGods);
-            Building.LoadBuildingResources(Faction.TierTwoGods);
-            Building.LoadBuildingResources(Faction.TierThreeGods);
+            GodTypes = new List<Faction.GodType>();
+            foreach(Faction faction in CurrentFactions)
+            {
+                GodTypes.Add(faction.Type);
+            }
+            Building.LoadBuildingResources(GodTypes);
             //Create and place player village
             PlayerVillage = new Building(Building.BUILDING_TYPE.VILLAGE, PlayerFaction, BuildingCostModifier);
             vec3VillagePos = GameMap.CalculateRandomPosition(PlayerFaction);
@@ -160,14 +155,12 @@ public class GameManager : MonoBehaviour
             }
 
             // Hide all buildings outside starting tier
-            for(int Tier = 1; Tier < FactionTiers.Count; Tier++)
+            CurrentTierFactions = CurrentFactions.FindAll(MatchingFaction => MatchingFaction.GodTier != 0);
+            foreach(Faction faction in CurrentTierFactions)
             {
-                foreach(Faction factionToHide in FactionTiers[Tier])
-                {
-                    factionToHide.SetHidden(true);
-                }
+                faction.SetHidden(true);
             }
-            GameMap.DrawMultipleFactionAreas(CurrentFactions);
+            GameMap.DrawFactionArea(PlayerFaction);
         }
     }
 
@@ -194,7 +187,7 @@ public class GameManager : MonoBehaviour
             // Load factions
             foreach(GameInfo.SavedFaction savedFaction in gameInfo.SavedFactions)
             {
-                InitFaction = new Faction(savedFaction.GodName, savedFaction.Type)
+                InitFaction = new Faction(savedFaction.GodName, savedFaction.Type, savedFaction.GodTier)
                 {
                     MaterialCount = savedFaction.MatieralCount,
                     Morale = savedFaction.Morale,
@@ -209,7 +202,7 @@ public class GameManager : MonoBehaviour
                     GameMap.PlaceBuilding(InitBuilding, building.BuildingPosition);
                 }
             }
-            PlayerFaction = new Faction(gameInfo.PlayerFaction.GodName, gameInfo.PlayerFaction.Type)
+            PlayerFaction = new Faction(gameInfo.PlayerFaction.GodName, gameInfo.PlayerFaction.Type, gameInfo.PlayerFaction.GodTier)
             {
                 MaterialCount = gameInfo.PlayerFaction.MatieralCount,
                 Morale = gameInfo.PlayerFaction.Morale,
@@ -227,7 +220,7 @@ public class GameManager : MonoBehaviour
             }
             CurrentFactions.Add(PlayerFaction);
 
-            EnemyFaction = new Faction(gameInfo.EnemyFaction.GodName, gameInfo.EnemyFaction.Type)
+            EnemyFaction = new Faction(gameInfo.EnemyFaction.GodName, gameInfo.EnemyFaction.Type, gameInfo.EnemyFaction.GodTier)
             {
                 MaterialCount = gameInfo.EnemyFaction.MatieralCount,
                 Morale = gameInfo.EnemyFaction.Morale,
@@ -254,6 +247,7 @@ public class GameManager : MonoBehaviour
                 foreach(Building building in EnemyFaction.OwnedBuildings)
                 {
                     building.OwningFaction = PlayerFaction;
+                    building.ReloadBuildingObject();
                 }
                 // Check if that was the last enemy in that tier, if so, unlock next tier
             }
@@ -266,7 +260,7 @@ public class GameManager : MonoBehaviour
             {
                 // Run defeat animation/reset to tier checkpoint
             }
-            //GameMap.DrawFactionArea(PlayerFaction);
+            GameMap.DrawFactionArea(PlayerFaction);
             return true;
         }
         else
@@ -284,81 +278,23 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void EnterCombatMode(Faction EnemyFaction)
     {
-        GameInfo.SavedFaction initFaction;
         // save player faction
-        gameInfo.PlayerFaction = new GameInfo.SavedFaction
-        {
-            GodName = PlayerFaction.GodName,
-            MatieralCount = PlayerFaction.MaterialCount,
-            Morale = PlayerFaction.Morale,
-            WorshipperCount = PlayerFaction.WorshipperCount,
-            FactionArea = PlayerFaction.FactionArea,
-            Type = PlayerFaction.Type,
-            OwnedBuildings = new List<GameInfo.SavedBuilding>()
-        };
-        foreach(Building building in PlayerFaction.OwnedBuildings)
-        {
-            gameInfo.PlayerFaction.OwnedBuildings.Add(
-                new GameInfo.SavedBuilding
-                {
-                    BuildingPosition = building.BuildingPosition,
-                    BuildingType = building.BuildingType,
-                    UpgradeLevel = building.UpgradeLevel
-                });
-        }
+        gameInfo.PlayerFaction = GameInfo.CreateSavedFaction(PlayerFaction);
 
         // save challenging faction
-        gameInfo.EnemyFaction= new GameInfo.SavedFaction
-        {
-            GodName = EnemyFaction.GodName,
-            MatieralCount = EnemyFaction.MaterialCount,
-            Morale = EnemyFaction.Morale,
-            WorshipperCount = EnemyFaction.WorshipperCount,
-            FactionArea = EnemyFaction.FactionArea,
-            Type = EnemyFaction.Type,
-            OwnedBuildings = new List<GameInfo.SavedBuilding>()
-        };
-        foreach (Building building in EnemyFaction.OwnedBuildings)
-        {
-            gameInfo.EnemyFaction.OwnedBuildings.Add(
-                new GameInfo.SavedBuilding
-                {
-                    BuildingPosition = building.BuildingPosition,
-                    BuildingType = building.BuildingType,
-                    UpgradeLevel = building.UpgradeLevel
-                });
-        }
+        gameInfo.EnemyFaction = GameInfo.CreateSavedFaction(EnemyFaction);
 
-        gameInfo.SavedFactions = new List<GameInfo.SavedFaction>();
         // Save the rest of the factions
+        gameInfo.SavedFactions = new List<GameInfo.SavedFaction>();
         foreach(Faction faction in EnemyFactions)
         {
             if(faction != EnemyFaction)
             {
-                initFaction = new GameInfo.SavedFaction
-                {
-                    GodName = faction.GodName,
-                    MatieralCount = faction.MaterialCount,
-                    Morale = faction.Morale,
-                    WorshipperCount = faction.WorshipperCount,
-                    FactionArea = faction.FactionArea,
-                    Type = faction.Type,
-                    OwnedBuildings = new List<GameInfo.SavedBuilding>()
-                };
-                foreach (Building building in faction.OwnedBuildings)
-                {
-                    initFaction.OwnedBuildings.Add(
-                        new GameInfo.SavedBuilding
-                        {
-                            BuildingPosition = building.BuildingPosition,
-                            BuildingType = building.BuildingType,
-                            UpgradeLevel = building.UpgradeLevel
-                        });
-                }
-                gameInfo.SavedFactions.Add(initFaction);
+                gameInfo.SavedFactions.Add(GameInfo.CreateSavedFaction(faction));
             }
         }
 
+        // Save player abilities
         foreach (Ability PlayerAbility in PlayerFaction.CurrentAbilites)
         {
             gameInfo.PlayerAbilities.Add(PlayerAbility.AbilityName);
@@ -914,10 +850,12 @@ public class GameManager : MonoBehaviour
 
     private void UnlockNextTier()
     {
+        
         CurrentTier++;
-        if(FactionTiers.ContainsKey(CurrentTier))
+        List<Faction> NextTierFactions = CurrentFactions.FindAll(MatchingFaction => MatchingFaction.GodTier == CurrentTier);
+        if (NextTierFactions.Count > 0)
         {
-            foreach(Faction factionToShow in FactionTiers[CurrentTier])
+            foreach(Faction factionToShow in NextTierFactions)
             {
                 factionToShow.SetHidden(false);
             }

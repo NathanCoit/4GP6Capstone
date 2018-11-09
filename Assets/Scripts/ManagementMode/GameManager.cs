@@ -75,7 +75,11 @@ public class GameManager : MonoBehaviour
 
             // Create the player Faction
             //Mushroom for now
-            PlayerFaction = new Faction("YourGod", Faction.GodType.Mushroom, 0);
+            PlayerFaction = new Faction("YourGod", Faction.GodType.Mushroom, 0)
+            {
+                WorshipperCount = 10000,
+                MaterialCount = 10000
+            };
             CurrentFactions.Add(PlayerFaction);
             // Create tier one factions
 
@@ -122,7 +126,10 @@ public class GameManager : MonoBehaviour
             {
                 bldEnemyBuilding = new Building(Building.BUILDING_TYPE.VILLAGE, enemyFaction, BuildingCostModifier);
                 vec3VillagePos = GameMap.CalculateRandomPosition(enemyFaction);
-                GameMap.PlaceBuilding(bldEnemyBuilding, vec3VillagePos);
+                while(!GameMap.PlaceBuilding(bldEnemyBuilding, vec3VillagePos))
+                {
+                    vec3VillagePos = GameMap.CalculateRandomPosition(enemyFaction);
+                }
 
                 // Generate starting buildings based on enemy difficulty
                 for(int i = 0; i < 3 * enemyFaction.FactionDifficulty; i++)
@@ -190,7 +197,7 @@ public class GameManager : MonoBehaviour
                 InitFaction = new Faction(savedFaction.GodName, savedFaction.Type, savedFaction.GodTier)
                 {
                     MaterialCount = savedFaction.MatieralCount,
-                    Morale = savedFaction.Morale,
+                    Morale = savedFaction.Morale > MinimumMorale ? savedFaction.Morale : MinimumMorale,
                     WorshipperCount = savedFaction.WorshipperCount,
                     FactionArea = savedFaction.FactionArea
                 };
@@ -205,7 +212,7 @@ public class GameManager : MonoBehaviour
             PlayerFaction = new Faction(gameInfo.PlayerFaction.GodName, gameInfo.PlayerFaction.Type, gameInfo.PlayerFaction.GodTier)
             {
                 MaterialCount = gameInfo.PlayerFaction.MatieralCount,
-                Morale = gameInfo.PlayerFaction.Morale,
+                Morale = gameInfo.PlayerFaction.Morale  > MinimumMorale ? PlayerFaction.Morale : MinimumMorale,
                 WorshipperCount = gameInfo.PlayerFaction.WorshipperCount,
                 FactionArea = gameInfo.PlayerFaction.FactionArea
             };
@@ -223,7 +230,7 @@ public class GameManager : MonoBehaviour
             EnemyFaction = new Faction(gameInfo.EnemyFaction.GodName, gameInfo.EnemyFaction.Type, gameInfo.EnemyFaction.GodTier)
             {
                 MaterialCount = gameInfo.EnemyFaction.MatieralCount,
-                Morale = gameInfo.EnemyFaction.Morale,
+                Morale = gameInfo.EnemyFaction.Morale > MinimumMorale ? EnemyFaction.Morale : MinimumMorale,
                 WorshipperCount = gameInfo.EnemyFaction.WorshipperCount,
                 FactionArea = gameInfo.EnemyFaction.FactionArea
             };
@@ -248,8 +255,13 @@ public class GameManager : MonoBehaviour
                 {
                     building.OwningFaction = PlayerFaction;
                     building.ReloadBuildingObject();
+                    PlayerFaction.OwnedBuildings.Add(building);
                 }
                 // Check if that was the last enemy in that tier, if so, unlock next tier
+                if(CurrentFactions.FindAll(enemyFaction => enemyFaction.GodTier == CurrentTier && enemyFaction != PlayerFaction).Count == 0)
+                {
+                    UnlockNextTier();
+                }
             }
             else if (gameInfo.LastBattleStatus == GameInfo.BATTLESTATUS.Retreat)
             {
@@ -259,6 +271,10 @@ public class GameManager : MonoBehaviour
             else
             {
                 // Run defeat animation/reset to tier checkpoint
+            }
+            foreach(Faction faction in CurrentFactions.FindAll(MatchingFaction => MatchingFaction.GodTier > CurrentTier))
+            {
+                faction.SetHidden(true);
             }
             GameMap.DrawFactionArea(PlayerFaction);
             return true;
@@ -538,9 +554,13 @@ public class GameManager : MonoBehaviour
                     else
                     {
                         // Not enough housing for the population, morale will drop
-                        if (CurrentFaction.Morale >= MinimumMorale)
+                        if (CurrentFaction.Morale > MinimumMorale)
                         {
                             CurrentFaction.Morale -= 0.05f;
+                        }
+                        else
+                        {
+                            CurrentFaction.Morale = MinimumMorale;
                         }
                     }
                 }

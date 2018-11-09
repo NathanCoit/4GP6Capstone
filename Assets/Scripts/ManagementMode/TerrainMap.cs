@@ -133,8 +133,8 @@ public class TerrainMap
         Vector3 vec3StartingPosition = new Vector3(0, 0, 0);
         float[] FactionArea = pobjFactionToPlace.FactionArea[0];
 
-        float fAngle = Random.Range(FactionArea[2] + 0.05f, FactionArea[3] - 0.05f);
-        float fRad = Random.Range(FactionArea[0] + 5f, FactionArea[1] - 5f);
+        float fAngle = Random.Range(FactionArea[2] + (Building.BuildingRadiusSize / 100f), FactionArea[3] - (Building.BuildingRadiusSize / 100f));
+        float fRad = Random.Range(FactionArea[0] + Building.BuildingRadiusSize, FactionArea[1] - Building.BuildingRadiusSize);
 
         vec3StartingPosition = new Vector3(fRad * Mathf.Cos(fAngle), 0.5f, fRad * Mathf.Sin(fAngle));
         return vec3StartingPosition;

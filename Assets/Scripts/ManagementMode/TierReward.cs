@@ -15,20 +15,22 @@ public class TierReward{
     public string RewardName;
     public string RewardDescription;
     public TierReward PreviousRequiredReward;
+    public List<TierReward> ChildRewards;
     public bool Unlocked = false;
+    public GameObject ButtonObject;
 
     public Ability TierAbility;
     //public Buff TierBuff
     //public Resource TierResource
 
     // Create an ability tier reward
-    public TierReward(int pintTierLevel, string pstrName, string pstrDesc, TierReward pTierRewardPreviousRequired = null)
+    public TierReward(string pstrName, string pstrDesc, TierReward pTierRewardPreviousRequired = null)
     {
         RewardType = REWARDTYPE.Ability;
-        TierLevel = pintTierLevel;
         RewardName = pstrName;
         RewardDescription = pstrDesc;
         PreviousRequiredReward = pTierRewardPreviousRequired;
+        ChildRewards = new List<TierReward>();
         TierAbility = new Ability(pstrName, pstrDesc);
     }
 
@@ -38,11 +40,6 @@ public class TierReward{
 
     public Ability UnlockAbility()
     {
-        // If you haven't unlocked the previous tier or this isnt an ability reward, return nothing
-        if ((PreviousRequiredReward != null && !PreviousRequiredReward.Unlocked) || RewardType != REWARDTYPE.Ability)
-        {
-            return null;
-        }
         return TierAbility;
     }
 }

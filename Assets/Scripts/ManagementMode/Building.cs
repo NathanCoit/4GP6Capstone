@@ -76,7 +76,7 @@ public class Building{
     private GameObject CreateHousingBuildingObject(Faction.GodType type)
     {
         GameObject gobjHousingBuilding = null;
-        string strResourceKey = type.ToString() + BUILDING_TYPE.HOUSING.ToString() + "1";
+        string strResourceKey = "Buildings/" + type.ToString() + BUILDING_TYPE.HOUSING.ToString() + "1";
         if (BuildingResources.ContainsKey(strResourceKey) && BuildingResources[strResourceKey] != null)
         {
             gobjHousingBuilding = (GameObject)GameObject.Instantiate(
@@ -92,7 +92,7 @@ public class Building{
     private GameObject CreateMaterialBuildingObject(Faction.GodType type)
     {
         GameObject gobjMaterialBuilding = null;
-        string strResourceKey = type.ToString() + BUILDING_TYPE.MATERIAL.ToString() + "1";
+        string strResourceKey = "Buildings/" + type.ToString() + BUILDING_TYPE.MATERIAL.ToString() + "1";
         if(BuildingResources.ContainsKey(strResourceKey) && BuildingResources[strResourceKey] != null)
         {
             gobjMaterialBuilding = (GameObject)GameObject.Instantiate(
@@ -108,7 +108,7 @@ public class Building{
     private GameObject CreateVillageBuildingObject(Faction.GodType type)
     {
         GameObject gobjVillageBuilding = null;
-        string strResourceKey = type.ToString() + BUILDING_TYPE.VILLAGE.ToString() + "1";
+        string strResourceKey = "Buildings/" + type.ToString() + BUILDING_TYPE.VILLAGE.ToString() + "1";
         if (BuildingResources.ContainsKey(strResourceKey) && BuildingResources[strResourceKey] != null)
         {
             gobjVillageBuilding = (GameObject)GameObject.Instantiate(
@@ -123,7 +123,7 @@ public class Building{
     private GameObject CreateAltarBuildingObject(Faction.GodType type)
     {
         GameObject gobjAltarBuilding = null;
-        string strResourceKey = type.ToString() + BUILDING_TYPE.ALTAR.ToString() + "1";
+        string strResourceKey = "Buildings/" + type.ToString() + BUILDING_TYPE.ALTAR.ToString() + "1";
         if (BuildingResources.ContainsKey(strResourceKey) && BuildingResources[strResourceKey] != null)
         {
             gobjAltarBuilding = (GameObject)GameObject.Instantiate(
@@ -140,7 +140,7 @@ public class Building{
     {
         UpgradeLevel++;
         Vector3 OriginalPos;
-        string strResourceKey = OwningFaction.Type.ToString() + BuildingType.ToString() + UpgradeLevel.ToString();
+        string strResourceKey = "Buildings/" + OwningFaction.Type.ToString() + BuildingType.ToString() + UpgradeLevel.ToString();
         if (BuildingResources.ContainsKey(strResourceKey) && BuildingResources[strResourceKey] != null)
         {
             OriginalPos = BuildingPosition;
@@ -244,7 +244,7 @@ public class Building{
         string strResourcePath = string.Empty;
         foreach(Faction.GodType type in LoadedGodTypes)
         {
-            strResourcePath = type.ToString() + BUILDING_TYPE.ALTAR.ToString();
+            strResourcePath = "Buildings/" + type.ToString() + BUILDING_TYPE.ALTAR.ToString();
             // Load all 4 building types and the upgrade levels of each
             if(!BuildingResources.ContainsKey(strResourcePath + "1"))
             {
@@ -259,7 +259,7 @@ public class Building{
                 BuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
             }
 
-            strResourcePath = type.ToString() + BUILDING_TYPE.MATERIAL.ToString();
+            strResourcePath = "Buildings/" + type.ToString() + BUILDING_TYPE.MATERIAL.ToString();
             if (!BuildingResources.ContainsKey(strResourcePath + "1"))
             {
                 BuildingResources.Add(strResourcePath + "1", Resources.Load(strResourcePath + "1"));
@@ -273,7 +273,7 @@ public class Building{
                 BuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
             }
 
-            strResourcePath = type.ToString() + BUILDING_TYPE.VILLAGE.ToString();
+            strResourcePath = "Buildings/" + type.ToString() + BUILDING_TYPE.VILLAGE.ToString();
             if (!BuildingResources.ContainsKey(strResourcePath + "1"))
             {
                 BuildingResources.Add(strResourcePath + "1", Resources.Load(strResourcePath + "1"));
@@ -287,7 +287,7 @@ public class Building{
                 BuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
             }
 
-            strResourcePath = type.ToString() + BUILDING_TYPE.HOUSING.ToString();
+            strResourcePath = "Buildings/" + type.ToString() + BUILDING_TYPE.HOUSING.ToString();
             if (!BuildingResources.ContainsKey(strResourcePath + "1"))
             {
                 BuildingResources.Add(strResourcePath + "1", Resources.Load(strResourcePath + "1"));

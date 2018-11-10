@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     modeTextScript text1;
 	resourceScript resourcetext;
     public GameObject RewardUI;
+    public GameObject RewardNotifier;
     public GameObject AudioObject;
     private ExecuteSound sound;
     public TerrainMap GameMap;
@@ -636,7 +637,7 @@ public class GameManager : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.V))
         {
             CurrentMenuState = MENUSTATE.Tier_Reward_State;
-            EnableRewardsUI();
+            SetRewardsUIActive();
         }
         else if(Input.GetKeyDown(KeyCode.T))
         {
@@ -748,39 +749,11 @@ public class GameManager : MonoBehaviour
 
     private void CheckTierRewardStateInputs()
     {
-        List<TierReward> UnlockableRewards = null;
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             CurrentMenuState = MENUSTATE.Default_State;
-            DisableRewardsUI();
-        }
-
-        if(PlayerFaction.TierRewardPoints > 0)
-        {
-            // Check if the input is between 1-9
-            for (int intRewardNum = 1; intRewardNum < 9; intRewardNum++)
-            {
-                if (Input.GetKeyDown(Convert.ToString(intRewardNum)))
-                {
-                    UnlockableRewards = GetUnlockableRewards();
-                    // Check if the reward to unlock exists
-                    if (intRewardNum <= UnlockableRewards.Count)
-                    {
-                        // Player has selected a reward, and has enough to unlock it
-                        switch(UnlockableRewards[intRewardNum-1].RewardType)
-                        {
-                            case TierReward.REWARDTYPE.Ability:
-                                PlayerFaction.CurrentAbilites.Add(UnlockableRewards[intRewardNum-1].UnlockAbility());
-                                break;
-                        }
-                        UnlockableRewards[intRewardNum-1].Unlocked = true;
-                        PlayerFaction.TierRewardPoints--;
-                        EnableRewardsUI();
-                    }
-                }
-            }
-        }
-        
+            SetRewardsUIActive(false);
+        }        
     }
 
     private void BufferBuilding(Building.BUILDING_TYPE penumBuildingType)
@@ -815,17 +788,36 @@ public class GameManager : MonoBehaviour
         PlayerRewardTree = new List<TierReward>();
 
         // First tier, player gets this tier upon game start
-        BasePlayerTierReward = new TierReward(0, "ThrowMushroom", "Starting Mushroom God ability to smite enemies with divine mushroom punishment.");
+        BasePlayerTierReward = new TierReward("ThrowMushroom", "Starting Mushroom God ability to smite enemies with divine mushroom punishment.");
         PlayerRewardTree.Add(BasePlayerTierReward);
 
         // Second tier, unlocked at 1 * TierCount (100)
-        NextPlayerTierReward = new TierReward(1, "SecondAbility", "Second Ability", BasePlayerTierReward);
-        PlayerRewardTree.Add(NextPlayerTierReward);
+        NextPlayerTierReward = new TierReward("SecondAbility", "Second Ability", BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
         BasePlayerTierReward = NextPlayerTierReward;
 
         // Third tier, unlocked at 2 * TierCount (200). Final tier for Demo
-        NextPlayerTierReward = new TierReward(2, "ThirdAbility", "Third Ability", BasePlayerTierReward);
-        PlayerRewardTree.Add(NextPlayerTierReward);
+        NextPlayerTierReward = new TierReward("ThirdAbility", "Third Ability", BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+        NextPlayerTierReward = new TierReward("Fourth Ability", "Fourth Ability", BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+        NextPlayerTierReward = new TierReward("Fifth Ability", "Fifth Ability", BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+        BasePlayerTierReward = new TierReward("Eat", "Eat a mushroom to feel better");
+        PlayerRewardTree.Add(BasePlayerTierReward);
+
+        NextPlayerTierReward = new TierReward("Puke", "Puke up that mushroom you just ate", BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+        NextPlayerTierReward = new TierReward("Evolve", "Survive the mushroom", BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+
+        RewardUI.GetComponentInChildren<PopulateTierIcons>().InitializeButtons(PlayerRewardTree);
+        RewardUI.SetActive(false);
     }
 
     private List<TierReward> GetUnlockableRewards()
@@ -838,33 +830,20 @@ public class GameManager : MonoBehaviour
         && !UnlockableReward.Unlocked);
     }
 
-    private void EnableRewardsUI()
+    private void SetRewardsUIActive(bool blnActive = true)
     {
-        string strRewardsText = string.Empty;
-        RewardUI.SetActive(true);
-        strRewardsText = string.Format("Current Reward Points: {0}, Next Point at {1} worshippers\n", PlayerFaction.TierRewardPoints, TierWorshipperCount);
-        if(PlayerFaction.TierRewardPoints > 0)
-        {
-            foreach (TierReward UnlockableReward in GetUnlockableRewards())
-            {
-                strRewardsText += string.Format("1. {0}\n", UnlockableReward.RewardName);
-            }
-        }
-        RewardUI.GetComponent<Text>().text = strRewardsText;
+        RewardUI.SetActive(blnActive);
+        RewardNotifier.SetActive(false);
+        Camera.main.GetComponent<Cam>().CameraMovementEnabled = !blnActive;
     }
 
-    private void DisableRewardsUI()
-    {
-        RewardUI.GetComponent<Text>().text = "";
-        RewardUI.SetActive(false);
-    }
 
     private void NotifyPlayerOfAvaiableRewards()
     {
         if(CurrentMenuState != MENUSTATE.Tier_Reward_State)
         {
-            RewardUI.SetActive(true);
-            RewardUI.GetComponent<Text>().text = "A reward is available, Press 'V' to see!";
+            RewardNotifier.SetActive(true);
+            RewardNotifier.GetComponent<Text>().text = "A reward is available, Press 'V' to see!";
         }
     }
 
@@ -884,5 +863,49 @@ public class GameManager : MonoBehaviour
         {
             // You've won
         }
+    }
+
+    private TierReward FindRewardByName(string RewardName, List<TierReward> Rewards)
+    {
+        TierReward Found = null;
+        if(Rewards != null)
+        {
+            foreach (TierReward reward in Rewards)
+            {
+                if (reward.RewardName.Equals(RewardName))
+                {
+                    return reward;
+                }
+                Found = FindRewardByName(RewardName, reward.ChildRewards);
+                if(Found != null)
+                {
+                    return Found;
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    public bool UnlockReward(TierReward reward)
+    {
+        bool AbleToUnlock = false;
+        //check if this reward can be unlocked
+        AbleToUnlock = (reward.PreviousRequiredReward == null || reward.PreviousRequiredReward.Unlocked) && PlayerFaction.TierRewardPoints > 0 && !reward.Unlocked;
+        if(AbleToUnlock)
+        {
+            PlayerFaction.TierRewardPoints--;
+            reward.Unlocked = true;
+            switch(reward.RewardType)
+            {
+                case TierReward.REWARDTYPE.Ability:
+                    PlayerFaction.CurrentAbilites.Add(reward.UnlockAbility());
+                    break;
+                default:
+                    //do nothing
+                    break;
+            }
+        }
+        return AbleToUnlock;
     }
 }

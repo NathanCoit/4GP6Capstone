@@ -20,9 +20,11 @@ public class GameManager : MonoBehaviour
         Building_Selected_State, //SelectedBuilding != null
         Moving_Building_State, //BufferedBuilding != null
         Tier_Reward_State,
+        Upgrade_State,
         Paused_State
     }
-
+    public int InitialPlayerMaterials = 0;
+    public int InitialPlayerWorshippers = 0;
 	public Texture mapTexture;
     public GameObject GameInfoObjectPrefab;
     private GameInfo gameInfo;
@@ -54,20 +56,25 @@ public class GameManager : MonoBehaviour
     private int CurrentTier = 0;
     public int TierDifficultyIncrease = 10; // Each tier gets X*Tier buildings to start
     private MENUSTATE LastMenuState = MENUSTATE.Default_State;
+    private List<float> MaterialMultipliers = new List<float>();
+    private List<float> WorshipperMultipliers = new List<float>();
+    public int EnemyChallengeTimer = 300; // Seconds until an enemy attacks
+    private int CurrentTimer = 0;
+    public float BuildingRadius = 10;
     // Use this for any initializations needed by other scripts
     void Awake()
     {
+        Building.BuildingRadiusSize = BuildingRadius;
 		text1 = FindObjectOfType<modeTextScript>();
 		resourcetext = FindObjectOfType<resourceScript>();
         sound = AudioObject.GetComponent<ExecuteSound>();
         Building bldEnemyBuilding = null;
         Faction facEnemyFaction = null;
-        Building.BUILDING_TYPE RandomType;
         Vector3 vec3VillagePos;
         List<Faction.GodType> GodTypes;
         List<Faction> CurrentTierFactions;
         float TierRadius = (MapRadius / 2) / MapTierCount;
-
+        int Attempts = 0;
         if (!InitializeGameInfoObject())
         {
             // Starting new game scene, initialize map, players, and buildings
@@ -80,8 +87,8 @@ public class GameManager : MonoBehaviour
             //Mushroom for now
             PlayerFaction = new Faction("YourGod", Faction.GodType.Mushroom, 0)
             {
-                WorshipperCount = 10000,
-                MaterialCount = 10000
+                WorshipperCount = InitialPlayerWorshippers,
+                MaterialCount = InitialPlayerMaterials
             };
             CurrentFactions.Add(PlayerFaction);
             // Create tier one factions
@@ -105,7 +112,9 @@ public class GameManager : MonoBehaviour
                 {
                     facEnemyFaction = new Faction("EnemyGod" + enemyCount, GodTypes[enemyCount], TierIndex)
                     {
-                        FactionDifficulty = (enemyCount + 1) * ((TierIndex + 1) * TierDifficultyIncrease)
+                        FactionDifficulty = (enemyCount + 1) + ((TierIndex + 1) * TierDifficultyIncrease),
+                        MaterialCount = (int)Math.Pow(10, TierIndex + 2),
+                        WorshipperCount = (int)Math.Pow(10,TierIndex+2),
                     };
                     CurrentFactions.Add(facEnemyFaction);
                     EnemyFactions.Add(facEnemyFaction);
@@ -129,38 +138,16 @@ public class GameManager : MonoBehaviour
             {
                 bldEnemyBuilding = new Building(Building.BUILDING_TYPE.VILLAGE, enemyFaction, BuildingCostModifier);
                 vec3VillagePos = GameMap.CalculateRandomPosition(enemyFaction);
-                while(!GameMap.PlaceBuilding(bldEnemyBuilding, vec3VillagePos))
+                while(!GameMap.PlaceBuilding(bldEnemyBuilding, vec3VillagePos) && Attempts < 100)
                 {
                     vec3VillagePos = GameMap.CalculateRandomPosition(enemyFaction);
+                    Attempts++;
                 }
-
+                Attempts = 0;
                 // Generate starting buildings based on enemy difficulty
-                for(int i = 0; i < 3 * enemyFaction.FactionDifficulty; i++)
+                for(int i = 0; i < enemyFaction.FactionDifficulty; i++)
                 {
-                    switch((int)(UnityEngine.Random.value * 100 / 25))
-                    {
-                        case 0:
-                            RandomType = Building.BUILDING_TYPE.ALTAR;
-                            break;
-                        case 1:
-                            RandomType = Building.BUILDING_TYPE.HOUSING;
-                            break;
-                        case 2:
-                            RandomType = Building.BUILDING_TYPE.MATERIAL;
-                            break;
-                        case 3:
-                            RandomType = Building.BUILDING_TYPE.ALTAR;
-                            break;
-                        default:
-                            RandomType = Building.BUILDING_TYPE.MATERIAL;
-                            break;
-                    }
-                    // Place a random building for that faction
-                    bldEnemyBuilding = new Building(RandomType, enemyFaction);
-                    if(!GameMap.PlaceBuilding(bldEnemyBuilding, GameMap.CalculateRandomPosition(enemyFaction)))
-                    {
-                        bldEnemyBuilding.Destroy();
-                    }
+                    PlaceRandomBuilding(enemyFaction);
                 }
             }
 
@@ -242,8 +229,7 @@ public class GameManager : MonoBehaviour
                 InitBuilding = new Building(building.BuildingType, EnemyFaction);
                 GameMap.PlaceBuilding(InitBuilding, building.BuildingPosition);
             }
-
-            // Load tech tree
+            
 
 
             if(gameInfo.LastBattleStatus == GameInfo.BATTLESTATUS.Victory)
@@ -263,6 +249,12 @@ public class GameManager : MonoBehaviour
                 // Check if that was the last enemy in that tier, if so, unlock next tier
                 if(CurrentFactions.FindAll(enemyFaction => enemyFaction.GodTier == CurrentTier && enemyFaction != PlayerFaction).Count == 0)
                 {
+                    // Check if there a no more gods in the next tier too
+                    if(CurrentFactions.FindAll(enemyFaction => enemyFaction.GodTier == CurrentTier + 1 && enemyFaction != PlayerFaction).Count == 0)
+                    {
+                        // No gods in the current tier, no gods in the next tier => game over you win
+                        // END GAME
+                    }
                     UnlockNextTier();
                 }
             }
@@ -312,20 +304,10 @@ public class GameManager : MonoBehaviour
                 gameInfo.SavedFactions.Add(GameInfo.CreateSavedFaction(faction));
             }
         }
-
-        // Save player abilities
-        foreach (Ability PlayerAbility in PlayerFaction.CurrentAbilites)
-        {
-            gameInfo.PlayerAbilities.Add(PlayerAbility.AbilityName);
-        }
-        gameInfo.EnemyWorshipperCount = EnemyFaction.WorshipperCount;
-        gameInfo.EnemyMorale = EnemyFaction.Morale;
-        foreach (Ability PlayerAbility in EnemyFaction.CurrentAbilites)
-        {
-            gameInfo.EnemyAbilites.Add(PlayerAbility.AbilityName);
-        }
+        
         gameInfo.MapRadius = MapRadius;
         gameInfo.CurrentTier = CurrentTier;
+        gameInfo.PlayerRewards = SaveRewardTree(PlayerRewardTree);
         SceneManager.LoadScene("CombatMode");
     }
 
@@ -364,6 +346,9 @@ public class GameManager : MonoBehaviour
             case MENUSTATE.Paused_State:
                 CheckPausedStateInputs();
                 break;
+            case MENUSTATE.Upgrade_State:
+                CheckUpgradeStateInput();
+                break;
         }
         // Global pause hotkey, game can be paused from any menu state
         if(Input.GetKeyDown(KeyCode.P) && CurrentMenuState != MENUSTATE.Paused_State)
@@ -393,6 +378,15 @@ public class GameManager : MonoBehaviour
 		}
 
 		resourcetext.resourceUIUpdate (PlayerFaction.MaterialCount, PlayerFaction.WorshipperCount, PlayerFaction.Morale);
+    }
+
+    private void CheckUpgradeStateInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            CurrentMenuState = MENUSTATE.Building_Selected_State;
+            SetUpgradeUIActive(false);
+        }
     }
 
     private void CheckPausedStateInputs()
@@ -492,6 +486,8 @@ public class GameManager : MonoBehaviour
         List<Building> VillageBuildings = null;
         List<Building> MaterialBuildings = null;
         List<Building> HousingBuildings = null;
+        Building tempBuilding = null;
+        Faction ChallengingFaction = null;
         int intHousingTotal = 0;
         int intMaterialsToAdd = 0;
         int intWorshippersToAdd = 0;
@@ -544,8 +540,39 @@ public class GameManager : MonoBehaviour
 
                     if (CurrentFaction == PlayerFaction)
                     {
+                        foreach(float multiplier in MaterialMultipliers)
+                        {
+                            intMaterialsToAdd += (int)((multiplier - 1) * intMaterialsToAdd);
+                        }
+                        foreach (float multiplier in WorshipperMultipliers)
+                        {
+                            intWorshippersToAdd += (int)((multiplier - 1) * intWorshippersToAdd);
+                        }
                         WorPerSec = (float)intWorshippersToAdd / 2;
                         MatPerSec = (float)intMaterialsToAdd / 2;
+                    }
+                    else
+                    {
+                        // Check if enemy has enough resources to upgrade a building, if so upgrade a random building
+                        // Everything costs double for bots to allow player to eventually catch up
+                        if(CurrentFaction.MaterialCount > 100)
+                        {
+                            tempBuilding = CurrentFaction.OwnedBuildings.Find(MatchingBuilding => MatchingBuilding.UpgradeLevel <= 2);
+                            if(tempBuilding != null)
+                            {
+                                tempBuilding.UpgradeBuilding(false);
+                                CurrentFaction.MaterialCount -= 2 * (Building.CalculateBuildingUpgradeCost(tempBuilding.BuildingType, BuildingCostModifier));
+                            }
+                            else
+                            {
+                                // Try to place a new building
+                                tempBuilding = PlaceRandomBuilding(CurrentFaction);
+                                if (tempBuilding != null)
+                                {
+                                    CurrentFaction.MaterialCount -= 2 * tempBuilding.BuildingCost;
+                                }
+                            }
+                        }
                     }
 
                     // Add the appropriate resources
@@ -605,7 +632,14 @@ public class GameManager : MonoBehaviour
                 CurrentMenuState,
                 PlayerFaction.TierRewardPoints));
         }
-
+        CurrentTimer += 2;
+        if(CurrentTimer > EnemyChallengeTimer)
+        {
+            ChallengingFaction = CurrentFactions.Find(MatchingFaction => MatchingFaction != PlayerFaction && MatchingFaction.GodTier == CurrentTier);
+            Debug.Log(string.Format("{0} has challenged you!", ChallengingFaction.GodName));
+            EnterCombatMode(ChallengingFaction);
+        }
+        
     }
 
     private void CheckBuildingStateInputs()
@@ -627,6 +661,12 @@ public class GameManager : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.D))
         {
             BufferBuilding(Building.BUILDING_TYPE.HOUSING);
+        }
+        else if (Input.GetKeyDown(KeyCode.F))
+        {
+            // Only allow 1 upgrade building
+            if(PlayerFaction.OwnedBuildings.Find(upgradeBuilding => upgradeBuilding.BuildingType == Building.BUILDING_TYPE.UPGRADE) == null)
+            BufferBuilding(Building.BUILDING_TYPE.UPGRADE);
         }
     }
 
@@ -749,6 +789,11 @@ public class GameManager : MonoBehaviour
                     SelectedBuilding = null;
                     CurrentMenuState = MENUSTATE.Default_State;
                 }
+                else if(Input.GetKeyDown(KeyCode.X))
+                {
+                    CurrentMenuState = MENUSTATE.Upgrade_State;
+                    SetUpgradeUIActive();
+                }
             }
             else
             {
@@ -825,17 +870,34 @@ public class GameManager : MonoBehaviour
 
         NextPlayerTierReward = new TierReward("Fifth Ability", "Fifth Ability", BasePlayerTierReward);
         BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+        BasePlayerTierReward = NextPlayerTierReward;
 
-        BasePlayerTierReward = new TierReward("Eat", "Eat a mushroom to feel better");
+        NextPlayerTierReward = new TierReward("Sixth Ability", "Sixth Ability", BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+        NextPlayerTierReward = new TierReward("Seventh Ability", "Sixth Ability", BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+        BasePlayerTierReward = new TierReward("Materials", "100 Materials", TierReward.RESOURCETYPE.Material, 100);
         PlayerRewardTree.Add(BasePlayerTierReward);
 
-        NextPlayerTierReward = new TierReward("Puke", "Puke up that mushroom you just ate", BasePlayerTierReward);
+        NextPlayerTierReward = new TierReward("2xMat", "2x material growth", TierReward.RESOURCETYPE.Material, 2.0f, BasePlayerTierReward);
         BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
 
-        NextPlayerTierReward = new TierReward("Evolve", "Survive the mushroom", BasePlayerTierReward);
+        NextPlayerTierReward = new TierReward("2xWorshipper", "2x worshipper growth", TierReward.RESOURCETYPE.Worshipper, 2.0f, BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+        BasePlayerTierReward = NextPlayerTierReward;
+
+        NextPlayerTierReward = new TierReward("2xWorshipperA", "2x worshipper growth", TierReward.RESOURCETYPE.Worshipper, 2.0f, BasePlayerTierReward);
         BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
 
+        //PlayerRewardTree.Add(new TierReward("Worshippers", "100 Worshippers", TierReward.RESOURCETYPE.Worshipper, 100));
 
+        //PlayerRewardTree.Add(new TierReward("WorshippersA", "100 Worshippers", TierReward.RESOURCETYPE.Worshipper, 100));
+        if (gameInfo.PlayerRewards.Count > 0 )
+        {
+            LoadRewardTree(gameInfo.PlayerRewards);
+        }
         RewardUI.GetComponentInChildren<PopulateTierIcons>().InitializeButtons(PlayerRewardTree);
         RewardUI.SetActive(false);
     }
@@ -854,6 +916,12 @@ public class GameManager : MonoBehaviour
     {
         RewardUI.SetActive(blnActive);
         RewardNotifier.SetActive(false);
+        Camera.main.GetComponent<Cam>().CameraMovementEnabled = !blnActive;
+    }
+
+    private void SetUpgradeUIActive(bool blnActive = true)
+    {
+        // Enable/ disable upgrade UI
         Camera.main.GetComponent<Cam>().CameraMovementEnabled = !blnActive;
     }
 
@@ -921,6 +989,28 @@ public class GameManager : MonoBehaviour
                 case TierReward.REWARDTYPE.Ability:
                     PlayerFaction.CurrentAbilites.Add(reward.UnlockAbility());
                     break;
+                case TierReward.REWARDTYPE.Resource:
+                    switch(reward.ResourceType)
+                    {
+                        case TierReward.RESOURCETYPE.Material:
+                            PlayerFaction.MaterialCount += reward.Amount;
+                            break;
+                        case TierReward.RESOURCETYPE.Worshipper:
+                            PlayerFaction.WorshipperCount += reward.Amount;
+                            break;
+                    }
+                    break;
+                case TierReward.REWARDTYPE.ResourceMultiplier:
+                    switch(reward.ResourceType)
+                    {
+                        case TierReward.RESOURCETYPE.Material:
+                            MaterialMultipliers.Add(reward.Multiplier);
+                            break;
+                        case TierReward.RESOURCETYPE.Worshipper:
+                            WorshipperMultipliers.Add(reward.Multiplier);
+                            break;
+                    }
+                    break;
                 default:
                     //do nothing
                     break;
@@ -946,5 +1036,72 @@ public class GameManager : MonoBehaviour
             Camera.main.GetComponent<Cam>().CameraMovementEnabled = true;
             CurrentMenuState = LastMenuState;
         }
+    }
+
+    public List<string> SaveRewardTree(List<TierReward> rewards)
+    {
+        List<string> savedRewards = new List<string>();
+        List<string> childRewards = null;
+        foreach(TierReward reward in rewards)
+        {
+            if(reward.Unlocked)
+            {
+                savedRewards.Add(reward.RewardName);
+                childRewards = SaveRewardTree(reward.ChildRewards);
+                if (childRewards != null)
+                {
+                    foreach (string savedReward in childRewards)
+                    {
+                        savedRewards.Add(savedReward);
+                    }
+                }
+            }
+        }
+        return savedRewards;
+    }
+
+    public void LoadRewardTree(List<string> savedRewards)
+    {
+        TierReward reward; 
+        foreach(string savedReward in savedRewards)
+        {
+            reward = FindRewardByName(savedReward, PlayerRewardTree);
+            if(reward != null)
+            {
+                reward.Unlocked = true;
+            }
+        }
+    }
+
+    private Building PlaceRandomBuilding(Faction placingFaction)
+    {
+        Building.BUILDING_TYPE RandomType;
+        Building blnRandomBuilding = null;
+        switch ((int)(UnityEngine.Random.value * 100 / 25))
+        {
+            case 0:
+                RandomType = Building.BUILDING_TYPE.ALTAR;
+                break;
+            case 1:
+                RandomType = Building.BUILDING_TYPE.HOUSING;
+                break;
+            case 2:
+                RandomType = Building.BUILDING_TYPE.MATERIAL;
+                break;
+            case 3:
+                RandomType = Building.BUILDING_TYPE.ALTAR;
+                break;
+            default:
+                RandomType = Building.BUILDING_TYPE.MATERIAL;
+                break;
+        }
+        // Place a random building for that faction
+        blnRandomBuilding = new Building(RandomType, placingFaction);
+        if (!GameMap.PlaceBuilding(blnRandomBuilding, GameMap.CalculateRandomPosition(placingFaction)))
+        {
+            blnRandomBuilding.Destroy();
+            return null;
+        }
+        return blnRandomBuilding;
     }
 }

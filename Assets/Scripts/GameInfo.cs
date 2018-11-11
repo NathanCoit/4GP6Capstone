@@ -31,12 +31,14 @@ public class GameInfo : MonoBehaviour {
         public List<float[]> FactionArea;
         public Faction.GodType Type;
         public int GodTier;
+        public int RewardPoints;
+        public List<string> Abilities;
     }
     // Initialize any variables that need to be stored here, give each a default value.
     // Variables shared by combat and management mode
     public int PlayerWorshipperCount = 300;
     public float PlayerMorale = 0;
-    public List<string> PlayerAbilities = new List<string>();
+    public List<string> PlayerRewards = new List<string>();
     public int EnemyWorshipperCount = 200;
     public float EnemyMorale = 0;
     public List<string> EnemyAbilites = new List<string>();
@@ -79,15 +81,20 @@ public class GameInfo : MonoBehaviour {
             FactionArea = factionToSave.FactionArea,
             Type = factionToSave.Type,
             GodTier = factionToSave.GodTier,
-            OwnedBuildings = new List<GameInfo.SavedBuilding>()
+            RewardPoints = factionToSave.TierRewardPoints,
+            OwnedBuildings = new List<SavedBuilding>(),
+            Abilities = new List<string>()
         };
-
+        
+        foreach(Ability ability in factionToSave.CurrentAbilites)
+        {
+            savedFaction.Abilities.Add(ability.AbilityName);
+        }
         foreach (Building building in factionToSave.OwnedBuildings)
         {
             savedFaction.OwnedBuildings.Add(CreateSavedBuilding(building));
         }
 
         return savedFaction;
-    }
-	
+    }	
 }

@@ -5,8 +5,10 @@ using UnityEngine.UI;
 
 public class PopulateTierIcons : MonoBehaviour
 {
-    private float Scale = 0;
-    private List<GameObject> Buttons;
+    private float XScale = 0;
+    private float YScale = 0;
+    private int MaxRewardDepth = 0;
+    public Dictionary<string,GameObject> Buttons;
     // Use this for initialization
     void Start()
     {
@@ -21,22 +23,22 @@ public class PopulateTierIcons : MonoBehaviour
 
     public void InitializeButtons(List<TierReward> TierRewards)
     {
-        Buttons = new List<GameObject>();
-        UnityEngine.Object btn = Resources.Load("Button");
-        int MaxRewardDepth = GetTreeMaxDepth(TierRewards);
+        Buttons = new Dictionary<string, GameObject>();
+        Object btn = Resources.Load("Button");
+        MaxRewardDepth = GetTreeMaxDepth(TierRewards);
         float startingx = 0 - (Screen.width / 2);
         float startingy = 0 - (Screen.height / 2);
         float endingx = Screen.width / 2;
         float endingy = Screen.height / 2;
         endingy = startingy + (endingy - startingy) / MaxRewardDepth;
-        // Change scale based on screen size, should be able to fit 
-        Scale = ((MaxRewardDepth * TierRewards.Count) / 8) + 1;
-
+        // Change scale based on screen size, should be able to fit all rewards without overlap
+        XScale = ((TierRewards.Count + MaxRewardDepth) / 3f);
+        YScale = (MaxRewardDepth / 3f);
         // Place buttons
         PlaceButtons(btn, TierRewards, startingx, endingx, startingy, endingy);
 
         // Scale UI
-        GetComponent<RectTransform>().localScale = new Vector3(Scale, Scale, 1);
+        GetComponent<RectTransform>().localScale = new Vector3(XScale, YScale, 1);
     }
 
     /// <summary>
@@ -52,6 +54,7 @@ public class PopulateTierIcons : MonoBehaviour
     {
         // Place button between bounds
         GameObject Button;
+        RectTransform btnRectTransform;
         float segment;
         float currentx;
         if (TierRewards != null && TierRewards.Count > 0)
@@ -63,14 +66,19 @@ public class PopulateTierIcons : MonoBehaviour
                 Button = (GameObject)Instantiate(btn);
                 Button.transform.SetParent(this.transform);
                 Button.GetComponentInChildren<Text>().text = Reward.RewardName;
-                Button.GetComponent<RectTransform>().anchoredPosition = new Vector3(currentx + (segment / 2), startingy + (endingy - startingy) / 2, 0);
-                Button.GetComponent<RectTransform>().localScale = new Vector3(1 / Scale, 1 / Scale, 1 / Scale);
+                btnRectTransform = Button.GetComponent<RectTransform>();
+                btnRectTransform.anchoredPosition = new Vector3(currentx + (segment / 2), startingy + (endingy - startingy) / 2, 0);
+                btnRectTransform.localScale = new Vector3(1 / XScale, 1 / YScale, 1);
                 Button.GetComponent<Button>().onClick.AddListener(() => RewardClicked(Reward));
                 Reward.ButtonObject = Button;
-                Buttons.Add(Button);
-                if(Reward.PreviousRequiredReward!= null && !Reward.PreviousRequiredReward.Unlocked)
+                Buttons.Add(Reward.RewardName,Button);
+                if((Reward.PreviousRequiredReward!= null && !Reward.PreviousRequiredReward.Unlocked) || Reward.Unlocked)
                 {
-                    Button.SetActive(false);
+                    Button.GetComponent<Image>().color = Color.grey;
+                }
+                if(segment < 2 * btnRectTransform.rect.width)
+                {
+                    btnRectTransform.localScale.Scale(new Vector3(0.1f, 0.1f, 1));
                 }
                 // Place child buttons
                 PlaceButtons(btn, Reward.ChildRewards, currentx, currentx + segment, endingy, endingy + (endingy - startingy));
@@ -96,15 +104,15 @@ public class PopulateTierIcons : MonoBehaviour
         return ++Max;
     }
 
-    void RewardClicked(TierReward reward)
+    public void RewardClicked(TierReward reward)
     {
         if (GameObject.Find("GameManager").GetComponent<GameManager>().UnlockReward(reward))
         {
             // Grey out self, light up child buttons
-            reward.ButtonObject.SetActive(false);
+            reward.ButtonObject.GetComponent<Image>().color = Color.grey;
             foreach(TierReward childReward in reward.ChildRewards)
             {
-                childReward.ButtonObject.SetActive(true);
+                childReward.ButtonObject.GetComponent<Image>().color = Color.white;
             }
         }
     }

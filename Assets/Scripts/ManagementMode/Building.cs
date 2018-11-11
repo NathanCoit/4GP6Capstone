@@ -26,7 +26,8 @@ public class Building{
         MATERIAL,
         HOUSING,
         VILLAGE,
-        ALTAR
+        ALTAR,
+        UPGRADE
     }
     public Faction OwningFaction;
 
@@ -64,6 +65,9 @@ public class Building{
             case BUILDING_TYPE.HOUSING:
                 gobjBuilding = CreateHousingBuildingObject(type);
                 break;
+            case BUILDING_TYPE.UPGRADE:
+                gobjBuilding = CreateUpgradeBuildingObject(type);
+                break;
         }
         if(gobjBuilding != null)
         {
@@ -71,6 +75,22 @@ public class Building{
             gobjBuilding.transform.localScale = new Vector3(BuildingRadiusSize, BuildingRadiusSize, BuildingRadiusSize);
         }
         return gobjBuilding;
+    }
+
+    private GameObject CreateUpgradeBuildingObject(Faction.GodType type)
+    {
+        GameObject gobjUpgradeBuilding = null;
+        string strResourceKey = "Buildings/" + type.ToString() + BUILDING_TYPE.UPGRADE.ToString() + "1";
+        if (BuildingResources.ContainsKey(strResourceKey) && BuildingResources[strResourceKey] != null)
+        {
+            gobjUpgradeBuilding = (GameObject)GameObject.Instantiate(
+            BuildingResources[strResourceKey]);
+        }
+        else
+        {
+            gobjUpgradeBuilding = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        }
+        return gobjUpgradeBuilding;
     }
 
     private GameObject CreateHousingBuildingObject(Faction.GodType type)
@@ -136,7 +156,7 @@ public class Building{
         return gobjAltarBuilding;
     }
 
-    public void UpgradeBuilding()
+    public void UpgradeBuilding(bool outline = true)
     {
         UpgradeLevel++;
         Vector3 OriginalPos;
@@ -150,7 +170,10 @@ public class Building{
             BuildingObject.transform.localScale = new Vector3(BuildingRadiusSize, BuildingRadiusSize, BuildingRadiusSize);
             BuildingPosition = OriginalPos;
             BuildingObject.AddComponent<LineRenderer>();
-            ToggleBuildingOutlines(true);
+            if(outline)
+            {
+                ToggleBuildingOutlines(true);
+            }            
         }
         else
         {
@@ -214,6 +237,9 @@ public class Building{
             case (Building.BUILDING_TYPE.VILLAGE):
                 BuildingCost = Convert.ToInt32(10 * BuildingCostModifier);
                 break;
+            case (Building.BUILDING_TYPE.UPGRADE):
+                BuildingCost = Convert.ToInt32(100 * BuildingCostModifier);
+                break;
         }
         return BuildingCost;
     }
@@ -235,6 +261,9 @@ public class Building{
             case (Building.BUILDING_TYPE.VILLAGE):
                 BuildingCost = Convert.ToInt32(50 * BuildingCostModifier);
                 break;
+            case (BUILDING_TYPE.UPGRADE):
+                BuildingCost = Convert.ToInt32(100 * BuildingCostModifier);
+                break;
         }
         return BuildingCost;
     }
@@ -245,7 +274,7 @@ public class Building{
         foreach(Faction.GodType type in LoadedGodTypes)
         {
             strResourcePath = "Buildings/" + type.ToString() + BUILDING_TYPE.ALTAR.ToString();
-            // Load all 4 building types and the upgrade levels of each
+            // Load all 5 building types and the upgrade levels of each
             if(!BuildingResources.ContainsKey(strResourcePath + "1"))
             {
                 BuildingResources.Add(strResourcePath + "1", Resources.Load(strResourcePath + "1"));
@@ -288,6 +317,20 @@ public class Building{
             }
 
             strResourcePath = "Buildings/" + type.ToString() + BUILDING_TYPE.HOUSING.ToString();
+            if (!BuildingResources.ContainsKey(strResourcePath + "1"))
+            {
+                BuildingResources.Add(strResourcePath + "1", Resources.Load(strResourcePath + "1"));
+            }
+            if (!BuildingResources.ContainsKey(strResourcePath + "2"))
+            {
+                BuildingResources.Add(strResourcePath + "2", Resources.Load(strResourcePath + "2"));
+            }
+            if (!BuildingResources.ContainsKey(strResourcePath + "2"))
+            {
+                BuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
+            }
+
+            strResourcePath = "Buildings/" + type.ToString() + BUILDING_TYPE.UPGRADE.ToString();
             if (!BuildingResources.ContainsKey(strResourcePath + "1"))
             {
                 BuildingResources.Add(strResourcePath + "1", Resources.Load(strResourcePath + "1"));

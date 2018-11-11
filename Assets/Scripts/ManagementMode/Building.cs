@@ -306,7 +306,7 @@ public class Building{
     public void ReloadBuildingObject()
     {
         Vector3 OriginalPos;
-        string strResourceKey = OwningFaction.Type.ToString() + BuildingType.ToString() + UpgradeLevel.ToString();
+        string strResourceKey = "Buildings/" + OwningFaction.Type.ToString() + BuildingType.ToString() + UpgradeLevel.ToString();
         if (BuildingResources.ContainsKey(strResourceKey) && BuildingResources[strResourceKey] != null)
         {
             OriginalPos = BuildingPosition;

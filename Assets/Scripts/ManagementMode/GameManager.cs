@@ -19,7 +19,8 @@ public class GameManager : MonoBehaviour
         Buffered_Building_State, //BufferedBuilding != null
         Building_Selected_State, //SelectedBuilding != null
         Moving_Building_State, //BufferedBuilding != null
-        Tier_Reward_State
+        Tier_Reward_State,
+        Paused_State
     }
 
 	public Texture mapTexture;
@@ -52,6 +53,7 @@ public class GameManager : MonoBehaviour
     public int EnemiesPerTier = 3;
     private int CurrentTier = 0;
     public int TierDifficultyIncrease = 10; // Each tier gets X*Tier buildings to start
+    private MENUSTATE LastMenuState = MENUSTATE.Default_State;
     // Use this for any initializations needed by other scripts
     void Awake()
     {
@@ -359,15 +361,25 @@ public class GameManager : MonoBehaviour
             case MENUSTATE.Tier_Reward_State:
                 CheckTierRewardStateInputs();
                 break;
-
+            case MENUSTATE.Paused_State:
+                CheckPausedStateInputs();
+                break;
         }
-        if (BufferedBuilding != null)
+        // Global pause hotkey, game can be paused from any menu state
+        if(Input.GetKeyDown(KeyCode.P) && CurrentMenuState != MENUSTATE.Paused_State)
         {
-            UpdateBufferedBuilding();
+            SetPaused(true);
         }
-        else
+        if(CurrentMenuState != MENUSTATE.Paused_State && CurrentMenuState != MENUSTATE.Tier_Reward_State)
         {
-            CheckForSelectedBuilding();
+            if (BufferedBuilding != null)
+            {
+                UpdateBufferedBuilding();
+            }
+            else
+            {
+                CheckForSelectedBuilding();
+            }
         }
 
 		if (CurrentMenuState == MENUSTATE.Default_State) {
@@ -381,6 +393,14 @@ public class GameManager : MonoBehaviour
 		}
 
 		resourcetext.resourceUIUpdate (PlayerFaction.MaterialCount, PlayerFaction.WorshipperCount, PlayerFaction.Morale);
+    }
+
+    private void CheckPausedStateInputs()
+    {
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            SetPaused(false);
+        }
     }
 
     private void CheckForSelectedBuilding()
@@ -478,7 +498,7 @@ public class GameManager : MonoBehaviour
 
         float WorPerSec = 0;
         float MatPerSec = 0;
-        if (CurrentFactions != null)
+        if (CurrentFactions != null && CurrentMenuState != MENUSTATE.Paused_State)
         {
             foreach (Faction CurrentFaction in CurrentFactions)
             {
@@ -907,5 +927,24 @@ public class GameManager : MonoBehaviour
             }
         }
         return AbleToUnlock;
+    }
+
+    public void SetPaused(bool pause = true)
+    {
+
+        
+        if(pause)
+        {
+            Time.timeScale = 0;
+            Camera.main.GetComponent<Cam>().CameraMovementEnabled = false;
+            LastMenuState = CurrentMenuState;
+            CurrentMenuState = MENUSTATE.Paused_State;
+        }
+        else
+        {
+            Time.timeScale = 1;
+            Camera.main.GetComponent<Cam>().CameraMovementEnabled = true;
+            CurrentMenuState = LastMenuState;
+        }
     }
 }

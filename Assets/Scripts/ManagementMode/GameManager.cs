@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
     public int BuildingCostModifier = 1;
     private MENUSTATE CurrentMenuState = MENUSTATE.Default_State;
     private Building BufferedBuilding = null;
-    private Faction PlayerFaction = null;
+    public Faction PlayerFaction { get; private set; }
     private List<Faction> EnemyFactions = null;
     private GameObject SelectedGameObject = null;
     private Building SelectedBuilding = null;
@@ -65,6 +65,7 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         Building.BuildingRadiusSize = BuildingRadius;
+        Building.BuildingCostModifier = BuildingCostModifier;
 		text1 = FindObjectOfType<modeTextScript>();
 		resourcetext = FindObjectOfType<resourceScript>();
         sound = AudioObject.GetComponent<ExecuteSound>();
@@ -129,14 +130,14 @@ public class GameManager : MonoBehaviour
             }
             Building.LoadBuildingResources(GodTypes);
             //Create and place player village
-            PlayerVillage = new Building(Building.BUILDING_TYPE.VILLAGE, PlayerFaction, BuildingCostModifier);
+            PlayerVillage = new Building(Building.BUILDING_TYPE.VILLAGE, PlayerFaction);
             vec3VillagePos = GameMap.CalculateRandomPosition(PlayerFaction);
             GameMap.PlaceBuilding(PlayerVillage, vec3VillagePos);
 
             //Create and place enemy villages
             foreach (Faction enemyFaction in EnemyFactions)
             {
-                bldEnemyBuilding = new Building(Building.BUILDING_TYPE.VILLAGE, enemyFaction, BuildingCostModifier);
+                bldEnemyBuilding = new Building(Building.BUILDING_TYPE.VILLAGE, enemyFaction);
                 vec3VillagePos = GameMap.CalculateRandomPosition(enemyFaction);
                 while(!GameMap.PlaceBuilding(bldEnemyBuilding, vec3VillagePos) && Attempts < 100)
                 {
@@ -560,8 +561,10 @@ public class GameManager : MonoBehaviour
                             tempBuilding = CurrentFaction.OwnedBuildings.Find(MatchingBuilding => MatchingBuilding.UpgradeLevel <= 2);
                             if(tempBuilding != null)
                             {
-                                tempBuilding.UpgradeBuilding(false);
-                                CurrentFaction.MaterialCount -= 2 * (Building.CalculateBuildingUpgradeCost(tempBuilding.BuildingType, BuildingCostModifier));
+                                if(tempBuilding.UpgradeBuilding(false))
+                                {
+                                    CurrentFaction.MaterialCount -= (Building.CalculateBuildingUpgradeCost(tempBuilding.BuildingType));
+                                }
                             }
                             else
                             {
@@ -725,7 +728,6 @@ public class GameManager : MonoBehaviour
 
     private void CheckSelectedBuildingStateInputs()
     {
-        int intUpgradeCost;
         if (SelectedBuilding != null)
         {
             // Player's building
@@ -735,26 +737,22 @@ public class GameManager : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.U))
                 {
                     // Attempt to upgrade selected building
-                    intUpgradeCost = Building.CalculateBuildingUpgradeCost(SelectedBuilding.BuildingType, BuildingCostModifier);
                     // 3 is max upgrade level of a building
-                    if (PlayerFaction.MaterialCount >= intUpgradeCost)
+                    if (SelectedBuilding.UpgradeBuilding())
                     {
-                        if (SelectedBuilding.UpgradeLevel < 3)
-                        {
-                            SelectedBuilding.UpgradeBuilding();
-                            PlayerFaction.MaterialCount -= Building.CalculateBuildingUpgradeCost(SelectedBuilding.BuildingType, BuildingCostModifier);
-							sound.PlaySound ("PlaceBuilding");
-                        }
-                        else
-                        {
-                            Debug.Log("Building is at max upgrade level");
-							sound.PlaySound ("NotMaterials");
-                        }
-
+                        sound.PlaySound("PlaceBuilding");
                     }
                     else
                     {
-                        Debug.Log(string.Format("Not enough materials to upgrade ({0} required)", intUpgradeCost));
+                        if(SelectedBuilding.UpgradeLevel == 3)
+                        {
+                            Debug.Log("Already max upgrade level");
+                        }
+                        else
+                        {
+                            Debug.Log(string.Format("Not enough materials to upgrade ({0} required)",
+                            Building.CalculateBuildingUpgradeCost(SelectedBuilding.BuildingType)));
+                        }
 						sound.PlaySound ("NotMaterials");
                     }
 
@@ -824,10 +822,10 @@ public class GameManager : MonoBehaviour
     private void BufferBuilding(Building.BUILDING_TYPE penumBuildingType)
     {
         // Check if user has enough resources to build the building
-        int BuildingCost = Building.CalculateBuildingCost(penumBuildingType, BuildingCostModifier);
+        int BuildingCost = Building.CalculateBuildingCost(penumBuildingType);
         if (PlayerFaction.MaterialCount >= BuildingCost)
         {
-            BufferedBuilding = new Building(penumBuildingType, PlayerFaction, BuildingCostModifier);
+            BufferedBuilding = new Building(penumBuildingType, PlayerFaction);
             CurrentMenuState = MENUSTATE.Buffered_Building_State;
             foreach (Building BuildingOnMap in GameMap.GetBuildings())
             {

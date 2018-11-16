@@ -14,9 +14,53 @@ public class ManagementModeTests {
         Assert.True(TestFaction.OwnedBuildings.Contains(TestBuilding));
 	}
 
-	
-    // Play mode tests for scenarios that require multi frame data or unity physics
-	[UnityTest]
+    /// <summary>
+    /// MM-2 Upgrade a village from 1 to 2 with enough materials
+    /// </summary>
+    [Test]
+    public void CreateAndUpgradeVillage()
+    {
+        Faction TestFaction = new Faction("test", Faction.GodType.Fork, 0)
+        {
+            MaterialCount = 1000
+        };
+        Building TestBuilding = new Building(Building.BUILDING_TYPE.VILLAGE, TestFaction);
+        Assert.True(TestBuilding.UpgradeBuilding());
+        Assert.True(TestBuilding.UpgradeLevel == 2);
+        Assert.True(TestFaction.MaterialCount == 1000 - Building.CalculateBuildingUpgradeCost(Building.BUILDING_TYPE.VILLAGE));
+    }
+
+    /// <summary>
+    /// MM-2 upgrade a village from 1 to 2 with no materials
+    /// </summary>
+    [Test]
+    public void CreateAndUpgradeVillageWithNoMaterials()
+    {
+        Faction TestFaction = new Faction("test", Faction.GodType.Fork, 0);
+        Building TestBuilding = new Building(Building.BUILDING_TYPE.VILLAGE, TestFaction);
+        Assert.False(TestBuilding.UpgradeBuilding(), string.Format("Materials {0}", TestFaction.MaterialCount));
+        Assert.True(TestFaction.MaterialCount == 0);
+        Assert.True(TestBuilding.UpgradeLevel == 1);
+    }
+
+    /// <summary>
+    /// MM-2 Max upgrade level for a village is 3
+    /// </summary>
+    [Test]
+    public void UpgradeVillagePastThree()
+    {
+        Faction TestFaction = new Faction("test", Faction.GodType.Fork, 0)
+        {
+            MaterialCount = 1000
+        };
+        Building TestBuilding = new Building(Building.BUILDING_TYPE.VILLAGE, TestFaction); //1
+        Assert.True(TestBuilding.UpgradeBuilding()); //2
+        Assert.True(TestBuilding.UpgradeBuilding()); //3
+        Assert.False(TestBuilding.UpgradeBuilding());
+        Assert.True(TestBuilding.UpgradeLevel == 3);
+    }
+
+    [UnityTest]
 	public IEnumerator ManagementModeTestsWithEnumeratorPasses() {
 		// Use the Assert class to test conditions.
 		// yield to skip a frame

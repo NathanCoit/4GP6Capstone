@@ -7,42 +7,70 @@ public class TierReward{
     {
         Ability,
         Buff,
-        Resource
+        Resource,
+        ResourceMultiplier
     }
 
+    public enum RESOURCETYPE
+    {
+        Worshipper,
+        Material
+    }
     public REWARDTYPE RewardType;
     public int TierLevel;
     public string RewardName;
     public string RewardDescription;
     public TierReward PreviousRequiredReward;
+    public List<TierReward> ChildRewards;
     public bool Unlocked = false;
+    public GameObject ButtonObject;
 
     public Ability TierAbility;
+
+    public RESOURCETYPE ResourceType;
+    public int Amount = 0;
+    public float Multiplier = 0;
     //public Buff TierBuff
-    //public Resource TierResource
 
     // Create an ability tier reward
-    public TierReward(int pintTierLevel, string pstrName, string pstrDesc, TierReward pTierRewardPreviousRequired = null)
+    public TierReward(string pstrName, string pstrDesc, TierReward pTierRewardPreviousRequired = null)
     {
         RewardType = REWARDTYPE.Ability;
-        TierLevel = pintTierLevel;
         RewardName = pstrName;
         RewardDescription = pstrDesc;
         PreviousRequiredReward = pTierRewardPreviousRequired;
+        ChildRewards = new List<TierReward>();
         TierAbility = new Ability(pstrName, pstrDesc);
     }
 
     // Create a Buff tier reward
 
-    // Create a Resource Tier reward
+    // Tier reward for flat resource injections
+    public TierReward(string pstrName, string pstrDesc, RESOURCETYPE type, int amount, TierReward pTierRewardPreviousRequired = null)
+    {
+        RewardType = REWARDTYPE.Resource;
+        RewardName = pstrName;
+        RewardDescription = pstrDesc;
+        ResourceType = type;
+        Amount = amount;
+        PreviousRequiredReward = pTierRewardPreviousRequired;
+        ChildRewards = new List<TierReward>();
+    }
+
+    // Tier reward for resource multiplier
+    public TierReward(string pstrName, string pstrDesc, RESOURCETYPE type, float multiplier, TierReward pTierRewardPreviousRequired = null)
+    {
+        RewardType = REWARDTYPE.ResourceMultiplier;
+        RewardName = pstrName;
+        RewardDescription = pstrDesc;
+        ResourceType = type;
+        Multiplier = multiplier;
+        PreviousRequiredReward = pTierRewardPreviousRequired;
+        ChildRewards = new List<TierReward>();
+    }
 
     public Ability UnlockAbility()
     {
-        // If you haven't unlocked the previous tier or this isnt an ability reward, return nothing
-        if ((PreviousRequiredReward != null && !PreviousRequiredReward.Unlocked) || RewardType != REWARDTYPE.Ability)
-        {
-            return null;
-        }
         return TierAbility;
     }
 }

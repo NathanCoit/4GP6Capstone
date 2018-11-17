@@ -19,6 +19,7 @@ public class Cam : MonoBehaviour {
 	public float sensitivity = 5.0f;
     public GameObject gameManagerObject;
     private GameManager gameManagerScript;
+    public bool CameraMovementEnabled = true;
 
     float fov;
 
@@ -40,70 +41,77 @@ public class Cam : MonoBehaviour {
 
     void Update() 
 	{
-		if (Input.GetKeyDown(KeyCode.RightArrow))
-		{
-			rightHeld = true;
-		}
+		if(CameraMovementEnabled)
+        {
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                rightHeld = true;
+            }
 
-		if (Input.GetKeyUp(KeyCode.RightArrow)){
-			rightHeld = false;
-		}
+            if (Input.GetKeyUp(KeyCode.RightArrow))
+            {
+                rightHeld = false;
+            }
 
-		if (Input.GetKeyDown(KeyCode.LeftArrow))
-		{
-			leftHeld = true;
-		}
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                leftHeld = true;
+            }
 
-		if (Input.GetKeyUp(KeyCode.LeftArrow)){
-			leftHeld = false;
-		}
+            if (Input.GetKeyUp(KeyCode.LeftArrow))
+            {
+                leftHeld = false;
+            }
 
-		if (Input.GetKeyDown(KeyCode.UpArrow))
-		{
-			upHeld = true;
-		}
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                upHeld = true;
+            }
 
-		if (Input.GetKeyUp(KeyCode.UpArrow)){
-			upHeld = false;
-		}
+            if (Input.GetKeyUp(KeyCode.UpArrow))
+            {
+                upHeld = false;
+            }
 
-		if (Input.GetKeyDown(KeyCode.DownArrow))
-		{
-			downHeld = true;
-		}
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                downHeld = true;
+            }
 
-		if (Input.GetKeyUp(KeyCode.DownArrow)){
-			downHeld = false;
-		}
+            if (Input.GetKeyUp(KeyCode.DownArrow))
+            {
+                downHeld = false;
+            }
 
-		if (Input.mousePosition.x > theScreenWidth - Boundary || rightHeld)
-		{
-			transform.position += new Vector3(Time.deltaTime * fov,
-				0.0f, 0.0f);
-		}
+            if (Input.mousePosition.x > theScreenWidth - Boundary || rightHeld)
+            {
+                transform.position += new Vector3(Time.deltaTime * fov,
+                    0.0f, 0.0f);
+            }
 
-		if (Input.mousePosition.x < 0 + Boundary || leftHeld)
-		{
-			transform.position += new Vector3(-(Time.deltaTime * fov),
-				0.0f, 0.0f);
-		}
+            if (Input.mousePosition.x < 0 + Boundary || leftHeld)
+            {
+                transform.position += new Vector3(-(Time.deltaTime * fov),
+                    0.0f, 0.0f);
+            }
 
-		if (Input.mousePosition.y > theScreenHeight - Boundary || upHeld)
-		{
-			transform.position += new Vector3(0.0f,
-				0.0f, Time.deltaTime * fov);
-		}
+            if (Input.mousePosition.y > theScreenHeight - Boundary || upHeld)
+            {
+                transform.position += new Vector3(0.0f,
+                    0.0f, Time.deltaTime * fov);
+            }
 
-		if (Input.mousePosition.y < 0 + Boundary || downHeld)
-		{
-			transform.position += new Vector3(0.0f,
-				0.0f, -(Time.deltaTime * fov));
-		}
+            if (Input.mousePosition.y < 0 + Boundary || downHeld)
+            {
+                transform.position += new Vector3(0.0f,
+                    0.0f, -(Time.deltaTime * fov));
+            }
 
 
-		fov -= Input.GetAxis("Mouse ScrollWheel") * sensitivity;
-		fov = Mathf.Clamp(fov, minFov, maxFov);
-		Camera.main.fieldOfView = fov;
+            fov -= Input.GetAxis("Mouse ScrollWheel") * sensitivity;
+            fov = Mathf.Clamp(fov, minFov, maxFov);
+            Camera.main.fieldOfView = fov;
+        }
 
 	}
 

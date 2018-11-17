@@ -35,11 +35,11 @@ public class SetupManager : MonoBehaviour {
             gameInfo = GameInfoObject.GetComponent<GameInfo>();
             //Found a game object, load values
             //Since only 80% of the worshippers go to war
-            double a = gameInfo.PlayerWorshipperCount * worshiperPercentage;
+            double a = gameInfo.PlayerFaction.WorshipperCount * worshiperPercentage;
             this.playerWorshiperCount = (int) a;
             
             //Since only 80% of the worshippers go to war
-            double b = gameInfo.EnemyWorshipperCount * worshiperPercentage;
+            double b = gameInfo.EnemyFaction.WorshipperCount * worshiperPercentage;
             //and then truncate it so you don't have a partial worshiper lol
             this.enemyWorshiperCount = (int) b;
 
@@ -69,11 +69,11 @@ public class SetupManager : MonoBehaviour {
             //load back into GameInfoObject
 
             //Take original amount of worshipers and add how many worshipers are left after the war
-            this.gameInfo.PlayerWorshipperCount = playWorLeft + System.Convert.ToInt32(this.gameInfo.PlayerWorshipperCount*(1 - worshiperPercentage));
-            this.gameInfo.EnemyWorshipperCount = eneWorLeft + System.Convert.ToInt32(this.gameInfo.EnemyWorshipperCount*(1 - worshiperPercentage));
+            this.gameInfo.PlayerFaction.WorshipperCount = playWorLeft + System.Convert.ToInt32(this.gameInfo.PlayerWorshipperCount*(1 - worshiperPercentage));
+            this.gameInfo.EnemyFaction.WorshipperCount = eneWorLeft + System.Convert.ToInt32(this.gameInfo.EnemyWorshipperCount*(1 - worshiperPercentage));
 
-            this.gameInfo.PlayerMorale = BoardMan.GetComponent<BoardManager>().getPlayerMorale();
-            this.gameInfo.EnemyMorale = BoardMan.GetComponent<BoardManager>().getEnemyMorale();
+            this.gameInfo.PlayerFaction.Morale = BoardMan.GetComponent<BoardManager>().getPlayerMorale();
+            this.gameInfo.EnemyFaction.Morale = BoardMan.GetComponent<BoardManager>().getEnemyMorale();
 
             //The battle has been finished
             gameInfo.FinishedBattle = true;

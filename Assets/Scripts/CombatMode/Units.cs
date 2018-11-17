@@ -25,6 +25,8 @@ public class Units : MonoBehaviour {
     public float AttackStrength;
 
 
+    private bool autoClick = false;
+
     // Use this for initialization
     void Start()
     {
@@ -141,14 +143,21 @@ public class Units : MonoBehaviour {
         BoardMan.GetComponent<BoardManager>().DecreaseNumActions();
     }
 
-    private void OnMouseOver()
+    public void OnMouseOver()
     {
-        if (Input.GetMouseButtonDown(0) && canAct)
+        if ((Input.GetMouseButtonDown(0) || autoClick) && canAct)
         {
             MapMan.GetComponent<MapManager>().Selected = this.gameObject;
             MapMan.GetComponent<MapManager>().newSelected = true;
+            autoClick = false;
         }
             
+    }
+
+    //For spoofing clicks for testing
+    public void testClick()
+    {
+        autoClick = true;
     }
 
     private Tile[,] getTiles()

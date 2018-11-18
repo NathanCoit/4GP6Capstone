@@ -6,6 +6,8 @@ public class Units : MonoBehaviour {
 
     public bool canAct;
 
+    private bool isGod;
+
     private GameObject MapMan;
     private Vector2 pos;
     private GameObject BoardMan;
@@ -78,6 +80,11 @@ public class Units : MonoBehaviour {
     public bool HasAct()
     {
         return canAct;
+    }
+
+    public bool CheckIfGod()
+    {
+        return isGod;
     }
 
     public int getWorshiperCount()

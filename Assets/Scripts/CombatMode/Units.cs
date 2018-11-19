@@ -46,7 +46,7 @@ public class Units : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-
+        morale = BoardMan.GetComponent<BoardManager>().playerMorale;
     }
 
     public void Draw(Tile[,] tiles)
@@ -109,6 +109,17 @@ public class Units : MonoBehaviour {
     public float getAttackStrength()
     {
         return AttackStrength;
+    }
+
+    //For using skill, will be done later
+    public void useSkill(int number)
+    {
+
+    }
+
+    public void setGod()
+    {
+        isGod = true;
     }
 
     public void updateAttackStrength()

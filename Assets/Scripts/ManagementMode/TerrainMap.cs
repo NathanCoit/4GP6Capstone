@@ -29,7 +29,7 @@ public class TerrainMap
         gobjMap.AddComponent<MeshCollider>();
         gobjMap.AddComponent<LineRenderer>().positionCount = 0;
         gobjMap.GetComponent<Renderer>().material.mainTexture = mapTexture;
-        gobjMap.GetComponent<Renderer>().material.SetTextureScale("_MainTex", new Vector2(20, 20));
+        gobjMap.GetComponent<Renderer>().material.SetTextureScale("_MainTex", new Vector2(40, 40));
         ////Create map
         //GameObject gobjMap = new GameObject("GameMap");
         //TerrainData _TerrainData = new TerrainData();

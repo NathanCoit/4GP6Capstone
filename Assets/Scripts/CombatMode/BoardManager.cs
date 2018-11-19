@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BoardManager : MonoBehaviour {
+public class BoardManager : MonoBehaviour
+{
 
     public bool playerTurn = true;
     //private GameObject MapMan;
@@ -22,7 +23,7 @@ public class BoardManager : MonoBehaviour {
     public float faithCap;
 
     // Use this for initialization
-    void Start ()
+    void Start()
     {
         playerUnits = new List<GameObject>();
         enemyUnits = new List<GameObject>();
@@ -34,9 +35,10 @@ public class BoardManager : MonoBehaviour {
         this.playerMorale = SetupMan.playerMorale;
         enemyMorale = SetupMan.enemyMorale;
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update()
+    {
         if (!HasActionsLeft()) //any actions left to take?
             SwitchTurns();
 
@@ -48,11 +50,12 @@ public class BoardManager : MonoBehaviour {
             //wow much win such proud of u
             //insert wonderful text box appearing saying you win
             //insert delightful victory music
-        } else if (playerUnits.Count == 0)
+        }
+        else if (playerUnits.Count == 0)
         {
             //much disappoint such loss
             //pepehands
-            
+
             //loss text box
             //loss music
         }
@@ -65,7 +68,7 @@ public class BoardManager : MonoBehaviour {
             HasActionsLeft();
             Debug.Log("Selectrorama");
         }*/
-	}
+    }
 
     public void Victory()
     {
@@ -83,6 +86,12 @@ public class BoardManager : MonoBehaviour {
     {
         SetupMan.battleResult = 2;
         SetupMan.finishedBattle = true;
+
+        //morale is broken atm
+
+        int worshipersLeft = GetRemainingWorshipers(true);
+        SetupMan.playerWorshiperCount = worshipersLeft;
+
     }
 
     //Post fight stuff
@@ -91,13 +100,17 @@ public class BoardManager : MonoBehaviour {
     public int GetRemainingWorshipers(bool player)
     {
         int worshipers = 0;
-        if (player) {
-            foreach (GameObject i in playerUnits) {
+        if (player)
+        {
+            foreach (GameObject i in playerUnits)
+            {
                 worshipers += i.GetComponent<Units>().getWorshiperCount();
             }
-        } else //need to calculate enemy worshiper count if player decided to kill enemy god first/early
+        }
+        else //need to calculate enemy worshiper count if player decided to kill enemy god first/early
         {
-            foreach (GameObject i in enemyUnits) { 
+            foreach (GameObject i in enemyUnits)
+            {
                 worshipers += i.GetComponent<Units>().getWorshiperCount();
             }
         }
@@ -173,8 +186,10 @@ public class BoardManager : MonoBehaviour {
         return playerTurn;
     }
 
-    public void surrender()
+    public bool surrender()
     {
-        
+        //not implemented yet so it's returning a bool
+        Retreat();
+        return false;
     }
 }

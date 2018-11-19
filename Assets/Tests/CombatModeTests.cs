@@ -1684,4 +1684,337 @@ public class CombatModeTests
 
     }
 
+    [UnityTest]
+    public IEnumerator Req8ExpectedFAILCanSplitWorshipers()
+    {
+        bool passed = true;
+
+        SceneManager.LoadScene("CombatMode");
+
+        //Always give it a sec
+        yield return null;
+
+        SetupManager SetupMan = GameObject.FindGameObjectWithTag("SetupManager").GetComponent<SetupManager>();
+        MapManager MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
+        BoardManager BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
+
+        yield return null;
+
+        passed = SetupMan.SplitWorshipers(); //dummy function
+
+        Assert.True(passed);
+    }
+
+    [UnityTest]
+    public IEnumerator Requ10AUnitCanDie()
+    {
+        bool passed = true;
+
+        SceneManager.LoadScene("CombatMode");
+
+        //Always give it a sec
+        yield return null;
+
+        SetupManager SetupMan = GameObject.FindGameObjectWithTag("SetupManager").GetComponent<SetupManager>();
+        MapManager MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
+        BoardManager BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
+
+        yield return null;
+
+
+        //end player's turn
+        foreach (GameObject u in BoardMan.playerUnits)
+        {
+            Units unit = u.GetComponent<Units>();
+
+            //Opening Menu
+            unit.testClick();
+            unit.OnMouseOver();
+            yield return null;
+
+            unit.EndTurnButton();
+        }
+
+        yield return null;
+
+
+        GameObject forwardTile = null;
+
+        Units enemyUnit = BoardMan.enemyUnits[0].GetComponent<Units>();
+
+        enemyUnit.testClick();
+        enemyUnit.OnMouseOver();
+        yield return null;
+
+
+        //Show tiles
+        enemyUnit.showMovable();
+        yield return null;
+
+        //Move to Tile
+        List<GameObject> MoveableTiles = GameObject.FindGameObjectsWithTag("MoveableTile").ToList();
+
+        //Find tile 1 to the left
+        foreach (GameObject g in MoveableTiles)
+        {
+            if (g.GetComponent<Movable>().pos.x == enemyUnit.getPos().x - 1)
+            {
+                forwardTile = g;
+                break;
+            }
+        }
+        forwardTile.GetComponent<Movable>().testClick();
+        forwardTile.GetComponent<Movable>().OnMouseOver();
+
+        int playerUnitsCount = BoardMan.playerUnits.Count;
+
+        //Attack
+        enemyUnit.testClick();
+        enemyUnit.OnMouseOver();
+        yield return null;
+        enemyUnit.showAttackable();
+        yield return null;
+        List<GameObject> AttackableTiles = GameObject.FindGameObjectsWithTag("AttackableTile").ToList();
+        AttackableTiles[0].GetComponent<Attackable>().testClick();
+        AttackableTiles[0].GetComponent<Attackable>().OnMouseOver();
+
+        yield return null;
+
+        if (playerUnitsCount <= BoardMan.playerUnits.Count)
+            passed = false;
+
+        Assert.True(passed);
+    }
+
+    [UnityTest]
+    public IEnumerator Requ10BDifferentAttackStrengths()
+    {
+
+        bool passed = true;
+
+        SceneManager.LoadScene("CombatMode");
+
+        //Always give it a sec
+        yield return null;
+
+        SetupManager SetupMan = GameObject.FindGameObjectWithTag("SetupManager").GetComponent<SetupManager>();
+        MapManager MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
+        BoardManager BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
+
+        yield return null;
+
+        Units unit1 = BoardMan.playerUnits[0].GetComponent<Units>();
+        Units unit2 = BoardMan.playerUnits[1].GetComponent<Units>();
+
+        yield return null;
+
+        unit1.setWorshiperCount(100);
+        unit2.setWorshiperCount(57);
+
+        unit1.setMorale(1.0f);
+        unit2.setMorale(1.0f);
+
+        yield return null;
+
+        unit1.updateAttackStrength();
+        unit2.updateAttackStrength();
+
+        yield return null;
+
+        if (unit1.getAttackStrength() == unit2.getAttackStrength())
+            passed = false;
+
+        //Checks to see if we added one unit
+        Assert.True(passed);
+    }
+
+    [UnityTest]
+    public IEnumerator Requ10CSameAttackStrength()
+    {
+
+        bool passed = true;
+
+        SceneManager.LoadScene("CombatMode");
+
+        //Always give it a sec
+        yield return null;
+
+        SetupManager SetupMan = GameObject.FindGameObjectWithTag("SetupManager").GetComponent<SetupManager>();
+        MapManager MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
+        BoardManager BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
+
+        yield return null;
+
+        Units unit1 = BoardMan.playerUnits[0].GetComponent<Units>();
+        Units unit2 = BoardMan.playerUnits[1].GetComponent<Units>();
+
+        unit1.setWorshiperCount(100);
+        unit2.setWorshiperCount(100);
+
+        unit1.setMorale(1.0f);
+        unit2.setMorale(1.0f);
+
+        yield return null;
+
+        unit1.updateAttackStrength();
+        unit2.updateAttackStrength();
+
+        yield return null;
+
+        if (unit1.getAttackStrength() != unit2.getAttackStrength())
+            passed = false;
+
+        //Checks to see if we added one unit
+        Assert.True(passed);
+    }
+
+    [UnityTest]
+    public IEnumerator Requ13AExpectedFAILSurrender()
+    {
+
+        bool passed = true;
+
+        SceneManager.LoadScene("CombatMode");
+
+        //Always give it a sec
+        yield return null;
+
+        SetupManager SetupMan = GameObject.FindGameObjectWithTag("SetupManager").GetComponent<SetupManager>();
+        MapManager MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
+        BoardManager BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
+
+        yield return null;
+
+        passed = BoardMan.surrender(); //not implemented so it's expected to fail; dummy function for now
+
+        //Checks to see if we added one unit
+        Assert.True(passed);
+    }
+
+    [UnityTest]
+    public IEnumerator Requ13BExpectedFAILReturnToManagementMode()
+    {
+
+        bool passed = true;
+
+        SceneManager.LoadScene("CombatMode");
+
+        //Always give it a sec
+        yield return null;
+
+        SetupManager SetupMan = GameObject.FindGameObjectWithTag("SetupManager").GetComponent<SetupManager>();
+        MapManager MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
+        BoardManager BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
+
+        yield return null;
+
+        passed = BoardMan.surrender(); //since the game isn't meant to start in combat mode, this will fail 
+        //HOWEVER starting in management mode, going into combat and then back into management mode WORKS
+
+        //Checks to see if we added one unit
+        Assert.True(passed);
+    }
+
+    [UnityTest]
+    public IEnumerator Requ13CExpectedFAILAdjustMoraleAfterSurrender()
+    {
+
+        bool passed = true;
+
+        SceneManager.LoadScene("CombatMode");
+
+        //Always give it a sec
+        yield return null;
+
+        SetupManager SetupMan = GameObject.FindGameObjectWithTag("SetupManager").GetComponent<SetupManager>();
+        MapManager MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
+        BoardManager BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
+
+        yield return null;
+
+        passed = BoardMan.surrender(); //since surrender isn't implemented yet, we aren't properly adjusting values
+        Assert.True(passed);
+    }
+
+    [UnityTest]
+    public IEnumerator Requ14ExpectedFAILAdjustWorshiperCountAfterUnitDeath()
+    {
+        bool passed = true;
+
+        SceneManager.LoadScene("CombatMode");
+
+        //Always give it a sec
+        yield return null;
+
+        SetupManager SetupMan = GameObject.FindGameObjectWithTag("SetupManager").GetComponent<SetupManager>();
+        MapManager MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
+        BoardManager BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
+
+        yield return null;
+
+
+        //end player's turn
+        foreach (GameObject u in BoardMan.playerUnits)
+        {
+            Units unit = u.GetComponent<Units>();
+
+            //Opening Menu
+            unit.testClick();
+            unit.OnMouseOver();
+            yield return null;
+
+            unit.EndTurnButton();
+        }
+
+        yield return null;
+
+
+        GameObject forwardTile = null;
+
+        Units enemyUnit = BoardMan.enemyUnits[0].GetComponent<Units>();
+
+        enemyUnit.testClick();
+        enemyUnit.OnMouseOver();
+        yield return null;
+
+
+        //Show tiles
+        enemyUnit.showMovable();
+        yield return null;
+
+        //Move to Tile
+        List<GameObject> MoveableTiles = GameObject.FindGameObjectsWithTag("MoveableTile").ToList();
+
+        //Find tile 1 to the left
+        foreach (GameObject g in MoveableTiles)
+        {
+            if (g.GetComponent<Movable>().pos.x == enemyUnit.getPos().x - 1)
+            {
+                forwardTile = g;
+                break;
+            }
+        }
+        forwardTile.GetComponent<Movable>().testClick();
+        forwardTile.GetComponent<Movable>().OnMouseOver();
+
+        int initialPlayerWorshiperCount = 999; //FIX HERE, add worshiper count into BoardMan that gets updated during combat
+
+        //Attack
+        enemyUnit.testClick();
+        enemyUnit.OnMouseOver();
+        yield return null;
+        enemyUnit.showAttackable();
+        yield return null;
+        List<GameObject> AttackableTiles = GameObject.FindGameObjectsWithTag("AttackableTile").ToList();
+        AttackableTiles[0].GetComponent<Attackable>().testClick();
+        AttackableTiles[0].GetComponent<Attackable>().OnMouseOver();
+
+        yield return null;
+
+        if (initialPlayerWorshiperCount > 5)
+            passed = false;
+
+        Assert.True(passed);
+    }
+
 }

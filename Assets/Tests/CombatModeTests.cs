@@ -520,7 +520,7 @@ public class CombatModeTests
     }
 
     [UnityTest]
-    public IEnumerator Req4BSENDHELPTestUnitCantAttackFriends()
+    public IEnumerator Req4BTestUnitCantAttackFriends()
     {
         bool passed = true;
 
@@ -592,7 +592,7 @@ public class CombatModeTests
             {
                 foreach (GameObject g in BoardMan.playerUnits)
                 {
-                    if (g.GetComponent<Units>().getPos().x == tile.GetComponent<Attackable>().pos.x || g.GetComponent<Units>().getPos().y == tile.GetComponent<Attackable>().pos.y)
+                    if (g.GetComponent<Units>().getPos() == tile.GetComponent<Attackable>().pos)
                         passed = false;
                 }
             }
@@ -609,7 +609,7 @@ public class CombatModeTests
     }
 
     [UnityTest]
-    public IEnumerator Req4CSENDHELPTestUnitCantAttackSelf()
+    public IEnumerator Req4CTestUnitCantAttackSelf()
     {
         bool passed = true;
 
@@ -667,17 +667,9 @@ public class CombatModeTests
 
             yield return null;
 
-            /* NEED HELP HERE
-             * NEED HELP HERE
-             * NEED HELP HERE
-             * NEED HELP HERE
-             * NEED HELP HERE
-             * NEED HELP HERE
-             * NEED HELP HERE
-             */
             foreach (GameObject tile in AttackableTiles)
             {
-                if (tile.GetComponent<Attackable>().pos.x == unit.getPos().x || tile.GetComponent<Attackable>().pos.y == unit.getPos().y)
+                if (unit.getPos() == tile.GetComponent<Attackable>().pos)
                     passed = false;
             }
 

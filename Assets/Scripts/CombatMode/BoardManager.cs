@@ -16,6 +16,10 @@ public class BoardManager : MonoBehaviour {
     public bool endBattle = false;
     public float playerMorale;
     public float enemyMorale;
+    public float playerFaith;
+    public float enemyFaith;
+
+    public float faithCap;
 
     // Use this for initialization
     void Start ()
@@ -110,6 +114,21 @@ public class BoardManager : MonoBehaviour {
         return enemyMorale;
     }
 
+    public float getPlayerFaith()
+    {
+        return playerFaith;
+    }
+
+    public float getEnemyFaith()
+    {
+        return enemyFaith;
+    }
+
+    public float getFaithCap()
+    {
+        return faithCap;
+    }
+
     public void setPlayerMorale(float m)
     {
         playerMorale = m;
@@ -152,5 +171,10 @@ public class BoardManager : MonoBehaviour {
     public bool isPlayerTurn()
     {
         return playerTurn;
+    }
+
+    public void surrender()
+    {
+        
     }
 }

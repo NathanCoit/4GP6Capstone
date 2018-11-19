@@ -40,7 +40,7 @@ public class Units : MonoBehaviour {
         //AllowAct(); //this actually broke it for the longest time but i FOUND IT 
         GetComponent<MeshRenderer>().material = NotAvailable;
 
-        AttackStrength = WorshiperCount * 0.25f;
+        AttackStrength = WorshiperCount * 0.25f * morale;
     }
 
     // Update is called once per frame
@@ -113,7 +113,7 @@ public class Units : MonoBehaviour {
 
     public void updateAttackStrength()
     {
-        AttackStrength = AttackStrength * morale;
+        AttackStrength = WorshiperCount * 0.25f * morale;
     }
 
     public void AllowAct() //this Unit has not yet acted in this round

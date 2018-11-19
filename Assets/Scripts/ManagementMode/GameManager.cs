@@ -158,6 +158,7 @@ public class GameManager : MonoBehaviour
                 faction.SetHidden(true);
             }
             GameMap.DrawFactionArea(PlayerFaction);
+			//GameMap.DrawMultipleFactionAreas(CurrentFactions);
         }
     }
 
@@ -890,6 +891,9 @@ public class GameManager : MonoBehaviour
 
         NextPlayerTierReward = new TierReward("2xWorshipperA", "2x worshipper growth", TierReward.RESOURCETYPE.Worshipper, 2.0f, BasePlayerTierReward);
         BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+		NextPlayerTierReward = new TierReward("2xWorshipperB", "2x worshipper growth", TierReward.RESOURCETYPE.Worshipper, 2.0f, BasePlayerTierReward);
+		BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
 
         //PlayerRewardTree.Add(new TierReward("Worshippers", "100 Worshippers", TierReward.RESOURCETYPE.Worshipper, 100));
 

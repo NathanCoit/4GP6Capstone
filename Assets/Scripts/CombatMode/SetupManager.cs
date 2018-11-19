@@ -111,6 +111,16 @@ public class SetupManager : MonoBehaviour {
         }
     }
 
+    public bool SplitWorshipers()
+    {
+        //haha not implemented
+        //will be done in a separate scene probably
+        //assign worshiper count percentages in that scene to individual units
+        //can have up to ten units per side
+
+        return false;
+    }
+
 
     public void CreatePlayerUnit(Vector2 pos, Tile[,] tiles, int WorshiperCount, float morale)
     {

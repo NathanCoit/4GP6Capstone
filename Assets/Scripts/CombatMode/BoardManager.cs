@@ -83,6 +83,12 @@ public class BoardManager : MonoBehaviour {
     {
         SetupMan.battleResult = 2;
         SetupMan.finishedBattle = true;
+
+        //morale is broken atm
+
+        int worshipersLeft = GetRemainingWorshipers(true);
+        SetupMan.playerWorshiperCount = worshipersLeft;
+
     }
 
     //Post fight stuff
@@ -173,8 +179,10 @@ public class BoardManager : MonoBehaviour {
         return playerTurn;
     }
 
-    public void surrender()
+    public bool surrender()
     {
-        
+        //not implemented yet so it's returning a bool
+        Retreat();
+        return false;
     }
 }

@@ -13,7 +13,7 @@ public class SetupManager : MonoBehaviour {
     public GameObject Unit;
 
     private Tile[,] tiles;
-    private bool startup = true;
+    public bool startup = true;
     
     public int playerWorshiperCount;
     public float playerMorale;

@@ -8,6 +8,8 @@ public class Movable : MonoBehaviour {
     private GameObject MapMan;
     private GameObject BoardMan;
 
+    private bool autoClick;
+
     // Use this for initialization
     void Start ()
     {
@@ -27,9 +29,9 @@ public class Movable : MonoBehaviour {
         return MapMan.GetComponent<MapManager>().tiles;
     }
 
-    private void OnMouseOver()
+    public void OnMouseOver()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) || autoClick)
         {
             Tile[,] tiles = getTiles();
             List<int> depths = new List<int>();
@@ -65,6 +67,14 @@ public class Movable : MonoBehaviour {
 
             //Get rid of blue tiles
             MapMan.GetComponent<MapManager>().ClearSelection();
+
+            autoClick = false;
         }
+    }
+
+    //For spoofing clicks for testing
+    public void testClick()
+    {
+        autoClick = true;
     }
 }

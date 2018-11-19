@@ -154,7 +154,11 @@ public class MapManager : MonoBehaviour
         //Clean up tiles
         GameObject[] movableTiles = GameObject.FindGameObjectsWithTag("MoveableTile");
         for (var i = 0; i < movableTiles.GetLength(0); i++)
-            Destroy(movableTiles[i]); ;
+            Destroy(movableTiles[i]);
+
+        GameObject[] attackableTiles = GameObject.FindGameObjectsWithTag("AttackableTile");
+        for (var i = 0; i < attackableTiles.GetLength(0); i++)
+            Destroy(attackableTiles[i]);
     }
 }
 

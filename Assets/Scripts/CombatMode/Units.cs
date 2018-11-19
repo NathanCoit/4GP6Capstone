@@ -6,6 +6,8 @@ public class Units : MonoBehaviour {
 
     public bool canAct;
 
+    private bool isGod;
+
     private GameObject MapMan;
     private Vector2 pos;
     private GameObject BoardMan;
@@ -25,6 +27,8 @@ public class Units : MonoBehaviour {
     public float AttackStrength;
 
 
+    private bool autoClick = false;
+
     // Use this for initialization
     void Start()
     {
@@ -36,13 +40,13 @@ public class Units : MonoBehaviour {
         //AllowAct(); //this actually broke it for the longest time but i FOUND IT 
         GetComponent<MeshRenderer>().material = NotAvailable;
 
-        AttackStrength = WorshiperCount * 0.25f;
+        AttackStrength = WorshiperCount * 0.25f * morale;
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        morale = BoardMan.GetComponent<BoardManager>().playerMorale;
     }
 
     public void Draw(Tile[,] tiles)
@@ -78,6 +82,11 @@ public class Units : MonoBehaviour {
         return canAct;
     }
 
+    public bool CheckIfGod()
+    {
+        return isGod;
+    }
+
     public int getWorshiperCount()
     {
         return WorshiperCount;
@@ -102,9 +111,20 @@ public class Units : MonoBehaviour {
         return AttackStrength;
     }
 
+    //For using skill, will be done later
+    public void useSkill(int number)
+    {
+
+    }
+
+    public void setGod()
+    {
+        isGod = true;
+    }
+
     public void updateAttackStrength()
     {
-        AttackStrength = AttackStrength * morale;
+        AttackStrength = WorshiperCount * 0.25f * morale;
     }
 
     public void AllowAct() //this Unit has not yet acted in this round
@@ -141,14 +161,21 @@ public class Units : MonoBehaviour {
         BoardMan.GetComponent<BoardManager>().DecreaseNumActions();
     }
 
-    private void OnMouseOver()
+    public void OnMouseOver()
     {
-        if (Input.GetMouseButtonDown(0) && canAct)
+        if ((Input.GetMouseButtonDown(0) || autoClick) && canAct)
         {
             MapMan.GetComponent<MapManager>().Selected = this.gameObject;
             MapMan.GetComponent<MapManager>().newSelected = true;
+            autoClick = false;
         }
             
+    }
+
+    //For spoofing clicks for testing
+    public void testClick()
+    {
+        autoClick = true;
     }
 
     private Tile[,] getTiles()

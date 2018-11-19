@@ -9,6 +9,8 @@ public class Attackable : MonoBehaviour
     private GameObject BoardMan;
     private SetupManager SetupMan;
 
+    private bool autoClick;
+
     void Start()
     {
         MapMan = GameObject.FindGameObjectWithTag("MapManager");
@@ -29,9 +31,9 @@ public class Attackable : MonoBehaviour
         return MapMan.GetComponent<MapManager>().tiles;
     }
 
-    private void OnMouseOver()
+    public void OnMouseOver()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) || autoClick)
         {
             List<GameObject> targets = new List<GameObject>();
             if (BoardMan.GetComponent<BoardManager>().playerUnits.Contains(MapMan.GetComponent<MapManager>().Selected))
@@ -98,5 +100,11 @@ public class Attackable : MonoBehaviour
             MapMan.GetComponent<MapManager>().ClearSelection();
 
         }
+    }
+
+    //For spoofing clicks for testing
+    public void testClick()
+    {
+        autoClick = true;
     }
 }

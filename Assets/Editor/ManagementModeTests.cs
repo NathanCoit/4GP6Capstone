@@ -2,6 +2,7 @@
 using UnityEditor;
 using UnityEngine.TestTools;
 using NUnit.Framework;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class ManagementModeTests {
@@ -23,4 +24,43 @@ public class ManagementModeTests {
 		yield return null;
         Assert.True(true);
     }
+
+	[UnityTest]
+	public IEnumerator TestStartWithNoMaterials() {
+		yield return null;
+		Faction TestFaction = new Faction("TestGod", Faction.GodType.Duck, 0);
+
+		//Checks to see if we added one unit
+		Assert.True(TestFaction.MaterialCount == 0);
+	}
+
+	[UnityTest]
+	public IEnumerator TestStartWithNoWorshippers() {
+		yield return null;
+		Faction TestFaction = new Faction("TestGod", Faction.GodType.Duck, 0);
+
+		//Checks to see if we added one unit
+		Assert.True(TestFaction.WorshipperCount == 0);
+	}
+
+	[UnityTest]
+	public IEnumerator TestStartWithBaseMorale() {
+		yield return null;
+		Faction TestFaction = new Faction("TestGod", Faction.GodType.Duck, 0);
+
+		//Checks to see if we added one unit
+		Assert.True(TestFaction.Morale == 1.0f);
+	}
+		
+	[UnityTest]
+	public IEnumerator TestUIShowsResources() {
+		yield return null;
+		Faction TestFaction = new Faction("TestGod", Faction.GodType.Duck, 0);
+
+		//Checks to see if we added one unit
+		Assert.True(TestFaction.Morale == 1.0f);
+	}
+
+
+
 }

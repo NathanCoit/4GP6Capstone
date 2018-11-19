@@ -40,13 +40,13 @@ public class Units : MonoBehaviour {
         //AllowAct(); //this actually broke it for the longest time but i FOUND IT 
         GetComponent<MeshRenderer>().material = NotAvailable;
 
-        AttackStrength = WorshiperCount * 0.25f;
+        AttackStrength = WorshiperCount * 0.25f * morale;
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        morale = BoardMan.GetComponent<BoardManager>().playerMorale;
     }
 
     public void Draw(Tile[,] tiles)
@@ -111,9 +111,20 @@ public class Units : MonoBehaviour {
         return AttackStrength;
     }
 
+    //For using skill, will be done later
+    public void useSkill(int number)
+    {
+
+    }
+
+    public void setGod()
+    {
+        isGod = true;
+    }
+
     public void updateAttackStrength()
     {
-        AttackStrength = AttackStrength * morale;
+        AttackStrength = WorshiperCount * 0.25f * morale;
     }
 
     public void AllowAct() //this Unit has not yet acted in this round

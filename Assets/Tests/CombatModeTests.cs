@@ -10,14 +10,16 @@ public class CombatModeTests
 {
 
     [Test]
-    public void CombatModeTestsSimplePasses() {
+    public void CombatModeTestsSimplePasses()
+    {
         // Use the Assert class to test conditions.
     }
 
     // A UnityTest behaves like a coroutine in PlayMode
     // and allows you to yield null to skip a frame in EditMode
     [UnityTest]
-    public IEnumerator TestCreatingPlayerUnit() {
+    public IEnumerator Req1ACreatingPlayerUnit()
+    {
 
         SceneManager.LoadScene("CombatMode");
 
@@ -39,7 +41,7 @@ public class CombatModeTests
     }
 
     [UnityTest]
-    public IEnumerator TestCreatingEnemyUnit()
+    public IEnumerator Req1BCreatingEnemyUnit()
     {
         SceneManager.LoadScene("CombatMode");
 
@@ -62,7 +64,7 @@ public class CombatModeTests
 
     //Test ending turn without doing anything
     [UnityTest]
-    public IEnumerator TestUnitEndTurn()
+    public IEnumerator Req1CEndingAllTurns()
     {
         bool passed = true;
 
@@ -108,7 +110,7 @@ public class CombatModeTests
 
     //Testing moving al units right one tile then ending turn
     [UnityTest]
-    public IEnumerator TestUnitsMove()
+    public IEnumerator Req1DMovingThenEndingTurns()
     {
         bool passed = true;
 
@@ -144,9 +146,9 @@ public class CombatModeTests
             List<GameObject> MoveableTiles = GameObject.FindGameObjectsWithTag("MoveableTile").ToList();
 
             //Find tile 1 to the right
-            foreach(GameObject g in MoveableTiles)
+            foreach (GameObject g in MoveableTiles)
             {
-                if(g.GetComponent<Movable>().pos.x == unit.getPos().x + 1)
+                if (g.GetComponent<Movable>().pos.x == unit.getPos().x + 1)
                 {
                     forwardTile = g;
                     break;
@@ -164,22 +166,22 @@ public class CombatModeTests
             yield return null;
         }
         yield return null;
-        foreach(int i in initalPosX)
+        foreach (int i in initalPosX)
         {
-            foreach(GameObject g in BoardMan.playerUnits)
+            foreach (GameObject g in BoardMan.playerUnits)
             {
                 //Make sure everything moved forward and player turn ended, otherwise test fails
                 if (i != (int)g.GetComponent<Units>().getPos().x - 1 || BoardMan.playerTurn)
-                        passed = false;
+                    passed = false;
             }
         }
         Assert.True(passed);
-        
+
     }
 
     //Test moving one forward and attacking
     [UnityTest]
-    public IEnumerator TestUnitsMoveAttack()
+    public IEnumerator Req1EMoivningThenAttacking()
     {
         bool passed = true;
 
@@ -254,7 +256,7 @@ public class CombatModeTests
 
     //Test a mixture of moving and attacking and ending turn
     [UnityTest]
-    public IEnumerator TestUnitsMoveAttackorEndTurn()
+    public IEnumerator Req1FMovingThenAttackingMixed()
     {
         bool passed = true;
 
@@ -345,7 +347,7 @@ public class CombatModeTests
     }
 
     [UnityTest]
-    public IEnumerator TestUnitEndingTurn()
+    public IEnumerator Req2AUnitEndingTurn()
     {
         bool passed = true;
 
@@ -380,7 +382,7 @@ public class CombatModeTests
     }
 
     [UnityTest]
-    public IEnumerator TestUnitAttackingEndingTurn()
+    public IEnumerator Req2BAttackingEndsTurn()
     {
         bool passed = true;
 
@@ -520,7 +522,7 @@ public class CombatModeTests
     }
 
     [UnityTest]
-    public IEnumerator Req4BSENDHELPTestUnitCantAttackFriends()
+    public IEnumerator Req4BTestUnitCantAttackFriends()
     {
         bool passed = true;
 
@@ -579,20 +581,13 @@ public class CombatModeTests
             //AttackableTiles[0].GetComponent<Attackable>().OnMouseOver();
 
             yield return null;
-            /* NEED HELP HERE
-             * NEED HELP HERE
-             * NEED HELP HERE
-             * NEED HELP HERE
-             * NEED HELP HERE
-             * NEED HELP HERE
-             * NEED HELP HERE
-             */
+
             //basically, check if any of the player's units pos is the same as any attackable tile pos and fail if true
             foreach (GameObject tile in AttackableTiles)
             {
                 foreach (GameObject g in BoardMan.playerUnits)
                 {
-                    if (g.GetComponent<Units>().getPos().x == tile.GetComponent<Attackable>().pos.x || g.GetComponent<Units>().getPos().y == tile.GetComponent<Attackable>().pos.y)
+                    if (g.GetComponent<Units>().getPos() == tile.GetComponent<Attackable>().pos)
                         passed = false;
                 }
             }
@@ -609,7 +604,7 @@ public class CombatModeTests
     }
 
     [UnityTest]
-    public IEnumerator Req4CSENDHELPTestUnitCantAttackSelf()
+    public IEnumerator Req4CTestUnitCantAttackSelf()
     {
         bool passed = true;
 
@@ -667,17 +662,9 @@ public class CombatModeTests
 
             yield return null;
 
-            /* NEED HELP HERE
-             * NEED HELP HERE
-             * NEED HELP HERE
-             * NEED HELP HERE
-             * NEED HELP HERE
-             * NEED HELP HERE
-             * NEED HELP HERE
-             */
             foreach (GameObject tile in AttackableTiles)
             {
-                if (tile.GetComponent<Attackable>().pos.x == unit.getPos().x || tile.GetComponent<Attackable>().pos.y == unit.getPos().y)
+                if (unit.getPos() == tile.GetComponent<Attackable>().pos)
                     passed = false;
             }
 

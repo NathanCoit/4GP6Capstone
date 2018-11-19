@@ -9,10 +9,10 @@ public class Cam : MonoBehaviour {
 	int theScreenWidth;
 	int theScreenHeight;
 
-	bool rightHeld;
-	bool leftHeld;
-	bool downHeld;
-	bool upHeld;
+	public bool rightHeld;
+	public bool leftHeld;
+	public bool downHeld;
+	public bool upHeld;
 
 	float maxFov = 60.0f;
 	float minFov = 10.0f;
@@ -21,7 +21,7 @@ public class Cam : MonoBehaviour {
     private GameManager gameManagerScript;
     public bool CameraMovementEnabled = true;
 
-    float fov;
+    public float fov;
 
 
 	void Start() 

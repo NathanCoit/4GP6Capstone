@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
     public int BuildingCostModifier = 1;
     private MENUSTATE CurrentMenuState = MENUSTATE.Default_State;
     private Building BufferedBuilding = null;
-    public Faction PlayerFaction { get; private set; }
+	public Faction PlayerFaction = null;
     private List<Faction> EnemyFactions = null;
     private GameObject SelectedGameObject = null;
     private Building SelectedBuilding = null;

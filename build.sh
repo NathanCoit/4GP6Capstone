@@ -25,7 +25,7 @@ echo "Running editor unit tests for UnityProject"
 	-silent-crashes \
         -testPlatform playmode
 	-logFile $(pwd)/unity.log \
-	-projectPath "$(pwd)/UnityProject"" \
+	-projectPath "$(pwd)/UnityProject" \
 	-runTests \
 	-testResults $(pwd)/test.xml \
 	-quit

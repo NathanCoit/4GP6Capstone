@@ -15,4 +15,4 @@ if [-f $(pwd)/test.xml ]; then
 # exit if tests failed
 if [ $rc0 -ne 0 ]; then { echo "Failed unit tests"; exit $rc0; } fi
 
-exit $(($rc1|$rc2))
+exit $(($rc1))

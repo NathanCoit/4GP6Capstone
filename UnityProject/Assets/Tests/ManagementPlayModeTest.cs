@@ -23,7 +23,7 @@ public class ManagementPlayModeTest {
 
     //tests camera moving right on d key press
     [UnityTest]
-    public IEnumerator TestMoveCameraRightOnDKey() {
+    public IEnumerator MM1MoveCameraRightOnDKey() {
 
         if (GameObject.Find("GameInfo") != null) {
             GameObject.Destroy(GameObject.Find("GameInfo"));
@@ -33,6 +33,7 @@ public class ManagementPlayModeTest {
 
         //Always give it a sec
         yield return null;
+		yield return null;
 
         Cam testcam = GameObject.Find("Main Camera").GetComponent<Cam>();
 
@@ -51,7 +52,7 @@ public class ManagementPlayModeTest {
 
     // tests camera moving left on 'a' key press
     [UnityTest]
-    public IEnumerator TestMoveCameraLeftOnAKey() {
+    public IEnumerator MM1MoveCameraLeftOnAKey() {
 
         if (GameObject.Find("GameInfo") != null) {
             GameObject.Destroy(GameObject.Find("GameInfo"));
@@ -61,6 +62,7 @@ public class ManagementPlayModeTest {
 
         //Always give it a sec
         yield return null;
+		yield return null;
 
         Cam testcam = GameObject.Find("Main Camera").GetComponent<Cam>();
 
@@ -79,7 +81,7 @@ public class ManagementPlayModeTest {
 
     // tests camera moving up o w key press
     [UnityTest]
-    public IEnumerator TestMoveCameraUpOnWKey() {
+    public IEnumerator MM1MoveCameraUpOnWKey() {
 
         if (GameObject.Find("GameInfo") != null) {
             GameObject.Destroy(GameObject.Find("GameInfo"));
@@ -89,6 +91,7 @@ public class ManagementPlayModeTest {
 
         //Always give it a sec
         yield return null;
+		yield return null;
 
         Cam testcam = GameObject.Find("Main Camera").GetComponent<Cam>();
 
@@ -107,7 +110,7 @@ public class ManagementPlayModeTest {
 
     //tests camera moving down on s key press
     [UnityTest]
-    public IEnumerator TestMoveCameraDownOnSKey() {
+    public IEnumerator MM1MoveCameraDownOnSKey() {
 
         if (GameObject.Find("GameInfo") != null) {
             GameObject.Destroy(GameObject.Find("GameInfo"));
@@ -117,6 +120,7 @@ public class ManagementPlayModeTest {
 
         //Always give it a sec
         yield return null;
+		yield return null;
 
         Cam testcam = GameObject.Find("Main Camera").GetComponent<Cam>();
 
@@ -135,7 +139,7 @@ public class ManagementPlayModeTest {
 
     // tests camera moving down on mouse in bottom boundary
     [UnityTest]
-    public IEnumerator TestMoveCameraDownOnMouse() {
+    public IEnumerator MM1MoveCameraDownOnMouse() {
 
         if (GameObject.Find("GameInfo") != null) {
             GameObject.Destroy(GameObject.Find("GameInfo"));
@@ -145,6 +149,7 @@ public class ManagementPlayModeTest {
 
         //Always give it a sec
         yield return null;
+		yield return null;
 
         Cam testcam = GameObject.Find("Main Camera").GetComponent<Cam>();
 
@@ -160,7 +165,7 @@ public class ManagementPlayModeTest {
 
     //tests camera moving up on mouse in top boundary
     [UnityTest]
-    public IEnumerator TestMoveCameraUpOnMouse() {
+    public IEnumerator MM1MoveCameraUpOnMouse() {
 
         if (GameObject.Find("GameInfo") != null) {
             GameObject.Destroy(GameObject.Find("GameInfo"));
@@ -170,6 +175,7 @@ public class ManagementPlayModeTest {
 
         //Always give it a sec
         yield return null;
+		yield return null;
 
         Cam testcam = GameObject.Find("Main Camera").GetComponent<Cam>();
 
@@ -185,7 +191,7 @@ public class ManagementPlayModeTest {
 
     // tests camera moving left on mouse in left boundary
     [UnityTest]
-    public IEnumerator TestMoveCameraLeftOnMouse() {
+    public IEnumerator MM1MoveCameraLeftOnMouse() {
 
         if (GameObject.Find("GameInfo") != null) {
             GameObject.Destroy(GameObject.Find("GameInfo"));
@@ -195,6 +201,7 @@ public class ManagementPlayModeTest {
 
         //Always give it a sec
         yield return null;
+		yield return null;
 
         Cam testcam = GameObject.Find("Main Camera").GetComponent<Cam>();
 
@@ -211,7 +218,7 @@ public class ManagementPlayModeTest {
 
     // tests camera moving right on mouse in right boundary
     [UnityTest]
-    public IEnumerator TestMoveCameraRightOnMouse() {
+    public IEnumerator MM1MoveCameraRightOnMouse() {
 
         if (GameObject.Find("GameInfo") != null) {
             GameObject.Destroy(GameObject.Find("GameInfo"));
@@ -221,6 +228,7 @@ public class ManagementPlayModeTest {
 
         //Always give it a sec
         yield return null;
+		yield return null;
 
         Cam testcam = GameObject.Find("Main Camera").GetComponent<Cam>();
 
@@ -237,13 +245,16 @@ public class ManagementPlayModeTest {
 
     // tests that player gains worshippers
     [UnityTest]
-    public IEnumerator TestPlayerGeneratesWorshippers() {
+    public IEnumerator MM4PlayerGeneratesWorshippers() {
 
         if (GameObject.Find("GameInfo") != null) {
             GameObject.Destroy(GameObject.Find("GameInfo"));
         }
 
         SceneManager.LoadScene("UnderGodScene");
+
+		yield return null;
+		yield return null;
 
         Faction faction = GameObject.Find("GameManager").GetComponent<GameManager>().PlayerFaction;
 
@@ -259,13 +270,16 @@ public class ManagementPlayModeTest {
 
     // tests that player gains materials
     [UnityTest]
-    public IEnumerator TestPlayerGeneratesMaterials() {
+    public IEnumerator MM4PlayerGeneratesMaterials() {
 
         if (GameObject.Find("GameInfo") != null) {
             GameObject.Destroy(GameObject.Find("GameInfo"));
         }
 
         SceneManager.LoadScene("UnderGodScene");
+
+		yield return null;
+		yield return null;
 
         Faction faction = GameObject.Find("GameManager").GetComponent<GameManager>().PlayerFaction;
 
@@ -281,13 +295,16 @@ public class ManagementPlayModeTest {
 
     // tests that that UI shows the correct amounts of materials that the user has
     [UnityTest]
-    public IEnumerator TestUIShowsCorrectMaterialAmount() {
+    public IEnumerator MM10UIShowsCorrectMaterialAmount() {
 
         if (GameObject.Find("GameInfo") != null) {
             GameObject.Destroy(GameObject.Find("GameInfo"));
         }
 
         SceneManager.LoadScene("UnderGodScene");
+
+		yield return null;
+		yield return null;
 
         Faction faction = GameObject.Find("GameManager").GetComponent<GameManager>().PlayerFaction;
 
@@ -303,13 +320,16 @@ public class ManagementPlayModeTest {
 
     // tests that that UI shows the correct amounts of materials that the user has
     [UnityTest]
-    public IEnumerator TestUIShowsCorrectWorshippersAmount() {
+    public IEnumerator MM10UIShowsCorrectWorshippersAmount() {
 
         if (GameObject.Find("GameInfo") != null) {
             GameObject.Destroy(GameObject.Find("GameInfo"));
         }
 
         SceneManager.LoadScene("UnderGodScene");
+
+		yield return null;
+		yield return null;
 
         Faction faction = GameObject.Find("GameManager").GetComponent<GameManager>().PlayerFaction;
 
@@ -322,6 +342,23 @@ public class ManagementPlayModeTest {
 
         Assert.True(temptext.text.Split(' ')[4].Trim() == tempWors.ToString());
     }
+
+	// tests that that UI shows the correct amounts of materials that the user has
+	[UnityTest]
+	public IEnumerator MM10UIDisplaysResources() {
+
+		if (GameObject.Find("GameInfo") != null) {
+			GameObject.Destroy(GameObject.Find("GameInfo"));
+		}
+
+		SceneManager.LoadScene("UnderGodScene");
+		yield return null;
+		yield return null;
+
+		Text temptext = GameObject.Find("ResourcesText").GetComponent<resourceScript>().resourceText;
+
+		Assert.True(temptext.text != null);
+	}
 
     [UnityTest]
     public IEnumerator MM2BuildingSelectedHighlight()

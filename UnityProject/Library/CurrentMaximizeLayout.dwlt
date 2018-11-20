@@ -1,0 +1,2220 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &1
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12010, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Children:
+  - {fileID: 3}
+  - {fileID: 16}
+  m_Position:
+    serializedVersion: 2
+    x: 0
+    y: 30
+    width: 1920
+    height: 947
+  m_MinSize: {x: 706, y: 492}
+  m_MaxSize: {x: 16006, y: 14042}
+  vertical: 0
+  controlID: 138
+--- !u!114 &2
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12015, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AutoRepaintOnSceneChange: 1
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Game
+    m_Image: {fileID: -2087823869225018852, guid: 0000000000000000d000000000000000,
+      type: 0}
+    m_Tooltip: 
+  m_DepthBufferBits: 32
+  m_Pos:
+    serializedVersion: 2
+    x: 846
+    y: 92
+    width: 388
+    height: 511
+  m_PersistentViewDataDictionary: {fileID: 0}
+  m_MaximizeOnPlay: 1
+  m_Gizmos: 0
+  m_Stats: 0
+  m_SelectedSizes: 00000000000000000000000000000000000000000000000000000000000000000000000000000000
+  m_TargetDisplay: 0
+  m_ZoomArea:
+    m_HRangeLocked: 0
+    m_VRangeLocked: 0
+    m_HBaseRangeMin: -194
+    m_HBaseRangeMax: 194
+    m_VBaseRangeMin: -247
+    m_VBaseRangeMax: 247
+    m_HAllowExceedBaseRangeMin: 1
+    m_HAllowExceedBaseRangeMax: 1
+    m_VAllowExceedBaseRangeMin: 1
+    m_VAllowExceedBaseRangeMax: 1
+    m_ScaleWithWindow: 0
+    m_HSlider: 0
+    m_VSlider: 0
+    m_IgnoreScrollWheelUntilClicked: 0
+    m_EnableMouseInput: 1
+    m_EnableSliderZoom: 0
+    m_UniformScale: 1
+    m_UpDirection: 1
+    m_DrawArea:
+      serializedVersion: 2
+      x: 0
+      y: 17
+      width: 388
+      height: 494
+    m_Scale: {x: 1, y: 1}
+    m_Translation: {x: 194, y: 247}
+    m_MarginLeft: 0
+    m_MarginRight: 0
+    m_MarginTop: 0
+    m_MarginBottom: 0
+    m_LastShownAreaInsideMargins:
+      serializedVersion: 2
+      x: -194
+      y: -247
+      width: 388
+      height: 494
+    m_MinimalGUI: 1
+  m_defaultScale: 1
+  m_TargetTexture: {fileID: 0}
+  m_CurrentColorSpace: 0
+  m_LastWindowPixelSize: {x: 388, y: 511}
+  m_ClearInEditMode: 1
+  m_NoCameraWarning: 1
+  m_LowResolutionForAspectRatios: 01000000000100000100
+--- !u!114 &3
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12010, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Children:
+  - {fileID: 4}
+  - {fileID: 12}
+  m_Position:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1236
+    height: 947
+  m_MinSize: {x: 604, y: 492}
+  m_MaxSize: {x: 12004, y: 14042}
+  vertical: 1
+  controlID: 139
+--- !u!114 &4
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12010, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Children:
+  - {fileID: 5}
+  - {fileID: 7}
+  - {fileID: 11}
+  m_Position:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1236
+    height: 532
+  m_MinSize: {x: 604, y: 221}
+  m_MaxSize: {x: 12004, y: 4021}
+  vertical: 0
+  controlID: 117
+--- !u!114 &5
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Children: []
+  m_Position:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 262
+    height: 532
+  m_MinSize: {x: 202, y: 221}
+  m_MaxSize: {x: 4002, y: 4021}
+  m_ActualView: {fileID: 6}
+  m_Panes:
+  - {fileID: 6}
+  m_Selected: 0
+  m_LastSelected: 0
+--- !u!114 &6
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12061, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AutoRepaintOnSceneChange: 0
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Hierarchy
+    m_Image: {fileID: -590624980919486359, guid: 0000000000000000d000000000000000,
+      type: 0}
+    m_Tooltip: 
+  m_DepthBufferBits: 0
+  m_Pos:
+    serializedVersion: 2
+    x: 0
+    y: 92
+    width: 260
+    height: 511
+  m_PersistentViewDataDictionary: {fileID: 0}
+  m_TreeViewState:
+    scrollPos: {x: 0, y: 0}
+    m_SelectedIDs: 
+    m_LastClickedID: 0
+    m_ExpandedIDs: 7c78ffff00000000
+    m_RenameOverlay:
+      m_UserAcceptedRename: 0
+      m_Name: 
+      m_OriginalName: 
+      m_EditFieldRect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      m_UserData: 0
+      m_IsWaitingForDelay: 0
+      m_IsRenaming: 0
+      m_OriginalEventType: 11
+      m_IsRenamingFilename: 0
+      m_ClientGUIView: {fileID: 5}
+    m_SearchString: 
+  m_ExpandedScenes:
+  - UnderGodScene
+  m_CurrenRootInstanceID: 0
+  m_Locked: 0
+  m_CurrentSortingName: TransformSorting
+--- !u!114 &7
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Children: []
+  m_Position:
+    serializedVersion: 2
+    x: 262
+    y: 0
+    width: 582
+    height: 532
+  m_MinSize: {x: 204, y: 221}
+  m_MaxSize: {x: 4004, y: 4021}
+  m_ActualView: {fileID: 8}
+  m_Panes:
+  - {fileID: 8}
+  - {fileID: 9}
+  - {fileID: 10}
+  m_Selected: 0
+  m_LastSelected: 2
+--- !u!114 &8
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12013, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AutoRepaintOnSceneChange: 1
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Scene
+    m_Image: {fileID: 2318424515335265636, guid: 0000000000000000d000000000000000,
+      type: 0}
+    m_Tooltip: 
+  m_DepthBufferBits: 32
+  m_Pos:
+    serializedVersion: 2
+    x: 264
+    y: 92
+    width: 578
+    height: 511
+  m_PersistentViewDataDictionary: {fileID: 0}
+  m_SceneLighting: 1
+  lastFramingTime: 402.05990658776705
+  m_2DMode: 0
+  m_isRotationLocked: 0
+  m_AudioPlay: 0
+  m_Position:
+    m_Target: {x: 178.87369, y: 203.01643, z: -98.8623}
+    speed: 2
+    m_Value: {x: 178.87369, y: 203.01643, z: -98.8623}
+  m_RenderMode: 0
+  m_ValidateTrueMetals: 0
+  m_SceneViewState:
+    showFog: 0
+    showMaterialUpdate: 0
+    showSkybox: 0
+    showFlares: 0
+    showImageEffects: 1
+    showParticleSystems: 1
+  grid:
+    xGrid:
+      m_Target: 0
+      speed: 2
+      m_Value: 0
+    yGrid:
+      m_Target: 1
+      speed: 2
+      m_Value: 1
+    zGrid:
+      m_Target: 0
+      speed: 2
+      m_Value: 0
+  m_Rotation:
+    m_Target: {x: -0.019636199, y: 0.97363055, z: -0.20783728, w: -0.09198731}
+    speed: 2
+    m_Value: {x: -0.019636199, y: 0.97363055, z: -0.20783728, w: -0.09198731}
+  m_Size:
+    m_Target: 1201.9362
+    speed: 2
+    m_Value: 1201.9362
+  m_Ortho:
+    m_Target: 0
+    speed: 2
+    m_Value: 0
+  m_ShowGlobalGrid: 1
+  m_LastSceneViewRotation: {x: -0.08717229, y: 0.89959055, z: -0.21045254, w: -0.3726226}
+  m_LastSceneViewOrtho: 0
+  m_ReplacementShader: {fileID: 0}
+  m_ReplacementString: 
+  m_LastLockedObject: {fileID: 0}
+  m_ViewIsLockedToObject: 0
+--- !u!114 &9
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 12914, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AutoRepaintOnSceneChange: 1
+  m_MinSize: {x: 100, y: 100}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Animator
+    m_Image: {fileID: 663490763026382308, guid: 0000000000000000d000000000000000,
+      type: 0}
+    m_Tooltip: 
+  m_DepthBufferBits: 0
+  m_Pos:
+    serializedVersion: 2
+    x: 403
+    y: 92
+    width: 491
+    height: 652
+  m_PersistentViewDataDictionary: {fileID: 0}
+  m_ViewTransforms:
+    m_KeySerializationHelper: []
+    m_ValueSerializationHelper: []
+  m_PreviewAnimator: {fileID: 0}
+  m_AnimatorController: {fileID: 0}
+  m_BreadCrumbs: []
+  stateMachineGraph: {fileID: 0}
+  stateMachineGraphGUI: {fileID: 0}
+  blendTreeGraph: {fileID: 0}
+  blendTreeGraphGUI: {fileID: 0}
+  m_AutoLiveLink: 1
+  m_MiniTool: 0
+  m_SerializedLocked: 0
+  m_CurrentEditor: 0
+  m_LayerEditor:
+    m_SelectedLayerIndex: 0
+--- !u!114 &10
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12111, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AutoRepaintOnSceneChange: 0
+  m_MinSize: {x: 400, y: 100}
+  m_MaxSize: {x: 2048, y: 2048}
+  m_TitleContent:
+    m_Text: Asset Store
+    m_Image: {fileID: 357073275683767465, guid: 0000000000000000d000000000000000,
+      type: 0}
+    m_Tooltip: 
+  m_DepthBufferBits: 0
+  m_Pos:
+    serializedVersion: 2
+    x: 278
+    y: 92
+    width: 610
+    height: 510
+  m_PersistentViewDataDictionary: {fileID: 0}
+--- !u!114 &11
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Children: []
+  m_Position:
+    serializedVersion: 2
+    x: 844
+    y: 0
+    width: 392
+    height: 532
+  m_MinSize: {x: 204, y: 221}
+  m_MaxSize: {x: 4004, y: 4021}
+  m_ActualView: {fileID: 2}
+  m_Panes:
+  - {fileID: 2}
+  m_Selected: 0
+  m_LastSelected: 0
+--- !u!114 &12
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Children: []
+  m_Position:
+    serializedVersion: 2
+    x: 0
+    y: 532
+    width: 1236
+    height: 415
+  m_MinSize: {x: 232, y: 271}
+  m_MaxSize: {x: 10002, y: 10021}
+  m_ActualView: {fileID: 13}
+  m_Panes:
+  - {fileID: 13}
+  - {fileID: 14}
+  - {fileID: 15}
+  m_Selected: 0
+  m_LastSelected: 1
+--- !u!114 &13
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12014, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AutoRepaintOnSceneChange: 0
+  m_MinSize: {x: 230, y: 250}
+  m_MaxSize: {x: 10000, y: 10000}
+  m_TitleContent:
+    m_Text: Project
+    m_Image: {fileID: -7501376956915960154, guid: 0000000000000000d000000000000000,
+      type: 0}
+    m_Tooltip: 
+  m_DepthBufferBits: 0
+  m_Pos:
+    serializedVersion: 2
+    x: 0
+    y: 624
+    width: 1234
+    height: 394
+  m_PersistentViewDataDictionary: {fileID: 0}
+  m_SearchFilter:
+    m_NameFilter: 
+    m_ClassNames: []
+    m_AssetLabels: []
+    m_AssetBundleNames: []
+    m_VersionControlStates: []
+    m_SoftLockControlStates: []
+    m_ReferencingInstanceIDs: 
+    m_ScenePaths: []
+    m_ShowAllHits: 0
+    m_SearchArea: 0
+    m_Folders:
+    - Assets
+  m_ViewMode: 1
+  m_StartGridSize: 64
+  m_LastFolders:
+  - Assets
+  m_LastFoldersGridSize: -1
+  m_LastProjectPath: E:\UnityProjects\4GP6Capstone\UnityProject
+  m_IsLocked: 0
+  m_FolderTreeState:
+    scrollPos: {x: 0, y: 0}
+    m_SelectedIDs: 4e340000
+    m_LastClickedID: 13390
+    m_ExpandedIDs: 000000004e3400006e360000cc3600004a370000dc370000f03700006e38000074380000ee38000000ca9a3bffffff7f
+    m_RenameOverlay:
+      m_UserAcceptedRename: 0
+      m_Name: 
+      m_OriginalName: 
+      m_EditFieldRect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      m_UserData: 0
+      m_IsWaitingForDelay: 0
+      m_IsRenaming: 0
+      m_OriginalEventType: 11
+      m_IsRenamingFilename: 1
+      m_ClientGUIView: {fileID: 12}
+    m_SearchString: 
+    m_CreateAssetUtility:
+      m_EndAction: {fileID: 0}
+      m_InstanceID: 0
+      m_Path: 
+      m_Icon: {fileID: 0}
+      m_ResourceFile: 
+  m_AssetTreeState:
+    scrollPos: {x: 0, y: 0}
+    m_SelectedIDs: 
+    m_LastClickedID: 0
+    m_ExpandedIDs: 000000004e3400006e360000cc3600004a370000dc370000f03700006e38000074380000ee380000
+    m_RenameOverlay:
+      m_UserAcceptedRename: 0
+      m_Name: 
+      m_OriginalName: 
+      m_EditFieldRect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      m_UserData: 0
+      m_IsWaitingForDelay: 0
+      m_IsRenaming: 0
+      m_OriginalEventType: 11
+      m_IsRenamingFilename: 1
+      m_ClientGUIView: {fileID: 0}
+    m_SearchString: 
+    m_CreateAssetUtility:
+      m_EndAction: {fileID: 0}
+      m_InstanceID: 0
+      m_Path: 
+      m_Icon: {fileID: 0}
+      m_ResourceFile: 
+  m_ListAreaState:
+    m_SelectedInstanceIDs: 
+    m_LastClickedInstanceID: 0
+    m_HadKeyboardFocusLastEvent: 0
+    m_ExpandedInstanceIDs: c62300001267000000000000d42d0000
+    m_RenameOverlay:
+      m_UserAcceptedRename: 0
+      m_Name: 
+      m_OriginalName: 
+      m_EditFieldRect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      m_UserData: 0
+      m_IsWaitingForDelay: 0
+      m_IsRenaming: 0
+      m_OriginalEventType: 11
+      m_IsRenamingFilename: 1
+      m_ClientGUIView: {fileID: 12}
+    m_CreateAssetUtility:
+      m_EndAction: {fileID: 0}
+      m_InstanceID: 0
+      m_Path: 
+      m_Icon: {fileID: 0}
+      m_ResourceFile: 
+    m_NewAssetIndexInList: -1
+    m_ScrollPosition: {x: 0, y: 0}
+    m_GridSize: 64
+  m_DirectoriesAreaWidth: 238
+--- !u!114 &14
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12003, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AutoRepaintOnSceneChange: 0
+  m_MinSize: {x: 100, y: 100}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Console
+    m_Image: {fileID: 111653112392082826, guid: 0000000000000000d000000000000000,
+      type: 0}
+    m_Tooltip: 
+  m_DepthBufferBits: 0
+  m_Pos:
+    serializedVersion: 2
+    x: 0
+    y: 624
+    width: 1234
+    height: 394
+  m_PersistentViewDataDictionary: {fileID: 0}
+--- !u!114 &15
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12071, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AutoRepaintOnSceneChange: 0
+  m_MinSize: {x: 100, y: 100}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Animation
+    m_Image: {fileID: 1561878555887300916, guid: 0000000000000000d000000000000000,
+      type: 0}
+    m_Tooltip: 
+  m_DepthBufferBits: 0
+  m_Pos:
+    serializedVersion: 2
+    x: 0
+    y: 623
+    width: 1297
+    height: 395
+  m_PersistentViewDataDictionary: {fileID: 0}
+  m_AnimEditor: {fileID: 0}
+  m_Locked: 0
+--- !u!114 &16
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Children: []
+  m_Position:
+    serializedVersion: 2
+    x: 1236
+    y: 0
+    width: 684
+    height: 947
+  m_MinSize: {x: 102, y: 121}
+  m_MaxSize: {x: 4002, y: 4021}
+  m_ActualView: {fileID: 20}
+  m_Panes:
+  - {fileID: 17}
+  - {fileID: 18}
+  - {fileID: 19}
+  - {fileID: 20}
+  m_Selected: 3
+  m_LastSelected: 0
+--- !u!114 &17
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12019, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AutoRepaintOnSceneChange: 0
+  m_MinSize: {x: 275, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Inspector
+    m_Image: {fileID: -6905738622615590433, guid: 0000000000000000d000000000000000,
+      type: 0}
+    m_Tooltip: 
+  m_DepthBufferBits: 0
+  m_Pos:
+    serializedVersion: 2
+    x: 1238
+    y: 92
+    width: 682
+    height: 926
+  m_PersistentViewDataDictionary: {fileID: 0}
+  m_ScrollPosition: {x: 0, y: 0}
+  m_InspectorMode: 0
+  m_PreviewResizer:
+    m_CachedPref: 339
+    m_ControlHash: -371814159
+    m_PrefName: Preview_InspectorPreview
+  m_PreviewWindow: {fileID: 0}
+--- !u!114 &18
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12157, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AutoRepaintOnSceneChange: 0
+  m_MinSize: {x: 275, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Services
+    m_Image: {fileID: 0}
+    m_Tooltip: 
+  m_DepthBufferBits: 0
+  m_Pos:
+    serializedVersion: 2
+    x: 1301
+    y: 92
+    width: 619
+    height: 926
+  m_PersistentViewDataDictionary: {fileID: 0}
+  m_InitialOpenURL: https://public-cdn.cloud.unity3d.com/editor/production/cloud/hub
+  m_GlobalObjectTypeName: 
+  m_RegisteredViewURLs:
+  - https://public-cdn.cloud.unity3d.com/editor/production/cloud/hub
+  m_RegisteredViewInstances:
+  - {fileID: 0}
+--- !u!114 &19
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12079, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AutoRepaintOnSceneChange: 0
+  m_MinSize: {x: 360, y: 390}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Lighting
+    m_Image: {fileID: 8394858894532624064, guid: 0000000000000000d000000000000000,
+      type: 0}
+    m_Tooltip: 
+  m_DepthBufferBits: 0
+  m_Pos:
+    serializedVersion: 2
+    x: 1301
+    y: 92
+    width: 619
+    height: 926
+  m_PersistentViewDataDictionary: {fileID: 0}
+--- !u!114 &20
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 13401, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AutoRepaintOnSceneChange: 0
+  m_MinSize: {x: 100, y: 100}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Test Runner
+    m_Image: {fileID: 0}
+    m_Tooltip: 
+  m_DepthBufferBits: 0
+  m_Pos:
+    serializedVersion: 2
+    x: 1238
+    y: 92
+    width: 682
+    height: 926
+  m_PersistentViewDataDictionary: {fileID: 0}
+  m_TestTypeToolbarIndex: 0
+  m_PlayModeTestListGUI:
+    m_Window: {fileID: 20}
+    newResultList:
+    - id: '[4GP6Capstone][suite]'
+      name: 4GP6Capstone
+      fullName: 4GP6Capstone
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+    - id: '[E:/UnityProjects/4GP6Capstone/UnityProject/Library/ScriptAssemblies/Tests.dll][suite]'
+      name: Tests.dll
+      fullName: E:/UnityProjects/4GP6Capstone/UnityProject/Library/ScriptAssemblies/Tests.dll
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+    - id: '[Tests][CombatModeTests][suite]'
+      name: CombatModeTests
+      fullName: CombatModeTests
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+    - id: '[Tests][CombatModeTests.CombatModeTestsSimplePasses]'
+      name: CombatModeTestsSimplePasses
+      fullName: CombatModeTests.CombatModeTestsSimplePasses
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req1ACreatingPlayerUnit]'
+      name: Req1ACreatingPlayerUnit
+      fullName: CombatModeTests.Req1ACreatingPlayerUnit
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req1BCreatingEnemyUnit]'
+      name: Req1BCreatingEnemyUnit
+      fullName: CombatModeTests.Req1BCreatingEnemyUnit
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req1CEndingAllTurns]'
+      name: Req1CEndingAllTurns
+      fullName: CombatModeTests.Req1CEndingAllTurns
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req1DMovingThenEndingTurns]'
+      name: Req1DMovingThenEndingTurns
+      fullName: CombatModeTests.Req1DMovingThenEndingTurns
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req1EMoivningThenAttacking]'
+      name: Req1EMoivningThenAttacking
+      fullName: CombatModeTests.Req1EMoivningThenAttacking
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req1FMovingThenAttackingMixed]'
+      name: Req1FMovingThenAttackingMixed
+      fullName: CombatModeTests.Req1FMovingThenAttackingMixed
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req2AUnitEndingTurn]'
+      name: Req2AUnitEndingTurn
+      fullName: CombatModeTests.Req2AUnitEndingTurn
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req2BAttackingEndsTurn]'
+      name: Req2BAttackingEndsTurn
+      fullName: CombatModeTests.Req2BAttackingEndsTurn
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req3ATestUnitAttackingCannotBeSelectedAgain]'
+      name: Req3ATestUnitAttackingCannotBeSelectedAgain
+      fullName: CombatModeTests.Req3ATestUnitAttackingCannotBeSelectedAgain
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req3BTestUnitMovedCanStillAttack]'
+      name: Req3BTestUnitMovedCanStillAttack
+      fullName: CombatModeTests.Req3BTestUnitMovedCanStillAttack
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req4ATestUnitAttackDidDamage]'
+      name: Req4ATestUnitAttackDidDamage
+      fullName: CombatModeTests.Req4ATestUnitAttackDidDamage
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req4BTestUnitCantAttackFriends]'
+      name: Req4BTestUnitCantAttackFriends
+      fullName: CombatModeTests.Req4BTestUnitCantAttackFriends
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req4CTestUnitCantAttackSelf]'
+      name: Req4CTestUnitCantAttackSelf
+      fullName: CombatModeTests.Req4CTestUnitCantAttackSelf
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req5ATestUnitCanMove]'
+      name: Req5ATestUnitCanMove
+      fullName: CombatModeTests.Req5ATestUnitCanMove
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req5BTestUnitCanMoveTwoTiles]'
+      name: Req5BTestUnitCanMoveTwoTiles
+      fullName: CombatModeTests.Req5BTestUnitCanMoveTwoTiles
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req6AExpectedFAILTestGodlyUnitExists]'
+      name: Req6AExpectedFAILTestGodlyUnitExists
+      fullName: CombatModeTests.Req6AExpectedFAILTestGodlyUnitExists
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req6BExpectedFAILTestChooseGodlyAbility]'
+      name: Req6BExpectedFAILTestChooseGodlyAbility
+      fullName: CombatModeTests.Req6BExpectedFAILTestChooseGodlyAbility
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req6CExpectedFAILTestAbilityHappened]'
+      name: Req6CExpectedFAILTestAbilityHappened
+      fullName: CombatModeTests.Req6CExpectedFAILTestAbilityHappened
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req7AFaithGeneratedatStartofTurn]'
+      name: Req7AFaithGeneratedatStartofTurn
+      fullName: CombatModeTests.Req7AFaithGeneratedatStartofTurn
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req7BFaithNotGeneratedduringEnemyTurn]'
+      name: Req7BFaithNotGeneratedduringEnemyTurn
+      fullName: CombatModeTests.Req7BFaithNotGeneratedduringEnemyTurn
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req7CFaithDoesNotExceedCap]'
+      name: Req7CFaithDoesNotExceedCap
+      fullName: CombatModeTests.Req7CFaithDoesNotExceedCap
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req7CFaithNotGeneratedduringPlayerTurn]'
+      name: Req7CFaithNotGeneratedduringPlayerTurn
+      fullName: CombatModeTests.Req7CFaithNotGeneratedduringPlayerTurn
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req7DFaithDoesNotGoBelowZero]'
+      name: Req7DFaithDoesNotGoBelowZero
+      fullName: CombatModeTests.Req7DFaithDoesNotGoBelowZero
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req8ExpectedFAILCanSplitWorshipers]'
+      name: Req8ExpectedFAILCanSplitWorshipers
+      fullName: CombatModeTests.Req8ExpectedFAILCanSplitWorshipers
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req9AHigherMoraleEqualsHigherAttackstr]'
+      name: Req9AHigherMoraleEqualsHigherAttackstr
+      fullName: CombatModeTests.Req9AHigherMoraleEqualsHigherAttackstr
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req9BMoraleChangesAttackStr]'
+      name: Req9BMoraleChangesAttackStr
+      fullName: CombatModeTests.Req9BMoraleChangesAttackStr
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Req9CAttackStrisnotNegative]'
+      name: Req9CAttackStrisnotNegative
+      fullName: CombatModeTests.Req9CAttackStrisnotNegative
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Requ10AUnitCanDie]'
+      name: Requ10AUnitCanDie
+      fullName: CombatModeTests.Requ10AUnitCanDie
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Requ10BDifferentAttackStrengths]'
+      name: Requ10BDifferentAttackStrengths
+      fullName: CombatModeTests.Requ10BDifferentAttackStrengths
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Requ10CSameAttackStrength]'
+      name: Requ10CSameAttackStrength
+      fullName: CombatModeTests.Requ10CSameAttackStrength
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Requ11ACheckifKillingAnEnemyRemovesitFromtheList]'
+      name: Requ11ACheckifKillingAnEnemyRemovesitFromtheList
+      fullName: CombatModeTests.Requ11ACheckifKillingAnEnemyRemovesitFromtheList
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Requ11BExpectedFailKillingGodUnitEndsBattle]'
+      name: Requ11BExpectedFailKillingGodUnitEndsBattle
+      fullName: CombatModeTests.Requ11BExpectedFailKillingGodUnitEndsBattle
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Requ11CAttackingWithoutKillDoesntKill]'
+      name: Requ11CAttackingWithoutKillDoesntKill
+      fullName: CombatModeTests.Requ11CAttackingWithoutKillDoesntKill
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Requ12EnemyCanKillPlayerUnit]'
+      name: Requ12EnemyCanKillPlayerUnit
+      fullName: CombatModeTests.Requ12EnemyCanKillPlayerUnit
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Requ13AExpectedFAILSurrender]'
+      name: Requ13AExpectedFAILSurrender
+      fullName: CombatModeTests.Requ13AExpectedFAILSurrender
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Requ13BExpectedFAILReturnToManagementMode]'
+      name: Requ13BExpectedFAILReturnToManagementMode
+      fullName: CombatModeTests.Requ13BExpectedFAILReturnToManagementMode
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Requ13CExpectedFAILAdjustMoraleAfterSurrender]'
+      name: Requ13CExpectedFAILAdjustMoraleAfterSurrender
+      fullName: CombatModeTests.Requ13CExpectedFAILAdjustMoraleAfterSurrender
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][CombatModeTests.Requ14ExpectedFAILAdjustWorshiperCountAfterUnitDeath]'
+      name: Requ14ExpectedFAILAdjustWorshiperCountAfterUnitDeath
+      fullName: CombatModeTests.Requ14ExpectedFAILAdjustWorshiperCountAfterUnitDeath
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest][suite]'
+      name: ManagementPlayModeTest
+      fullName: ManagementPlayModeTest
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+    - id: '[Tests][ManagementPlayModeTest.ManagementPlayModeTestSimplePasses]'
+      name: ManagementPlayModeTestSimplePasses
+      fullName: ManagementPlayModeTest.ManagementPlayModeTestSimplePasses
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.ManagementPlayModeTestWithEnumeratorPasses]'
+      name: ManagementPlayModeTestWithEnumeratorPasses
+      fullName: ManagementPlayModeTest.ManagementPlayModeTestWithEnumeratorPasses
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM11AllFactionsAreUnique]'
+      name: MM11AllFactionsAreUnique
+      fullName: ManagementPlayModeTest.MM11AllFactionsAreUnique
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM11GameMapGeneratedOnStart]'
+      name: MM11GameMapGeneratedOnStart
+      fullName: ManagementPlayModeTest.MM11GameMapGeneratedOnStart
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM11HigherTierFactionsHaveMoreStartingBuildings]'
+      name: MM11HigherTierFactionsHaveMoreStartingBuildings
+      fullName: ManagementPlayModeTest.MM11HigherTierFactionsHaveMoreStartingBuildings
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM11NewGameOptionAvailableInMenu]'
+      name: MM11NewGameOptionAvailableInMenu
+      fullName: ManagementPlayModeTest.MM11NewGameOptionAvailableInMenu
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM11PlayCanChooseStartingGod]'
+      name: MM11PlayCanChooseStartingGod
+      fullName: ManagementPlayModeTest.MM11PlayCanChooseStartingGod
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM11PlayerStartsInTierZero]'
+      name: MM11PlayerStartsInTierZero
+      fullName: ManagementPlayModeTest.MM11PlayerStartsInTierZero
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM12BufferedBuildingVisible]'
+      name: MM12BufferedBuildingVisible
+      fullName: ManagementPlayModeTest.MM12BufferedBuildingVisible
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM12PlayerCanCreateAltarBuilding]'
+      name: MM12PlayerCanCreateAltarBuilding
+      fullName: ManagementPlayModeTest.MM12PlayerCanCreateAltarBuilding
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM12PlayerCanCreateBlackSmithBuilding]'
+      name: MM12PlayerCanCreateBlackSmithBuilding
+      fullName: ManagementPlayModeTest.MM12PlayerCanCreateBlackSmithBuilding
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM12PlayerCanCreateHousingBuilding]'
+      name: MM12PlayerCanCreateHousingBuilding
+      fullName: ManagementPlayModeTest.MM12PlayerCanCreateHousingBuilding
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM12PlayerCanCreateMineBuilding]'
+      name: MM12PlayerCanCreateMineBuilding
+      fullName: ManagementPlayModeTest.MM12PlayerCanCreateMineBuilding
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM13BlackSmithBuildingExists]'
+      name: MM13BlackSmithBuildingExists
+      fullName: ManagementPlayModeTest.MM13BlackSmithBuildingExists
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM13BlackSmithCanBeUpgraded]'
+      name: MM13BlackSmithCanBeUpgraded
+      fullName: ManagementPlayModeTest.MM13BlackSmithCanBeUpgraded
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM13BuyingUpgradeReducesPlayerMaterials]'
+      name: MM13BuyingUpgradeReducesPlayerMaterials
+      fullName: ManagementPlayModeTest.MM13BuyingUpgradeReducesPlayerMaterials
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM13OnlyOneBlackSmithBuildingAllowed]'
+      name: MM13OnlyOneBlackSmithBuildingAllowed
+      fullName: ManagementPlayModeTest.MM13OnlyOneBlackSmithBuildingAllowed
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM13PlayerCanUnlockUpgrade]'
+      name: MM13PlayerCanUnlockUpgrade
+      fullName: ManagementPlayModeTest.MM13PlayerCanUnlockUpgrade
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM13UpgradeBuildingUICanBeClosed]'
+      name: MM13UpgradeBuildingUICanBeClosed
+      fullName: ManagementPlayModeTest.MM13UpgradeBuildingUICanBeClosed
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM13UpgradeBuildingUIExists]'
+      name: MM13UpgradeBuildingUIExists
+      fullName: ManagementPlayModeTest.MM13UpgradeBuildingUIExists
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM14AltarBuildingGeneratesWorshippers]'
+      name: MM14AltarBuildingGeneratesWorshippers
+      fullName: ManagementPlayModeTest.MM14AltarBuildingGeneratesWorshippers
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM14AltarBuildingUIExists]'
+      name: MM14AltarBuildingUIExists
+      fullName: ManagementPlayModeTest.MM14AltarBuildingUIExists
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM14AltarCanBeUpgraded]'
+      name: MM14AltarCanBeUpgraded
+      fullName: ManagementPlayModeTest.MM14AltarCanBeUpgraded
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM14PlayerCanCreateAltarBuilding]'
+      name: MM14PlayerCanCreateAltarBuilding
+      fullName: ManagementPlayModeTest.MM14PlayerCanCreateAltarBuilding
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM15MineBuildingGeneratesMaterials]'
+      name: MM15MineBuildingGeneratesMaterials
+      fullName: ManagementPlayModeTest.MM15MineBuildingGeneratesMaterials
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM15MineBuildingUIExists]'
+      name: MM15MineBuildingUIExists
+      fullName: ManagementPlayModeTest.MM15MineBuildingUIExists
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM15MineCanBeUpgraded]'
+      name: MM15MineCanBeUpgraded
+      fullName: ManagementPlayModeTest.MM15MineCanBeUpgraded
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM15PlayerCanCreateMineBuilding]'
+      name: MM15PlayerCanCreateMineBuilding
+      fullName: ManagementPlayModeTest.MM15PlayerCanCreateMineBuilding
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM16HouseCanBeUpgraded]'
+      name: MM16HouseCanBeUpgraded
+      fullName: ManagementPlayModeTest.MM16HouseCanBeUpgraded
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM16HousingAffectsMorale]'
+      name: MM16HousingAffectsMorale
+      fullName: ManagementPlayModeTest.MM16HousingAffectsMorale
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM16HousingBuildingUIExists]'
+      name: MM16HousingBuildingUIExists
+      fullName: ManagementPlayModeTest.MM16HousingBuildingUIExists
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM16PlayerCanCreateHousingBuilding]'
+      name: MM16PlayerCanCreateHousingBuilding
+      fullName: ManagementPlayModeTest.MM16PlayerCanCreateHousingBuilding
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM2BuildingSelectedHighlight]'
+      name: MM2BuildingSelectedHighlight
+      fullName: ManagementPlayModeTest.MM2BuildingSelectedHighlight
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM3VillagesRandomlyPlaced]'
+      name: MM3VillagesRandomlyPlaced
+      fullName: ManagementPlayModeTest.MM3VillagesRandomlyPlaced
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM3VillagesWithinGodsTerritory]'
+      name: MM3VillagesWithinGodsTerritory
+      fullName: ManagementPlayModeTest.MM3VillagesWithinGodsTerritory
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM4VillageBuildingGeneratesMaterials]'
+      name: MM4VillageBuildingGeneratesMaterials
+      fullName: ManagementPlayModeTest.MM4VillageBuildingGeneratesMaterials
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM4VillageBuildingGeneratesWorshippers]'
+      name: MM4VillageBuildingGeneratesWorshippers
+      fullName: ManagementPlayModeTest.MM4VillageBuildingGeneratesWorshippers
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM5EnterCombatModeAnimationPlays]'
+      name: MM5EnterCombatModeAnimationPlays
+      fullName: ManagementPlayModeTest.MM5EnterCombatModeAnimationPlays
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM5PlayerCanEnterCombatMode]'
+      name: MM5PlayerCanEnterCombatMode
+      fullName: ManagementPlayModeTest.MM5PlayerCanEnterCombatMode
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM5PlayerCanSelectEnemyVillage]'
+      name: MM5PlayerCanSelectEnemyVillage
+      fullName: ManagementPlayModeTest.MM5PlayerCanSelectEnemyVillage
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM6EnemyChallengerIsOfCurrentTier]'
+      name: MM6EnemyChallengerIsOfCurrentTier
+      fullName: ManagementPlayModeTest.MM6EnemyChallengerIsOfCurrentTier
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM6EnemyChallengesPlayerAfterTime]'
+      name: MM6EnemyChallengesPlayerAfterTime
+      fullName: ManagementPlayModeTest.MM6EnemyChallengesPlayerAfterTime
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM6WarningAppearsBeforeEnemyChallenge]'
+      name: MM6WarningAppearsBeforeEnemyChallenge
+      fullName: ManagementPlayModeTest.MM6WarningAppearsBeforeEnemyChallenge
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM7AnimationPlaysAfterTierUnlock]'
+      name: MM7AnimationPlaysAfterTierUnlock
+      fullName: ManagementPlayModeTest.MM7AnimationPlaysAfterTierUnlock
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM7HigherTierFactionsNotVisible]'
+      name: MM7HigherTierFactionsNotVisible
+      fullName: ManagementPlayModeTest.MM7HigherTierFactionsNotVisible
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM7TierUnlocksAfterEnemiesDefeated]'
+      name: MM7TierUnlocksAfterEnemiesDefeated
+      fullName: ManagementPlayModeTest.MM7TierUnlocksAfterEnemiesDefeated
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM8EnemiesBuildingsCostMore]'
+      name: MM8EnemiesBuildingsCostMore
+      fullName: ManagementPlayModeTest.MM8EnemiesBuildingsCostMore
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM8EnemiesBuildNewBuildings]'
+      name: MM8EnemiesBuildNewBuildings
+      fullName: ManagementPlayModeTest.MM8EnemiesBuildNewBuildings
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM8EnemiesUpgradeTheirOwnBuildings]'
+      name: MM8EnemiesUpgradeTheirOwnBuildings
+      fullName: ManagementPlayModeTest.MM8EnemiesUpgradeTheirOwnBuildings
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM9PlaceBuildingInPlayersTerritory]'
+      name: MM9PlaceBuildingInPlayersTerritory
+      fullName: ManagementPlayModeTest.MM9PlaceBuildingInPlayersTerritory
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM9PlaceBuildingOnTopOfAnotherBuilding]'
+      name: MM9PlaceBuildingOnTopOfAnotherBuilding
+      fullName: ManagementPlayModeTest.MM9PlaceBuildingOnTopOfAnotherBuilding
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.MM9PlaceBuildingOutsidePlayersTerritory]'
+      name: MM9PlaceBuildingOutsidePlayersTerritory
+      fullName: ManagementPlayModeTest.MM9PlaceBuildingOutsidePlayersTerritory
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.TestMoveCameraDownOnMouse]'
+      name: TestMoveCameraDownOnMouse
+      fullName: ManagementPlayModeTest.TestMoveCameraDownOnMouse
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.TestMoveCameraDownOnSKey]'
+      name: TestMoveCameraDownOnSKey
+      fullName: ManagementPlayModeTest.TestMoveCameraDownOnSKey
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.TestMoveCameraLeftOnAKey]'
+      name: TestMoveCameraLeftOnAKey
+      fullName: ManagementPlayModeTest.TestMoveCameraLeftOnAKey
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.TestMoveCameraLeftOnMouse]'
+      name: TestMoveCameraLeftOnMouse
+      fullName: ManagementPlayModeTest.TestMoveCameraLeftOnMouse
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.TestMoveCameraRightOnDKey]'
+      name: TestMoveCameraRightOnDKey
+      fullName: ManagementPlayModeTest.TestMoveCameraRightOnDKey
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.TestMoveCameraRightOnMouse]'
+      name: TestMoveCameraRightOnMouse
+      fullName: ManagementPlayModeTest.TestMoveCameraRightOnMouse
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.TestMoveCameraUpOnMouse]'
+      name: TestMoveCameraUpOnMouse
+      fullName: ManagementPlayModeTest.TestMoveCameraUpOnMouse
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.TestMoveCameraUpOnWKey]'
+      name: TestMoveCameraUpOnWKey
+      fullName: ManagementPlayModeTest.TestMoveCameraUpOnWKey
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.TestPlayerGeneratesMaterials]'
+      name: TestPlayerGeneratesMaterials
+      fullName: ManagementPlayModeTest.TestPlayerGeneratesMaterials
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.TestPlayerGeneratesWorshippers]'
+      name: TestPlayerGeneratesWorshippers
+      fullName: ManagementPlayModeTest.TestPlayerGeneratesWorshippers
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.TestUIShowsCorrectMaterialAmount]'
+      name: TestUIShowsCorrectMaterialAmount
+      fullName: ManagementPlayModeTest.TestUIShowsCorrectMaterialAmount
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Tests][ManagementPlayModeTest.TestUIShowsCorrectWorshippersAmount]'
+      name: TestUIShowsCorrectWorshippersAmount
+      fullName: ManagementPlayModeTest.TestUIShowsCorrectWorshippersAmount
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    m_ResultText: 
+    m_ResultStacktrace: 
+    m_TestListState:
+      scrollPos: {x: 0, y: 0}
+      m_SelectedIDs: 
+      m_LastClickedID: 0
+      m_ExpandedIDs: fb06408f3ff5b4c30a9ddae5ffffff7f
+      m_RenameOverlay:
+        m_UserAcceptedRename: 0
+        m_Name: 
+        m_OriginalName: 
+        m_EditFieldRect:
+          serializedVersion: 2
+          x: 0
+          y: 0
+          width: 0
+          height: 0
+        m_UserData: 0
+        m_IsWaitingForDelay: 0
+        m_IsRenaming: 0
+        m_OriginalEventType: 11
+        m_IsRenamingFilename: 0
+        m_ClientGUIView: {fileID: 0}
+      m_SearchString: 
+    m_TestRunnerUIFilter:
+      PassedHidden: 0
+      FailedHidden: 0
+      NotRunHidden: 0
+      m_SearchString: 
+      selectedCategoryMask: 0
+      availableCategories: []
+  m_EditModeTestListGUI:
+    m_Window: {fileID: 20}
+    newResultList:
+    - id: '[4GP6Capstone][suite]'
+      name: 4GP6Capstone
+      fullName: 4GP6Capstone
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+    - id: '[E:/UnityProjects/4GP6Capstone/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll][suite]'
+      name: Assembly-CSharp-Editor.dll
+      fullName: E:/UnityProjects/4GP6Capstone/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll
+      resultStatus: 2
+      duration: 0.0531834
+      messages: One or more child tests had errors
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+    - id: '[Assembly-CSharp-Editor][ManagementModeTests][suite]'
+      name: ManagementModeTests
+      fullName: ManagementModeTests
+      resultStatus: 2
+      duration: 0.0451708
+      messages: One or more child tests had errors
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+    - id: '[Assembly-CSharp-Editor][ManagementModeTests.FactionOwnsBuildingTest]'
+      name: FactionOwnsBuildingTest
+      fullName: ManagementModeTests.FactionOwnsBuildingTest
+      resultStatus: 1
+      duration: 0.0108257
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    - id: '[Assembly-CSharp-Editor][ManagementModeTests.ManagementModeTestsWithEnumeratorPasses]'
+      name: ManagementModeTestsWithEnumeratorPasses
+      fullName: ManagementModeTests.ManagementModeTestsWithEnumeratorPasses
+      resultStatus: 0
+      duration: 0.0209771
+      messages: 'Unhandled log message: ''[Error] EditMode test can only yield null''.
+        Use UnityEngine.TestTools.LogAssert.Expect'
+      output: "EditMode test can only yield null\r\n"
+      stacktrace: "UnityEditor.EditorApplication:Internal_CallUpdateFunctions()\r\n\r\n"
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+    m_ResultText: 'ManagementModeTestsWithEnumeratorPasses (0.021s)
+
+      ---
+
+      Unhandled log message: ''[Error] EditMode test can only yield null''. Use UnityEngine.TestTools.LogAssert.Expect
+
+      ---
+
+      UnityEditor.EditorApplication:Internal_CallUpdateFunctions()
+
+      ---
+
+      EditMode test can only yield null'
+    m_ResultStacktrace: "UnityEditor.EditorApplication:Internal_CallUpdateFunctions()\r\n\r\n"
+    m_TestListState:
+      scrollPos: {x: 0, y: 0}
+      m_SelectedIDs: f18f8674
+      m_LastClickedID: 1954975729
+      m_ExpandedIDs: 0a9ddae55913b512ed2be377ffffff7f
+      m_RenameOverlay:
+        m_UserAcceptedRename: 0
+        m_Name: 
+        m_OriginalName: 
+        m_EditFieldRect:
+          serializedVersion: 2
+          x: 0
+          y: 0
+          width: 0
+          height: 0
+        m_UserData: 0
+        m_IsWaitingForDelay: 0
+        m_IsRenaming: 0
+        m_OriginalEventType: 11
+        m_IsRenamingFilename: 0
+        m_ClientGUIView: {fileID: 0}
+      m_SearchString: 
+    m_TestRunnerUIFilter:
+      PassedHidden: 0
+      FailedHidden: 0
+      NotRunHidden: 0
+      m_SearchString: 
+      selectedCategoryMask: 0
+      availableCategories: []

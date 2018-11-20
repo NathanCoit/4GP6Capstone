@@ -22,7 +22,7 @@ echo "Running editor unit tests for UnityProject"
 	-batchmode \
 	-nographics \
 	-silent-crashes \
-    -testPlatform playmode
+    -testPlatform playmode \
 	-projectPath "$(pwd)/UnityProject" \
 	-runTests \
 	-testResults $(pwd)/test.xml \

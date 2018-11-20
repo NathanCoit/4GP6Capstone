@@ -4,17 +4,19 @@
 #  a subdirectory of the repo root directory, e.g. for this repo "unity-ci-test" 
 #  the project folder is "UnityProject". If this is not true then adjust the 
 #  -projectPath argument to point to the right location.
-
+ls
 ## Run the play unit tests
 echo "Running play unit tests for UnityProject"
 /Applications/Unity/Unity.app/Contents/MacOS/Unity \
 	-batchmode \
         -testPlatform playmode \
-	-projectPath "./UnityProject" \
+	-projectPath ./UnityProject \
 	-runTests \
 	-testResults ./test.xml
 
 rc0=$?
+ls
+ls ./UnityProject
 echo "Unit test logs"
 cat ./UnityProject/test.xml
 # exit if tests failed

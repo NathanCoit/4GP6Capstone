@@ -5,11 +5,11 @@ using UnityEngine.UI;
 
 public class resourceScript : MonoBehaviour {
 
-	Text resourceText;
+	public Text resourceText;
 	// Use this for initialization
 	void Start () {
 		resourceText = gameObject.GetComponent<Text> ();
-		resourceText.text = "Materials:" + 0.ToString() + "     Worshippers:" + 0.ToString() + "     Morale:" + 0.ToString();
+		resourceText.text = "Materials: " + 0.ToString() + " Worshippers: " + 0.ToString() + " Morale: " + 0.ToString();
 	}
 
 	// Update is called once per frame
@@ -17,6 +17,6 @@ public class resourceScript : MonoBehaviour {
 	}
 
 	public void resourceUIUpdate(int mat, int wor, float mor){
-		resourceText.text = "Materials:" + mat.ToString() + "     Worshippers:" + wor.ToString() + "     Morale:" + mor.ToString();
+		resourceText.text = "Materials: " + mat.ToString() + " Worshippers: " + wor.ToString() + " Morale: " + mor.ToString();
 	}
 }

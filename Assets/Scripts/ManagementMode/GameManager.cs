@@ -36,16 +36,15 @@ public class GameManager : MonoBehaviour
     private ExecuteSound sound;
     public TerrainMap GameMap;
     public Building PlayerVillage;
-    public List<Building> EnemyVillages;
     public float MapRadius;
     public List<Faction> CurrentFactions;
     public int BuildingCostModifier = 1;
     private MENUSTATE CurrentMenuState = MENUSTATE.Default_State;
-    private Building BufferedBuilding = null;
-    private Faction PlayerFaction = null;
-    private List<Faction> EnemyFactions = null;
+    public Building BufferedBuilding = null;
+	public Faction PlayerFaction = null;
+    public List<Faction> EnemyFactions = null;
     private GameObject SelectedGameObject = null;
-    private Building SelectedBuilding = null;
+    public Building SelectedBuilding = null;
     private Vector3 OriginalBuildingPosition;
     public float MinimumMorale = 0.2f;
     public List<TierReward> PlayerRewardTree;
@@ -53,7 +52,7 @@ public class GameManager : MonoBehaviour
     public int TierWoshipperCountMultiplier = 2; // After every tier, tier count is multiplied by this
     public int MapTierCount = 3;
     public int EnemiesPerTier = 3;
-    private int CurrentTier = 0;
+    public int CurrentTier = 0;
     public int TierDifficultyIncrease = 10; // Each tier gets X*Tier buildings to start
     private MENUSTATE LastMenuState = MENUSTATE.Default_State;
     private List<float> MaterialMultipliers = new List<float>();
@@ -61,10 +60,12 @@ public class GameManager : MonoBehaviour
     public int EnemyChallengeTimer = 300; // Seconds until an enemy attacks
     private int CurrentTimer = 0;
     public float BuildingRadius = 10;
+    public int ResourceTicks { get; private set; }
     // Use this for any initializations needed by other scripts
     void Awake()
     {
         Building.BuildingRadiusSize = BuildingRadius;
+        Building.BuildingCostModifier = BuildingCostModifier;
 		text1 = FindObjectOfType<modeTextScript>();
 		resourcetext = FindObjectOfType<resourceScript>();
         sound = AudioObject.GetComponent<ExecuteSound>();
@@ -129,14 +130,14 @@ public class GameManager : MonoBehaviour
             }
             Building.LoadBuildingResources(GodTypes);
             //Create and place player village
-            PlayerVillage = new Building(Building.BUILDING_TYPE.VILLAGE, PlayerFaction, BuildingCostModifier);
+            PlayerVillage = new Building(Building.BUILDING_TYPE.VILLAGE, PlayerFaction);
             vec3VillagePos = GameMap.CalculateRandomPosition(PlayerFaction);
             GameMap.PlaceBuilding(PlayerVillage, vec3VillagePos);
 
             //Create and place enemy villages
             foreach (Faction enemyFaction in EnemyFactions)
             {
-                bldEnemyBuilding = new Building(Building.BUILDING_TYPE.VILLAGE, enemyFaction, BuildingCostModifier);
+                bldEnemyBuilding = new Building(Building.BUILDING_TYPE.VILLAGE, enemyFaction);
                 vec3VillagePos = GameMap.CalculateRandomPosition(enemyFaction);
                 while(!GameMap.PlaceBuilding(bldEnemyBuilding, vec3VillagePos) && Attempts < 100)
                 {
@@ -286,6 +287,14 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Wrapper method for entering combat mode on the currently selected building
+    /// </summary>
+    public void EnterCombatMode()
+    {
+        EnterCombatMode(SelectedBuilding.OwningFaction);
+    }
+
+    /// <summary>
     /// Method for setting the gameInfo values needed to go to/from management mode scenes
     /// </summary>
     private void EnterCombatMode(Faction EnemyFaction)
@@ -317,6 +326,7 @@ public class GameManager : MonoBehaviour
     {
         CreateRewardTree();
         NotifyPlayerOfAvaiableRewards();
+        ResourceTicks = 0;
         InvokeRepeating("CalculateResources", 0.5f, 2.0f);
     }
 
@@ -425,19 +435,23 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    if (SelectedBuilding != null)
-                    {
-                        SelectedBuilding.ToggleBuildingOutlines(false);
-                    }
-                    SelectedBuilding = GameMap.GetBuildings().Find(ClickedBuilding => ClickedBuilding.BuildingObject == SelectedGameObject);
-                    if (SelectedBuilding != null)
-                    {
-                        Debug.Log(string.Format("Selected {0} type building", SelectedBuilding.BuildingType));
-                        CurrentMenuState = MENUSTATE.Building_Selected_State;
-                        SelectedBuilding.ToggleBuildingOutlines(true);
-                    }
+                    SetSelectedBuilding(GameMap.GetBuildings().Find(ClickedBuilding => ClickedBuilding.BuildingObject == SelectedGameObject));
                 }
             }
+        }
+    }
+
+    public void SetSelectedBuilding(Building building)
+    {
+        if (SelectedBuilding != null)
+        {
+            SelectedBuilding.ToggleBuildingOutlines(false);
+        }
+        SelectedBuilding = building;
+        if (SelectedBuilding != null)
+        {
+            CurrentMenuState = MENUSTATE.Building_Selected_State;
+            SelectedBuilding.ToggleBuildingOutlines(true);
         }
     }
 
@@ -561,8 +575,10 @@ public class GameManager : MonoBehaviour
                             tempBuilding = CurrentFaction.OwnedBuildings.Find(MatchingBuilding => MatchingBuilding.UpgradeLevel <= 2);
                             if(tempBuilding != null)
                             {
-                                tempBuilding.UpgradeBuilding(false);
-                                CurrentFaction.MaterialCount -= 2 * (Building.CalculateBuildingUpgradeCost(tempBuilding.BuildingType, BuildingCostModifier));
+                                if(tempBuilding.UpgradeBuilding(false))
+                                {
+                                    CurrentFaction.MaterialCount -= (Building.CalculateBuildingUpgradeCost(tempBuilding.BuildingType));
+                                }
                             }
                             else
                             {
@@ -633,6 +649,7 @@ public class GameManager : MonoBehaviour
                 CurrentMenuState,
                 PlayerFaction.TierRewardPoints));
         }
+        ResourceTicks++;
         CurrentTimer += 2;
         if(CurrentTimer > EnemyChallengeTimer)
         {
@@ -665,8 +682,6 @@ public class GameManager : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.F))
         {
-            // Only allow 1 upgrade building
-            if(PlayerFaction.OwnedBuildings.Find(upgradeBuilding => upgradeBuilding.BuildingType == Building.BUILDING_TYPE.UPGRADE) == null)
             BufferBuilding(Building.BUILDING_TYPE.UPGRADE);
         }
     }
@@ -726,7 +741,6 @@ public class GameManager : MonoBehaviour
 
     private void CheckSelectedBuildingStateInputs()
     {
-        int intUpgradeCost;
         if (SelectedBuilding != null)
         {
             // Player's building
@@ -736,26 +750,22 @@ public class GameManager : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.U))
                 {
                     // Attempt to upgrade selected building
-                    intUpgradeCost = Building.CalculateBuildingUpgradeCost(SelectedBuilding.BuildingType, BuildingCostModifier);
                     // 3 is max upgrade level of a building
-                    if (PlayerFaction.MaterialCount >= intUpgradeCost)
+                    if (SelectedBuilding.UpgradeBuilding())
                     {
-                        if (SelectedBuilding.UpgradeLevel < 3)
-                        {
-                            SelectedBuilding.UpgradeBuilding();
-                            PlayerFaction.MaterialCount -= Building.CalculateBuildingUpgradeCost(SelectedBuilding.BuildingType, BuildingCostModifier);
-							sound.PlaySound ("PlaceBuilding");
-                        }
-                        else
-                        {
-                            Debug.Log("Building is at max upgrade level");
-							sound.PlaySound ("NotMaterials");
-                        }
-
+                        sound.PlaySound("PlaceBuilding");
                     }
                     else
                     {
-                        Debug.Log(string.Format("Not enough materials to upgrade ({0} required)", intUpgradeCost));
+                        if(SelectedBuilding.UpgradeLevel == 3)
+                        {
+                            Debug.Log("Already max upgrade level");
+                        }
+                        else
+                        {
+                            Debug.Log(string.Format("Not enough materials to upgrade ({0} required)",
+                            Building.CalculateBuildingUpgradeCost(SelectedBuilding.BuildingType)));
+                        }
 						sound.PlaySound ("NotMaterials");
                     }
 
@@ -806,7 +816,7 @@ public class GameManager : MonoBehaviour
                     if(Input.GetKeyDown(KeyCode.B))
                     {
                         // Initialize info file variables, save game state, move to combat mode scene
-                        EnterCombatMode(SelectedBuilding.OwningFaction);
+                        EnterCombatMode();
                     }
                 }
             }
@@ -822,25 +832,30 @@ public class GameManager : MonoBehaviour
         }        
     }
 
-    private void BufferBuilding(Building.BUILDING_TYPE penumBuildingType)
+    public void BufferBuilding(Building.BUILDING_TYPE penumBuildingType)
     {
-        // Check if user has enough resources to build the building
-        int BuildingCost = Building.CalculateBuildingCost(penumBuildingType, BuildingCostModifier);
-        if (PlayerFaction.MaterialCount >= BuildingCost)
+        // Only one upgrade building allowed at a time.
+        if(penumBuildingType != Building.BUILDING_TYPE.UPGRADE 
+            || PlayerFaction.OwnedBuildings.Find(upgradeBuilding => upgradeBuilding.BuildingType == Building.BUILDING_TYPE.UPGRADE) == null)
         {
-            BufferedBuilding = new Building(penumBuildingType, PlayerFaction, BuildingCostModifier);
-            CurrentMenuState = MENUSTATE.Buffered_Building_State;
-            foreach (Building BuildingOnMap in GameMap.GetBuildings())
+            // Check if user has enough resources to build the building
+            int BuildingCost = Building.CalculateBuildingCost(penumBuildingType);
+            if (PlayerFaction.MaterialCount >= BuildingCost)
             {
-                BuildingOnMap.ToggleBuildingOutlines(true);
+                BufferedBuilding = new Building(penumBuildingType, PlayerFaction);
+                CurrentMenuState = MENUSTATE.Buffered_Building_State;
+                foreach (Building BuildingOnMap in GameMap.GetBuildings())
+                {
+                    BuildingOnMap.ToggleBuildingOutlines(true);
+                }
+                BufferedBuilding.ToggleBuildingOutlines(true);
+                // Disable the collider to have the raycasting ignore the held building for placement purposes
+                BufferedBuilding.BuildingObject.GetComponent<Collider>().enabled = false;
             }
-            BufferedBuilding.ToggleBuildingOutlines(true);
-            // Disable the collider to have the raycasting ignore the held building for placement purposes
-            BufferedBuilding.BuildingObject.GetComponent<Collider>().enabled = false;
-        }
-        else
-        {
-            sound.PlaySound("NotMaterials");
+            else
+            {
+                sound.PlaySound("NotMaterials");
+            }
         }
     }
 
@@ -923,7 +938,7 @@ public class GameManager : MonoBehaviour
         Camera.main.GetComponent<Cam>().CameraMovementEnabled = !blnActive;
     }
 
-    private void SetUpgradeUIActive(bool blnActive = true)
+    public void SetUpgradeUIActive(bool blnActive = true)
     {
         // Enable/ disable upgrade UI
         Camera.main.GetComponent<Cam>().CameraMovementEnabled = !blnActive;
@@ -939,7 +954,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void UnlockNextTier()
+    public void UnlockNextTier()
     {
         
         CurrentTier++;
@@ -1077,10 +1092,23 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private Building PlaceRandomBuilding(Faction placingFaction)
+    public Building PlaceRandomBuilding(Faction placingFaction)
+    {
+        Building RandomBuilding = null;
+        // Place a random building for that faction
+        RandomBuilding = CreateRandomBuilding(placingFaction);
+        if (!GameMap.PlaceBuilding(RandomBuilding, GameMap.CalculateRandomPosition(placingFaction)))
+        {
+            RandomBuilding.Destroy();
+            return null;
+        }
+        return RandomBuilding;
+    }
+
+    public Building CreateRandomBuilding(Faction placingFaction)
     {
         Building.BUILDING_TYPE RandomType;
-        Building blnRandomBuilding = null;
+        Building RandomBuilding = null;
         switch ((int)(UnityEngine.Random.value * 100 / 25))
         {
             case 0:
@@ -1099,13 +1127,7 @@ public class GameManager : MonoBehaviour
                 RandomType = Building.BUILDING_TYPE.MATERIAL;
                 break;
         }
-        // Place a random building for that faction
-        blnRandomBuilding = new Building(RandomType, placingFaction);
-        if (!GameMap.PlaceBuilding(blnRandomBuilding, GameMap.CalculateRandomPosition(placingFaction)))
-        {
-            blnRandomBuilding.Destroy();
-            return null;
-        }
-        return blnRandomBuilding;
+        RandomBuilding = new Building(RandomType, placingFaction);
+        return RandomBuilding;
     }
 }

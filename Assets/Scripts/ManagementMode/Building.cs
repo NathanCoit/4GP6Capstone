@@ -8,6 +8,7 @@ using UnityEngine;
 public class Building{
     public GameObject BuildingObject;
     static public float BuildingRadiusSize = 10f; // Radius around a building that can not be built on
+    static public float BuildingCostModifier = 1;
     private static Dictionary<string, UnityEngine.Object> BuildingResources = new Dictionary<string, UnityEngine.Object>();
     public Vector3 BuildingPosition
     {
@@ -37,13 +38,13 @@ public class Building{
 
     public int BuildingCost = 0;
 
-	public Building(BUILDING_TYPE penumBuildingType, Faction pFactionOwner, float pfBuildingCostModifier = 1.0f)
+	public Building(BUILDING_TYPE penumBuildingType, Faction pFactionOwner)
     {
         BuildingObject = CreateBuildingObject(penumBuildingType, pFactionOwner.Type);
         BuildingType = penumBuildingType;
         OwningFaction = pFactionOwner;
         OwningFaction.OwnedBuildings.Add(this);
-        BuildingCost = CalculateBuildingCost(penumBuildingType, pfBuildingCostModifier);
+        BuildingCost = CalculateBuildingCost(penumBuildingType);
     }
 
 
@@ -156,29 +157,37 @@ public class Building{
         return gobjAltarBuilding;
     }
 
-    public void UpgradeBuilding(bool outline = true)
+    public bool UpgradeBuilding(bool outline = true)
     {
-        UpgradeLevel++;
-        Vector3 OriginalPos;
-        string strResourceKey = "Buildings/" + OwningFaction.Type.ToString() + BuildingType.ToString() + UpgradeLevel.ToString();
-        if (BuildingResources.ContainsKey(strResourceKey) && BuildingResources[strResourceKey] != null)
+        bool Upgraded = false;
+        int BuildingCost = CalculateBuildingUpgradeCost(BuildingType);
+        if(OwningFaction.MaterialCount > BuildingCost && UpgradeLevel < 3)
         {
-            OriginalPos = BuildingPosition;
-            GameObject.Destroy(BuildingObject);
-            BuildingObject = (GameObject)GameObject.Instantiate(
-                BuildingResources[strResourceKey]);
-            BuildingObject.transform.localScale = new Vector3(BuildingRadiusSize, BuildingRadiusSize, BuildingRadiusSize);
-            BuildingPosition = OriginalPos;
-            BuildingObject.AddComponent<LineRenderer>();
-            if(outline)
+            Upgraded = true;
+            OwningFaction.MaterialCount -= BuildingCost;
+            UpgradeLevel++;
+            Vector3 OriginalPos;
+            string strResourceKey = "Buildings/" + OwningFaction.Type.ToString() + BuildingType.ToString() + UpgradeLevel.ToString();
+            if (BuildingResources.ContainsKey(strResourceKey) && BuildingResources[strResourceKey] != null)
             {
-                ToggleBuildingOutlines(true);
-            }            
+                OriginalPos = BuildingPosition;
+                GameObject.Destroy(BuildingObject);
+                BuildingObject = (GameObject)GameObject.Instantiate(
+                    BuildingResources[strResourceKey]);
+                BuildingObject.transform.localScale = new Vector3(BuildingRadiusSize, BuildingRadiusSize, BuildingRadiusSize);
+                BuildingPosition = OriginalPos;
+                BuildingObject.AddComponent<LineRenderer>();
+                if (outline)
+                {
+                    ToggleBuildingOutlines(true);
+                }
+            }
+            else
+            {
+                BuildingObject.transform.localScale += new Vector3(1, 1, 1); // In case no model exists yet
+            }
         }
-        else
-        {
-            BuildingObject.transform.localScale += new Vector3(1, 1, 1); // In case no model exists yet
-        }
+        return Upgraded;
     }
 
     public void Destroy()
@@ -220,7 +229,7 @@ public class Building{
         }
     }
 
-    public static int CalculateBuildingCost(Building.BUILDING_TYPE penumBuildingType, float BuildingCostModifier)
+    public static int CalculateBuildingCost(Building.BUILDING_TYPE penumBuildingType)
     {
         int BuildingCost = int.MaxValue;
         switch (penumBuildingType)
@@ -244,7 +253,7 @@ public class Building{
         return BuildingCost;
     }
 
-    public static int CalculateBuildingUpgradeCost(Building.BUILDING_TYPE penumBuildingType, float BuildingCostModifier)
+    public static int CalculateBuildingUpgradeCost(Building.BUILDING_TYPE penumBuildingType)
     {
         int BuildingCost = int.MaxValue;
         switch (penumBuildingType)

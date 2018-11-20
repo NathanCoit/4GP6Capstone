@@ -6,10 +6,11 @@
 #  -projectPath argument to point to the right location.
 ## Run the play unit tests
 echo "Running play unit tests for UnityProject"
-/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -testPlatform playmode -projectPath "$(pwd)/UnityProject" -runTests -testResults "$(pwd)/test.xml"
+/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -testPlatform playmode -projectPath "$(pwd)/UnityProject" -runTests -testResults "$(pwd)/test.xml" -nographics
 
 rc0=$?
+ls $(pwd)
 # exit if tests failed
 if [ $rc0 -ne 0 ]; then { echo "Failed unit tests"; exit $rc0; } fi
 
-exit $(($rc1))
+exit $(($rc1)),

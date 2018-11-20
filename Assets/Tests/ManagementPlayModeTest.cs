@@ -33,6 +33,7 @@ public class ManagementPlayModeTest {
 
         //Always give it a sec
         yield return null;
+		yield return null;
 
         Cam testcam = GameObject.Find("Main Camera").GetComponent<Cam>();
 
@@ -61,6 +62,7 @@ public class ManagementPlayModeTest {
 
         //Always give it a sec
         yield return null;
+		yield return null;
 
         Cam testcam = GameObject.Find("Main Camera").GetComponent<Cam>();
 
@@ -89,6 +91,7 @@ public class ManagementPlayModeTest {
 
         //Always give it a sec
         yield return null;
+		yield return null;
 
         Cam testcam = GameObject.Find("Main Camera").GetComponent<Cam>();
 
@@ -117,6 +120,7 @@ public class ManagementPlayModeTest {
 
         //Always give it a sec
         yield return null;
+		yield return null;
 
         Cam testcam = GameObject.Find("Main Camera").GetComponent<Cam>();
 
@@ -145,6 +149,7 @@ public class ManagementPlayModeTest {
 
         //Always give it a sec
         yield return null;
+		yield return null;
 
         Cam testcam = GameObject.Find("Main Camera").GetComponent<Cam>();
 
@@ -170,6 +175,7 @@ public class ManagementPlayModeTest {
 
         //Always give it a sec
         yield return null;
+		yield return null;
 
         Cam testcam = GameObject.Find("Main Camera").GetComponent<Cam>();
 
@@ -195,6 +201,7 @@ public class ManagementPlayModeTest {
 
         //Always give it a sec
         yield return null;
+		yield return null;
 
         Cam testcam = GameObject.Find("Main Camera").GetComponent<Cam>();
 
@@ -221,6 +228,7 @@ public class ManagementPlayModeTest {
 
         //Always give it a sec
         yield return null;
+		yield return null;
 
         Cam testcam = GameObject.Find("Main Camera").GetComponent<Cam>();
 
@@ -245,6 +253,9 @@ public class ManagementPlayModeTest {
 
         SceneManager.LoadScene("UnderGodScene");
 
+		yield return null;
+		yield return null;
+
         Faction faction = GameObject.Find("GameManager").GetComponent<GameManager>().PlayerFaction;
 
         int tempWorshippers = faction.WorshipperCount;
@@ -266,6 +277,9 @@ public class ManagementPlayModeTest {
         }
 
         SceneManager.LoadScene("UnderGodScene");
+
+		yield return null;
+		yield return null;
 
         Faction faction = GameObject.Find("GameManager").GetComponent<GameManager>().PlayerFaction;
 
@@ -289,6 +303,9 @@ public class ManagementPlayModeTest {
 
         SceneManager.LoadScene("UnderGodScene");
 
+		yield return null;
+		yield return null;
+
         Faction faction = GameObject.Find("GameManager").GetComponent<GameManager>().PlayerFaction;
 
         //Always give it a sec
@@ -311,6 +328,9 @@ public class ManagementPlayModeTest {
 
         SceneManager.LoadScene("UnderGodScene");
 
+		yield return null;
+		yield return null;
+
         Faction faction = GameObject.Find("GameManager").GetComponent<GameManager>().PlayerFaction;
 
         //Always give it a sec
@@ -332,6 +352,8 @@ public class ManagementPlayModeTest {
 		}
 
 		SceneManager.LoadScene("UnderGodScene");
+		yield return null;
+		yield return null;
 
 		Text temptext = GameObject.Find("ResourcesText").GetComponent<resourceScript>().resourceText;
 

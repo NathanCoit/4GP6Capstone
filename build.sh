@@ -17,6 +17,19 @@ echo "Running editor unit tests for UnityProject"
 	-testResults $(pwd)/test.xml \
 	-quit
 
+## Run the editor unit tests
+echo "Running editor unit tests for UnityProject"
+/Applications/Unity/Unity.app/Contents/MacOS/Unity \
+	-batchmode \
+	-nographics \
+	-silent-crashes \
+        -testPlatform playmode
+	-logFile $(pwd)/unity.log \
+	-projectPath "$(pwd)/UnityProject"" \
+	-runTests \
+	-testResults $(pwd)/test.xml \
+	-quit
+
 rc0=$?
 echo "Unit test logs"
 cat $(pwd)/test.xml

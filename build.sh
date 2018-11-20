@@ -13,11 +13,11 @@ echo "Running editor unit tests for UnityProject"
 	-silent-crashes \
 	-projectPath "$(pwd)/UnityProject" \
 	-runTests \
-	-testResults $(pwd)/test.xml \
+	-testResults "$(pwd)/test.xml" \
 	-quit
 
-## Run the editor unit tests
-echo "Running editor unit tests for UnityProject"
+## Run the play unit tests
+echo "Running play unit tests for UnityProject"
 /Applications/Unity/Unity.app/Contents/MacOS/Unity \
 	-batchmode \
 	-nographics \
@@ -25,12 +25,12 @@ echo "Running editor unit tests for UnityProject"
     -testPlatform playmode \
 	-projectPath "$(pwd)/UnityProject" \
 	-runTests \
-	-testResults $(pwd)/test.xml \
+	-testResults "$(pwd)/test.xml" \
 	-quit
 
 rc0=$?
 echo "Unit test logs"
-cat $(pwd)/test.xml
+cat "$(pwd)/test.xml"
 # exit if tests failed
 if [ $rc0 -ne 0 ]; then { echo "Failed unit tests"; exit $rc0; } fi
 

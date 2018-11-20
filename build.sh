@@ -5,28 +5,14 @@
 #  the project folder is "UnityProject". If this is not true then adjust the 
 #  -projectPath argument to point to the right location.
 
-## Run the editor unit tests
-echo "Running editor unit tests for UnityProject"
-/Applications/Unity/Unity.app/Contents/MacOS/Unity \
-	-batchmode \
-	-nographics \
-	-silent-crashes \
-	-projectPath "$(pwd)/UnityProject" \
-	-runTests \
-	-testResults "$(pwd)/test.xml" \
-	-quit
-
 ## Run the play unit tests
 echo "Running play unit tests for UnityProject"
 /Applications/Unity/Unity.app/Contents/MacOS/Unity \
 	-batchmode \
-	-nographics \
-	-silent-crashes \
-    -testPlatform playmode \
+        -testPlatform playmode \
 	-projectPath "$(pwd)/UnityProject" \
 	-runTests \
-	-testResults "$(pwd)/test.xml" \
-	-quit
+	-testResults "$(pwd)/test.xml"
 
 rc0=$?
 echo "Unit test logs"

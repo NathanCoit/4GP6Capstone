@@ -11,7 +11,6 @@ echo "Running editor unit tests for UnityProject"
 	-batchmode \
 	-nographics \
 	-silent-crashes \
-	-logFile $(pwd)/unity.log \
 	-projectPath "$(pwd)/UnityProject" \
 	-runTests \
 	-testResults $(pwd)/test.xml \
@@ -23,8 +22,7 @@ echo "Running editor unit tests for UnityProject"
 	-batchmode \
 	-nographics \
 	-silent-crashes \
-        -testPlatform playmode
-	-logFile $(pwd)/unity.log \
+    -testPlatform playmode
 	-projectPath "$(pwd)/UnityProject" \
 	-runTests \
 	-testResults $(pwd)/test.xml \

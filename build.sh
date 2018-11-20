@@ -16,7 +16,7 @@ echo "Running play unit tests for UnityProject"
 
 rc0=$?
 echo "Unit test logs"
-cat "$(./UnityProject/test.xml"
+cat ./UnityProject/test.xml
 # exit if tests failed
 if [ $rc0 -ne 0 ]; then { echo "Failed unit tests"; exit $rc0; } fi
 

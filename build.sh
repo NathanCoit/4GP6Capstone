@@ -7,16 +7,11 @@
 ls
 ## Run the play unit tests
 echo "Running play unit tests for UnityProject"
-/Applications/Unity/Unity.app/Contents/MacOS/Unity \
-	-batchmode \
-        -testPlatform playmode \
-	-projectPath ./UnityProject \
-	-runTests \
-	-testResults ./test.xml
+/Applications/Unity/Unity.app/Contents/MacOS/Unity -batchmode -testPlatform playmode -projectPath "$(pwd)/UnityProject" -runTests -testResults "$(pwd)/test.xml"
 
 rc0=$?
-ls
-ls ./UnityProject
+ls $(pwd)
+ls ./
 echo "Unit test logs"
 cat ./UnityProject/test.xml
 # exit if tests failed

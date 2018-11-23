@@ -10,6 +10,7 @@ public class TerrainMap
     private GameObject mgobjTerrainMap;
     private List<Building> marrBuildingsOnMap;
     private List<GameObject> LineDrawers;
+    private System.Random randomNumGenerator = new System.Random();
 
 
 
@@ -88,6 +89,7 @@ public class TerrainMap
         {
             marrBuildingsOnMap.Add(pBuildingToPlace);
             pBuildingToPlace.BuildingPosition = pvec3PointToPlace;
+            pBuildingToPlace.OwningFaction.OwnedBuildings.Add(pBuildingToPlace);
         }
         return blnCanPlace && blnInAnArea;
     }
@@ -131,7 +133,8 @@ public class TerrainMap
     public Vector3 CalculateRandomPosition(Faction pobjFactionToPlace)
     {
         Vector3 vec3StartingPosition = new Vector3(0, 0, 0);
-        float[] FactionArea = pobjFactionToPlace.FactionArea[0];
+        int areaIndex = randomNumGenerator.Next(pobjFactionToPlace.FactionArea.Count);
+        float[] FactionArea = pobjFactionToPlace.FactionArea[areaIndex];
 
         float fAngle = Random.Range(FactionArea[2] + (Building.BuildingRadiusSize / 100f), FactionArea[3] - (Building.BuildingRadiusSize / 100f));
         float fRad = Random.Range(FactionArea[0] + Building.BuildingRadiusSize, FactionArea[1] - Building.BuildingRadiusSize);

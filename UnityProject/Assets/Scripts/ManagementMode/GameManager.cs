@@ -71,7 +71,7 @@ public class GameManager : MonoBehaviour
         sound = AudioObject.GetComponent<ExecuteSound>();
         Building bldEnemyBuilding = null;
         Faction facEnemyFaction = null;
-        Vector3 vec3VillagePos;
+        Vector3 vec3BuildngPos;
         List<Faction.GodType> GodTypes;
         List<Faction> CurrentTierFactions;
         float TierRadius = (MapRadius / 2) / MapTierCount;
@@ -131,24 +131,44 @@ public class GameManager : MonoBehaviour
             Building.LoadBuildingResources(GodTypes);
             //Create and place player village
             PlayerVillage = new Building(Building.BUILDING_TYPE.VILLAGE, PlayerFaction);
-            vec3VillagePos = GameMap.CalculateRandomPosition(PlayerFaction);
-            GameMap.PlaceBuilding(PlayerVillage, vec3VillagePos);
+            vec3BuildngPos = GameMap.CalculateRandomPosition(PlayerFaction);
+            GameMap.PlaceBuilding(PlayerVillage, vec3BuildngPos);
 
             //Create and place enemy villages
             foreach (Faction enemyFaction in EnemyFactions)
             {
                 bldEnemyBuilding = new Building(Building.BUILDING_TYPE.VILLAGE, enemyFaction);
-                vec3VillagePos = GameMap.CalculateRandomPosition(enemyFaction);
-                while(!GameMap.PlaceBuilding(bldEnemyBuilding, vec3VillagePos) && Attempts < 100)
+                vec3BuildngPos = GameMap.CalculateRandomPosition(enemyFaction);
+                while(!GameMap.PlaceBuilding(bldEnemyBuilding, vec3BuildngPos) && Attempts < 100)
                 {
-                    vec3VillagePos = GameMap.CalculateRandomPosition(enemyFaction);
+                    vec3BuildngPos = GameMap.CalculateRandomPosition(enemyFaction);
                     Attempts++;
+                }
+                for (int i = 0; i < enemyFaction.GodTier; i++)
+                {
+                    bldEnemyBuilding.UpgradeBuilding();
                 }
                 Attempts = 0;
                 // Generate starting buildings based on enemy difficulty
                 for(int i = 0; i < enemyFaction.FactionDifficulty; i++)
                 {
                     PlaceRandomBuilding(enemyFaction);
+                }
+                for (int i = 0; i < enemyFaction.GodTier + 1; i++)
+                {
+                    bldEnemyBuilding = new MineBuilding(Building.BUILDING_TYPE.MATERIAL, enemyFaction);
+                    vec3BuildngPos = GameMap.CalculateRandomPosition(enemyFaction);
+                    while (!GameMap.PlaceBuilding(bldEnemyBuilding, vec3BuildngPos) && Attempts < 100)
+                    {
+                        vec3BuildngPos = GameMap.CalculateRandomPosition(enemyFaction);
+                        Attempts++;
+                    }
+                    Attempts = 0;
+                    for (int j = 0; j < enemyFaction.GodTier; j++)
+                    {
+                        bldEnemyBuilding.UpgradeBuilding(false,true);
+                    }
+                    ((MineBuilding)bldEnemyBuilding).Miners = ((MineBuilding)bldEnemyBuilding).MinerCap;
                 }
             }
 
@@ -173,6 +193,7 @@ public class GameManager : MonoBehaviour
         Faction EnemyFaction = null;
         Building InitBuilding = null;
         GameObject GameInfoObject = GameObject.Find("GameInfo");
+        List<Faction> arrFactionsLeft = null;
         if (GameInfoObject != null)
         {
             // Found a gameinfo object, load values
@@ -197,20 +218,37 @@ public class GameManager : MonoBehaviour
                 EnemyFactions.Add(InitFaction);
                 foreach(GameInfo.SavedBuilding building in savedFaction.OwnedBuildings)
                 {
-                    InitBuilding = new Building(building.BuildingType, InitFaction);
+                    switch (building.BuildingType)
+                    {
+                        case Building.BUILDING_TYPE.MATERIAL:
+                            InitBuilding = new MineBuilding(building, InitFaction);
+                            break;
+                        default:
+                            InitBuilding = new Building(building, InitFaction);
+                            break;
+                    }
                     GameMap.PlaceBuilding(InitBuilding, building.BuildingPosition);
                 }
             }
             PlayerFaction = new Faction(gameInfo.PlayerFaction.GodName, gameInfo.PlayerFaction.Type, gameInfo.PlayerFaction.GodTier)
             {
                 MaterialCount = gameInfo.PlayerFaction.MatieralCount,
-                Morale = gameInfo.PlayerFaction.Morale  > MinimumMorale ? PlayerFaction.Morale : MinimumMorale,
+                Morale = gameInfo.PlayerFaction.Morale  > MinimumMorale ? gameInfo.PlayerFaction.Morale : MinimumMorale,
                 WorshipperCount = gameInfo.PlayerFaction.WorshipperCount,
                 FactionArea = gameInfo.PlayerFaction.FactionArea
             };
             foreach (GameInfo.SavedBuilding building in gameInfo.PlayerFaction.OwnedBuildings)
             {
-                InitBuilding = new Building(building.BuildingType, PlayerFaction);
+                switch(building.BuildingType)
+                {
+                    case Building.BUILDING_TYPE.MATERIAL:
+                        InitBuilding = new MineBuilding(building, PlayerFaction);
+                        break;
+                    default:
+                        InitBuilding = new Building(building, PlayerFaction);
+                        break;
+                }
+                
                 GameMap.PlaceBuilding(InitBuilding, building.BuildingPosition);
                 if (building.BuildingType == Building.BUILDING_TYPE.VILLAGE)
                 {
@@ -228,7 +266,15 @@ public class GameManager : MonoBehaviour
             };
             foreach (GameInfo.SavedBuilding building in gameInfo.EnemyFaction.OwnedBuildings)
             {
-                InitBuilding = new Building(building.BuildingType, EnemyFaction);
+                switch (building.BuildingType)
+                {
+                    case Building.BUILDING_TYPE.MATERIAL:
+                        InitBuilding = new MineBuilding(building, EnemyFaction);
+                        break;
+                    default:
+                        InitBuilding = new Building(building, EnemyFaction);
+                        break;
+                }
                 GameMap.PlaceBuilding(InitBuilding, building.BuildingPosition);
             }
             
@@ -247,9 +293,14 @@ public class GameManager : MonoBehaviour
                     building.OwningFaction = PlayerFaction;
                     building.ReloadBuildingObject();
                     PlayerFaction.OwnedBuildings.Add(building);
+                    if(building.BuildingType == Building.BUILDING_TYPE.MATERIAL)
+                    {
+                        ((MineBuilding)building).Miners = 0;
+                    }
                 }
+                arrFactionsLeft = CurrentFactions.FindAll(enemyFaction => enemyFaction.GodTier == CurrentTier && enemyFaction != PlayerFaction);
                 // Check if that was the last enemy in that tier, if so, unlock next tier
-                if(CurrentFactions.FindAll(enemyFaction => enemyFaction.GodTier == CurrentTier && enemyFaction != PlayerFaction).Count == 0)
+                if (arrFactionsLeft.Count == 0)
                 {
                     // Check if there a no more gods in the next tier too
                     if(CurrentFactions.FindAll(enemyFaction => enemyFaction.GodTier == CurrentTier + 1 && enemyFaction != PlayerFaction).Count == 0)
@@ -257,12 +308,22 @@ public class GameManager : MonoBehaviour
                         // No gods in the current tier, no gods in the next tier => game over you win
                         // END GAME
                     }
-                    UnlockNextTier();
+                    else
+                    {
+                        UnlockNextTier();
+                    }
+                }
+                else
+                {
+                    if(arrFactionsLeft.Count >= 2)
+                    {
+                        BattleTwoFactions(arrFactionsLeft[0], arrFactionsLeft[1]);
+                    }
                 }
             }
             else if (gameInfo.LastBattleStatus == GameInfo.BATTLESTATUS.Retreat)
             {
-                // Lower morale
+                // Lower max morale
                 CurrentFactions.Add(EnemyFaction);
             }
             else
@@ -319,6 +380,36 @@ public class GameManager : MonoBehaviour
         gameInfo.CurrentTier = CurrentTier;
         gameInfo.PlayerRewards = SaveRewardTree(PlayerRewardTree);
         SceneManager.LoadScene("CombatMode");
+    }
+
+    public void BattleTwoFactions(Faction pobjFactionOne, Faction pobjFactionTwo)
+    {
+        Faction WinningFaction = null;
+        Faction LosingFaction = null;
+        if(pobjFactionOne.WorshipperCount >= pobjFactionTwo.WorshipperCount)
+        {
+            WinningFaction = pobjFactionOne;
+            LosingFaction = pobjFactionTwo;
+        }
+        else
+        {
+            LosingFaction = pobjFactionOne;
+            WinningFaction = pobjFactionTwo;
+        }
+        WinningFaction.MaterialCount += LosingFaction.MaterialCount;
+        WinningFaction.WorshipperCount +=(int)(0.5 * LosingFaction.MaterialCount);
+        foreach(float[] factionArea in LosingFaction.FactionArea)
+        {
+            WinningFaction.FactionArea.Add(factionArea);
+        }
+        foreach(Building loserBuilding in LosingFaction.OwnedBuildings)
+        {
+            loserBuilding.OwningFaction = WinningFaction;
+            loserBuilding.ReloadBuildingObject();
+            WinningFaction.OwnedBuildings.Add(loserBuilding);
+        }
+        CurrentFactions.Remove(LosingFaction);
+        EnemyFactions.Remove(LosingFaction);
     }
 
     // Use this for any initializations not needed by other scripts.
@@ -452,6 +543,7 @@ public class GameManager : MonoBehaviour
         {
             CurrentMenuState = MENUSTATE.Building_Selected_State;
             SelectedBuilding.ToggleBuildingOutlines(true);
+            Debug.Log(SelectedBuilding.UpgradeLevel);
         }
     }
 
@@ -538,7 +630,7 @@ public class GameManager : MonoBehaviour
                         intWorshippersToAdd += (1 * VillageBuilding.UpgradeLevel);
                         // Calculatae Resource growth
                         intMaterialsToAdd += (1 * VillageBuilding.UpgradeLevel);
-                        intHousingTotal += 100 * VillageBuilding.UpgradeLevel;
+                        intHousingTotal += (int)(Math.Pow(10, VillageBuilding.UpgradeLevel + 1));
                     }
 
                     // Get all the material buildings
@@ -546,7 +638,7 @@ public class GameManager : MonoBehaviour
                     foreach (Building MaterialBuilding in MaterialBuildings)
                     {
                         // Calculatae Resource growth
-                        intMaterialsToAdd += (1 * MaterialBuilding.UpgradeLevel);
+                        intMaterialsToAdd += (int)Math.Ceiling(0.1 * ((MineBuilding)MaterialBuilding).Miners * MaterialBuilding.UpgradeLevel);
                     }
 
                     // Apply the morale modifier
@@ -570,24 +662,39 @@ public class GameManager : MonoBehaviour
                     {
                         // Check if enemy has enough resources to upgrade a building, if so upgrade a random building
                         // Everything costs double for bots to allow player to eventually catch up
-                        if(CurrentFaction.MaterialCount > 100)
+                        // Check if buildings exist that can be upgraded
+                        if(CurrentFaction.OwnedBuildings.FindAll(
+                            upgradeableBuilding => upgradeableBuilding.UpgradeLevel < CurrentFaction.GodTier + 1 
+                            && upgradeableBuilding.BuildingType != Building.BUILDING_TYPE.VILLAGE).Count > 0)
                         {
-                            tempBuilding = CurrentFaction.OwnedBuildings.Find(MatchingBuilding => MatchingBuilding.UpgradeLevel <= 2);
-                            if(tempBuilding != null)
+                            // A building exists that can be upgraded
+                            tempBuilding = CurrentFaction.OwnedBuildings.Find(
+                                upgradeableBuilding => upgradeableBuilding.UpgradeLevel < CurrentFaction.GodTier + 1
+                                && upgradeableBuilding.BuildingType != Building.BUILDING_TYPE.VILLAGE);
+                            if(CurrentFaction.MaterialCount > tempBuilding.CalculateBuildingUpgradeCost() * 2)
                             {
-                                if(tempBuilding.UpgradeBuilding(false))
+                                CurrentFaction.MaterialCount -= tempBuilding.CalculateBuildingUpgradeCost();
+                                tempBuilding.UpgradeBuilding();
+                            }
+                        }
+                        else
+                        {
+                            // No upgradeable buildings exist, build a new one
+                            tempBuilding = CreateRandomBuilding(CurrentFaction);
+                            if (CurrentFaction.MaterialCount > tempBuilding.BuildingCost * 2)
+                            {
+                                if(GameMap.PlaceBuilding(tempBuilding, GameMap.CalculateRandomPosition(CurrentFaction)))
                                 {
-                                    CurrentFaction.MaterialCount -= (Building.CalculateBuildingUpgradeCost(tempBuilding.BuildingType));
+                                    CurrentFaction.MaterialCount -= 2 * tempBuilding.BuildingCost;
+                                }
+                                else
+                                {
+                                    tempBuilding.Destroy();
                                 }
                             }
                             else
                             {
-                                // Try to place a new building
-                                tempBuilding = PlaceRandomBuilding(CurrentFaction);
-                                if (tempBuilding != null)
-                                {
-                                    CurrentFaction.MaterialCount -= 2 * tempBuilding.BuildingCost;
-                                }
+                                tempBuilding.Destroy();
                             }
                         }
                     }
@@ -600,7 +707,7 @@ public class GameManager : MonoBehaviour
                     HousingBuildings = OwnedBuildings.FindAll(HousingBuild => HousingBuild.BuildingType == Building.BUILDING_TYPE.HOUSING);
                     foreach (Building HousingBuilding in HousingBuildings)
                     {
-                        intHousingTotal += 100 * HousingBuilding.UpgradeLevel;
+                        intHousingTotal += (int)(Math.Pow(10, HousingBuilding.UpgradeLevel + 1));
                     }
                     //Calculate morale losses/gains
                     // Each housing/village building can hold 100 * upgrade level worshippers
@@ -639,15 +746,15 @@ public class GameManager : MonoBehaviour
                 TierWorshipperCount *= TierWoshipperCountMultiplier;
                 NotifyPlayerOfAvaiableRewards();
             }
-            Debug.Log(string.Format("{0}: Material Count({1}), Worshipper Count({2}), Morale({3}), Wor/sec({4}), Mat/sec({5}), MenuState({6}), RewardPoints({7})",
-                PlayerFaction.GodName,
-                PlayerFaction.MaterialCount,
-                PlayerFaction.WorshipperCount,
-                PlayerFaction.Morale,
-                WorPerSec,
-                MatPerSec,
-                CurrentMenuState,
-                PlayerFaction.TierRewardPoints));
+            //Debug.Log(string.Format("{0}: Material Count({1}), Worshipper Count({2}), Morale({3}), Wor/sec({4}), Mat/sec({5}), MenuState({6}), RewardPoints({7})",
+            //    PlayerFaction.GodName,
+            //    PlayerFaction.MaterialCount,
+            //    PlayerFaction.WorshipperCount,
+            //    PlayerFaction.Morale,
+            //    WorPerSec,
+            //    MatPerSec,
+            //    CurrentMenuState,
+            //    PlayerFaction.TierRewardPoints));
         }
         ResourceTicks++;
         CurrentTimer += 2;
@@ -747,7 +854,7 @@ public class GameManager : MonoBehaviour
             if (SelectedBuilding.OwningFaction == PlayerFaction)
             {
                 // Global hotkey for a selected building
-                if (Input.GetKeyDown(KeyCode.U))
+                if (Input.GetKeyDown(KeyCode.U) && SelectedBuilding.BuildingType != Building.BUILDING_TYPE.VILLAGE)
                 {
                     // Attempt to upgrade selected building
                     // 3 is max upgrade level of a building
@@ -800,10 +907,18 @@ public class GameManager : MonoBehaviour
                     SelectedBuilding = null;
                     CurrentMenuState = MENUSTATE.Default_State;
                 }
-                else if(Input.GetKeyDown(KeyCode.X))
+                else if(Input.GetKeyDown(KeyCode.X) && SelectedBuilding.BuildingType == Building.BUILDING_TYPE.UPGRADE)
                 {
                     CurrentMenuState = MENUSTATE.Upgrade_State;
                     SetUpgradeUIActive();
+                }
+                else if(Input.GetKeyDown(KeyCode.K) && SelectedBuilding.BuildingType == Building.BUILDING_TYPE.MATERIAL)
+                {
+                    // Open a text box ui for entering numbers, or stick with default amounts
+                    if(!((MineBuilding)SelectedBuilding).BuyMiners((int)Math.Pow(10,SelectedBuilding.UpgradeLevel)))
+                    {
+                        sound.PlaySound("NotMaterials");
+                    }
                 }
             }
             else
@@ -834,15 +949,27 @@ public class GameManager : MonoBehaviour
 
     public void BufferBuilding(Building.BUILDING_TYPE penumBuildingType)
     {
-        // Only one upgrade building allowed at a time.
-        if(penumBuildingType != Building.BUILDING_TYPE.UPGRADE 
+        // Part 1: Evaluates to true if not an upgrade building, or is an upgrade building and player does not currently have an upgrade building
+        // Ensures only one upgrade building exists at a time for the player
+        if((penumBuildingType != Building.BUILDING_TYPE.UPGRADE 
             || PlayerFaction.OwnedBuildings.Find(upgradeBuilding => upgradeBuilding.BuildingType == Building.BUILDING_TYPE.UPGRADE) == null)
+        // Part 2: Evaluates to true if not a material builidng, or is a material building and the player owns less than mines than territories
+        // Ensures player only has one mine per territory
+            && (penumBuildingType != Building.BUILDING_TYPE.MATERIAL ||
+            PlayerFaction.OwnedBuildings.FindAll(materialBuilding => materialBuilding.BuildingType == Building.BUILDING_TYPE.MATERIAL).Count < PlayerFaction.FactionArea.Count))
         {
             // Check if user has enough resources to build the building
             int BuildingCost = Building.CalculateBuildingCost(penumBuildingType);
             if (PlayerFaction.MaterialCount >= BuildingCost)
             {
-                BufferedBuilding = new Building(penumBuildingType, PlayerFaction);
+                if(penumBuildingType == Building.BUILDING_TYPE.MATERIAL)
+                {
+                    BufferedBuilding = new MineBuilding(penumBuildingType, PlayerFaction);
+                }
+                else
+                {
+                    BufferedBuilding = new Building(penumBuildingType, PlayerFaction);
+                }
                 CurrentMenuState = MENUSTATE.Buffered_Building_State;
                 foreach (Building BuildingOnMap in GameMap.GetBuildings())
                 {
@@ -856,6 +983,10 @@ public class GameManager : MonoBehaviour
             {
                 sound.PlaySound("NotMaterials");
             }
+        }
+        else
+        {
+            sound.PlaySound("NotMaterials");
         }
     }
 
@@ -958,7 +1089,15 @@ public class GameManager : MonoBehaviour
     {
         
         CurrentTier++;
+        PlayerFaction.GodTier++;
         List<Faction> NextTierFactions = CurrentFactions.FindAll(MatchingFaction => MatchingFaction.GodTier == CurrentTier);
+        foreach(Building playerVillage in PlayerFaction.OwnedBuildings.FindAll(villageBuilding => villageBuilding.BuildingType == Building.BUILDING_TYPE.VILLAGE))
+        {
+            if(PlayerVillage.UpgradeLevel <= CurrentTier)
+            {
+                playerVillage.UpgradeBuilding(false);
+            }
+        }
         if (NextTierFactions.Count > 0)
         {
             foreach(Faction factionToShow in NextTierFactions)
@@ -1118,13 +1257,13 @@ public class GameManager : MonoBehaviour
                 RandomType = Building.BUILDING_TYPE.HOUSING;
                 break;
             case 2:
-                RandomType = Building.BUILDING_TYPE.MATERIAL;
+                RandomType = Building.BUILDING_TYPE.HOUSING;
                 break;
             case 3:
                 RandomType = Building.BUILDING_TYPE.ALTAR;
                 break;
             default:
-                RandomType = Building.BUILDING_TYPE.MATERIAL;
+                RandomType = Building.BUILDING_TYPE.ALTAR;
                 break;
         }
         RandomBuilding = new Building(RandomType, placingFaction);

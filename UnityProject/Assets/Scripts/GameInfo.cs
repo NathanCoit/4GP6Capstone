@@ -20,6 +20,7 @@ public class GameInfo : MonoBehaviour {
         public Vector3 BuildingPosition;
         public Building.BUILDING_TYPE BuildingType;
         public int UpgradeLevel;
+        public int Miners;
     }
     public struct SavedFaction
     {
@@ -64,7 +65,8 @@ public class GameInfo : MonoBehaviour {
         {
             BuildingPosition = buildingToSave.BuildingPosition,
             BuildingType = buildingToSave.BuildingType,
-            UpgradeLevel = buildingToSave.UpgradeLevel
+            UpgradeLevel = buildingToSave.UpgradeLevel,
+            Miners = buildingToSave.BuildingType == Building.BUILDING_TYPE.MATERIAL ? ((MineBuilding)buildingToSave).Miners : 0
         };
 
         return savedBuilding;

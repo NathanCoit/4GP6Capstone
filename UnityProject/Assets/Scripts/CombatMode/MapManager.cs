@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MapManager : MonoBehaviour
 {
-    public Tile[,] tiles = new Tile[10,10];
+    public Tile[,] tiles;
 
     private List<GameObject> Movable;
     private GameObject SelectionIndicator;
@@ -17,35 +17,36 @@ public class MapManager : MonoBehaviour
     private GameObject BoardMan;
     private GameObject previousSelected;
     public bool newSelected = false;
+    public string mapName;
 
     // Use this for initialization
     void Start ()
     {
+        if (mapName == "")
+            mapName = "testMap";
+
+        TextAsset map = Resources.Load("CMaps/" + mapName) as TextAsset;
+
+        //Splitting on newline from https://stackoverflow.com/questions/1547476/easiest-way-to-split-a-string-on-newlines-in-net
+        string[] lines = map.text.Split(
+        new[] { "\r\n", "\r", "\n" },
+        System.StringSplitOptions.None);
+
+        tiles = new Tile[lines[0].Split('-').Length, lines.Length];
+
         //Initiliaze Grid
-        for (int x = 0; x < tileX; x++)
-            for (int y = 0; y < tileY; y++)
-            {
-                tiles[x, y] = new Tile(new Vector3(x, 0, y));
-            }
+        for (int y = 0; y < lines.Length; y++)
+        {
+            //Read back to front to match how it looks in the text file
+            string[] chars = lines[(lines.Length - 1) - y].Split('-');
 
-        //Define Connections
-        for (int x = 0; x < tileX; x++)
-            for (int y = 0; y < tileY; y++)
+            for(int x = 0; x < chars.Length; x++)
             {
-                Tile temp = tiles[x, y];
-                List<Tile> tempConnections = new List<Tile>();
-                if (y < tiles.GetLength(1) - 1)
-                    tempConnections.Add(tiles[x, y + 1]);
-                if (x < tiles.GetLength(0) - 1)
-                    tempConnections.Add(tiles[x + 1, y]);
-                if (y > 0)
-                    tempConnections.Add(tiles[x, y - 1]);
-                if (x > 0)
-                    tempConnections.Add(tiles[x - 1, y]);
-                temp.updateConnections(tempConnections);
-                tiles[x, y] = temp;
-
+                tiles[x, y] = new Tile(new Vector3(x, 0, y), chars[x]);
             }
+        }
+
+        DefineConnections();
 
         Movable = new List<GameObject>();
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager");
@@ -58,7 +59,7 @@ public class MapManager : MonoBehaviour
         }
         */
     }
-	
+
 	// Update is called once per frame
 	void Update ()
     {
@@ -149,6 +150,27 @@ public class MapManager : MonoBehaviour
 
     }
 
+    public void DefineConnections()
+    {
+        //Define Connections
+        for (int x = 0; x < tileX; x++)
+            for (int y = 0; y < tileY; y++)
+            {
+                Tile temp = tiles[x, y];
+                List<Tile> tempConnections = new List<Tile>();
+                if (y < tiles.GetLength(1) - 1 && tiles[x, y + 1].isTraversable())
+                    tempConnections.Add(tiles[x, y + 1]);
+                if (x < tiles.GetLength(0) - 1 && tiles[x + 1, y].isTraversable())
+                    tempConnections.Add(tiles[x + 1, y]);
+                if (y > 0 && tiles[x, y - 1].isTraversable())
+                    tempConnections.Add(tiles[x, y - 1]);
+                if (x > 0 && tiles[x - 1, y].isTraversable())
+                    tempConnections.Add(tiles[x - 1, y]);
+                temp.updateConnections(tempConnections);
+                tiles[x, y] = temp;
+            }
+    }
+
     public void ClearSelection()
     {
         //Clean up tiles
@@ -160,141 +182,13 @@ public class MapManager : MonoBehaviour
         for (var i = 0; i < attackableTiles.GetLength(0); i++)
             Destroy(attackableTiles[i]);
     }
-}
 
-public class Tile
-{
-    private Vector3 pos;
-
-    private List<Tile> Connected = new List<Tile>();
-
-    private List<int> depths = new List<int>();
-
-    private HashSet<Tile> visited = new HashSet<Tile>();
-
-    public Tile(Vector3 pos)
+    //For making the gameObject of a tile
+    public void InstantiateTile(string typeID, Vector3 pos)
     {
-        this.pos = pos;
+        GameObject temp = Instantiate(Resources.Load("Tiles/" + typeID) as GameObject);
+
+        //Cenetering
+        temp.transform.position = new Vector3(pos.x + ((1 - temp.transform.lossyScale.x) / 2) + temp.transform.lossyScale.x / 2, 0, pos.z + ((1 - temp.transform.lossyScale.z) / 2) + temp.transform.lossyScale.x / 2);
     }
-
-    public void updateConnections (List<Tile> newConnections)
-    {
-        Connected = newConnections;
-    }
-
-    public void showConnected(Tile[,] tiles)
-    {
-        for(int i = 0; i < Connected.Count; i++)
-        {
-            //new Unit(new Vector2(Connected[i].getX(), Connected[i].getZ()), tiles);
-        }
-    }
-
-    //Code from https://stackoverflow.com/questions/10258305/how-to-implement-a-breadth-first-search-to-a-certain-depth
-    public HashSet<Tile> findAtDistance(int distance, List<GameObject> invalidTiles, Tile[,] tiles)
-    {
-        visited = new HashSet<Tile>();
-        depths = new List<int>();
-        Queue<Tile> queue = new Queue<Tile>();
-        List<Tile> toBeRemoved = new List<Tile>();
-        Tile root = this;
-
-        //Removing invalid tiles connections
-        foreach(Tile t in tiles)
-        {
-            foreach (GameObject g in invalidTiles)
-                if (g.GetComponent<Units>().getPos() == new Vector2(t.getX(), t.getZ()))
-                {
-                    t.Connected = new List<Tile>();
-                    foreach (Tile t1 in tiles)
-                        if (t1.Connected.Contains(t))
-                            t1.Connected.Remove(t);
-                }
-        }
-
-        int currentDepth = 0;
-        int elementsToNextDepth = 1;
-        int nextElementsToDepthIncrease = 0;
-
-        queue.Enqueue(root);
-
-        while(queue.Count > 0)
-        {
-            Tile current = queue.Dequeue();
-
-
-            //Jumps to next itereation if we've already visited
-            //if (visited.Contains(current))
-            //continue;
-
-
-            //If we have not visited, add to visited
-            if(!visited.Contains(current))
-                depths.Add(currentDepth);
-            visited.Add(current);
-            
-            nextElementsToDepthIncrease += current.getConnected().Count;
-
-            
-            if (--elementsToNextDepth == 0)
-            {
-                if (++currentDepth > distance)
-                {
-                    /*
-                    foreach (GameObject g in opposingTeam)
-                    {
-                        foreach (Tile t in visited)
-                            if (g.GetComponent<Units>().getPos() == new Vector2(t.getX(), t.getZ()))
-                                toBeRemoved.Add(t);
-
-                    }
-                    foreach (Tile t in toBeRemoved)
-                        visited.Remove(t);
-                    */
-                    return visited;
-                }
-                elementsToNextDepth = nextElementsToDepthIncrease;
-                nextElementsToDepthIncrease = 0;
-            }
-
-
-            foreach (Tile connect in current.getConnected())
-            {
-                //if (!visited.Contains(connect))
-                    queue.Enqueue(connect);
-            }
-        }
-        return visited;
-    }
-
-    public List<int> getDepths()
-    {
-        return depths;
-    }
-
-    public HashSet<Tile> getVisited()
-    {
-        return visited;
-    }
-
-    public float getX()
-    {
-        return pos.x;
-    }
-
-    public float getY()
-    {
-        return pos.y;
-    }
-
-    public float getZ()
-    {
-        return pos.z;
-    }
-
-    public List<Tile> getConnected()
-    {
-        return Connected;
-    }
-
 }

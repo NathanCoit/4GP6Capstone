@@ -44,18 +44,25 @@ public class SetupManager : MonoBehaviour
             //and then truncate it so you don't have a partial worshiper lol
             this.enemyWorshiperCount = (int)b;
 
-            //this.playerMorale = gameInfo.PlayerMorale;
-            // not yet
-            //this.enemyMorale = gameInfo.EnemyMorale;
-            playerMorale = 1;
-            enemyMorale = 1;
-
+            playerMorale = gameInfo.PlayerFaction.Morale;
+            enemyMorale = gameInfo.EnemyFaction.Morale;
         }
         else
         {
+            Debug.Log("No gameInfo object found, setting a test scene for you boyo");
+            Debug.Log("If this isn't someone working on Combat Mode, things are broken");
             GameObject NewGameInfoObject = (GameObject)Instantiate(GameInfoObjectPrefab);
             NewGameInfoObject.name = "GameInfo";
             gameInfo = NewGameInfoObject.GetComponent<GameInfo>();
+
+            //Setup some test values (feel free to change)
+            gameInfo.PlayerFaction.WorshipperCount = 300;
+            gameInfo.EnemyFaction.WorshipperCount = 200;
+
+            gameInfo.PlayerFaction.Morale = 1;
+            gameInfo.EnemyFaction.Morale = 1;
+
+            //Call start setup stuff
             Start();
         }
     }
@@ -129,6 +136,7 @@ public class SetupManager : MonoBehaviour
         GameObject temp = Instantiate(Unit);
         temp.GetComponent<Units>().setWorshiperCount(WorshiperCount);
         temp.GetComponent<Units>().setMorale(morale);
+        temp.GetComponent<Units>().isPlayer = true;
         temp.GetComponent<Units>().Move(new Vector2(pos.x, pos.y), tiles);
         BoardMan.GetComponent<BoardManager>().playerUnits.Add(temp);
     }
@@ -138,6 +146,7 @@ public class SetupManager : MonoBehaviour
         GameObject temp = Instantiate(Unit);
         temp.GetComponent<Units>().setWorshiperCount(WorshiperCount);
         temp.GetComponent<Units>().setMorale(morale);
+        temp.GetComponent<Units>().isPlayer = false;
         temp.GetComponent<Units>().Move(new Vector2(pos.x, pos.y), tiles);
         //Set so the players turn is first
         temp.GetComponent<Units>().EndAct();

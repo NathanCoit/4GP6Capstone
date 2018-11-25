@@ -8,9 +8,9 @@ public class Units : MonoBehaviour {
 
     private bool isGod;
 
-    private GameObject MapMan;
+    private MapManager MapMan;
     private Vector2 pos;
-    private GameObject BoardMan;
+    private BoardManager BoardMan;
     private List<int> depths = new List<int>();
     private HashSet<Tile> visited = new HashSet<Tile>();
 
@@ -19,10 +19,13 @@ public class Units : MonoBehaviour {
     public GameObject AttackableTile;
     public int Movement = 2;
     public float morale;
+    public bool isPlayer;
 
     //For use without models, can be removed later
-    public Material Available;
-    public Material NotAvailable;
+    public Material playerAvailable;
+    public Material playerNotAvailable;
+    public Material enemyAvailable;
+    public Material enemyNotAvailable;
     public int WorshiperCount;
     public float AttackStrength;
 
@@ -33,12 +36,15 @@ public class Units : MonoBehaviour {
     void Start()
     {
         //You know who to call, ITS MAP MAN!
-        MapMan = GameObject.FindGameObjectWithTag("MapManager");
+        MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>(); ;
 
-        BoardMan = GameObject.FindGameObjectWithTag("BoardManager");
+        BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
 
         //AllowAct(); //this actually broke it for the longest time but i FOUND IT 
-        GetComponent<MeshRenderer>().material = NotAvailable;
+        if(isPlayer)
+            GetComponent<MeshRenderer>().material = playerNotAvailable;
+        else
+            GetComponent<MeshRenderer>().material = enemyNotAvailable;
 
         AttackStrength = WorshiperCount * 0.25f * morale;
     }
@@ -46,7 +52,10 @@ public class Units : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        morale = BoardMan.GetComponent<BoardManager>().playerMorale;
+        if (isPlayer)
+            morale = BoardMan.playerMorale;
+        else
+            morale = BoardMan.enemyMorale;
     }
 
     public void Draw(Tile[,] tiles)
@@ -132,7 +141,10 @@ public class Units : MonoBehaviour {
         canAct = true;
 
         //Render stuff for use without proper models, can be removed later
-        GetComponent<MeshRenderer>().material = Available;
+        if (isPlayer)
+            GetComponent<MeshRenderer>().material = playerAvailable;
+        else
+            GetComponent<MeshRenderer>().material = enemyAvailable;
     }
 
     public void EndAct() //this Unit has completed their allotted actions in this round
@@ -140,7 +152,10 @@ public class Units : MonoBehaviour {
         canAct = false;
 
         //Render stuff for use without proper models, can be removed later
-        GetComponent<MeshRenderer>().material = NotAvailable;
+        if (isPlayer)
+            GetComponent<MeshRenderer>().material = playerNotAvailable;
+        else
+            GetComponent<MeshRenderer>().material = enemyNotAvailable;
         transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
 
     }
@@ -165,8 +180,8 @@ public class Units : MonoBehaviour {
     {
         if ((Input.GetMouseButtonDown(0) || autoClick) && canAct)
         {
-            MapMan.GetComponent<MapManager>().Selected = this.gameObject;
-            MapMan.GetComponent<MapManager>().newSelected = true;
+            MapMan.Selected = this.gameObject;
+            MapMan.newSelected = true;
             autoClick = false;
         }
             
@@ -180,7 +195,7 @@ public class Units : MonoBehaviour {
 
     private Tile[,] getTiles()
     {
-        return MapMan.GetComponent<MapManager>().tiles;
+        return MapMan.tiles;
     }
 
     public void showMovable()
@@ -197,28 +212,10 @@ public class Units : MonoBehaviour {
         //Calculate Movable Tiles
         MovableTiles = tiles[(int)getPos().x, (int)getPos().y].findAtDistance(Movement, invalidTiles, tiles);
 
-
-        //Restore Connections
-        for (int x = 0; x < tiles.GetLength(0); x++)
-            for (int y = 0; y < tiles.GetLength(1); y++)
-            {
-                Tile temp = tiles[x, y];
-                List<Tile> tempConnections = new List<Tile>();
-                if (y < tiles.GetLength(1) - 1)
-                    tempConnections.Add(tiles[x, y + 1]);
-                if (x < tiles.GetLength(0) - 1)
-                    tempConnections.Add(tiles[x + 1, y]);
-                if (y > 0)
-                    tempConnections.Add(tiles[x, y - 1]);
-                if (x > 0)
-                    tempConnections.Add(tiles[x - 1, y]);
-                temp.updateConnections(tempConnections);
-                tiles[x, y] = temp;
-
-            }
+        MapMan.DefineConnections();
 
         //Draw movable tiles
-        MapMan.GetComponent<MapManager>().ClearSelection();
+        MapMan.ClearSelection();
 
         foreach (Tile t in MovableTiles)
         {
@@ -236,7 +233,7 @@ public class Units : MonoBehaviour {
         HashSet<Tile> AttackableTiles = new HashSet<Tile>();
         List<Tile> ConnectedTiles = tiles[(int)getPos().x, (int)getPos().y].getConnected();
         List<GameObject> targets = new List<GameObject>();
-        if (BoardMan.GetComponent<BoardManager>().playerUnits.Contains(MapMan.GetComponent<MapManager>().Selected))
+        if (BoardMan.GetComponent<BoardManager>().playerUnits.Contains(MapMan.Selected))
         {
             targets = BoardMan.GetComponent<BoardManager>().enemyUnits;
         }
@@ -252,7 +249,7 @@ public class Units : MonoBehaviour {
 
 
         //Draw movable tiles
-        MapMan.GetComponent<MapManager>().ClearSelection();
+        MapMan.ClearSelection();
 
         foreach (Tile t in AttackableTiles)
         {

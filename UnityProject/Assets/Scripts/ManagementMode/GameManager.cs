@@ -686,6 +686,10 @@ public class GameManager : MonoBehaviour
                                 if(GameMap.PlaceBuilding(tempBuilding, GameMap.CalculateRandomPosition(CurrentFaction)))
                                 {
                                     CurrentFaction.MaterialCount -= 2 * tempBuilding.BuildingCost;
+                                    if(CurrentFaction.GodTier > CurrentTier)
+                                    {
+                                        tempBuilding.BuildingObject.SetActive(false);
+                                    }
                                 }
                                 else
                                 {
@@ -746,15 +750,15 @@ public class GameManager : MonoBehaviour
                 TierWorshipperCount *= TierWoshipperCountMultiplier;
                 NotifyPlayerOfAvaiableRewards();
             }
-            //Debug.Log(string.Format("{0}: Material Count({1}), Worshipper Count({2}), Morale({3}), Wor/sec({4}), Mat/sec({5}), MenuState({6}), RewardPoints({7})",
-            //    PlayerFaction.GodName,
-            //    PlayerFaction.MaterialCount,
-            //    PlayerFaction.WorshipperCount,
-            //    PlayerFaction.Morale,
-            //    WorPerSec,
-            //    MatPerSec,
-            //    CurrentMenuState,
-            //    PlayerFaction.TierRewardPoints));
+            Debug.Log(string.Format("{0}: Material Count({1}), Worshipper Count({2}), Morale({3}), Wor/sec({4}), Mat/sec({5}), MenuState({6}), RewardPoints({7})",
+                PlayerFaction.GodName,
+                PlayerFaction.MaterialCount,
+                PlayerFaction.WorshipperCount,
+                PlayerFaction.Morale,
+                WorPerSec,
+                MatPerSec,
+                CurrentMenuState,
+                PlayerFaction.TierRewardPoints));
         }
         ResourceTicks++;
         CurrentTimer += 2;
@@ -1000,29 +1004,19 @@ public class GameManager : MonoBehaviour
         PlayerRewardTree = new List<TierReward>();
 
         // First tier, player gets this tier upon game start
-        BasePlayerTierReward = new TierReward("ThrowMushroom", "Starting Mushroom God ability to smite enemies with divine mushroom punishment.");
+        BasePlayerTierReward = new TierReward("ThrowMushroom");
         PlayerRewardTree.Add(BasePlayerTierReward);
 
         // Second tier, unlocked at 1 * TierCount (100)
-        NextPlayerTierReward = new TierReward("SecondAbility", "Second Ability", BasePlayerTierReward);
+        NextPlayerTierReward = new TierReward("EatMushroom", BasePlayerTierReward);
         BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
         BasePlayerTierReward = NextPlayerTierReward;
 
         // Third tier, unlocked at 2 * TierCount (200). Final tier for Demo
-        NextPlayerTierReward = new TierReward("ThirdAbility", "Third Ability", BasePlayerTierReward);
+        NextPlayerTierReward = new TierReward("MushroomLaser", BasePlayerTierReward);
         BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
 
-        NextPlayerTierReward = new TierReward("Fourth Ability", "Fourth Ability", BasePlayerTierReward);
-        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
-
-        NextPlayerTierReward = new TierReward("Fifth Ability", "Fifth Ability", BasePlayerTierReward);
-        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
-        BasePlayerTierReward = NextPlayerTierReward;
-
-        NextPlayerTierReward = new TierReward("Sixth Ability", "Sixth Ability", BasePlayerTierReward);
-        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
-
-        NextPlayerTierReward = new TierReward("Seventh Ability", "Sixth Ability", BasePlayerTierReward);
+        NextPlayerTierReward = new TierReward("SpreadSpores", BasePlayerTierReward);
         BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
 
         BasePlayerTierReward = new TierReward("Materials", "100 Materials", TierReward.RESOURCETYPE.Material, 100);

@@ -33,14 +33,14 @@ public class TierReward{
     //public Buff TierBuff
 
     // Create an ability tier reward
-    public TierReward(string pstrName, string pstrDesc, TierReward pTierRewardPreviousRequired = null)
+    public TierReward(string pstrName, TierReward pTierRewardPreviousRequired = null)
     {
         RewardType = REWARDTYPE.Ability;
         RewardName = pstrName;
-        RewardDescription = pstrDesc;
         PreviousRequiredReward = pTierRewardPreviousRequired;
         ChildRewards = new List<TierReward>();
-        TierAbility = new Ability(pstrName, pstrDesc);
+        TierAbility = GameInfo.LoadAbility(pstrName);
+        RewardDescription = TierAbility.AbilityDescription;
     }
 
     // Create a Buff tier reward

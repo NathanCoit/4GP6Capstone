@@ -45,8 +45,8 @@ public class GameManager : MonoBehaviour
     private Vector3 OriginalBuildingPosition;
     public float MinimumMorale = 0.2f;
     public List<TierReward> PlayerRewardTree;
-    public int TierWorshipperCount = 100; // Initial tier unlock count
-    public int TierWoshipperCountMultiplier = 2; // After every tier, tier count is multiplied by this
+    public int TierUnlockPoint = 100; // Initial tier unlock count
+    public int TierUnlockPointMultiplier = 2; // After every tier, tier count is multiplied by this
     public int MapTierCount = 3;
     public int EnemiesPerTier = 3;
     public int CurrentTier = 0;
@@ -727,11 +727,11 @@ public class GameManager : MonoBehaviour
             }
 
             // Check if player has unlocked a new tier point
-            if(PlayerFaction.WorshipperCount > TierWorshipperCount)
+            if(PlayerFaction.WorshipperCount > TierUnlockPoint)
             {
                 // Player has unlocked a new reward tier point
                 PlayerFaction.TierRewardPoints++;
-                TierWorshipperCount *= TierWoshipperCountMultiplier;
+                TierUnlockPoint *= TierUnlockPointMultiplier;
             }
             Debug.Log(string.Format("{0}: Material Count({1}), Worshipper Count({2}), Morale({3}), Wor/sec({4}), Mat/sec({5}), MenuState({6}), RewardPoints({7})",
                 PlayerFaction.GodName,

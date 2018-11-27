@@ -22,6 +22,7 @@ public class BoardManager : MonoBehaviour
 
     public float faithCap;
 
+
     // Use this for initialization
     void Start()
     {
@@ -32,13 +33,15 @@ public class BoardManager : MonoBehaviour
         //It's ya boi, Map man.
         //MapMan = GameObject.FindGameObjectWithTag("MapManager");
         SetupMan = GameObject.Find("SetupManager").GetComponent<SetupManager>();
-        this.playerMorale = SetupMan.playerMorale;
-        enemyMorale = SetupMan.enemyMorale;
     }
 
     // Update is called once per frame
     void Update()
     {
+        //Updates Morale
+        playerMorale = SetupMan.playerMorale;
+        enemyMorale = SetupMan.enemyMorale;
+
         if (!HasActionsLeft()) //any actions left to take?
             SwitchTurns();
 
@@ -72,19 +75,19 @@ public class BoardManager : MonoBehaviour
 
     public void Victory()
     {
-        SetupMan.battleResult = 0;
+        SetupMan.battleResult = GameInfo.BATTLESTATUS.Victory;
         SetupMan.finishedBattle = true;
     }
 
     public void Defeat()
     {
-        SetupMan.battleResult = 1;
+        SetupMan.battleResult = GameInfo.BATTLESTATUS.Defeat;
         SetupMan.finishedBattle = true;
     }
 
     public void Retreat()
     {
-        SetupMan.battleResult = 2;
+        SetupMan.battleResult = GameInfo.BATTLESTATUS.Retreat;
         SetupMan.finishedBattle = true;
 
         //morale is broken atm

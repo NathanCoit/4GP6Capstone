@@ -10,7 +10,8 @@ public class CombatModeTests
 {
 
     [Test]
-    public void CombatModeTestsSimplePasses() {
+    public void CombatModeTestsSimplePasses()
+    {
         // Use the Assert class to test conditions.
     }
 
@@ -145,9 +146,9 @@ public class CombatModeTests
             List<GameObject> MoveableTiles = GameObject.FindGameObjectsWithTag("MoveableTile").ToList();
 
             //Find tile 1 to the right
-            foreach(GameObject g in MoveableTiles)
+            foreach (GameObject g in MoveableTiles)
             {
-                if(g.GetComponent<Movable>().pos.x == unit.getPos().x + 1)
+                if (g.GetComponent<Movable>().pos.x == unit.getPos().x + 1)
                 {
                     forwardTile = g;
                     break;
@@ -165,17 +166,17 @@ public class CombatModeTests
             yield return null;
         }
         yield return null;
-        foreach(int i in initalPosX)
+        foreach (int i in initalPosX)
         {
-            foreach(GameObject g in BoardMan.playerUnits)
+            foreach (GameObject g in BoardMan.playerUnits)
             {
                 //Make sure everything moved forward and player turn ended, otherwise test fails
                 if (i != (int)g.GetComponent<Units>().getPos().x - 1 || BoardMan.playerTurn)
-                        passed = false;
+                    passed = false;
             }
         }
         Assert.True(passed);
-        
+
     }
 
     //Test moving one forward and attacking
@@ -2016,5 +2017,4 @@ public class CombatModeTests
 
         Assert.True(passed);
     }
-
 }

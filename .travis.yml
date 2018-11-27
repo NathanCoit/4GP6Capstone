@@ -1,0 +1,6 @@
+sudo: enabled
+os: osx
+language: csharp
+script:
+  - ./install.sh
+  - ./build.sh

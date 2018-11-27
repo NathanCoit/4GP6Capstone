@@ -5,17 +5,17 @@ using UnityEngine;
 public class Attackable : MonoBehaviour
 {
     public Vector2 pos;
-    private GameObject MapMan;
-    private GameObject BoardMan;
+    private MapManager MapMan;
+    private BoardManager BoardMan;
     private SetupManager SetupMan;
 
     private bool autoClick;
 
     void Start()
     {
-        MapMan = GameObject.FindGameObjectWithTag("MapManager");
+        MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
 
-        BoardMan = GameObject.FindGameObjectWithTag("BoardManager");
+        BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
 
         SetupMan = GameObject.Find("SetupManager").GetComponent<SetupManager>();
     }
@@ -28,7 +28,7 @@ public class Attackable : MonoBehaviour
 
     private Tile[,] getTiles()
     {
-        return MapMan.GetComponent<MapManager>().tiles;
+        return MapMan.tiles;
     }
 
     public void OnMouseOver()
@@ -36,13 +36,13 @@ public class Attackable : MonoBehaviour
         if (Input.GetMouseButtonDown(0) || autoClick)
         {
             List<GameObject> targets = new List<GameObject>();
-            if (BoardMan.GetComponent<BoardManager>().playerUnits.Contains(MapMan.GetComponent<MapManager>().Selected))
+            if (BoardMan.playerUnits.Contains(MapMan.Selected))
             {
-                targets = BoardMan.GetComponent<BoardManager>().enemyUnits;
+                targets = BoardMan.enemyUnits;
             }
             else
             {
-                targets = BoardMan.GetComponent<BoardManager>().playerUnits;
+                targets = BoardMan.playerUnits;
             }
                 Tile[,] tiles = getTiles();
             GameObject attackedUnit = new GameObject();
@@ -51,53 +51,56 @@ public class Attackable : MonoBehaviour
                 if (g.GetComponent<Units>().getPos() == pos)
                     attackedUnit = g;
 
-            MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().updateAttackStrength();
+            //MapMan.Selected.GetComponent<Units>().updateAttackStrength();
 
-            attackedUnit.GetComponent<Units>().setWorshiperCount(attackedUnit.GetComponent<Units>().getWorshiperCount() - (int)MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().getAttackStrength());
+            //Decreases the "HP" of the attacked unit - decreases their worshipper count
+            int damage = (int)MapMan.Selected.GetComponent<Units>().getAttackStrength();
+            attackedUnit.GetComponent<Units>().setWorshiperCount(attackedUnit.GetComponent<Units>().getWorshiperCount() - damage);
 
-            if (BoardMan.GetComponent<BoardManager>().playerUnits.Contains(MapMan.GetComponent<MapManager>().Selected))
+            //Adjust that unit's morale
+            if (BoardMan.playerUnits.Contains(MapMan.Selected))
             {
                 //change .8f to something else later (at the end of this line)
-                BoardMan.GetComponent<BoardManager>().setEnemyMorale((BoardMan.GetComponent<BoardManager>().GetRemainingWorshipers(false) - MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().getAttackStrength()) / (SetupMan.enemyWorshiperCount * .8f));
-                Debug.Log("Morale" + BoardMan.GetComponent<BoardManager>().enemyMorale);
+                SetupMan.enemyMorale = ((BoardMan.GetRemainingWorshipers(false) - damage) / (SetupMan.enemyWorshiperCount * .8f));
+                Debug.Log("Enemy Morale" + SetupMan.enemyMorale);
             }
             else
             {
                 //change .8f to something else later (at the end of this line)
                 // to do: fix this
-                BoardMan.GetComponent<BoardManager>().setPlayerMorale((BoardMan.GetComponent<BoardManager>().GetRemainingWorshipers(true) - MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().getAttackStrength()) / (SetupMan.playerWorshiperCount * .8f));
-                Debug.Log("Morale" + BoardMan.GetComponent<BoardManager>().playerMorale);
+                SetupMan.playerMorale = ((BoardMan.GetRemainingWorshipers(true) - damage) / (SetupMan.playerWorshiperCount * .8f));
+                Debug.Log("Player Morale" + SetupMan.playerMorale);
             }
 
             
 
             if (attackedUnit.GetComponent<Units>().getWorshiperCount() <= 0)
             {
-                BoardMan.GetComponent<BoardManager>().enemyUnits.Remove(attackedUnit);
+                BoardMan.enemyUnits.Remove(attackedUnit);
                 Destroy(attackedUnit);
             }
 
-            MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().EndAct();
-            BoardMan.GetComponent<BoardManager>().DecreaseNumActions();
+            MapMan.Selected.GetComponent<Units>().EndAct();
+            BoardMan.DecreaseNumActions();
 
             //check if someone won the game
-            if (BoardMan.GetComponent<BoardManager>().playerUnits.Count == 0)
+            if (BoardMan.playerUnits.Count == 0)
             {
-                BoardMan.GetComponent<BoardManager>().Defeat();
+                BoardMan.Defeat();
             }
-            else if (BoardMan.GetComponent<BoardManager>().enemyUnits.Count == 0)
+            else if (BoardMan.enemyUnits.Count == 0)
             {
-                BoardMan.GetComponent<BoardManager>().Victory();
+                BoardMan.Victory();
             }
 
             //Hide Menu
-            MapMan.GetComponent<MapManager>().Selected.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
+            MapMan.Selected.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
 
             //Unslecting
-            MapMan.GetComponent<MapManager>().Selected = null;
+            MapMan.Selected = null;
 
             //Clean up Tiles
-            MapMan.GetComponent<MapManager>().ClearSelection();
+            MapMan.ClearSelection();
 
         }
     }

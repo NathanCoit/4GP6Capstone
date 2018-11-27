@@ -56,6 +56,8 @@ public class Units : MonoBehaviour {
             morale = BoardMan.playerMorale;
         else
             morale = BoardMan.enemyMorale;
+
+        updateAttackStrength();
     }
 
     public void Draw(Tile[,] tiles)
@@ -145,6 +147,8 @@ public class Units : MonoBehaviour {
             GetComponent<MeshRenderer>().material = playerAvailable;
         else
             GetComponent<MeshRenderer>().material = enemyAvailable;
+
+        Movement = 2;
     }
 
     public void EndAct() //this Unit has completed their allotted actions in this round

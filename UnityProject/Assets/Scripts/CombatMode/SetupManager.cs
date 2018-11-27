@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class SetupManager : MonoBehaviour
 {
-
+    public GameInfo.BATTLESTATUS battleResult;
     public GameObject GameInfoObjectPrefab;
     private GameInfo gameInfo;
 
@@ -21,7 +21,6 @@ public class SetupManager : MonoBehaviour
     public int enemyWorshiperCount;
     public float enemyMorale;
     public bool finishedBattle = false;
-    public int battleResult; //0 for victory, 1 for defeat, 2 for retreat
 
     private double worshiperPercentage = 0.80;
 
@@ -87,11 +86,11 @@ public class SetupManager : MonoBehaviour
             //The battle has been finished
             gameInfo.FinishedBattle = true;
 
-            if (battleResult == 0)
+            if (battleResult == GameInfo.BATTLESTATUS.Victory)
                 this.gameInfo.LastBattleStatus = GameInfo.BATTLESTATUS.Victory;
-            else if (battleResult == 1)
+            else if (battleResult == GameInfo.BATTLESTATUS.Defeat)
                 this.gameInfo.LastBattleStatus = GameInfo.BATTLESTATUS.Defeat;
-            else if (battleResult == 2)
+            else if (battleResult == GameInfo.BATTLESTATUS.Retreat)
                 this.gameInfo.LastBattleStatus = GameInfo.BATTLESTATUS.Retreat;
 
             //Missing:

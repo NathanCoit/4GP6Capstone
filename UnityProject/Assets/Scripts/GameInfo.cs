@@ -35,6 +35,23 @@ public class GameInfo : MonoBehaviour {
         public int RewardPoints;
         public List<string> Abilities;
     }
+
+    public static List<string> SingleTargetAbilities = new List<string>
+    {
+        "throwmushroom"
+    };
+    public static List<string> MultiTargetAbilities = new List<string>
+    {
+        "mushroomlaser"
+    };
+    public static List<string> BuffAbilities = new List<string>
+    {
+        "eatmushroom"
+    };
+    public static List<string> DebuffAbilities = new List<string>
+    {
+        "spreadspores"
+    };
     // Initialize any variables that need to be stored here, give each a default value.
     // Variables shared by combat and management mode
     public int PlayerWorshipperCount = 300;
@@ -98,5 +115,29 @@ public class GameInfo : MonoBehaviour {
         }
 
         return savedFaction;
-    }	
+    }
+
+    public static Ability LoadAbility(string pstrAbilityName)
+    {
+        Ability loadedAbility = null;
+
+        if(SingleTargetAbilities.Contains(pstrAbilityName.ToLower()))
+        {
+            loadedAbility = new SingleTargetAbility(pstrAbilityName);
+        }
+        else if(MultiTargetAbilities.Contains(pstrAbilityName.ToLower()))
+        {
+            loadedAbility = new MultiTargetAbility(pstrAbilityName);
+        }
+        else if (BuffAbilities.Contains(pstrAbilityName.ToLower()))
+        {
+            loadedAbility = new BuffAbility(pstrAbilityName);
+        }
+        else if (DebuffAbilities.Contains(pstrAbilityName.ToLower()))
+        {
+            loadedAbility = new DebuffAbility(pstrAbilityName);
+        }
+
+        return loadedAbility;
+    }
 }

@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class ManagementPlayModeTest {
 
@@ -313,9 +314,9 @@ public class ManagementPlayModeTest {
 
         int tempMats = faction.MaterialCount;
 
-        Text temptext = GameObject.Find("ResourcesText").GetComponent<resourceScript>().resourceText;
+        TextMeshProUGUI temptext = GameObject.Find("ResourcesText").GetComponent<ResourceUIScript>().MaterialText;
 
-        Assert.True(temptext.text.Split(' ')[1].Trim() == tempMats.ToString());
+        Assert.True(temptext.text == tempMats.ToString());
     }
 
     // tests that that UI shows the correct amounts of materials that the user has
@@ -338,26 +339,22 @@ public class ManagementPlayModeTest {
 
         int tempWors = faction.WorshipperCount;
 
-        Text temptext = GameObject.Find("ResourcesText").GetComponent<resourceScript>().resourceText;
+        TextMeshProUGUI temptext = GameObject.Find("ResourcesText").GetComponent<ResourceUIScript>().WorshipperText;
 
-        Assert.True(temptext.text.Split(' ')[4].Trim() == tempWors.ToString());
+        Assert.True(temptext.text == tempWors.ToString());
     }
 
-	// tests that that UI shows the correct amounts of materials that the user has
+	// tests that that UI shows the correct amounts of morale that the user has
 	[UnityTest]
 	public IEnumerator MM10UIDisplaysResources() {
 
-		if (GameObject.Find("GameInfo") != null) {
-			GameObject.Destroy(GameObject.Find("GameInfo"));
-		}
-
-		SceneManager.LoadScene("UnderGodScene");
+        InitManagementScene();
 		yield return null;
 		yield return null;
+        float playerMorale = GetGameManager().PlayerFaction.Morale;
+        TextMeshProUGUI temptext = GameObject.Find("ResourcesText").GetComponent<ResourceUIScript>().MoraleText;
 
-		Text temptext = GameObject.Find("ResourcesText").GetComponent<resourceScript>().resourceText;
-
-		Assert.True(temptext.text != null);
+		Assert.True(temptext.text == playerMorale.ToString("0.00"));
 	}
 
     [UnityTest]

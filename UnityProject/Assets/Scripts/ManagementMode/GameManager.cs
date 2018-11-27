@@ -16,7 +16,6 @@ public class GameManager : MonoBehaviour
     {
         Default_State,
         Building_State,
-        Buffered_Building_State, //BufferedBuilding != null
         Building_Selected_State, //SelectedBuilding != null
         Moving_Building_State, //BufferedBuilding != null
         Tier_Reward_State,
@@ -28,10 +27,8 @@ public class GameManager : MonoBehaviour
 	public Texture mapTexture;
     public GameObject GameInfoObjectPrefab;
     private GameInfo gameInfo;
-    modeTextScript text1;
-	resourceScript resourcetext;
+	ResourceUIScript ResourceUIController;
     public GameObject RewardUI;
-    public GameObject RewardNotifier;
     public GameObject AudioObject;
     private ExecuteSound sound;
     public TerrainMap GameMap;
@@ -48,8 +45,8 @@ public class GameManager : MonoBehaviour
     private Vector3 OriginalBuildingPosition;
     public float MinimumMorale = 0.2f;
     public List<TierReward> PlayerRewardTree;
-    public int TierWorshipperCount = 100; // Initial tier unlock count
-    public int TierWoshipperCountMultiplier = 2; // After every tier, tier count is multiplied by this
+    public int TierUnlockPoint = 100; // Initial tier unlock count
+    public int TierUnlockPointMultiplier = 2; // After every tier, tier count is multiplied by this
     public int MapTierCount = 3;
     public int EnemiesPerTier = 3;
     public int CurrentTier = 0;
@@ -61,14 +58,17 @@ public class GameManager : MonoBehaviour
     private int CurrentTimer = 0;
     public float BuildingRadius = 10;
     public int ResourceTicks { get; private set; }
+    public GameObject PausedText = null;
+    public GameObject MenuControlObject = null;
+    public MenuPanelControls MenuPanelController { get; private set; }
     // Use this for any initializations needed by other scripts
     void Awake()
     {
         Building.BuildingRadiusSize = BuildingRadius;
         Building.BuildingCostModifier = BuildingCostModifier;
-		text1 = FindObjectOfType<modeTextScript>();
-		resourcetext = FindObjectOfType<resourceScript>();
+		ResourceUIController = FindObjectOfType<ResourceUIScript>();
         sound = AudioObject.GetComponent<ExecuteSound>();
+        MenuPanelController = MenuControlObject.GetComponent<MenuPanelControls>();
         Building bldEnemyBuilding = null;
         Faction facEnemyFaction = null;
         Vector3 vec3BuildngPos;
@@ -416,7 +416,6 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         CreateRewardTree();
-        NotifyPlayerOfAvaiableRewards();
         ResourceTicks = 0;
         InvokeRepeating("CalculateResources", 0.5f, 2.0f);
     }
@@ -432,9 +431,6 @@ public class GameManager : MonoBehaviour
                 break;
             case MENUSTATE.Building_State:
                 CheckBuildingStateInputs();
-                break;
-            case MENUSTATE.Buffered_Building_State:
-                CheckBufferedBuildingStateInputs();
                 break;
             case MENUSTATE.Moving_Building_State:
                 CheckMovingBuildingStateInputs();
@@ -455,7 +451,7 @@ public class GameManager : MonoBehaviour
         // Global pause hotkey, game can be paused from any menu state
         if(Input.GetKeyDown(KeyCode.P) && CurrentMenuState != MENUSTATE.Paused_State)
         {
-            SetPaused(true);
+            PauseGame();
         }
         if(CurrentMenuState != MENUSTATE.Paused_State && CurrentMenuState != MENUSTATE.Tier_Reward_State)
         {
@@ -468,18 +464,7 @@ public class GameManager : MonoBehaviour
                 CheckForSelectedBuilding();
             }
         }
-
-		if (CurrentMenuState == MENUSTATE.Default_State) {
-			text1.textChange ("explore");
-		}
-		else if (CurrentMenuState == MENUSTATE.Building_State || CurrentMenuState == MENUSTATE.Buffered_Building_State) {
-			text1.textChange ("building");
-		}
-		else if (CurrentMenuState == MENUSTATE.Moving_Building_State || CurrentMenuState == MENUSTATE.Building_Selected_State) {
-			text1.textChange ("upgrade");
-		}
-
-		resourcetext.resourceUIUpdate (PlayerFaction.MaterialCount, PlayerFaction.WorshipperCount, PlayerFaction.Morale);
+		ResourceUIController.UpdateResourceUIElements (PlayerFaction.MaterialCount, PlayerFaction.WorshipperCount, PlayerFaction.Morale, PlayerFaction.TierRewardPoints);
     }
 
     private void CheckUpgradeStateInput()
@@ -495,7 +480,7 @@ public class GameManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Escape))
         {
-            SetPaused(false);
+            UnPauseGame();
         }
     }
 
@@ -520,7 +505,7 @@ public class GameManager : MonoBehaviour
                         SelectedBuilding = null;
                         if (CurrentMenuState == MENUSTATE.Building_Selected_State)
                         {
-                            CurrentMenuState = MENUSTATE.Default_State;
+                            GoToDefaultMenuState();
                         }
                     }
                 }
@@ -541,7 +526,7 @@ public class GameManager : MonoBehaviour
         SelectedBuilding = building;
         if (SelectedBuilding != null)
         {
-            CurrentMenuState = MENUSTATE.Building_Selected_State;
+            EnterBuildingSelectedMenuState();
             SelectedBuilding.ToggleBuildingOutlines(true);
             Debug.Log(SelectedBuilding.UpgradeLevel);
         }
@@ -566,13 +551,12 @@ public class GameManager : MonoBehaviour
 				sound.PlaySound("PlaceBuilding");
                 // If the building did place, go back to building menu
                 PlayerFaction.MaterialCount -= BufferedBuilding.BuildingCost;
-                CurrentMenuState = MENUSTATE.Building_State;
                 BufferedBuilding = null;
                 foreach (Building BuildingOnMap in GameMap.GetBuildings())
                 {
                     BuildingOnMap.ToggleBuildingOutlines(false);
                 }
-
+                EnterBuildMenuState();
             }
             else
             {
@@ -686,6 +670,10 @@ public class GameManager : MonoBehaviour
                                 if(GameMap.PlaceBuilding(tempBuilding, GameMap.CalculateRandomPosition(CurrentFaction)))
                                 {
                                     CurrentFaction.MaterialCount -= 2 * tempBuilding.BuildingCost;
+                                    if(CurrentFaction.GodTier > CurrentTier)
+                                    {
+                                        tempBuilding.BuildingObject.SetActive(false);
+                                    }
                                 }
                                 else
                                 {
@@ -739,22 +727,21 @@ public class GameManager : MonoBehaviour
             }
 
             // Check if player has unlocked a new tier point
-            if(PlayerFaction.WorshipperCount > TierWorshipperCount)
+            if(PlayerFaction.WorshipperCount > TierUnlockPoint)
             {
                 // Player has unlocked a new reward tier point
                 PlayerFaction.TierRewardPoints++;
-                TierWorshipperCount *= TierWoshipperCountMultiplier;
-                NotifyPlayerOfAvaiableRewards();
+                TierUnlockPoint *= TierUnlockPointMultiplier;
             }
-            //Debug.Log(string.Format("{0}: Material Count({1}), Worshipper Count({2}), Morale({3}), Wor/sec({4}), Mat/sec({5}), MenuState({6}), RewardPoints({7})",
-            //    PlayerFaction.GodName,
-            //    PlayerFaction.MaterialCount,
-            //    PlayerFaction.WorshipperCount,
-            //    PlayerFaction.Morale,
-            //    WorPerSec,
-            //    MatPerSec,
-            //    CurrentMenuState,
-            //    PlayerFaction.TierRewardPoints));
+            Debug.Log(string.Format("{0}: Material Count({1}), Worshipper Count({2}), Morale({3}), Wor/sec({4}), Mat/sec({5}), MenuState({6}), RewardPoints({7})",
+                PlayerFaction.GodName,
+                PlayerFaction.MaterialCount,
+                PlayerFaction.WorshipperCount,
+                PlayerFaction.Morale,
+                WorPerSec,
+                MatPerSec,
+                CurrentMenuState,
+                PlayerFaction.TierRewardPoints));
         }
         ResourceTicks++;
         CurrentTimer += 2;
@@ -771,25 +758,23 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            CurrentMenuState = MENUSTATE.Default_State;
+            GoToDefaultMenuState();
         }
         else if (Input.GetKeyDown(KeyCode.A))
         {
-            // Altar building
-            BufferBuilding(Building.BUILDING_TYPE.ALTAR);
+            BufferAltar();
         }
         else if (Input.GetKeyDown(KeyCode.S))
         {
-            // Mine building
-            BufferBuilding(Building.BUILDING_TYPE.MATERIAL);
+            BufferMine();
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
-            BufferBuilding(Building.BUILDING_TYPE.HOUSING);
+            BufferHousing();
         }
         else if (Input.GetKeyDown(KeyCode.F))
         {
-            BufferBuilding(Building.BUILDING_TYPE.UPGRADE);
+            BufferUpgrade();
         }
     }
 
@@ -797,17 +782,19 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            CurrentMenuState = MENUSTATE.Building_Selected_State;
-            if (BufferedBuilding != null)
-            {
-                GameMap.PlaceBuilding(BufferedBuilding, OriginalBuildingPosition);
-            }
             foreach (Building BuildingOnMap in GameMap.GetBuildings())
             {
                 BuildingOnMap.ToggleBuildingOutlines(false);
             }
-            SelectedBuilding = null;
+            if (BufferedBuilding != null)
+            {
+                GameMap.PlaceBuilding(BufferedBuilding, OriginalBuildingPosition);
+                BufferedBuilding.ToggleBuildingOutlines(true);
+                BufferedBuilding.BuildingObject.GetComponent<Collider>().enabled = true;
+            }
+            SelectedBuilding = BufferedBuilding;
             BufferedBuilding = null;
+            EnterBuildingSelectedMenuState();
         }
     }
 
@@ -815,34 +802,16 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.B))
         {
-            CurrentMenuState = MENUSTATE.Building_State;
+            EnterBuildMenuState();
         }
         else if (Input.GetKeyDown(KeyCode.V))
         {
-            CurrentMenuState = MENUSTATE.Tier_Reward_State;
-            SetRewardsUIActive();
+            EnterTierRewardsMenuState();
         }
         else if(Input.GetKeyDown(KeyCode.T))
         {
             // Cheat to move onto next tier
             UnlockNextTier();
-        }
-    }
-
-    private void CheckBufferedBuildingStateInputs()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            CurrentMenuState = MENUSTATE.Building_State;
-            if (BufferedBuilding != null)
-            {
-                BufferedBuilding.Destroy();
-                BufferedBuilding = null;
-            }
-            foreach (Building BuildingOnMap in GameMap.GetBuildings())
-            {
-                BuildingOnMap.ToggleBuildingOutlines(false);
-            }
         }
     }
 
@@ -905,7 +874,7 @@ public class GameManager : MonoBehaviour
                 {
                     SelectedBuilding.ToggleBuildingOutlines(false);
                     SelectedBuilding = null;
-                    CurrentMenuState = MENUSTATE.Default_State;
+                    GoToDefaultMenuState();
                 }
                 else if(Input.GetKeyDown(KeyCode.X) && SelectedBuilding.BuildingType == Building.BUILDING_TYPE.UPGRADE)
                 {
@@ -942,13 +911,37 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            CurrentMenuState = MENUSTATE.Default_State;
+            GoToDefaultMenuState();
             SetRewardsUIActive(false);
         }        
+    }
+    public void BufferAltar()
+    {
+        BufferBuilding(Building.BUILDING_TYPE.ALTAR);
+    }
+
+    public void BufferMine()
+    {
+        BufferBuilding(Building.BUILDING_TYPE.MATERIAL);
+    }
+
+    public void BufferHousing()
+    {
+        BufferBuilding(Building.BUILDING_TYPE.HOUSING);
+    }
+
+    public void BufferUpgrade()
+    {
+        BufferBuilding(Building.BUILDING_TYPE.UPGRADE);
     }
 
     public void BufferBuilding(Building.BUILDING_TYPE penumBuildingType)
     {
+        if(BufferedBuilding != null)
+        {
+            BufferedBuilding.Destroy();
+            BufferedBuilding = null;
+        }
         // Part 1: Evaluates to true if not an upgrade building, or is an upgrade building and player does not currently have an upgrade building
         // Ensures only one upgrade building exists at a time for the player
         if((penumBuildingType != Building.BUILDING_TYPE.UPGRADE 
@@ -970,7 +963,6 @@ public class GameManager : MonoBehaviour
                 {
                     BufferedBuilding = new Building(penumBuildingType, PlayerFaction);
                 }
-                CurrentMenuState = MENUSTATE.Buffered_Building_State;
                 foreach (Building BuildingOnMap in GameMap.GetBuildings())
                 {
                     BuildingOnMap.ToggleBuildingOutlines(true);
@@ -1000,29 +992,19 @@ public class GameManager : MonoBehaviour
         PlayerRewardTree = new List<TierReward>();
 
         // First tier, player gets this tier upon game start
-        BasePlayerTierReward = new TierReward("ThrowMushroom", "Starting Mushroom God ability to smite enemies with divine mushroom punishment.");
+        BasePlayerTierReward = new TierReward("ThrowMushroom");
         PlayerRewardTree.Add(BasePlayerTierReward);
 
         // Second tier, unlocked at 1 * TierCount (100)
-        NextPlayerTierReward = new TierReward("SecondAbility", "Second Ability", BasePlayerTierReward);
+        NextPlayerTierReward = new TierReward("EatMushroom", BasePlayerTierReward);
         BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
         BasePlayerTierReward = NextPlayerTierReward;
 
         // Third tier, unlocked at 2 * TierCount (200). Final tier for Demo
-        NextPlayerTierReward = new TierReward("ThirdAbility", "Third Ability", BasePlayerTierReward);
+        NextPlayerTierReward = new TierReward("MushroomLaser", BasePlayerTierReward);
         BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
 
-        NextPlayerTierReward = new TierReward("Fourth Ability", "Fourth Ability", BasePlayerTierReward);
-        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
-
-        NextPlayerTierReward = new TierReward("Fifth Ability", "Fifth Ability", BasePlayerTierReward);
-        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
-        BasePlayerTierReward = NextPlayerTierReward;
-
-        NextPlayerTierReward = new TierReward("Sixth Ability", "Sixth Ability", BasePlayerTierReward);
-        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
-
-        NextPlayerTierReward = new TierReward("Seventh Ability", "Sixth Ability", BasePlayerTierReward);
+        NextPlayerTierReward = new TierReward("SpreadSpores", BasePlayerTierReward);
         BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
 
         BasePlayerTierReward = new TierReward("Materials", "100 Materials", TierReward.RESOURCETYPE.Material, 100);
@@ -1065,7 +1047,6 @@ public class GameManager : MonoBehaviour
     private void SetRewardsUIActive(bool blnActive = true)
     {
         RewardUI.SetActive(blnActive);
-        RewardNotifier.SetActive(false);
         Camera.main.GetComponent<Cam>().CameraMovementEnabled = !blnActive;
     }
 
@@ -1073,16 +1054,6 @@ public class GameManager : MonoBehaviour
     {
         // Enable/ disable upgrade UI
         Camera.main.GetComponent<Cam>().CameraMovementEnabled = !blnActive;
-    }
-
-
-    private void NotifyPlayerOfAvaiableRewards()
-    {
-        if(CurrentMenuState != MENUSTATE.Tier_Reward_State)
-        {
-            RewardNotifier.SetActive(true);
-            RewardNotifier.GetComponent<Text>().text = "A reward is available, Press 'V' to see!";
-        }
     }
 
     public void UnlockNextTier()
@@ -1177,23 +1148,21 @@ public class GameManager : MonoBehaviour
         return AbleToUnlock;
     }
 
-    public void SetPaused(bool pause = true)
+    public void PauseGame()
     {
+        Time.timeScale = 0;
+        Camera.main.GetComponent<Cam>().CameraMovementEnabled = false;
+        LastMenuState = CurrentMenuState;
+        CurrentMenuState = MENUSTATE.Paused_State;
+        PausedText.SetActive(true);
+    }
 
-        
-        if(pause)
-        {
-            Time.timeScale = 0;
-            Camera.main.GetComponent<Cam>().CameraMovementEnabled = false;
-            LastMenuState = CurrentMenuState;
-            CurrentMenuState = MENUSTATE.Paused_State;
-        }
-        else
-        {
-            Time.timeScale = 1;
-            Camera.main.GetComponent<Cam>().CameraMovementEnabled = true;
-            CurrentMenuState = LastMenuState;
-        }
+    public void UnPauseGame()
+    {
+        Time.timeScale = 1;
+        Camera.main.GetComponent<Cam>().CameraMovementEnabled = true;
+        CurrentMenuState = LastMenuState;
+        PausedText.SetActive(false);
     }
 
     public List<string> SaveRewardTree(List<TierReward> rewards)
@@ -1268,5 +1237,49 @@ public class GameManager : MonoBehaviour
         }
         RandomBuilding = new Building(RandomType, placingFaction);
         return RandomBuilding;
+    }
+
+    public void EnterBuildMenuState()
+    {
+        bool blnAllowedToBuildMine = 
+            PlayerFaction.OwnedBuildings.FindAll(materialBuilding => materialBuilding.BuildingType == Building.BUILDING_TYPE.MATERIAL).Count 
+            < PlayerFaction.FactionArea.Count;
+        bool blnAllowedToBuildUpgradeBuilding =
+            PlayerFaction.OwnedBuildings.Find(upgradeBuilding => upgradeBuilding.BuildingType == Building.BUILDING_TYPE.UPGRADE) == null;
+
+        CurrentMenuState = MENUSTATE.Building_State;
+        MenuPanelController.EnterBuildMode(blnAllowedToBuildMine, blnAllowedToBuildUpgradeBuilding);
+    }
+
+    public void EnterTierRewardsMenuState()
+    {
+        CurrentMenuState = MENUSTATE.Tier_Reward_State;
+        SetRewardsUIActive();
+    }
+
+    private void EnterBuildingSelectedMenuState()
+    {
+        CurrentMenuState = MENUSTATE.Building_Selected_State;
+        MenuPanelController.EnterSelectedBuildingMenu(SelectedBuilding.BuildingType);
+    }
+
+    private void GoToDefaultMenuState()
+    {
+        CurrentMenuState = MENUSTATE.Default_State;
+        MenuPanelController.GoToDefaultMenu();
+        if (BufferedBuilding != null)
+        {
+            BufferedBuilding.Destroy();
+            BufferedBuilding = null;
+            foreach (Building BuildingOnMap in GameMap.GetBuildings())
+            {
+                BuildingOnMap.ToggleBuildingOutlines(false);
+            }
+        }
+        if(SelectedBuilding != null)
+        {
+            SelectedBuilding.ToggleBuildingOutlines(false);
+            SelectedBuilding = null;
+        }
     }
 }

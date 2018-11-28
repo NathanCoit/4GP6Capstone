@@ -14,27 +14,39 @@ public class GameInfo : MonoBehaviour {
         Defeat,
         Retreat
     }
-
+    [System.Serializable]
     public struct SavedBuilding
     {
-        public Vector3 BuildingPosition;
+        public float x;
+        public float y;
+        public float z;
         public Building.BUILDING_TYPE BuildingType;
         public int UpgradeLevel;
         public int Miners;
     }
+    [System.Serializable]
+    public struct SavedArea
+    {
+        public float StartingRad;
+        public float EndingRad;
+        public float StartingAngle;
+        public float EndingAngle;
+    }
+    [System.Serializable]
     public struct SavedFaction
     {
         public string GodName;
         public int MatieralCount;
         public int WorshipperCount;
         public float Morale;
-        public List<SavedBuilding> OwnedBuildings;
-        public List<float[]> FactionArea;
+        public SavedBuilding[] OwnedBuildings;
+        public SavedArea[] FactionArea;
         public Faction.GodType Type;
         public int GodTier;
         public int RewardPoints;
-        public List<string> Abilities;
+        public string[] Abilities;
     }
+    
 
     public static List<string> SingleTargetAbilities = new List<string>
     {
@@ -99,27 +111,24 @@ public class GameInfo : MonoBehaviour {
     };
     // Initialize any variables that need to be stored here, give each a default value.
     // Variables shared by combat and management mode
-    public int PlayerWorshipperCount = 300;
-    public float PlayerMorale = 0;
-    public List<string> PlayerRewards = new List<string>();
-    public int EnemyWorshipperCount = 200;
-    public float EnemyMorale = 0;
-    public List<string> EnemyAbilites = new List<string>();
     public bool FinishedBattle = false;
     public SavedFaction EnemyFaction;
     public SavedFaction PlayerFaction;
-    public bool NewGame = true;
 
     // Combat mode variables
     public BATTLESTATUS LastBattleStatus = BATTLESTATUS.Victory;
 
     // Management mode variables for loading scene
-    public List<SavedFaction> SavedFactions = new List<SavedFaction>();
+    public SavedFaction[] SavedFactions;
     public int CurrentTier = 0;
     public float MapRadius = 100f;
     public float PlayerMoraleCap = 1.0f;
-	// Use this for initialization
-	void Start () {
+    public bool NewGame = true;
+    public bool FromSave = false;
+    public string[] PlayerRewards;
+    public int EnemyChallengeTimer;
+    // Use this for initialization
+    void Start () {
         DontDestroyOnLoad(gameObject);
 	}
 
@@ -127,7 +136,9 @@ public class GameInfo : MonoBehaviour {
     {
         SavedBuilding savedBuilding = new SavedBuilding
         {
-            BuildingPosition = buildingToSave.BuildingPosition,
+            x = buildingToSave.BuildingPosition.x,
+            y = buildingToSave.BuildingPosition.y,
+            z = buildingToSave.BuildingPosition.z,
             BuildingType = buildingToSave.BuildingType,
             UpgradeLevel = buildingToSave.UpgradeLevel,
             Miners = buildingToSave.BuildingType == Building.BUILDING_TYPE.MATERIAL ? ((MineBuilding)buildingToSave).Miners : 0
@@ -144,24 +155,39 @@ public class GameInfo : MonoBehaviour {
             MatieralCount = factionToSave.MaterialCount,
             Morale = factionToSave.Morale,
             WorshipperCount = factionToSave.WorshipperCount,
-            FactionArea = factionToSave.FactionArea,
+            FactionArea = new SavedArea[factionToSave.FactionArea.Count],
             Type = factionToSave.Type,
             GodTier = factionToSave.GodTier,
             RewardPoints = factionToSave.TierRewardPoints,
-            OwnedBuildings = new List<SavedBuilding>(),
-            Abilities = new List<string>()
+            OwnedBuildings = new SavedBuilding[factionToSave.OwnedBuildings.Count],
+            Abilities = new string[factionToSave.CurrentAbilites.Count]
         };
-        
-        foreach(Ability ability in factionToSave.CurrentAbilites)
+        for (int i = 0; i < factionToSave.CurrentAbilites.Count; i++)
         {
-            savedFaction.Abilities.Add(ability.AbilityName);
+            savedFaction.Abilities[i] = factionToSave.CurrentAbilites[i].AbilityName;
         }
-        foreach (Building building in factionToSave.OwnedBuildings)
+        for(int i = 0; i < factionToSave.OwnedBuildings.Count; i++)
         {
-            savedFaction.OwnedBuildings.Add(CreateSavedBuilding(building));
+            savedFaction.OwnedBuildings[i] = CreateSavedBuilding(factionToSave.OwnedBuildings[i]);
+        }
+        for (int i = 0; i < factionToSave.FactionArea.Count; i++)
+        {
+            savedFaction.FactionArea[i] = CreatedSavedFactionArea(factionToSave.FactionArea[i]);
         }
 
         return savedFaction;
+    }
+
+    public static SavedArea CreatedSavedFactionArea(float[] parrAreatoSave)
+    {
+        SavedArea savedArea = new SavedArea
+        {
+            StartingRad = parrAreatoSave[0],
+            EndingRad = parrAreatoSave[1],
+            StartingAngle = parrAreatoSave[2],
+            EndingAngle = parrAreatoSave[3]
+        };
+        return savedArea;
     }
 
     public static Ability LoadAbility(string pstrAbilityName)

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 /// <summary>
@@ -271,5 +272,46 @@ public class GameInfo : MonoBehaviour {
             blnFileDeleted = false;
         }
         return blnFileDeleted;
+    }
+
+    public static void ApplyGameSettings()
+    {
+        // set sound
+        AudioListener.volume = PlayerPrefs.GetFloat("MasterVolume");
+        UnityEngine.Rendering.GraphicsTier graphicsSetting = UnityEngine.Rendering.GraphicsTier.Tier1;
+        switch(PlayerPrefs.GetInt("GraphicsSetting"))
+        {
+            case 1:
+                graphicsSetting = UnityEngine.Rendering.GraphicsTier.Tier2;
+                break;
+            case 2:
+                graphicsSetting = UnityEngine.Rendering.GraphicsTier.Tier3;
+                break;
+        }
+        Graphics.activeTier = graphicsSetting;
+        // TODO, add more options
+    }
+
+    public static void SaveSettingsFromOptionsMenu()
+    {
+        // Assumes options menu prefab is being used.
+        float MasterVolume = GameObject.Find("AudioSliderObject").GetComponent<Slider>().value;
+        int GraphicsSetting = GameObject.Find("GraphicsDropDownMenu").GetComponent<Dropdown>().value;
+
+        // Save sound setting
+        PlayerPrefs.SetFloat("MasterVolume", MasterVolume);
+
+        // Save the graphics setting
+        PlayerPrefs.SetInt("GraphicsSetting", GraphicsSetting);
+        // TODO add more options to save
+    }
+
+    public static void ApplySettingsToOptionsMenu()
+    {
+        Slider audioSlider = GameObject.Find("AudioSliderObject").GetComponent<Slider>();
+        audioSlider.minValue = 0;
+        audioSlider.maxValue = 1;
+        audioSlider.value = PlayerPrefs.GetFloat("MasterVolume");
+        GameObject.Find("GraphicsDropDownMenu").GetComponent<Dropdown>().value = PlayerPrefs.GetInt("GraphicsSetting");
     }
 }

@@ -514,6 +514,7 @@ public class GameManager : MonoBehaviour
     // Use this for any initializations not needed by other scripts.
     void Start()
     {
+        GameInfo.ApplyGameSettings();
         PausedMenuPanel.SetActive(false);
         CreateRewardTree();
         ResourceTicks = 0;

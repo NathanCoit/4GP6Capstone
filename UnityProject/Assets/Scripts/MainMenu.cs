@@ -16,6 +16,10 @@ public class MainMenu : MonoBehaviour {
     public GameObject MainUIPanel;
     public GameObject LoadGameOptionsPanel;
     public GameObject LoadMenuScrollPanel;
+    public GameObject OptionsPanel;
+    public GameObject AudioSliderObject;
+    public UnityEngine.Object SaveButtonPrefab;
+
     public string GameSaveFileDirectory;
     private List<GameObject> marrButtonObjects;
 
@@ -28,6 +32,7 @@ public class MainMenu : MonoBehaviour {
 	void Start () {
         DisableAllPanels();
         MainUIPanel.SetActive(true);
+        GameInfo.ApplyGameSettings();
 	}
 	
 	// Update is called once per frame
@@ -74,11 +79,19 @@ public class MainMenu : MonoBehaviour {
         MainUIPanel.SetActive(true);
     }
 
+    public void OpenOptionsMenu()
+    {
+        DisableAllPanels();
+        OptionsPanel.SetActive(true);
+        GameInfo.ApplySettingsToOptionsMenu();
+    }
+
     public void DisableAllPanels()
     {
         MainUIPanel.SetActive(false);
         NewGameOptionsPanel.SetActive(false);
         LoadGameOptionsPanel.SetActive(false);
+        OptionsPanel.SetActive(false);
         DestroySaveFileButtons();
     }
 
@@ -92,7 +105,6 @@ public class MainMenu : MonoBehaviour {
     public void CreateSaveFileButtons()
     {
         List<FileInfo> SaveFileInfos = new List<FileInfo>();
-        UnityEngine.Object objButtonPrefab = Resources.Load("SaveFileButton");
         Button btnComponent = null;
         GameObject gobjButtonObject = null;
         Text objButtonText = null;
@@ -114,7 +126,7 @@ public class MainMenu : MonoBehaviour {
         foreach(FileInfo objFileInfo in SaveFileInfos)
         {
             string strSaveFileInfoText = string.Empty;
-            gobjButtonObject = (GameObject)Instantiate(objButtonPrefab);
+            gobjButtonObject = (GameObject)Instantiate(SaveButtonPrefab);
             gobjButtonObject.transform.SetParent(LoadMenuScrollPanel.transform);
             btnComponent = gobjButtonObject.GetComponent<Button>();
             objButtonText = gobjButtonObject.GetComponentInChildren<Text>();
@@ -181,6 +193,17 @@ public class MainMenu : MonoBehaviour {
         {
             // Save doesnt exist
         }
+    }
+
+    public void SaveSettings()
+    {
+        GameInfo.SaveSettingsFromOptionsMenu();
+        GameInfo.ApplyGameSettings();
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 }
 

@@ -5,6 +5,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Linq;
 
 public class MainMenu : MonoBehaviour {
     private GameInfo gameInfo = null;
@@ -14,6 +15,14 @@ public class MainMenu : MonoBehaviour {
     public GameObject NewGameOptionsPanel;
     public GameObject MainUIPanel;
     public GameObject LoadGameOptionsPanel;
+    public GameObject LoadMenuScrollPanel;
+    public string GameSaveFileDirectory;
+    private List<GameObject> marrButtonObjects;
+
+    void Awake()
+    {
+        GameSaveFileDirectory = Application.persistentDataPath + "/SaveFiles";
+    }
 
 	// Use this for initialization
 	void Start () {
@@ -70,26 +79,91 @@ public class MainMenu : MonoBehaviour {
         MainUIPanel.SetActive(false);
         NewGameOptionsPanel.SetActive(false);
         LoadGameOptionsPanel.SetActive(false);
+        DestroySaveFileButtons();
     }
 
     public void EnableLoadSaveGamePanel()
     {
         DisableAllPanels();
         LoadGameOptionsPanel.SetActive(true);
+        CreateSaveFileButtons();
     }
 
-    public void LoadSaveGame()
+    public void CreateSaveFileButtons()
+    {
+        List<FileInfo> SaveFileInfos = new List<FileInfo>();
+        UnityEngine.Object objButtonPrefab = Resources.Load("SaveFileButton");
+        Button btnComponent = null;
+        GameObject gobjButtonObject = null;
+        Text objButtonText = null;
+        marrButtonObjects = new List<GameObject>();
+        FileInfo[] objSaveFiles = null;
+        SaveData saveFileData = null;
+        if(Directory.Exists(GameSaveFileDirectory))
+        {
+            DirectoryInfo saveFileInfo = new DirectoryInfo(GameSaveFileDirectory);
+            objSaveFiles = saveFileInfo.GetFiles().OrderByDescending(file => file.LastWriteTimeUtc).ToArray();
+            foreach(FileInfo objFileInfo in objSaveFiles)
+            {
+                if(objFileInfo.Extension.Equals(".ugs"))
+                {
+                    SaveFileInfos.Add(objFileInfo);
+                }
+            }
+        }
+        foreach(FileInfo objFileInfo in SaveFileInfos)
+        {
+            string strSaveFileInfoText = string.Empty;
+            gobjButtonObject = (GameObject)Instantiate(objButtonPrefab);
+            gobjButtonObject.transform.SetParent(LoadMenuScrollPanel.transform);
+            btnComponent = gobjButtonObject.GetComponent<Button>();
+            objButtonText = gobjButtonObject.GetComponentInChildren<Text>();
+            btnComponent.onClick.AddListener(() => LoadSaveGame(objFileInfo.FullName));
+            gobjButtonObject.transform.GetChild(1).gameObject.GetComponent<Button>().onClick.AddListener(() => DeleteSaveFile(objFileInfo.FullName));
+
+            saveFileData = GameInfo.LoadSaveData(objFileInfo.FullName);
+            strSaveFileInfoText =
+                string.Format("{0} God of {1}\nCurrentTier: {2}\n{3}",
+                saveFileData.PlayerFaction.GodName,
+                saveFileData.PlayerFaction.Type.ToString(),
+                saveFileData.CurrentTier + 1, 
+                objFileInfo.LastWriteTimeUtc.ToLocalTime().ToShortTimeString());
+            objButtonText.text = strSaveFileInfoText;
+            marrButtonObjects.Add(gobjButtonObject);
+        }
+    }
+
+    public void DestroySaveFileButtons()
+    {
+        if(marrButtonObjects != null)
+        {
+            foreach (GameObject gobjButton in marrButtonObjects)
+            {
+                Destroy(gobjButton);
+            }
+            marrButtonObjects = null;
+        }
+    }
+
+    public void DeleteSaveFile(string pstrFilePath)
+    {
+        if(GameInfo.DeleteSaveFile(pstrFilePath))
+        {
+            DestroySaveFileButtons();
+            CreateSaveFileButtons();
+        }
+    }
+
+    public void LoadSaveGame(string pstrFilePath)
     {
         string gameInfoAsJSON = string.Empty;
-        string filePath = Application.dataPath + "/131878581333716560.ugs";
-        if (File.Exists(filePath))
+        SaveData loadedSaveData = GameInfo.LoadSaveData(pstrFilePath);
+        GameInfo gameInfo = null;
+        if (loadedSaveData != null)
         {
             GameObject NewGameInfoObject = (GameObject)Instantiate(GameInfoObjectPrefab);
             NewGameInfoObject.name = "GameInfo";
             gameInfo = NewGameInfoObject.GetComponent<GameInfo>();
-
-            gameInfoAsJSON = File.ReadAllText(filePath);
-            SaveData loadedSaveData = JsonUtility.FromJson<SaveData>(gameInfoAsJSON);
 
             // Set gameinfo variables
             gameInfo.PlayerFaction = loadedSaveData.PlayerFaction;
@@ -109,3 +183,4 @@ public class MainMenu : MonoBehaviour {
         }
     }
 }
+

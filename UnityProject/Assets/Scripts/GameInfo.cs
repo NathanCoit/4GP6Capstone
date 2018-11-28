@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Game info object to be used for reading/writing and cross scene info
@@ -109,6 +112,7 @@ public class GameInfo : MonoBehaviour {
         "stun",
         "root"
     };
+    
     // Initialize any variables that need to be stored here, give each a default value.
     // Variables shared by combat and management mode
     public bool FinishedBattle = false;
@@ -213,5 +217,59 @@ public class GameInfo : MonoBehaviour {
         }
 
         return loadedAbility;
+    }
+
+    public static SaveData LoadSaveData(string pstrFilePath)
+    {
+        SaveData saveData = null;
+        string gameInfoAsJSON = string.Empty;
+        if (File.Exists(pstrFilePath))
+        {
+            gameInfoAsJSON = File.ReadAllText(pstrFilePath);
+            saveData = JsonUtility.FromJson<SaveData>(gameInfoAsJSON);
+        }
+        return saveData;
+    }
+
+    public static bool SaveGame(string pstrSaveFileDirectory, GameInfo pobjGameInfo)
+    {
+        bool blnSaved = false;
+        try
+        {
+            string gameInfoAsJSON = JsonUtility.ToJson(pobjGameInfo);
+            if (!Directory.Exists(pstrSaveFileDirectory))
+            {
+                Directory.CreateDirectory(pstrSaveFileDirectory);
+            }
+            string filePath = pstrSaveFileDirectory + "/SaveFiles/" + DateTime.Now.ToFileTime() + ".ugs";
+            File.WriteAllText(filePath, gameInfoAsJSON);
+            blnSaved = true;
+        }
+        catch
+        {
+            blnSaved = false;
+        }
+        return blnSaved;
+    }
+
+    public static bool DeleteSaveFile(string pstrFilePath)
+    {
+        bool blnFileDeleted = false;
+        try
+        {
+            if (File.Exists(pstrFilePath))
+            {
+                if (pstrFilePath.EndsWith(".ugs"))
+                {
+                    File.Delete(pstrFilePath);
+                    blnFileDeleted = true;
+                }
+            }
+        }
+        catch
+        {
+            blnFileDeleted = false;
+        }
+        return blnFileDeleted;
     }
 }

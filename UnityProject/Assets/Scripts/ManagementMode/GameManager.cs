@@ -60,7 +60,7 @@ public class GameManager : MonoBehaviour
     private int CurrentTimer = 0;
     public float BuildingRadius = 10;
     public int ResourceTicks { get; private set; }
-    public GameObject PausedText = null;
+    public GameObject PausedMenuPanel = null;
     public GameObject MenuControlObject = null;
     public MenuPanelControls MenuPanelController { get; private set; }
     public float PlayerMoraleCap = 1.0f;
@@ -405,14 +405,14 @@ public class GameManager : MonoBehaviour
                     {
                         // Run defeat animation/reset to tier checkpoint
                     }
-                    foreach (Faction faction in CurrentFactions.FindAll(MatchingFaction => MatchingFaction.GodTier > CurrentTier))
-                    {
-                        faction.SetHidden(true);
-                    }
                 }
                 else
                 {
                     EnemyChallengeTimer = gameInfo.EnemyChallengeTimer;
+                }
+                foreach (Faction faction in CurrentFactions.FindAll(MatchingFaction => MatchingFaction.GodTier > CurrentTier))
+                {
+                    faction.SetHidden(true);
                 }
                 GameMap.DrawFactionArea(PlayerFaction);
                 return true;
@@ -514,6 +514,7 @@ public class GameManager : MonoBehaviour
     // Use this for any initializations not needed by other scripts.
     void Start()
     {
+        PausedMenuPanel.SetActive(false);
         CreateRewardTree();
         ResourceTicks = 0;
         InvokeRepeating("CalculateResources", 0.5f, 2.0f);
@@ -1238,8 +1239,7 @@ public class GameManager : MonoBehaviour
         Camera.main.GetComponent<Cam>().CameraMovementEnabled = false;
         LastMenuState = CurrentMenuState;
         CurrentMenuState = MENUSTATE.Paused_State;
-        PausedText.SetActive(true);
-        SaveGame();
+        PausedMenuPanel.SetActive(true);
     }
 
     public void UnPauseGame()
@@ -1247,7 +1247,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1;
         Camera.main.GetComponent<Cam>().CameraMovementEnabled = true;
         CurrentMenuState = LastMenuState;
-        PausedText.SetActive(false);
+        PausedMenuPanel.SetActive(false);
     }
 
     public List<string> SaveRewardTree(List<TierReward> rewards)
@@ -1444,12 +1444,22 @@ public class GameManager : MonoBehaviour
         gameInfo.EnemyChallengeTimer = EnemyChallengeTimer;
         gameInfo.EnemyFaction = new GameInfo.SavedFaction();
 
-        string gameInfoAsJSON = JsonUtility.ToJson(gameInfo);
-        string filePath = Application.dataPath + "/" + DateTime.Now.ToFileTime() + ".ugs";
-        
+        if(!GameInfo.SaveGame(Application.persistentDataPath, gameInfo))
+        {
+            // TODO Error occurred while saving
+            
+        }
+        else
+        {
+            
+        }
+    }
 
-
-        File.WriteAllText(filePath, gameInfoAsJSON);
+    public void QuitToMenu()
+    {
+        // Destroy gameinfo object
+        Destroy(gameInfo.gameObject);
+        SceneManager.LoadScene("MainMenu");
     }
 }
 

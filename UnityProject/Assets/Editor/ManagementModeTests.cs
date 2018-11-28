@@ -10,7 +10,7 @@ public class ManagementModeTests {
     // Edit mode tests for simple scenarios not needing unity physics and multi frame data
 	[Test]
 	public void FactionOwnsBuildingTest() {
-        Faction TestFaction = new Faction("TestGod", Faction.GodType.Duck, 0);
+        Faction TestFaction = new Faction("TestGod", Faction.GodType.Ducks, 0);
         Building TestBuilding = new Building(Building.BUILDING_TYPE.ALTAR, TestFaction);
         Assert.True(TestFaction.OwnedBuildings.Contains(TestBuilding));
 	}
@@ -21,7 +21,7 @@ public class ManagementModeTests {
     [Test]
     public void CreateAndUpgradeVillage()
     {
-        Faction TestFaction = new Faction("test", Faction.GodType.Fork, 0)
+        Faction TestFaction = new Faction("test", Faction.GodType.Forks, 0)
         {
             MaterialCount = 1000
         };
@@ -37,7 +37,7 @@ public class ManagementModeTests {
     [Test]
     public void CreateAndUpgradeVillageWithNoMaterials()
     {
-        Faction TestFaction = new Faction("test", Faction.GodType.Fork, 0);
+        Faction TestFaction = new Faction("test", Faction.GodType.Forks, 0);
         Building TestBuilding = new Building(Building.BUILDING_TYPE.VILLAGE, TestFaction);
         Assert.False(TestBuilding.UpgradeBuilding(), string.Format("Materials {0}", TestFaction.MaterialCount));
         Assert.True(TestFaction.MaterialCount == 0);
@@ -50,7 +50,7 @@ public class ManagementModeTests {
     [Test]
     public void UpgradeVillagePastThree()
     {
-        Faction TestFaction = new Faction("test", Faction.GodType.Fork, 0)
+        Faction TestFaction = new Faction("test", Faction.GodType.Forks, 0)
         {
             MaterialCount = 1000
         };
@@ -72,7 +72,7 @@ public class ManagementModeTests {
 	[UnityTest]
 	public IEnumerator TestStartWithNoMaterials() {
 		yield return null;
-		Faction TestFaction = new Faction("TestGod", Faction.GodType.Duck, 0);
+		Faction TestFaction = new Faction("TestGod", Faction.GodType.Ducks, 0);
 
 		//Checks to see if we added one unit
 		Assert.True(TestFaction.MaterialCount == 0);
@@ -81,7 +81,7 @@ public class ManagementModeTests {
 	[UnityTest]
 	public IEnumerator TestStartWithNoWorshippers() {
 		yield return null;
-		Faction TestFaction = new Faction("TestGod", Faction.GodType.Duck, 0);
+		Faction TestFaction = new Faction("TestGod", Faction.GodType.Ducks, 0);
 
 		//Checks to see if we added one unit
 		Assert.True(TestFaction.WorshipperCount == 0);
@@ -90,7 +90,7 @@ public class ManagementModeTests {
 	[UnityTest]
 	public IEnumerator TestStartWithBaseMorale() {
 		yield return null;
-		Faction TestFaction = new Faction("TestGod", Faction.GodType.Duck, 0);
+		Faction TestFaction = new Faction("TestGod", Faction.GodType.Ducks, 0);
 
 		//Checks to see if we added one unit
 		Assert.True(TestFaction.Morale == 1.0f);
@@ -99,7 +99,7 @@ public class ManagementModeTests {
 	[UnityTest]
 	public IEnumerator TestUIShowsResources() {
 		yield return null;
-		Faction TestFaction = new Faction("TestGod", Faction.GodType.Duck, 0);
+		Faction TestFaction = new Faction("TestGod", Faction.GodType.Ducks, 0);
 
 		//Checks to see if we added one unit
 		Assert.True(TestFaction.Morale == 1.0f);

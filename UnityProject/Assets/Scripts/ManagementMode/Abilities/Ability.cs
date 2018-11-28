@@ -6,6 +6,8 @@ public class Ability{
     public string AbilityName;
     public string AbilityDescription;
     public AbilityType Type;
+    public int Range = 0;
+    public int FaithCost;
 
     public enum AbilityType
     {
@@ -19,7 +21,8 @@ public class Ability{
     public enum MultiTargetShape
     {
         Line,
-        Square
+        Square,
+        Cone // "cone" shape in front of god
     }
 
     public enum BuffType
@@ -39,7 +42,9 @@ public class Ability{
         Paralyze, // Or root?
         Burn,
         Poison,
-        Slow
+        Slow,
+        Charm,
+        Blind
     }
 
     public Ability(string pstrAbilityName)

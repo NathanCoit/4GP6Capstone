@@ -38,19 +38,64 @@ public class GameInfo : MonoBehaviour {
 
     public static List<string> SingleTargetAbilities = new List<string>
     {
-        "throwmushroom"
+        "throwmushroom",
+        "paintslap",
+        "throwfork",
+        "kick",
+        "quack",
+        "chihuahua",
+        "batonslap",
+        "blowakiss",
+        "hammerslap",
+        "fireball",
+        "drown",
+        "smite",
+        "tornado"
     };
     public static List<string> MultiTargetAbilities = new List<string>
     {
-        "mushroomlaser"
+        "mushroomlaser",
+        "paintcannon",
+        "forksweep",
+        "legsweep",
+        "quack!!",
+        "corgi",
+        "jazzhands",
+        "giantheartslap",
+        "dropanvil",
+        "lavariver",
+        "tsunami",
+        "electricfield",
+        "earthquake"
     };
     public static List<string> BuffAbilities = new List<string>
     {
-        "eatmushroom"
+        "eatmushroom",
+        "warpaint",
+        "eatspaghett",
+        "yeezys",
+        "quack?",
+        "poodle",
+        "saxsolo",
+        "slapass",
+        "sharpenarms",
+        "igniteweapons",
+        "stayhydrated"
     };
     public static List<string> DebuffAbilities = new List<string>
     {
-        "spreadspores"
+        "spreadspores",
+        "forkflash",
+        "coloursplash",
+        "brokenankles",
+        "quack¿",
+        "cat",
+        "outoftunesolo",
+        "charm",
+        "armorbreak",
+        "burn",
+        "stun",
+        "root"
     };
     // Initialize any variables that need to be stored here, give each a default value.
     // Variables shared by combat and management mode
@@ -63,6 +108,7 @@ public class GameInfo : MonoBehaviour {
     public bool FinishedBattle = false;
     public SavedFaction EnemyFaction;
     public SavedFaction PlayerFaction;
+    public bool NewGame = true;
 
     // Combat mode variables
     public BATTLESTATUS LastBattleStatus = BATTLESTATUS.Victory;
@@ -71,6 +117,7 @@ public class GameInfo : MonoBehaviour {
     public List<SavedFaction> SavedFactions = new List<SavedFaction>();
     public int CurrentTier = 0;
     public float MapRadius = 100f;
+    public float PlayerMoraleCap = 1.0f;
 	// Use this for initialization
 	void Start () {
         DontDestroyOnLoad(gameObject);
@@ -120,20 +167,21 @@ public class GameInfo : MonoBehaviour {
     public static Ability LoadAbility(string pstrAbilityName)
     {
         Ability loadedAbility = null;
+        string strFormattedAbilityName = pstrAbilityName.ToLower().Replace(" ", string.Empty);
 
-        if(SingleTargetAbilities.Contains(pstrAbilityName.ToLower()))
+        if (SingleTargetAbilities.Contains(strFormattedAbilityName))
         {
-            loadedAbility = new SingleTargetAbility(pstrAbilityName);
+            loadedAbility = new SingleTargetAbility(strFormattedAbilityName);
         }
-        else if(MultiTargetAbilities.Contains(pstrAbilityName.ToLower()))
+        else if(MultiTargetAbilities.Contains(strFormattedAbilityName))
         {
             loadedAbility = new MultiTargetAbility(pstrAbilityName);
         }
-        else if (BuffAbilities.Contains(pstrAbilityName.ToLower()))
+        else if (BuffAbilities.Contains(strFormattedAbilityName))
         {
             loadedAbility = new BuffAbility(pstrAbilityName);
         }
-        else if (DebuffAbilities.Contains(pstrAbilityName.ToLower()))
+        else if (DebuffAbilities.Contains(strFormattedAbilityName))
         {
             loadedAbility = new DebuffAbility(pstrAbilityName);
         }

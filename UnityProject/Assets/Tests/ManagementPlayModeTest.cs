@@ -1041,7 +1041,7 @@ public class ManagementPlayModeTest {
     [Test]
     public void MM13BlackSmithBuildingExists()
     {
-        Faction TestFaction = new Faction("Test", Faction.GodType.Duck, 0);
+        Faction TestFaction = new Faction("Test", Faction.GodType.Ducks, 0);
         Building blackSmithBuilding = new Building(Building.BUILDING_TYPE.UPGRADE, TestFaction);
 
         Assert.True(blackSmithBuilding.BuildingType == Building.BUILDING_TYPE.UPGRADE);

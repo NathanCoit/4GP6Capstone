@@ -22,7 +22,8 @@ public class GameManager : MonoBehaviour
         Moving_Building_State, //BufferedBuilding != null
         Tier_Reward_State,
         Upgrade_State,
-        Paused_State
+        Paused_State,
+        Settings_Menu_State
     }
     public int InitialPlayerMaterials = 0;
     public int InitialPlayerWorshippers = 0;
@@ -71,6 +72,7 @@ public class GameManager : MonoBehaviour
     private bool blnVictory = false;
     private bool blnGameOver = false;
     private bool mblnPauseKeyDown = false;
+    public HotKeyManager hotKeyManager = new HotKeyManager();
     // Use this for any initializations needed by other scripts
     void Awake()
     {
@@ -542,7 +544,7 @@ public class GameManager : MonoBehaviour
             PauseGame();
             PausedMenuPanel.SetActive(false);
         }
-        
+        hotKeyManager.LoadHotkeyProfile();
         InvokeRepeating("CalculateResources", 0.5f, 2.0f);
     }
 
@@ -572,17 +574,22 @@ public class GameManager : MonoBehaviour
                 break;
         }
         // Global pause hotkey, game can be paused from any menu state
-        if((Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Escape) ) && CurrentMenuState != MENUSTATE.Paused_State && !mblnPauseKeyDown)
+        if(Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"]) && CurrentMenuState == MENUSTATE.Default_State && !mblnPauseKeyDown)
         {
             mblnPauseKeyDown = true;
             PauseGame();
         }
-        else if((Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Escape) && CurrentMenuState == MENUSTATE.Paused_State && !mblnPauseKeyDown))
+        else if(Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"]) && CurrentMenuState == MENUSTATE.Paused_State && !mblnPauseKeyDown)
         {
             mblnPauseKeyDown = true;
             UnPauseGame();
         }
-        if((Input.GetKeyUp(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P)) )
+        else if (Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"]) && CurrentMenuState == MENUSTATE.Settings_Menu_State && !mblnPauseKeyDown)
+        {
+            mblnPauseKeyDown = true;
+            ReturnToPauseMenu();
+        }
+        if (Input.GetKeyUp(hotKeyManager.HotKeys["EscapeKeyCode"]))
         {
             mblnPauseKeyDown = false;
         }
@@ -602,10 +609,11 @@ public class GameManager : MonoBehaviour
 
     private void CheckUpgradeStateInput()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"]))
         {
             CurrentMenuState = MENUSTATE.Building_Selected_State;
             SetUpgradeUIActive(false);
+            mblnPauseKeyDown = true;
         }
     }
 
@@ -897,23 +905,24 @@ public class GameManager : MonoBehaviour
 
     private void CheckBuildingStateInputs()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"]))
         {
             GoToDefaultMenuState();
+            mblnPauseKeyDown = true;
         }
-        else if (Input.GetKeyDown(KeyCode.A))
+        else if (Input.GetKeyDown(hotKeyManager.HotKeys["AltarKeyCode"]))
         {
             BufferAltar();
         }
-        else if (Input.GetKeyDown(KeyCode.S))
+        else if (Input.GetKeyDown(hotKeyManager.HotKeys["MineKeyCode"]))
         {
             BufferMine();
         }
-        else if (Input.GetKeyDown(KeyCode.D))
+        else if (Input.GetKeyDown(hotKeyManager.HotKeys["HouseKeyCode"]))
         {
             BufferHousing();
         }
-        else if (Input.GetKeyDown(KeyCode.F))
+        else if (Input.GetKeyDown(hotKeyManager.HotKeys["BlacksmithKeyCode"]))
         {
             BufferUpgrade();
         }
@@ -921,8 +930,9 @@ public class GameManager : MonoBehaviour
 
     private void CheckMovingBuildingStateInputs()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"]))
         {
+            mblnPauseKeyDown = true;
             foreach (Building BuildingOnMap in GameMap.GetBuildings())
             {
                 BuildingOnMap.ToggleBuildingOutlines(false);
@@ -941,11 +951,11 @@ public class GameManager : MonoBehaviour
 
     private void CheckDefaultMenuStateInputs()
     {
-        if (Input.GetKeyDown(KeyCode.B))
+        if (Input.GetKeyDown(hotKeyManager.HotKeys["BuildKeyCode"]))
         {
             EnterBuildMenuState();
         }
-        else if (Input.GetKeyDown(KeyCode.V))
+        else if (Input.GetKeyDown(hotKeyManager.HotKeys["TierRewardKeyCode"]))
         {
             EnterTierRewardsMenuState();
         }
@@ -964,14 +974,14 @@ public class GameManager : MonoBehaviour
             if (SelectedBuilding.OwningFaction == PlayerFaction)
             {
                 // Global hotkey for a selected building
-                if (Input.GetKeyDown(KeyCode.U) && SelectedBuilding.BuildingType != Building.BUILDING_TYPE.VILLAGE)
+                if (Input.GetKeyDown(hotKeyManager.HotKeys["BuildingUpgradeKeyCode"]) && SelectedBuilding.BuildingType != Building.BUILDING_TYPE.VILLAGE)
                 {
                     // Attempt to upgrade selected building
                     // 3 is max upgrade level of a building
                     UpgradeSelectedBuilding();
 
                 }
-                else if (Input.GetKeyDown(KeyCode.M))
+                else if (Input.GetKeyDown(hotKeyManager.HotKeys["BuildingMoveKeyCode"]))
                 {
                     //Move player building if it isn't a village
                     if (SelectedBuilding.BuildingType != Building.BUILDING_TYPE.VILLAGE)
@@ -984,12 +994,12 @@ public class GameManager : MonoBehaviour
                     }
 
                 }
-                else if(Input.GetKeyDown(KeyCode.X) && SelectedBuilding.BuildingType == Building.BUILDING_TYPE.UPGRADE)
+                else if(Input.GetKeyDown(hotKeyManager.HotKeys["BlackSmithUIKeyCode"]) && SelectedBuilding.BuildingType == Building.BUILDING_TYPE.UPGRADE)
                 {
                     CurrentMenuState = MENUSTATE.Upgrade_State;
                     SetUpgradeUIActive();
                 }
-                else if(Input.GetKeyDown(KeyCode.K) && SelectedBuilding.BuildingType == Building.BUILDING_TYPE.MATERIAL)
+                else if(Input.GetKeyDown(hotKeyManager.HotKeys["BuyMinersKeyCode"]) && SelectedBuilding.BuildingType == Building.BUILDING_TYPE.MATERIAL)
                 {
                     BuyMinersForSelectedBuilding();
                 }
@@ -1001,7 +1011,7 @@ public class GameManager : MonoBehaviour
                 if(SelectedBuilding.BuildingType == Building.BUILDING_TYPE.VILLAGE)
                 {
                     // Enemy Village building, can start battle here
-                    if(Input.GetKeyDown(KeyCode.B))
+                    if(Input.GetKeyDown(hotKeyManager.HotKeys["StartBattleKeyCode"]))
                     {
                         // Initialize info file variables, save game state, move to combat mode scene
                         EnterCombatMode();
@@ -1009,20 +1019,22 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"]))
         {
             SelectedBuilding.ToggleBuildingOutlines(false);
             SelectedBuilding = null;
             GoToDefaultMenuState();
+            mblnPauseKeyDown = true;
         }
     }
 
     private void CheckTierRewardStateInputs()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"]))
         {
             GoToDefaultMenuState();
             SetRewardsUIActive(false);
+            mblnPauseKeyDown = true;
         }        
     }
     public void BufferAltar()
@@ -1491,18 +1503,22 @@ public class GameManager : MonoBehaviour
     {
         PausedMenuPanel.SetActive(false);
         OptionsMenuPanel.SetActive(true);
+        CurrentMenuState = MENUSTATE.Settings_Menu_State;
         GameInfo.ApplySettingsToOptionsMenu();
     }
 
     public void ReturnToPauseMenu()
     {
         PausedMenuPanel.SetActive(true);
+        CurrentMenuState = MENUSTATE.Paused_State;
         OptionsMenuPanel.SetActive(false);
     }
 
     public void SaveGameSettings()
     {
         GameInfo.SaveSettingsFromOptionsMenu();
+        hotKeyManager.LoadHotkeyProfile();
+        MenuPanelController.SetButtonText();
         GameInfo.ApplyGameSettings();
     }
 

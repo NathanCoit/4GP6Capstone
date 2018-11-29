@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class MenuPanelControls : MonoBehaviour {
 
@@ -26,11 +27,18 @@ public class MenuPanelControls : MonoBehaviour {
     public GameObject SelectedBuildingMinersTextObject;
     public GameObject BuyMinersTextAmount;
 
+    public GameObject PauseButton;
     public GameObject MoveBuildingButton;
     public GameObject UpgradeBuildingButton;
     public GameObject BuyMinersButton;
     public GameObject UpgradeUIButton;
     public GameObject EnemyBattleButton;
+    public GameObject TierRewardButton;
+
+    public GameObject AltarButton;
+    public GameObject HousingButton;
+    public GameObject MineButton;
+    public GameObject BlacksmithButton;
 
     private Image SelectedBuildingImage;
     private TextMeshProUGUI SelectedBuildingTypeText;
@@ -41,9 +49,8 @@ public class MenuPanelControls : MonoBehaviour {
     public GameObject DefaultMenuPanel;
     public GameObject BuildMenuPanel;
     public GameObject SelectedBuildingMenu;
-
-    public GameObject MineButton;
-    public GameObject UpgradeButton;
+    private HotKeyManager hotKeyManager = new HotKeyManager();
+    
 
     private void Start()
     {
@@ -52,8 +59,47 @@ public class MenuPanelControls : MonoBehaviour {
         SelectedBuildingUpgradeLevelText = SelectedBuildingUpgradeLevelTextObject.GetComponent<TextMeshProUGUI>();
         SelectedBuildingOwnerText = SelectedBuildingOwnerTextObject.GetComponent<TextMeshProUGUI>();
         SelectedBuildingMinersText = SelectedBuildingMinersTextObject.GetComponent<TextMeshProUGUI>();
-
+        hotKeyManager.LoadHotkeyProfile();
+        SetButtonText();
         GoToDefaultMenu();
+    }
+
+    public void SetButtonText()
+    {
+        hotKeyManager.LoadHotkeyProfile();
+        // Set hotkey text to max 3 characters
+        MoveBuildingButton.GetComponentInChildren<Text>().text = hotKeyManager.HotKeys["BuildingMoveKeyCode"].
+            ToString().Substring(0, Math.Min(3, hotKeyManager.HotKeys["BuildingMoveKeyCode"].ToString().Length));
+
+        UpgradeBuildingButton.GetComponentInChildren<Text>().text = hotKeyManager.HotKeys["BuildingUpgradeKeyCode"].
+            ToString().Substring(0, Math.Min(3, hotKeyManager.HotKeys["BuildingUpgradeKeyCode"].ToString().Length));
+
+        BuyMinersButton.GetComponentInChildren<Text>().text = hotKeyManager.HotKeys["BuyMinersKeyCode"].
+            ToString().Substring(0, Math.Min(3, hotKeyManager.HotKeys["BuyMinersKeyCode"].ToString().Length));
+
+        UpgradeUIButton.GetComponentInChildren<Text>().text = hotKeyManager.HotKeys["BlackSmithUIKeyCode"].
+            ToString().Substring(0, Math.Min(3, hotKeyManager.HotKeys["BlackSmithUIKeyCode"].ToString().Length));
+
+        EnemyBattleButton.GetComponentInChildren<Text>().text = hotKeyManager.HotKeys["StartBattleKeyCode"].
+            ToString().Substring(0, Math.Min(3, hotKeyManager.HotKeys["StartBattleKeyCode"].ToString().Length));
+
+        AltarButton.GetComponentInChildren<Text>().text = hotKeyManager.HotKeys["AltarKeyCode"].
+            ToString().Substring(0, Math.Min(3, hotKeyManager.HotKeys["AltarKeyCode"].ToString().Length));
+
+        HousingButton.GetComponentInChildren<Text>().text = hotKeyManager.HotKeys["HouseKeyCode"].
+            ToString().Substring(0, Math.Min(3, hotKeyManager.HotKeys["HouseKeyCode"].ToString().Length));
+
+        MineButton.GetComponentInChildren<Text>().text = hotKeyManager.HotKeys["MineKeyCode"].
+            ToString().Substring(0, Math.Min(3, hotKeyManager.HotKeys["MineKeyCode"].ToString().Length));
+
+        BlacksmithButton.GetComponentInChildren<Text>().text = hotKeyManager.HotKeys["BlacksmithKeyCode"].
+            ToString().Substring(0, Math.Min(3, hotKeyManager.HotKeys["BlacksmithKeyCode"].ToString().Length));
+
+        PauseButton.GetComponentInChildren<Text>().text = hotKeyManager.HotKeys["EscapeKeyCode"].
+            ToString().Substring(0, Math.Min(3, hotKeyManager.HotKeys["EscapeKeyCode"].ToString().Length));
+
+        TierRewardButton.GetComponentInChildren<Text>().text = hotKeyManager.HotKeys["TierRewardKeyCode"].
+            ToString().Substring(0, Math.Min(3, hotKeyManager.HotKeys["TierRewardKeyCode"].ToString().Length));
     }
 
     public void EnterBuildMenu(bool pblnAllowedToBuildMine, bool pblnAllowedToBuildUpgrade)
@@ -194,14 +240,14 @@ public class MenuPanelControls : MonoBehaviour {
 
     private void DisableUpgradeButton()
     {
-        UpgradeButton.GetComponent<Button>().enabled = false;
-        UpgradeButton.GetComponent<Image>().color = Color.gray;
+        BlacksmithButton.GetComponent<Button>().enabled = false;
+        BlacksmithButton.GetComponent<Image>().color = Color.gray;
     }
 
     private void EnableUpgradeButton()
     {
-        UpgradeButton.GetComponent<Button>().enabled = true;
-        UpgradeButton.GetComponent<Image>().color = new Color(0.4902f, 0, 0, 255);
+        BlacksmithButton.GetComponent<Button>().enabled = true;
+        BlacksmithButton.GetComponent<Image>().color = new Color(0.4902f, 0, 0, 255);
     }
 
     private void HideSelectedBuildingButtons()

@@ -335,6 +335,9 @@ public class GameInfo : MonoBehaviour {
 
         // Save the graphics setting
         PlayerPrefs.SetInt("GraphicsSetting", GraphicsSetting);
+
+        // Save hotkeys
+        GameObject.Find("HotKeySettors").GetComponent<HotKeyScrollView>().hotKeyManager.SaveHotKeys();
         // TODO add more options to save
     }
 
@@ -345,5 +348,6 @@ public class GameInfo : MonoBehaviour {
         audioSlider.maxValue = 1;
         audioSlider.value = PlayerPrefs.GetFloat("MasterVolume");
         GameObject.Find("GraphicsDropDownMenu").GetComponent<Dropdown>().value = PlayerPrefs.GetInt("GraphicsSetting");
+        GameObject.Find("HotKeySettors").GetComponent<HotKeyScrollView>().CreateHotKeySettors();
     }
 }

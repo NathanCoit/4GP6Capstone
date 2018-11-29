@@ -37,7 +37,10 @@ public class MainMenu : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+		if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            OpenMainUI();
+        }
 	}
 
     public void StartButtonClicked()
@@ -141,6 +144,7 @@ public class MainMenu : MonoBehaviour {
                 saveFileData.CurrentTier + 1,
                 objFileInfo.LastWriteTimeUtc.ToLocalTime().ToShortDateString() + " " + objFileInfo.LastWriteTimeUtc.ToLocalTime().ToShortTimeString());
             objButtonText.text = strSaveFileInfoText;
+            gobjButtonObject.transform.localScale = new Vector3(1, 1, 1);
             marrButtonObjects.Add(gobjButtonObject);
         }
     }

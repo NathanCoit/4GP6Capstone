@@ -69,6 +69,16 @@ public class SetupManager : MonoBehaviour
     void Update()
     {
         //Battle has ended, send stats to GameInfo object
+        if(Input.GetKeyDown(KeyCode.J))
+        {
+            finishedBattle = true;
+            battleResult = GameInfo.BATTLESTATUS.Defeat;
+        }
+        else if (Input.GetKeyDown(KeyCode.K))
+        {
+            finishedBattle = true;
+            battleResult = GameInfo.BATTLESTATUS.Victory;
+        }
         if (finishedBattle)
         {
             //get remaining worshiper count for both sides

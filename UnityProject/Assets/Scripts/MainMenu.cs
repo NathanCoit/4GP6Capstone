@@ -138,8 +138,8 @@ public class MainMenu : MonoBehaviour {
                 string.Format("{0} God of {1}\nCurrentTier: {2}\n{3}",
                 saveFileData.PlayerFaction.GodName,
                 saveFileData.PlayerFaction.Type.ToString(),
-                saveFileData.CurrentTier + 1, 
-                objFileInfo.LastWriteTimeUtc.ToLocalTime().ToShortTimeString());
+                saveFileData.CurrentTier + 1,
+                objFileInfo.LastWriteTimeUtc.ToLocalTime().ToShortDateString() + " " + objFileInfo.LastWriteTimeUtc.ToLocalTime().ToShortTimeString());
             objButtonText.text = strSaveFileInfoText;
             marrButtonObjects.Add(gobjButtonObject);
         }
@@ -169,30 +169,11 @@ public class MainMenu : MonoBehaviour {
     public void LoadSaveGame(string pstrFilePath)
     {
         string gameInfoAsJSON = string.Empty;
-        SaveData loadedSaveData = GameInfo.LoadSaveData(pstrFilePath);
-        GameInfo gameInfo = null;
-        if (loadedSaveData != null)
-        {
-            GameObject NewGameInfoObject = (GameObject)Instantiate(GameInfoObjectPrefab);
-            NewGameInfoObject.name = "GameInfo";
-            gameInfo = NewGameInfoObject.GetComponent<GameInfo>();
+        GameObject NewGameInfoObject = (GameObject)Instantiate(GameInfoObjectPrefab);
+        NewGameInfoObject.name = "GameInfo";
+        GameInfo gameInfo = NewGameInfoObject.GetComponent<GameInfo>();
 
-            // Set gameinfo variables
-            gameInfo.PlayerFaction = loadedSaveData.PlayerFaction;
-            gameInfo.SavedFactions = loadedSaveData.SavedFactions;
-            gameInfo.MapRadius = loadedSaveData.MapRadius;
-            gameInfo.CurrentTier = loadedSaveData.CurrentTier;
-            gameInfo.PlayerRewards = loadedSaveData.PlayerRewards;
-            gameInfo.PlayerMoraleCap = loadedSaveData.PlayerMoraleCap;
-            gameInfo.EnemyChallengeTimer = loadedSaveData.EnemyChallengeTimer;
-            gameInfo.FromSave = true;
-            gameInfo.NewGame = false;
-            SceneManager.LoadScene("UnderGodScene");
-        }
-        else
-        {
-            // Save doesnt exist
-        }
+        GameInfo.LoadNewGameScene(pstrFilePath, gameInfo);
     }
 
     public void SaveSettings()

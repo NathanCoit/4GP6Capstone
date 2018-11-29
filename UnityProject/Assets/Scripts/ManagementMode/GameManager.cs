@@ -63,8 +63,14 @@ public class GameManager : MonoBehaviour
     public GameObject PausedMenuPanel = null;
     public GameObject MenuControlObject = null;
     public GameObject OptionsMenuPanel;
+    public GameObject GameOverPanel;
+    public GameObject VictoryPanel;
     public MenuPanelControls MenuPanelController { get; private set; }
     public float PlayerMoraleCap = 1.0f;
+    private bool mblnNewGame = false;
+    private bool blnVictory = false;
+    private bool blnGameOver = false;
+    private bool mblnPauseKeyDown = false;
     // Use this for any initializations needed by other scripts
     void Awake()
     {
@@ -85,6 +91,7 @@ public class GameManager : MonoBehaviour
         int Attempts = 0;
         if (!InitializeGameInfoObject())
         {
+            mblnNewGame = true;
             // Remove chance of player having same name as another god.
             GodNames.Remove(gameInfo.PlayerFaction.GodName);
             // Starting new game scene, initialize map, players, and buildings
@@ -191,7 +198,7 @@ public class GameManager : MonoBehaviour
                 faction.SetHidden(true);
             }
             GameMap.DrawFactionArea(PlayerFaction);
-			//GameMap.DrawMultipleFactionAreas(CurrentFactions);
+            //GameMap.DrawMultipleFactionAreas(CurrentFactions);
         }
     }
 
@@ -320,7 +327,7 @@ public class GameManager : MonoBehaviour
                     EnemyFaction = new Faction(gameInfo.EnemyFaction.GodName, gameInfo.EnemyFaction.Type, gameInfo.EnemyFaction.GodTier)
                     {
                         MaterialCount = gameInfo.EnemyFaction.MatieralCount,
-                        Morale = gameInfo.EnemyFaction.Morale > MinimumMorale ? EnemyFaction.Morale : MinimumMorale,
+                        Morale = gameInfo.EnemyFaction.Morale > MinimumMorale ? gameInfo.EnemyFaction.Morale : MinimumMorale,
                         WorshipperCount = gameInfo.EnemyFaction.WorshipperCount,
                         FactionArea = new List<float[]>()
                     };
@@ -382,6 +389,7 @@ public class GameManager : MonoBehaviour
                             {
                                 // No gods in the current tier, no gods in the next tier => game over you win
                                 // END GAME
+                                blnVictory = true;
                             }
                             else
                             {
@@ -405,6 +413,7 @@ public class GameManager : MonoBehaviour
                     else
                     {
                         // Run defeat animation/reset to tier checkpoint
+                        blnGameOver = true;
                     }
                 }
                 else
@@ -519,8 +528,21 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1;
         PausedMenuPanel.SetActive(false);
         OptionsMenuPanel.SetActive(false);
+        GameOverPanel.SetActive(blnGameOver);
+        VictoryPanel.SetActive(blnVictory);
         CreateRewardTree();
         ResourceTicks = 0;
+        if(mblnNewGame)
+        {
+            SaveGame();
+            mblnNewGame = false;
+        }
+        if(blnVictory || blnGameOver)
+        {
+            PauseGame();
+            PausedMenuPanel.SetActive(false);
+        }
+        
         InvokeRepeating("CalculateResources", 0.5f, 2.0f);
     }
 
@@ -545,17 +567,24 @@ public class GameManager : MonoBehaviour
             case MENUSTATE.Tier_Reward_State:
                 CheckTierRewardStateInputs();
                 break;
-            case MENUSTATE.Paused_State:
-                CheckPausedStateInputs();
-                break;
             case MENUSTATE.Upgrade_State:
                 CheckUpgradeStateInput();
                 break;
         }
         // Global pause hotkey, game can be paused from any menu state
-        if(Input.GetKeyDown(KeyCode.P) && CurrentMenuState != MENUSTATE.Paused_State)
+        if((Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Escape) ) && CurrentMenuState != MENUSTATE.Paused_State && !mblnPauseKeyDown)
         {
+            mblnPauseKeyDown = true;
             PauseGame();
+        }
+        else if((Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Escape) && CurrentMenuState == MENUSTATE.Paused_State && !mblnPauseKeyDown))
+        {
+            mblnPauseKeyDown = true;
+            UnPauseGame();
+        }
+        if((Input.GetKeyUp(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P)) )
+        {
+            mblnPauseKeyDown = false;
         }
         if(CurrentMenuState != MENUSTATE.Paused_State && CurrentMenuState != MENUSTATE.Tier_Reward_State)
         {
@@ -577,14 +606,6 @@ public class GameManager : MonoBehaviour
         {
             CurrentMenuState = MENUSTATE.Building_Selected_State;
             SetUpgradeUIActive(false);
-        }
-    }
-
-    private void CheckPausedStateInputs()
-    {
-        if(Input.GetKeyDown(KeyCode.Escape))
-        {
-            UnPauseGame();
         }
     }
 
@@ -1483,6 +1504,11 @@ public class GameManager : MonoBehaviour
     {
         GameInfo.SaveSettingsFromOptionsMenu();
         GameInfo.ApplyGameSettings();
+    }
+
+    public void LoadLastSave()
+    {
+        GameInfo.LoadLastSave(Application.persistentDataPath + "/SaveFiles", gameInfo);
     }
 }
 

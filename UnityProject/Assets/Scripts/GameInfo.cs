@@ -5,6 +5,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 /// <summary>
 /// Game info object to be used for reading/writing and cross scene info
@@ -237,22 +238,19 @@ public class GameInfo : MonoBehaviour {
         bool blnSaved = false;
         try
         {
-            Debug.Log(pstrSaveFileDirectory);
             string gameInfoAsJSON = JsonUtility.ToJson(pobjGameInfo);
             if (!Directory.Exists(pstrSaveFileDirectory))
             {
                 Directory.CreateDirectory(pstrSaveFileDirectory);
-                Debug.Log("Created");
             }
             
             string filePath = pstrSaveFileDirectory + "/" + DateTime.Now.ToFileTime() + ".ugs";
             File.WriteAllText(filePath, gameInfoAsJSON);
             blnSaved = true;
         }
-        catch(Exception ex)
+        catch
         {
             blnSaved = false;
-            Debug.Log(ex.Message);
         }
         return blnSaved;
     }
@@ -278,6 +276,36 @@ public class GameInfo : MonoBehaviour {
         return blnFileDeleted;
     }
 
+    public static void LoadLastSave(string pstrGameSaveFileDirectory, GameInfo gameInfo)
+    {
+        if (Directory.Exists(pstrGameSaveFileDirectory))
+        {
+            DirectoryInfo saveFileInfo = new DirectoryInfo(pstrGameSaveFileDirectory);
+            FileInfo[] objSaveFiles = saveFileInfo.GetFiles().OrderByDescending(file => file.LastWriteTimeUtc).ToArray();
+            if (objSaveFiles.Length > 0)
+            {
+                LoadNewGameScene(objSaveFiles[0].FullName, gameInfo);
+            }
+        }
+    }
+
+    public static void LoadNewGameScene(string pstrSaveFilePath, GameInfo gameInfo)
+    {
+        SaveData loadedSaveData = LoadSaveData(pstrSaveFilePath);
+        if (loadedSaveData != null)
+        {
+            gameInfo.PlayerFaction = loadedSaveData.PlayerFaction;
+            gameInfo.SavedFactions = loadedSaveData.SavedFactions;
+            gameInfo.MapRadius = loadedSaveData.MapRadius;
+            gameInfo.CurrentTier = loadedSaveData.CurrentTier;
+            gameInfo.PlayerRewards = loadedSaveData.PlayerRewards;
+            gameInfo.PlayerMoraleCap = loadedSaveData.PlayerMoraleCap;
+            gameInfo.EnemyChallengeTimer = loadedSaveData.EnemyChallengeTimer;
+            gameInfo.FromSave = true;
+            gameInfo.NewGame = false;
+            SceneManager.LoadScene("UnderGodScene");
+        }
+    }
     public static void ApplyGameSettings()
     {
         // set sound

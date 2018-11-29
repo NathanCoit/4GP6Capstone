@@ -887,8 +887,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 435552160}
-        m_MethodName: BuyMinersForSelectedBuilding
+      - m_Target: {fileID: 435552162}
+        m_MethodName: BuyMiners
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1250,7 +1250,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 435552160}
+      - m_Target: {fileID: 435552162}
         m_MethodName: SaveGame
         m_Mode: 1
         m_Arguments:
@@ -1852,7 +1852,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 435552160}
+      - m_Target: {fileID: 435552162}
         m_MethodName: BufferMine
         m_Mode: 1
         m_Arguments:
@@ -2049,7 +2049,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 435552160}
+      - m_Target: {fileID: 435552162}
         m_MethodName: QuitToMenu
         m_Mode: 1
         m_Arguments:
@@ -2457,6 +2457,8 @@ GameObject:
   m_Component:
   - component: {fileID: 435552161}
   - component: {fileID: 435552160}
+  - component: {fileID: 435552162}
+  - component: {fileID: 435552163}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -2480,10 +2482,13 @@ MonoBehaviour:
   mapTexture: {fileID: 2800000, guid: 8436acd77d5b60948bfc146c5031540d, type: 3}
   GameInfoObjectPrefab: {fileID: 1318629568701984, guid: 2c6d0661dcadf034f9fccf79768afba7,
     type: 2}
+  gameInfo: {fileID: 0}
   RewardUI: {fileID: 338056885}
   AudioObject: {fileID: 1207449813}
   MapRadius: 500
   BuildingCostModifier: 1
+  CurrentMenuState: 0
+  OriginalBuildingPosition: {x: 0, y: 0, z: 0}
   MinimumMorale: 0.2
   TierUnlockPoint: 100
   TierUnlockPointMultiplier: 2
@@ -2499,6 +2504,7 @@ MonoBehaviour:
   GameOverPanel: {fileID: 803584161}
   VictoryPanel: {fileID: 1759801437}
   PlayerMoraleCap: 1
+  mblnPauseKeyDown: 0
 --- !u!4 &435552161
 Transform:
   m_ObjectHideFlags: 0
@@ -2512,6 +2518,33 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &435552162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 435552159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a1596e61ec21584795a1a3463c658aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GameManagerObject: {fileID: 435552159}
+  MenuPanelObject: {fileID: 424929391}
+  PausedMenuPanel: {fileID: 1860688481}
+  OptionsMenuPanel: {fileID: 139222487}
+--- !u!114 &435552163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 435552159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00b6144444a8f224ab2f304b429b3872, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GamemanagerObject: {fileID: 435552159}
 --- !u!1 &458738732
 GameObject:
   m_ObjectHideFlags: 0
@@ -2739,8 +2772,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 435552160}
-        m_MethodName: UpgradeSelectedBuilding
+      - m_Target: {fileID: 435552162}
+        m_MethodName: Upgrade
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5677,7 +5710,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 435552160}
+      - m_Target: {fileID: 435552162}
         m_MethodName: BufferHousing
         m_Mode: 1
         m_Arguments:
@@ -5801,8 +5834,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 435552160}
-        m_MethodName: EnterMovingBuildingState
+      - m_Target: {fileID: 435552162}
+        m_MethodName: Move
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6076,7 +6109,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 435552160}
+      - m_Target: {fileID: 435552162}
         m_MethodName: BufferAltar
         m_Mode: 1
         m_Arguments:
@@ -6674,7 +6707,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 435552160}
+      - m_Target: {fileID: 435552162}
         m_MethodName: BufferUpgrade
         m_Mode: 1
         m_Arguments:
@@ -8186,7 +8219,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 435552160}
+      - m_Target: {fileID: 435552162}
         m_MethodName: LoadLastSave
         m_Mode: 1
         m_Arguments:
@@ -8309,7 +8342,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 435552160}
+      - m_Target: {fileID: 435552162}
         m_MethodName: QuitToMenu
         m_Mode: 1
         m_Arguments:
@@ -8432,7 +8465,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 435552160}
+      - m_Target: {fileID: 435552162}
         m_MethodName: OpenOptionsMenu
         m_Mode: 1
         m_Arguments:
@@ -8705,9 +8738,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 435552160}
-        m_MethodName: SetUpgradeUIActive
-        m_Mode: 6
+      - m_Target: {fileID: 435552162}
+        m_MethodName: ShowUpgradeShop
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

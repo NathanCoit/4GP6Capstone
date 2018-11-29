@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TierReward{
+public class TierReward
+{
     public enum REWARDTYPE
     {
         Ability,
@@ -39,7 +40,7 @@ public class TierReward{
         RewardName = pstrName;
         PreviousRequiredReward = pTierRewardPreviousRequired;
         ChildRewards = new List<TierReward>();
-        TierAbility = GameInfo.LoadAbility(pstrName);
+        TierAbility = Ability.LoadAbilityFromName(pstrName);
         RewardDescription = TierAbility.AbilityDescription;
     }
 
@@ -72,5 +73,125 @@ public class TierReward{
     public Ability UnlockAbility()
     {
         return TierAbility;
+    }
+
+    public static List<string> SaveRewardTree(List<TierReward> rewards)
+    {
+        List<string> savedRewards = new List<string>();
+        List<string> childRewards = null;
+        foreach (TierReward reward in rewards)
+        {
+            if (reward.Unlocked)
+            {
+                savedRewards.Add(reward.RewardName);
+                childRewards = SaveRewardTree(reward.ChildRewards);
+                if (childRewards != null)
+                {
+                    foreach (string savedReward in childRewards)
+                    {
+                        savedRewards.Add(savedReward);
+                    }
+                }
+            }
+        }
+        return savedRewards;
+    }
+
+    public static TierReward FindRewardByName(string RewardName, List<TierReward> Rewards)
+    {
+        TierReward Found = null;
+        if (Rewards != null)
+        {
+            foreach (TierReward reward in Rewards)
+            {
+                if (reward.RewardName.Equals(RewardName))
+                {
+                    return reward;
+                }
+                Found = FindRewardByName(RewardName, reward.ChildRewards);
+                if (Found != null)
+                {
+                    return Found;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public static List<TierReward> CreateTierRewardTree(Faction.GodType godType)
+    {
+        List<TierReward> playerRewards = null;
+        switch (godType)
+        {
+            case Faction.GodType.Mushrooms:
+                playerRewards = CreateMushroomRewardTree();
+                break;
+            case Faction.GodType.Ducks:
+                playerRewards = CreateDuckRewardTree();
+                break;
+            case Faction.GodType.Shoes:
+                playerRewards = CreateShoeRewardTree();
+                break;
+            case Faction.GodType.Forks:
+                playerRewards = CreateForkRewardTree();
+                break;
+        }
+        return playerRewards;
+    }
+    public static List<TierReward> CreateDuckRewardTree()
+    {
+        List<TierReward> PlayerRewardTree = new List<TierReward>();
+        return PlayerRewardTree;
+    }
+    public static List<TierReward> CreateShoeRewardTree()
+    {
+        List<TierReward> PlayerRewardTree = new List<TierReward>();
+        return PlayerRewardTree;
+    }
+    public static List<TierReward> CreateForkRewardTree()
+    {
+        List<TierReward> PlayerRewardTree = new List<TierReward>();
+        return PlayerRewardTree;
+    }
+
+    public static List<TierReward> CreateMushroomRewardTree()
+    {
+        TierReward BasePlayerTierReward;
+        TierReward NextPlayerTierReward;
+        List<TierReward> PlayerRewardTree = new List<TierReward>();
+
+        // First tier, player gets this tier upon game start
+        BasePlayerTierReward = new TierReward("Throw Mushroom");
+        PlayerRewardTree.Add(BasePlayerTierReward);
+
+        // Second tier, unlocked at 1 * TierCount (100)
+        NextPlayerTierReward = new TierReward("Eat Mushroom", BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+        BasePlayerTierReward = NextPlayerTierReward;
+
+        // Third tier, unlocked at 2 * TierCount (200). Final tier for Demo
+        NextPlayerTierReward = new TierReward("Mushroom Laser", BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+        NextPlayerTierReward = new TierReward("Spread Spores", BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+        BasePlayerTierReward = new TierReward("Materials", "100 Materials", TierReward.RESOURCETYPE.Material, 100);
+        PlayerRewardTree.Add(BasePlayerTierReward);
+
+        NextPlayerTierReward = new TierReward("2xMat", "2x material growth", TierReward.RESOURCETYPE.Material, 2.0f, BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+        NextPlayerTierReward = new TierReward("2xWorshipper", "2x worshipper growth", TierReward.RESOURCETYPE.Worshipper, 2.0f, BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+        BasePlayerTierReward = NextPlayerTierReward;
+
+        NextPlayerTierReward = new TierReward("2xWorshipperA", "2x worshipper growth", TierReward.RESOURCETYPE.Worshipper, 2.0f, BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+        NextPlayerTierReward = new TierReward("2xWorshipperB", "2x worshipper growth", TierReward.RESOURCETYPE.Worshipper, 2.0f, BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+        return PlayerRewardTree;
     }
 }

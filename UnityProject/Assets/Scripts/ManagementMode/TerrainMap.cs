@@ -47,7 +47,23 @@ public class TerrainMap
 
         return gobjMap;
     }
-
+    public void PlaceSavedFactionBuildings(GameInfo.SavedBuilding[] BuildingsToPlace, Faction OwningFaction)
+    {
+        Building loadedBuilding = null;
+        foreach(GameInfo.SavedBuilding buildingToPlace in BuildingsToPlace)
+        {
+            switch (buildingToPlace.BuildingType)
+            {
+                case Building.BUILDING_TYPE.MATERIAL:
+                    loadedBuilding = new MineBuilding(buildingToPlace, OwningFaction);
+                    break;
+                default:
+                    loadedBuilding = new Building(buildingToPlace, OwningFaction);
+                    break;
+            }
+            PlaceBuilding(loadedBuilding, new Vector3(buildingToPlace.x, buildingToPlace.y, buildingToPlace.z));
+        }
+    }
     public bool PlaceBuilding(Building pBuildingToPlace, Vector3 pvec3PointToPlace)
     {
         bool blnCanPlace = true;

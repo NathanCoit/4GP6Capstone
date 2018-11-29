@@ -32,7 +32,7 @@ public class MainMenu : MonoBehaviour {
 	void Start () {
         DisableAllPanels();
         MainUIPanel.SetActive(true);
-        GameInfo.ApplyGameSettings();
+        SaveAndSettingsHelper.ApplyGameSettings();
 	}
 	
 	// Update is called once per frame
@@ -86,7 +86,7 @@ public class MainMenu : MonoBehaviour {
     {
         DisableAllPanels();
         OptionsPanel.SetActive(true);
-        GameInfo.ApplySettingsToOptionsMenu();
+        SaveAndSettingsHelper.ApplySettingsToOptionsMenu();
     }
 
     public void DisableAllPanels()
@@ -136,7 +136,7 @@ public class MainMenu : MonoBehaviour {
             btnComponent.onClick.AddListener(() => LoadSaveGame(objFileInfo.FullName));
             gobjButtonObject.transform.GetChild(1).gameObject.GetComponent<Button>().onClick.AddListener(() => DeleteSaveFile(objFileInfo.FullName));
 
-            saveFileData = GameInfo.LoadSaveData(objFileInfo.FullName);
+            saveFileData = SaveAndSettingsHelper.LoadSaveData(objFileInfo.FullName);
             strSaveFileInfoText =
                 string.Format("{0} God of {1}\nCurrentTier: {2}\n{3}",
                 saveFileData.PlayerFaction.GodName,
@@ -163,7 +163,7 @@ public class MainMenu : MonoBehaviour {
 
     public void DeleteSaveFile(string pstrFilePath)
     {
-        if(GameInfo.DeleteSaveFile(pstrFilePath))
+        if(SaveAndSettingsHelper.DeleteSaveFile(pstrFilePath))
         {
             DestroySaveFileButtons();
             CreateSaveFileButtons();
@@ -177,13 +177,13 @@ public class MainMenu : MonoBehaviour {
         NewGameInfoObject.name = "GameInfo";
         GameInfo gameInfo = NewGameInfoObject.GetComponent<GameInfo>();
 
-        GameInfo.LoadNewGameScene(pstrFilePath, gameInfo);
+        SaveAndSettingsHelper.LoadNewGameScene(pstrFilePath, gameInfo);
     }
 
     public void SaveSettings()
     {
-        GameInfo.SaveSettingsFromOptionsMenu();
-        GameInfo.ApplyGameSettings();
+        SaveAndSettingsHelper.SaveSettingsFromOptionsMenu();
+        SaveAndSettingsHelper.ApplyGameSettings();
     }
 
     public void QuitGame()

@@ -786,7 +786,7 @@ public class ManagementPlayModeTest {
         playerFaction = gameManager.PlayerFaction;
         buildingCount = playerFaction.OwnedBuildings.Count;
 
-        buildingToPlace = gameManager.CreateRandomBuilding(playerFaction);
+        buildingToPlace = Building.CreateRandomBuilding(playerFaction);
         gameManager.GameMap.PlaceBuilding(buildingToPlace, new Vector3(1, 0.5f, 1));
         yield return null;
 
@@ -808,7 +808,7 @@ public class ManagementPlayModeTest {
         playerFaction = gameManager.PlayerFaction;
         buildingCount = playerFaction.OwnedBuildings.Count;
 
-        buildingToPlace = gameManager.CreateRandomBuilding(playerFaction);
+        buildingToPlace = Building.CreateRandomBuilding(playerFaction);
         Assert.False(gameManager.GameMap.PlaceBuilding(buildingToPlace, new Vector3(1000, 0.5f, 1000)));
     }
 
@@ -829,7 +829,7 @@ public class ManagementPlayModeTest {
         currentBuilding = gameManager.PlayerVillage;
         buildingCount = playerFaction.OwnedBuildings.Count;
 
-        buildingToPlace = gameManager.CreateRandomBuilding(playerFaction);
+        buildingToPlace = Building.CreateRandomBuilding(playerFaction);
         Assert.False(gameManager.GameMap.PlaceBuilding(buildingToPlace, currentBuilding.BuildingPosition));
     }
 

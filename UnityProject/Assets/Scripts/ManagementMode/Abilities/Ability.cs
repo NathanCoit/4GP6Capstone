@@ -47,6 +47,68 @@ public class Ability{
         Blind
     }
 
+    public static List<string> SingleTargetAbilities = new List<string>
+    {
+        "throwmushroom",
+        "paintslap",
+        "throwfork",
+        "kick",
+        "quack",
+        "chihuahua",
+        "batonslap",
+        "blowakiss",
+        "hammerslap",
+        "fireball",
+        "drown",
+        "smite",
+        "tornado"
+    };
+    public static List<string> MultiTargetAbilities = new List<string>
+    {
+        "mushroomlaser",
+        "paintcannon",
+        "forksweep",
+        "legsweep",
+        "quack!!",
+        "corgi",
+        "jazzhands",
+        "giantheartslap",
+        "dropanvil",
+        "lavariver",
+        "tsunami",
+        "electricfield",
+        "earthquake"
+    };
+    public static List<string> BuffAbilities = new List<string>
+    {
+        "eatmushroom",
+        "warpaint",
+        "eatspaghett",
+        "yeezys",
+        "quack?",
+        "poodle",
+        "saxsolo",
+        "slapass",
+        "sharpenarms",
+        "igniteweapons",
+        "stayhydrated"
+    };
+    public static List<string> DebuffAbilities = new List<string>
+    {
+        "spreadspores",
+        "forkflash",
+        "coloursplash",
+        "brokenankles",
+        "quack¿",
+        "cat",
+        "outoftunesolo",
+        "charm",
+        "armorbreak",
+        "burn",
+        "stun",
+        "root"
+    };
+
     public Ability(string pstrAbilityName)
     {
         if (LoadAbility(pstrAbilityName))
@@ -62,5 +124,29 @@ public class Ability{
     protected virtual bool LoadAbility(string pstrAbilityName)
     {
         return false;
+    }
+
+    public static Ability LoadAbilityFromName(string pstrAbilityName)
+    {
+        Ability loadedAbility = null;
+        string strFormattedAbilityName = pstrAbilityName.ToLower().Replace(" ", string.Empty);
+
+        if (SingleTargetAbilities.Contains(strFormattedAbilityName))
+        {
+            loadedAbility = new SingleTargetAbility(strFormattedAbilityName);
+        }
+        else if (MultiTargetAbilities.Contains(strFormattedAbilityName))
+        {
+            loadedAbility = new MultiTargetAbility(pstrAbilityName);
+        }
+        else if (BuffAbilities.Contains(strFormattedAbilityName))
+        {
+            loadedAbility = new BuffAbility(pstrAbilityName);
+        }
+        else if (DebuffAbilities.Contains(strFormattedAbilityName))
+        {
+            loadedAbility = new DebuffAbility(pstrAbilityName);
+        }
+        return loadedAbility;
     }
 }

@@ -20,4 +20,6 @@ public class SaveData
     public bool FromSave = false;
     public string[] PlayerRewards;
     public int EnemyChallengeTimer;
+    public float[] MaterialMultipliers;
+    public float[] WorshipperMultipliers;
 }

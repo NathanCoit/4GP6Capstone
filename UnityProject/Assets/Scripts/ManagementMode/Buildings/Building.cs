@@ -409,4 +409,30 @@ public class Building{
             BuildingObject.AddComponent<LineRenderer>();
         }
     }
+
+    public static Building CreateRandomBuilding(Faction placingFaction)
+    {
+        Building.BUILDING_TYPE RandomType;
+        Building RandomBuilding = null;
+        switch ((int)(UnityEngine.Random.value * 100 / 25))
+        {
+            case 0:
+                RandomType = Building.BUILDING_TYPE.ALTAR;
+                break;
+            case 1:
+                RandomType = Building.BUILDING_TYPE.HOUSING;
+                break;
+            case 2:
+                RandomType = Building.BUILDING_TYPE.HOUSING;
+                break;
+            case 3:
+                RandomType = Building.BUILDING_TYPE.ALTAR;
+                break;
+            default:
+                RandomType = Building.BUILDING_TYPE.ALTAR;
+                break;
+        }
+        RandomBuilding = new Building(RandomType, placingFaction);
+        return RandomBuilding;
+    }
 }

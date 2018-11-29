@@ -64,6 +64,33 @@ public class Faction
         GodTier = pintTier;
     }
 
+    public Faction(GameInfo.SavedFaction savedFaction)
+    {
+        GodName = savedFaction.GodName;
+        Type = savedFaction.Type;
+        GodTier = savedFaction.GodTier;
+        MaterialCount = savedFaction.MatieralCount;
+        Morale = savedFaction.Morale > 0.2f ? savedFaction.Morale : 0.2f;
+        WorshipperCount = savedFaction.WorshipperCount;
+        FactionArea = new List<float[]>();
+        foreach (GameInfo.SavedArea area in savedFaction.FactionArea)
+        {
+            FactionArea.Add(
+                new float[]
+                {
+                    area.StartingRad,
+                    area.EndingRad,
+                    area.StartingAngle,
+                    area.EndingAngle
+                });
+        }
+        CurrentAbilites = new List<Ability>();
+        foreach (string AbilityName in savedFaction.Abilities)
+        {
+            CurrentAbilites.Add(Ability.LoadAbilityFromName(AbilityName));
+        }
+    }
+
     public void SetHidden(bool pblnHide = true)
     {
         if(pblnHide)
@@ -139,62 +166,62 @@ public class Faction
         switch(penumGodType)
         {
             case GodType.Ducks:
-                GodAbilities.Add(GameInfo.LoadAbility("Quack"));
-                GodAbilities.Add(GameInfo.LoadAbility("Quack!!"));
-                GodAbilities.Add(GameInfo.LoadAbility("Quack?"));
-                GodAbilities.Add(GameInfo.LoadAbility("Quack¿"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Quack"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Quack!!"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Quack?"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Quack¿"));
                 break;
             case GodType.Earth:
-                GodAbilities.Add(GameInfo.LoadAbility("Tornado"));
-                GodAbilities.Add(GameInfo.LoadAbility("Earthquake"));
-                GodAbilities.Add(GameInfo.LoadAbility("Root"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Tornado"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Earthquake"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Root"));
                 break;
             case GodType.Fire:
-                GodAbilities.Add(GameInfo.LoadAbility("FireBall"));
-                GodAbilities.Add(GameInfo.LoadAbility("Lava River"));
-                GodAbilities.Add(GameInfo.LoadAbility("Ignite Weapons"));
-                GodAbilities.Add(GameInfo.LoadAbility("Burn"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("FireBall"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Lava River"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Ignite Weapons"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Burn"));
                 break;
             case GodType.Forks:
-                GodAbilities.Add(GameInfo.LoadAbility("Throw Fork"));
-                GodAbilities.Add(GameInfo.LoadAbility("Fork Sweep"));
-                GodAbilities.Add(GameInfo.LoadAbility("Eat Spaghett"));
-                GodAbilities.Add(GameInfo.LoadAbility("Fork Flash"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Throw Fork"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Fork Sweep"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Eat Spaghett"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Fork Flash"));
                 break;
             case GodType.Hounds:
-                GodAbilities.Add(GameInfo.LoadAbility("Chihuahua"));
-                GodAbilities.Add(GameInfo.LoadAbility("Poodle"));
-                GodAbilities.Add(GameInfo.LoadAbility("Corgi"));
-                GodAbilities.Add(GameInfo.LoadAbility("Cat"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Chihuahua"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Poodle"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Corgi"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Cat"));
                 break;
             case GodType.Jazz:
-                GodAbilities.Add(GameInfo.LoadAbility("Baton Slap"));
-                GodAbilities.Add(GameInfo.LoadAbility("Jazz Hands"));
-                GodAbilities.Add(GameInfo.LoadAbility("Sax Solo"));
-                GodAbilities.Add(GameInfo.LoadAbility("Out of Tune Solo"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Baton Slap"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Jazz Hands"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Sax Solo"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Out of Tune Solo"));
                 break;
             case GodType.Love:
-                GodAbilities.Add(GameInfo.LoadAbility("Blow A Kiss"));
-                GodAbilities.Add(GameInfo.LoadAbility("Giant Heart Slap"));
-                GodAbilities.Add(GameInfo.LoadAbility("Slap Ass"));
-                GodAbilities.Add(GameInfo.LoadAbility("Charm"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Blow A Kiss"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Giant Heart Slap"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Slap Ass"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Charm"));
                 break;
             case GodType.Mushrooms:
-                GodAbilities.Add(GameInfo.LoadAbility("Throw Mushroom"));
-                GodAbilities.Add(GameInfo.LoadAbility("Eat Mushroom"));
-                GodAbilities.Add(GameInfo.LoadAbility("Spread Spores"));
-                GodAbilities.Add(GameInfo.LoadAbility("Mushroom Laser"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Throw Mushroom"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Eat Mushroom"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Spread Spores"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Mushroom Laser"));
                 break;
             case GodType.Shoes:
-                GodAbilities.Add(GameInfo.LoadAbility("Kick"));
-                GodAbilities.Add(GameInfo.LoadAbility("Yeezys"));
-                GodAbilities.Add(GameInfo.LoadAbility("Leg Sweep"));
-                GodAbilities.Add(GameInfo.LoadAbility("Broken Ankles"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Kick"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Yeezys"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Leg Sweep"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Broken Ankles"));
                 break;
             case GodType.Water:
-                GodAbilities.Add(GameInfo.LoadAbility("Drown"));
-                GodAbilities.Add(GameInfo.LoadAbility("Tsunami"));
-                GodAbilities.Add(GameInfo.LoadAbility("Stay Hydrated"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Drown"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Tsunami"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Stay Hydrated"));
                 break;
         }
         return GodAbilities;

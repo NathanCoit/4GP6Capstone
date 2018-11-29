@@ -62,6 +62,7 @@ public class GameManager : MonoBehaviour
     public int ResourceTicks { get; private set; }
     public GameObject PausedMenuPanel = null;
     public GameObject MenuControlObject = null;
+    public GameObject OptionsMenuPanel;
     public MenuPanelControls MenuPanelController { get; private set; }
     public float PlayerMoraleCap = 1.0f;
     // Use this for any initializations needed by other scripts
@@ -515,7 +516,9 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         GameInfo.ApplyGameSettings();
+        Time.timeScale = 1;
         PausedMenuPanel.SetActive(false);
+        OptionsMenuPanel.SetActive(false);
         CreateRewardTree();
         ResourceTicks = 0;
         InvokeRepeating("CalculateResources", 0.5f, 2.0f);
@@ -1445,7 +1448,7 @@ public class GameManager : MonoBehaviour
         gameInfo.EnemyChallengeTimer = EnemyChallengeTimer;
         gameInfo.EnemyFaction = new GameInfo.SavedFaction();
 
-        if(!GameInfo.SaveGame(Application.persistentDataPath, gameInfo))
+        if(!GameInfo.SaveGame(Application.persistentDataPath + "/SaveFiles", gameInfo))
         {
             // TODO Error occurred while saving
             
@@ -1461,6 +1464,25 @@ public class GameManager : MonoBehaviour
         // Destroy gameinfo object
         Destroy(gameInfo.gameObject);
         SceneManager.LoadScene("MainMenu");
+    }
+
+    public void OpenOptionsMenu()
+    {
+        PausedMenuPanel.SetActive(false);
+        OptionsMenuPanel.SetActive(true);
+        GameInfo.ApplySettingsToOptionsMenu();
+    }
+
+    public void ReturnToPauseMenu()
+    {
+        PausedMenuPanel.SetActive(true);
+        OptionsMenuPanel.SetActive(false);
+    }
+
+    public void SaveGameSettings()
+    {
+        GameInfo.SaveSettingsFromOptionsMenu();
+        GameInfo.ApplyGameSettings();
     }
 }
 

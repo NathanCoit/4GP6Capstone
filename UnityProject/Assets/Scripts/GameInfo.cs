@@ -237,18 +237,22 @@ public class GameInfo : MonoBehaviour {
         bool blnSaved = false;
         try
         {
+            Debug.Log(pstrSaveFileDirectory);
             string gameInfoAsJSON = JsonUtility.ToJson(pobjGameInfo);
             if (!Directory.Exists(pstrSaveFileDirectory))
             {
                 Directory.CreateDirectory(pstrSaveFileDirectory);
+                Debug.Log("Created");
             }
-            string filePath = pstrSaveFileDirectory + "/SaveFiles/" + DateTime.Now.ToFileTime() + ".ugs";
+            
+            string filePath = pstrSaveFileDirectory + "/" + DateTime.Now.ToFileTime() + ".ugs";
             File.WriteAllText(filePath, gameInfoAsJSON);
             blnSaved = true;
         }
-        catch
+        catch(Exception ex)
         {
             blnSaved = false;
+            Debug.Log(ex.Message);
         }
         return blnSaved;
     }

@@ -68,7 +68,8 @@ public class SetupManager : MonoBehaviour
 
     void Update()
     {
-        //Battle has ended, send stats to GameInfo object
+#if DEBUG
+        // Debug Precompile Directive to allow ending a battle immediatly.
         if(Input.GetKeyDown(KeyCode.J))
         {
             finishedBattle = true;
@@ -79,6 +80,8 @@ public class SetupManager : MonoBehaviour
             finishedBattle = true;
             battleResult = GameInfo.BATTLESTATUS.Victory;
         }
+#endif
+        //Battle has ended, send stats to GameInfo object
         if (finishedBattle)
         {
             //get remaining worshiper count for both sides

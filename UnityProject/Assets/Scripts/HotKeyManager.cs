@@ -3,8 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// A class for managing hotkeys saved.
+/// Create an instance of this class and call LoadHotKeyProfile to load the current Computers hotkey profile.
+/// </summary>
 public class HotKeyManager
 {
+    // Current hotkeys and default keycodes
     public Dictionary<string, KeyCode> HotKeys = new Dictionary<string, KeyCode>
     {
         { "AltarKeyCode", KeyCode.A },
@@ -20,11 +25,10 @@ public class HotKeyManager
         { "BuyMinersKeyCode", KeyCode.K },
         { "StartBattleKeyCode", KeyCode.B }
     };
-
-    public HotKeyManager()
-    {
-    }
-
+    
+    /// <summary>
+    /// Load the current hotkeyprofile stored on this computer, if one exists.
+    /// </summary>
     public void LoadHotkeyProfile()
     {
         List<string> keys = new List<string>(HotKeys.Keys);
@@ -37,6 +41,11 @@ public class HotKeyManager
         }
     }
 
+    /// <summary>
+    /// Set the keycode of a current HotKey.
+    /// </summary>
+    /// <param name="pstrKey">The hotkey to set</param>
+    /// <param name="pstrHotKey">The KeyCode to be set for that hotkey</param>
     public void SetHotKey(string pstrKey, string pstrHotKey)
     {
         KeyCode newHotKey = (KeyCode)Enum.Parse(typeof(KeyCode), pstrHotKey, true);
@@ -47,6 +56,9 @@ public class HotKeyManager
         }
     }
 
+    /// <summary>
+    /// Save the current instance of HotKeys for this computer.
+    /// </summary>
     public void SaveHotKeys()
     {
         foreach(KeyValuePair<string,KeyCode> hotKey in HotKeys)

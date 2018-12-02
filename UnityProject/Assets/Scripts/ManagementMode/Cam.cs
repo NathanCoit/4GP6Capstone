@@ -41,6 +41,7 @@ public class Cam : MonoBehaviour {
 
     void Update() 
 	{
+        Vector3 NewCameraPosition = transform.position;
 		if(CameraMovementEnabled)
         {
             if (Input.GetKeyDown(KeyCode.RightArrow))
@@ -85,28 +86,37 @@ public class Cam : MonoBehaviour {
 
             if (Input.mousePosition.x > theScreenWidth - Boundary || rightHeld)
             {
-                transform.position += new Vector3(Time.deltaTime * fov,
+                NewCameraPosition += new Vector3(Time.deltaTime * fov,
                     0.0f, 0.0f);
             }
 
             if (Input.mousePosition.x < 0 + Boundary || leftHeld)
             {
-                transform.position += new Vector3(-(Time.deltaTime * fov),
+                NewCameraPosition += new Vector3(-(Time.deltaTime * fov),
                     0.0f, 0.0f);
             }
 
             if (Input.mousePosition.y > theScreenHeight - Boundary || upHeld)
             {
-                transform.position += new Vector3(0.0f,
+                NewCameraPosition += new Vector3(0.0f,
                     0.0f, Time.deltaTime * fov);
             }
 
             if (Input.mousePosition.y < 0 + Boundary || downHeld)
             {
-                transform.position += new Vector3(0.0f,
+                NewCameraPosition += new Vector3(0.0f,
                     0.0f, -(Time.deltaTime * fov));
             }
 
+            // Camera movement occurred, validate movement
+            if(NewCameraPosition != transform.position)
+            {
+                if(Vector3.Distance(NewCameraPosition, Vector3.zero - new Vector3(0, 0, 30f)) < (gameManagerScript.MapRadius / 2) / gameManagerScript.MapTierCount * (gameManagerScript.CurrentTier+1))
+                {
+                    transform.position = NewCameraPosition;
+                    Debug.Log(Vector3.Distance(NewCameraPosition, Vector3.zero));
+                }
+            }
 
             fov -= Input.GetAxis("Mouse ScrollWheel") * sensitivity;
             fov = Mathf.Clamp(fov, minFov, maxFov);

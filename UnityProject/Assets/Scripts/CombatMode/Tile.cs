@@ -141,7 +141,7 @@ public class Tile
     {
         List<Tile> MovableTiles = findAtDistance(this, range, invalidTiles, new List<GameObject>(), tiles).ToList();
         HashSet<Tile> TargetTiles = new HashSet<Tile>();
-        MovePriority = 0;
+        //MovePriority = 0;
 
         //Figure out where we're trying to go
         foreach (Tile t in tiles)
@@ -227,7 +227,7 @@ public class Tile
                     foreach (Tile ta in TargetTiles)
                         if (t == ta)
                         {
-                            MovePriority = 1 + newRange;
+                            MovePriority = 2 + newRange;
                             return tm;
                         }
                 }

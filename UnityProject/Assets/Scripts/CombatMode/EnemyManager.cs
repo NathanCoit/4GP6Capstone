@@ -55,8 +55,34 @@ public class EnemyManager : MonoBehaviour {
 
     }
 
+    //Yes this is redundant. We lookup everything before to get the priorities right. It's dumb but it works
+    public void updatePriorities()
+    {
+        Tile[,] tiles = getTiles();
+
+        
+
+        foreach (GameObject g in BoardMan.enemyUnits)
+        {
+            //Setup Invalid Tiles (the one with units on)
+            List<GameObject> invalidTiles = new List<GameObject>();
+            foreach (GameObject go in BoardMan.enemyUnits)
+            {
+                if (!(go.GetComponent<Units>().getPos() == g.GetComponent<Units>().getPos()))
+                    invalidTiles.Add(go);
+            }
+
+            Units u = g.GetComponent<Units>();
+            Tile t = tiles[(int)u.getPos().x, (int)u.getPos().y].getClosestTile(BoardMan.playerUnits, u.MaxMovement, invalidTiles, BoardMan.playerUnits, tiles);
+            MapMan.DefineConnections();
+            u.MovePriority = tiles[(int)u.getPos().x, (int)u.getPos().y].MovePriority;
+        }
+    }
+
     public IEnumerator EnemyActions(float delay)
     {
+        updatePriorities();
+
         BoardMan.enemyUnits.Sort((x, y) => x.GetComponent<Units>().MovePriority.CompareTo(y.GetComponent<Units>().MovePriority));
         
         foreach (GameObject g in BoardMan.enemyUnits)

@@ -19,6 +19,7 @@ public class Tile
     {
         this.pos = pos;
         this.typeID = typeID;
+        MovePriority = 0;
         Mapman = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
         Mapman.InstantiateTile(typeID, pos);
 
@@ -139,6 +140,7 @@ public class Tile
     {
         List<Tile> MovableTiles = findAtDistance(this, range, invalidTiles, new List<GameObject>(), tiles).ToList();
         HashSet<Tile> TargetTiles = new HashSet<Tile>();
+        MovePriority = 0;
 
         foreach (Tile t in tiles)
         {
@@ -162,6 +164,19 @@ public class Tile
                 if (s.GetComponent<Units>().getPos() == new Vector2(t.getX(), t.getZ()))
                 {
                     TargetTiles.Remove(t);
+                }
+        }
+
+        //Removing solid tiles connections
+        foreach (Tile t in tiles)
+        {
+            foreach (GameObject g in solidTiles)
+                if (g.GetComponent<Units>().getPos() == new Vector2(t.getX(), t.getZ()))
+                {
+                    t.Connected = new List<Tile>();
+                    foreach (Tile t1 in tiles)
+                        if (t1.Connected.Contains(t))
+                            t1.Connected.Remove(t);
                 }
         }
 
@@ -202,7 +217,7 @@ public class Tile
                     foreach (Tile ta in TargetTiles)
                         if (t == ta)
                         {
-                            MovePriority = 2;
+                            MovePriority = 1 + newRange;
                             return tm;
                         }
                 }

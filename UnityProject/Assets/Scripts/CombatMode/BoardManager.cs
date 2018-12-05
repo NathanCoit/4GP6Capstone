@@ -5,10 +5,11 @@ using UnityEngine;
 public class BoardManager : MonoBehaviour
 {
 
-    public bool playerTurn = true;
+    public bool playerTurn;
     //private GameObject MapMan;
 
     private SetupManager SetupMan;
+    private EnemyManager EnemyMan;
 
     public List<GameObject> playerUnits; //List of player's units, element 0 is player's God Unit
     public List<GameObject> enemyUnits; //List of enemy's worshipper units, element 0 is enemy's God Unit
@@ -29,10 +30,14 @@ public class BoardManager : MonoBehaviour
         playerUnits = new List<GameObject>();
         enemyUnits = new List<GameObject>();
         numActionsLeft = playerUnits.Count; //since player always starts first
+        playerTurn = true;
 
         //It's ya boi, Map man.
         //MapMan = GameObject.FindGameObjectWithTag("MapManager");
-        SetupMan = GameObject.Find("SetupManager").GetComponent<SetupManager>();
+        SetupMan = GameObject.FindGameObjectWithTag("SetupManager").GetComponent<SetupManager>();
+
+        //The baddest of them all, its EnemyMan
+        EnemyMan = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
     }
 
     // Update is called once per frame
@@ -41,6 +46,8 @@ public class BoardManager : MonoBehaviour
         //Updates Morale
         playerMorale = SetupMan.playerMorale;
         enemyMorale = SetupMan.enemyMorale;
+
+        
 
         if (!HasActionsLeft()) //any actions left to take? if not, switch turns
             SwitchTurns();
@@ -162,6 +169,7 @@ public class BoardManager : MonoBehaviour
             foreach (GameObject i in enemyUnits) //allow each of enemy units to act
                 i.GetComponent<Units>().AllowAct();
             numActionsLeft = enemyUnits.Count;
+            StartCoroutine(EnemyMan.EnemyActions(0.5f));
         }
         else
         { //it was the enemy's turn

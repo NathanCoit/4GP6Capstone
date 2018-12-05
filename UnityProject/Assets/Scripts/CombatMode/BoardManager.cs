@@ -42,7 +42,7 @@ public class BoardManager : MonoBehaviour
         playerMorale = SetupMan.playerMorale;
         enemyMorale = SetupMan.enemyMorale;
 
-        if (!HasActionsLeft()) //any actions left to take?
+        if (!HasActionsLeft()) //any actions left to take? if not, switch turns
             SwitchTurns();
 
         if (endBattle) //need to have units check if there are any enemies left after each attack

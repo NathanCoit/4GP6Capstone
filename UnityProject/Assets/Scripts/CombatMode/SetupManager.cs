@@ -56,7 +56,7 @@ public class SetupManager : MonoBehaviour
 
             //Setup some test values (feel free to change)
             gameInfo.PlayerFaction.WorshipperCount = 300;
-            gameInfo.EnemyFaction.WorshipperCount = 200;
+            gameInfo.EnemyFaction.WorshipperCount = 400;
 
             gameInfo.PlayerFaction.Morale = 1;
             gameInfo.EnemyFaction.Morale = 1;

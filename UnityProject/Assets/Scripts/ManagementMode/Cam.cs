@@ -114,7 +114,6 @@ public class Cam : MonoBehaviour {
                 if(Vector3.Distance(NewCameraPosition, Vector3.zero - new Vector3(0, 0, 30f)) < (gameManagerScript.MapRadius / 2) / gameManagerScript.MapTierCount * (gameManagerScript.CurrentTier+1))
                 {
                     transform.position = NewCameraPosition;
-                    Debug.Log(Vector3.Distance(NewCameraPosition, Vector3.zero));
                 }
             }
 

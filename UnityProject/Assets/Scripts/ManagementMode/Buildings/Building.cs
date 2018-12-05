@@ -333,7 +333,7 @@ public class Building{
             {
                 BuildingResources.Add(strResourcePath + "2", Resources.Load(strResourcePath + "2"));
             }
-            if (!BuildingResources.ContainsKey(strResourcePath + "2"))
+            if (!BuildingResources.ContainsKey(strResourcePath + "3"))
             {
                 BuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
             }
@@ -347,7 +347,7 @@ public class Building{
             {
                 BuildingResources.Add(strResourcePath + "2", Resources.Load(strResourcePath + "2"));
             }
-            if (!BuildingResources.ContainsKey(strResourcePath + "2"))
+            if (!BuildingResources.ContainsKey(strResourcePath + "3"))
             {
                 BuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
             }
@@ -361,7 +361,7 @@ public class Building{
             {
                 BuildingResources.Add(strResourcePath + "2", Resources.Load(strResourcePath + "2"));
             }
-            if (!BuildingResources.ContainsKey(strResourcePath + "2"))
+            if (!BuildingResources.ContainsKey(strResourcePath + "3"))
             {
                 BuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
             }
@@ -375,7 +375,7 @@ public class Building{
             {
                 BuildingResources.Add(strResourcePath + "2", Resources.Load(strResourcePath + "2"));
             }
-            if (!BuildingResources.ContainsKey(strResourcePath + "2"))
+            if (!BuildingResources.ContainsKey(strResourcePath + "3"))
             {
                 BuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
             }
@@ -389,7 +389,7 @@ public class Building{
             {
                 BuildingResources.Add(strResourcePath + "2", Resources.Load(strResourcePath + "2"));
             }
-            if (!BuildingResources.ContainsKey(strResourcePath + "2"))
+            if (!BuildingResources.ContainsKey(strResourcePath + "3"))
             {
                 BuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
             }

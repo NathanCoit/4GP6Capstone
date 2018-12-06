@@ -164,7 +164,13 @@ public class Units : MonoBehaviour {
             GetComponent<MeshRenderer>().material = playerNotAvailable;
         else
             GetComponent<MeshRenderer>().material = enemyNotAvailable;
-        transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
+
+        if(!isGod)
+            transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
+        else if(GetComponent<Gods>().isInBattle())
+            transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
+        else if(!GetComponent<Gods>().isInBattle())
+            transform.GetChild(1).GetComponent<Canvas>().gameObject.SetActive(false);
 
     }
 

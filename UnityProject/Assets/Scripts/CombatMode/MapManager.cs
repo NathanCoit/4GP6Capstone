@@ -8,8 +8,6 @@ public class MapManager : MonoBehaviour
 
     private List<GameObject> Movable;
     private GameObject SelectionIndicator;
-    public int tileX = 10;
-    public int tileY = 10;
 
     public GameObject Unit;
     public GameObject MovableTile;
@@ -18,6 +16,7 @@ public class MapManager : MonoBehaviour
     private GameObject previousSelected;
     public bool newSelected = false;
     public string mapName;
+    public float godFloatHeight;
 
     // Use this for initialization
     void Start ()
@@ -50,6 +49,8 @@ public class MapManager : MonoBehaviour
 
         Movable = new List<GameObject>();
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager");
+
+        godFloatHeight = 3.5f;
 
         /*
         foreach (Tile t in tiles[5, 5].findAtDistance(2))
@@ -98,13 +99,15 @@ public class MapManager : MonoBehaviour
             //SelectionIndicator.transform.position = new Vector3(Selected.transform.position.x, Selected.transform.position.y + 2, Selected.transform.position.z);
             //Movable = new List<GameObject>();
 
-            //Setup Invalid Tiles (the one with units on)
-            List<GameObject> invalidTiles = new List<GameObject>(BoardMan.GetComponent<BoardManager>().enemyUnits);
-            invalidTiles.AddRange(BoardMan.GetComponent<BoardManager>().playerUnits);
-            invalidTiles.Remove(Selected);
+
 
             //Show Menu
-            Selected.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(true);
+            if(!Selected.GetComponent<Units>().CheckIfGod())
+                Selected.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(true);
+            else if(Selected.GetComponent<Gods>().isInBattle())
+                Selected.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(true);
+            else if(!Selected.GetComponent<Gods>().isInBattle())
+                Selected.transform.GetChild(1).GetComponent<Canvas>().gameObject.SetActive(true);
 
             /*
             //Calculate Movable Tiles
@@ -153,8 +156,8 @@ public class MapManager : MonoBehaviour
     public void DefineConnections()
     {
         //Define Connections
-        for (int x = 0; x < tileX; x++)
-            for (int y = 0; y < tileY; y++)
+        for (int x = 0; x < tiles.GetLength(0); x++)
+            for (int y = 0; y < tiles.GetLength(1); y++)
             {
                 Tile temp = tiles[x, y];
                 List<Tile> tempConnections = new List<Tile>();

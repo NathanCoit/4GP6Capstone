@@ -9,9 +9,11 @@ public class SetupManager : MonoBehaviour
     public GameObject GameInfoObjectPrefab;
     private GameInfo gameInfo;
 
-    public GameObject BoardMan;
-    public GameObject Mapman;
+    public BoardManager BoardMan;
+    public MapManager MapMan;
+
     public GameObject Unit;
+    public GameObject God;
 
     private Tile[,] tiles;
     public bool startup = true;
@@ -30,6 +32,8 @@ public class SetupManager : MonoBehaviour
 
     void Start()
     {
+        BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
+        MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
         GameObject GameInfoObject = GameObject.Find("GameInfo");
         if (GameInfoObject != null)
         {
@@ -56,6 +60,30 @@ public class SetupManager : MonoBehaviour
             gameInfo = NewGameInfoObject.GetComponent<GameInfo>();
 
             //Setup some test values (feel free to change)
+            gameInfo.PlayerFaction.GodName = "JIMOTHY THEE GREAT";
+            gameInfo.PlayerFaction.Type = Faction.GodType.Mushrooms;
+
+            List<Ability> abilities = Faction.GetGodAbilities(gameInfo.PlayerFaction.Type);
+            string[] sAbilites = new string[abilities.Count];
+            for (int i = 0; i < abilities.Count; i++)
+                sAbilites[i] = abilities[i].AbilityName;
+
+            gameInfo.PlayerFaction.Abilities = sAbilites;
+                
+            Debug.Log(gameInfo.PlayerFaction.GodName + " reporting in, boss");
+
+            gameInfo.EnemyFaction.GodName = "Nathan";
+            gameInfo.EnemyFaction.Type = Faction.GodType.Ducks;
+
+            abilities = Faction.GetGodAbilities(gameInfo.PlayerFaction.Type);
+            sAbilites = new string[abilities.Count];
+            for (int i = 0; i < abilities.Count; i++)
+                sAbilites[i] = abilities[i].AbilityName;
+
+            gameInfo.EnemyFaction.Abilities = sAbilites;
+
+            Debug.Log(gameInfo.EnemyFaction.GodName + " reporting in, boss");
+
             gameInfo.PlayerFaction.WorshipperCount = 300;
             gameInfo.EnemyFaction.WorshipperCount = 200;
 
@@ -73,16 +101,16 @@ public class SetupManager : MonoBehaviour
         if (finishedBattle)
         {
             //get remaining worshiper count for both sides
-            int playWorLeft = BoardMan.GetComponent<BoardManager>().GetRemainingWorshipers(true);
-            int eneWorLeft = BoardMan.GetComponent<BoardManager>().GetRemainingWorshipers(false);
+            int playWorLeft = BoardMan.GetRemainingWorshipers(true);
+            int eneWorLeft = BoardMan.GetRemainingWorshipers(false);
             //load back into GameInfoObject
 
             //Take original amount of worshipers and add how many worshipers are left after the war
             this.gameInfo.PlayerFaction.WorshipperCount = playWorLeft + System.Convert.ToInt32(this.gameInfo.PlayerFaction.WorshipperCount * (1 - worshiperPercentage));
             this.gameInfo.EnemyFaction.WorshipperCount = eneWorLeft + System.Convert.ToInt32(this.gameInfo.EnemyFaction.WorshipperCount * (1 - worshiperPercentage));
 
-            this.gameInfo.PlayerFaction.Morale = BoardMan.GetComponent<BoardManager>().getPlayerMorale();
-            this.gameInfo.EnemyFaction.Morale = BoardMan.GetComponent<BoardManager>().getEnemyMorale();
+            this.gameInfo.PlayerFaction.Morale = BoardMan.getPlayerMorale();
+            this.gameInfo.EnemyFaction.Morale = BoardMan.getEnemyMorale();
 
             //The battle has been finished
             gameInfo.FinishedBattle = true;
@@ -108,15 +136,17 @@ public class SetupManager : MonoBehaviour
         //Note this can't be done in start as tiles hasn't been made yet.
         if (startup)
         {
-            tiles = Mapman.GetComponent<MapManager>().tiles;
+            tiles = MapMan.tiles;
             //Test Setup
             CreatePlayerUnit(new Vector2(4, 3), tiles, playerWorshiperCount / 3, 2, playerMorale); //hello integer division
             CreatePlayerUnit(new Vector2(4, 4), tiles, playerWorshiperCount / 3, 2, playerMorale); //also assumes we have 3 units per team
             CreatePlayerUnit(new Vector2(4, 5), tiles, playerWorshiperCount / 3, 2, playerMorale);
+            CreateGod(tiles, true);
 
             CreateEnemyUnit(new Vector2(6, 3), tiles, enemyWorshiperCount / 3, 2, enemyMorale);
             CreateEnemyUnit(new Vector2(6, 4), tiles, enemyWorshiperCount / 3, 2, enemyMorale);
             CreateEnemyUnit(new Vector2(6, 5), tiles, enemyWorshiperCount / 3, 2, enemyMorale);
+            CreateGod(tiles, false);
 
             startup = false;
         }
@@ -133,6 +163,34 @@ public class SetupManager : MonoBehaviour
     }
 
 
+    public void CreateGod(Tile[,] tiles, bool isPlayer)
+    {
+        GameObject temp = Instantiate(God);
+        Units u = temp.GetComponent<Units>();
+        Gods g = temp.GetComponent<Gods>();
+
+        u.setGod();
+
+        
+
+        if (isPlayer)
+        {
+            g.setName(gameInfo.PlayerFaction.GodName);
+            g.setAbilites(gameInfo.PlayerFaction.Abilities);
+            u.isPlayer = true;
+            temp.transform.position = new Vector3(0, MapMan.godFloatHeight, MapMan.tiles.GetLength(1) / 2);
+            BoardMan.playerUnits.Add(temp);
+        }
+        else
+        {
+            g.setName(gameInfo.EnemyFaction.GodName);
+            g.setAbilites(gameInfo.EnemyFaction.Abilities);
+            u.isPlayer = false;
+            temp.transform.position = new Vector3(MapMan.tiles.GetLength(0), MapMan.godFloatHeight, MapMan.tiles.GetLength(1) / 2);
+            BoardMan.enemyUnits.Add(temp);
+        }
+    }
+
     public void CreatePlayerUnit(Vector2 pos, Tile[,] tiles, int WorshiperCount, int MaxMovement, float morale)
     {
         GameObject temp = Instantiate(Unit);
@@ -144,7 +202,7 @@ public class SetupManager : MonoBehaviour
         u.isPlayer = true;
         u.Move(new Vector2(pos.x, pos.y), tiles);
 
-        BoardMan.GetComponent<BoardManager>().playerUnits.Add(temp);
+        BoardMan.playerUnits.Add(temp);
     }
 
     public void CreateEnemyUnit(Vector2 pos, Tile[,] tiles, int WorshiperCount, int MaxMovement, float morale)
@@ -160,7 +218,7 @@ public class SetupManager : MonoBehaviour
 
         //Set so the players turn is first
         u.EndAct();
-        BoardMan.GetComponent<BoardManager>().enemyUnits.Add(temp);
+        BoardMan.enemyUnits.Add(temp);
     }
 
     public void EndBattle()

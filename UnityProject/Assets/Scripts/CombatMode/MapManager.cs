@@ -184,6 +184,10 @@ public class MapManager : MonoBehaviour
         GameObject[] attackableTiles = GameObject.FindGameObjectsWithTag("AttackableTile");
         for (var i = 0; i < attackableTiles.GetLength(0); i++)
             Destroy(attackableTiles[i]);
+
+        GameObject[] TargetableTiles = GameObject.FindGameObjectsWithTag("TargetableTile");
+        for (var i = 0; i < TargetableTiles.GetLength(0); i++)
+            Destroy(TargetableTiles[i]);
     }
 
     //For making the gameObject of a tile

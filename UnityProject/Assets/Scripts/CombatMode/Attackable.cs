@@ -55,31 +55,32 @@ public class Attackable : MonoBehaviour
 
             //Decreases the "HP" of the attacked unit - decreases their worshipper count
             int damage = (int)MapMan.Selected.GetComponent<Units>().getAttackStrength();
+            //Set remaining worshippers accordingly
             attackedUnit.GetComponent<Units>().setWorshiperCount(attackedUnit.GetComponent<Units>().getWorshiperCount() - damage);
 
-            //Adjust that unit's morale
-            if (BoardMan.playerUnits.Contains(MapMan.Selected))
+            //Adjust that team's morale
+            if (BoardMan.playerUnits.Contains(MapMan.Selected)) //check to see who initiated the attack
             {
-                //change .8f to something else later (at the end of this line)
-                SetupMan.enemyMorale = ((BoardMan.GetRemainingWorshipers(false) - damage) / (SetupMan.enemyWorshiperCount * .8f));
-                Debug.Log("Enemy Morale" + SetupMan.enemyMorale);
+                SetupMan.enemyMorale = ((BoardMan.GetRemainingWorshipers(false)) * 1.0f / (SetupMan.enemyWorshiperCount)); 
+                //SetupMan.enemyWorshiperCount already takes into consideration the 0.8f (i.e. only 80% of that god's worshipper participates in war)
             }
             else
             {
-                //change .8f to something else later (at the end of this line)
-                // to do: fix this
-                SetupMan.playerMorale = ((BoardMan.GetRemainingWorshipers(true) - damage) / (SetupMan.playerWorshiperCount * .8f));
-                Debug.Log("Player Morale" + SetupMan.playerMorale);
+                SetupMan.playerMorale = ((BoardMan.GetRemainingWorshipers(true)) * 1.0f / (SetupMan.playerWorshiperCount));
             }
 
             
-
+            //Did the attacked unit's HP reach 0? If so, remove them from the board AND from the appropriate unit array
             if (attackedUnit.GetComponent<Units>().getWorshiperCount() <= 0)
             {
-                BoardMan.enemyUnits.Remove(attackedUnit);
+                if (BoardMan.playerUnits.Contains(attackedUnit))
+                    BoardMan.playerUnits.Remove(attackedUnit);
+                else
+                    BoardMan.enemyUnits.Remove(attackedUnit);
                 Destroy(attackedUnit);
             }
 
+            //End the turn of the unit who initiated the attack
             MapMan.Selected.GetComponent<Units>().EndAct();
             BoardMan.DecreaseNumActions();
 

@@ -18,8 +18,10 @@ public class Units : MonoBehaviour {
     public GameObject MovableTile;
     public GameObject AttackableTile;
     public int Movement = 2;
+    public int MaxMovement;
     public float morale;
     public bool isPlayer;
+    public int MovePriority;
 
     //For use without models, can be removed later
     public Material playerAvailable;
@@ -36,7 +38,7 @@ public class Units : MonoBehaviour {
     void Start()
     {
         //You know who to call, ITS MAP MAN!
-        MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>(); ;
+        MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
 
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
 
@@ -47,6 +49,9 @@ public class Units : MonoBehaviour {
             GetComponent<MeshRenderer>().material = enemyNotAvailable;
 
         AttackStrength = WorshiperCount * 0.25f * morale;
+
+        //For AI
+        MovePriority = 0;
     }
 
     // Update is called once per frame
@@ -141,14 +146,13 @@ public class Units : MonoBehaviour {
     public void AllowAct() //this Unit has not yet acted in this round
     {
         canAct = true;
+        Movement = MaxMovement;
 
         //Render stuff for use without proper models, can be removed later
         if (isPlayer)
             GetComponent<MeshRenderer>().material = playerAvailable;
         else
             GetComponent<MeshRenderer>().material = enemyAvailable;
-
-        Movement = 2;
     }
 
     public void EndAct() //this Unit has completed their allotted actions in this round
@@ -176,13 +180,14 @@ public class Units : MonoBehaviour {
             BoardMan.GetComponent<BoardManager>().Victory();
         }
 
+        MapMan.ClearSelection();
         EndAct();
         BoardMan.GetComponent<BoardManager>().DecreaseNumActions();
     }
 
     public void OnMouseOver()
     {
-        if ((Input.GetMouseButtonDown(0) || autoClick) && canAct)
+        if ((Input.GetMouseButtonDown(0) || autoClick) && canAct && BoardMan.playerUnits.Contains(gameObject))
         {
             MapMan.Selected = this.gameObject;
             MapMan.newSelected = true;
@@ -209,12 +214,12 @@ public class Units : MonoBehaviour {
         HashSet<Tile> MovableTiles = new HashSet<Tile>();
 
         //Setup Invalid Tiles (the one with units on)
-        List<GameObject> invalidTiles = new List<GameObject>(BoardMan.GetComponent<BoardManager>().enemyUnits);
+        List<GameObject> invalidTiles = new List<GameObject>();
         invalidTiles.AddRange(BoardMan.GetComponent<BoardManager>().playerUnits);
         invalidTiles.Remove(this.gameObject);
 
         //Calculate Movable Tiles
-        MovableTiles = tiles[(int)getPos().x, (int)getPos().y].findAtDistance(Movement, invalidTiles, tiles);
+        MovableTiles = tiles[(int)getPos().x, (int)getPos().y].findAtDistance(tiles[(int)getPos().x, (int)getPos().y], Movement, invalidTiles, BoardMan.enemyUnits, tiles);
 
         MapMan.DefineConnections();
 

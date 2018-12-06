@@ -34,7 +34,7 @@ public class CombatModeTests
 
         int currentPlayerUnits = BoardMan.playerUnits.Count;
 
-        SetupMan.CreatePlayerUnit(new Vector2(0, 0), MapMan.tiles, 10, 100);
+        SetupMan.CreatePlayerUnit(new Vector2(0, 0), MapMan.tiles, 10, 2, 100);
 
         //Checks to see if we added one unit
         Assert.True(currentPlayerUnits == BoardMan.playerUnits.Count - 1);
@@ -56,7 +56,7 @@ public class CombatModeTests
 
         int currentEnemyUnits = BoardMan.enemyUnits.Count;
 
-        SetupMan.CreateEnemyUnit(new Vector2(0, 0), MapMan.tiles, 10, 100);
+        SetupMan.CreateEnemyUnit(new Vector2(0, 0), MapMan.tiles, 10, 2, 100);
 
         //Checks to see if we added one unit
         Assert.True(currentEnemyUnits == BoardMan.enemyUnits.Count - 1);

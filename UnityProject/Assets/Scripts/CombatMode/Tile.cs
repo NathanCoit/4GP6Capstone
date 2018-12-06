@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Tile
@@ -12,11 +13,13 @@ public class Tile
     private string type;
     private bool traversable;
     private MapManager Mapman;
+    public int MovePriority;
 
     public Tile(Vector3 pos, string typeID)
     {
         this.pos = pos;
         this.typeID = typeID;
+        MovePriority = 0;
         Mapman = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
         Mapman.InstantiateTile(typeID, pos);
 
@@ -52,18 +55,19 @@ public class Tile
     }
 
     //Code from https://stackoverflow.com/questions/10258305/how-to-implement-a-breadth-first-search-to-a-certain-depth
-    public HashSet<Tile> findAtDistance(int distance, List<GameObject> invalidTiles, Tile[,] tiles)
+    //This is how we figure our what tiles Units can move to or attack.
+    public HashSet<Tile> findAtDistance(Tile start, int distance, List<GameObject> invalidTiles, List<GameObject> solidTiles, Tile[,] tiles)
     {
         visited = new HashSet<Tile>();
         depths = new List<int>();
         Queue<Tile> queue = new Queue<Tile>();
         List<Tile> toBeRemoved = new List<Tile>();
-        Tile root = this;
+        Tile root = start;
 
-        //Removing invalid tiles connections
+        //Removing solid tiles connections
         foreach (Tile t in tiles)
         {
-            foreach (GameObject g in invalidTiles)
+            foreach (GameObject g in solidTiles)
                 if (g.GetComponent<Units>().getPos() == new Vector2(t.getX(), t.getZ()))
                 {
                     t.Connected = new List<Tile>();
@@ -112,6 +116,8 @@ public class Tile
                     foreach (Tile t in toBeRemoved)
                         visited.Remove(t);
                     */
+                    foreach (GameObject g in invalidTiles)
+                        visited.Remove(tiles[(int)g.GetComponent<Units>().getPos().x, (int)g.GetComponent<Units>().getPos().y]);
                     return visited;
                 }
                 elementsToNextDepth = nextElementsToDepthIncrease;
@@ -125,8 +131,119 @@ public class Tile
                 queue.Enqueue(connect);
             }
         }
+        foreach (GameObject g in invalidTiles)
+            visited.Remove(tiles[(int)g.GetComponent<Units>().getPos().x, (int)g.GetComponent<Units>().getPos().y]);
         return visited;
     }
+
+    //Finds the optimal tile to move towards any tile in endingPoints (this is how the AI knows where to move)
+    public Tile getClosestTile(List<GameObject> endingPoints, int range, List<GameObject> invalidTiles, List<GameObject> solidTiles, Tile[,] tiles)
+    {
+        List<Tile> MovableTiles = findAtDistance(this, range, invalidTiles, new List<GameObject>(), tiles).ToList();
+        HashSet<Tile> TargetTiles = new HashSet<Tile>();
+        //MovePriority = 0;
+
+        //Figure out where we're trying to go
+        foreach (Tile t in tiles)
+        {
+            foreach (GameObject g in endingPoints)
+                if (g.GetComponent<Units>().getPos() == new Vector2(t.getX(), t.getZ()))
+                {
+                    foreach(Tile ta in t.getConnected())
+                        TargetTiles.Add(ta);
+                }
+        }
+
+        //Remove Invalid Target Tiles (either invalid(friendly unit already there) or solid(enemy unit already there)
+        foreach (Tile t in tiles)
+        {
+            foreach (GameObject g in invalidTiles)
+                if (g.GetComponent<Units>().getPos() == new Vector2(t.getX(), t.getZ()))
+                {
+                    TargetTiles.Remove(t);
+                }
+            foreach (GameObject s in solidTiles)
+                if (s.GetComponent<Units>().getPos() == new Vector2(t.getX(), t.getZ()))
+                {
+                    TargetTiles.Remove(t);
+                }
+        }
+
+        //Removing solid tiles connections (so we dont move through them)
+        //This could be done in findAtDistance, but we need those connections to exist when we find target tiles so we do it here
+        foreach (Tile t in tiles)
+        {
+            foreach (GameObject g in solidTiles)
+                if (g.GetComponent<Units>().getPos() == new Vector2(t.getX(), t.getZ()))
+                {
+                    t.Connected = new List<Tile>();
+                    foreach (Tile t1 in tiles)
+                        if (t1.Connected.Contains(t))
+                            t1.Connected.Remove(t);
+                }
+        }
+
+        //Note we keep track of priority
+        //This is to avoid the AI making dumbs moves and ruining oppertunities to attack
+
+        //If we're already there or there is no available TargetTiles (all taken up by team mates)
+        if (TargetTiles.Contains(this) || TargetTiles.Count == 0)
+        {
+            MovePriority = 0;
+            return null;
+        }
+
+        //If we're in range (move then attack)
+        foreach (Tile t in MovableTiles)
+        {
+            foreach (Tile ta in TargetTiles)
+                if (t == ta)
+                {
+                    MovePriority = 1;
+                    return t;
+                }
+        }
+
+        //If we're not in range (find the closest tile we can move to)
+
+        //New range is how far out of range we are
+        int newRange = 1;
+        //The set of tiles we can move to from the tiles we can move to
+        HashSet<Tile> newTiles;
+
+        //Remove this because we actually want to move so moving 0 is useless
+        MovableTiles.Remove(this);
+
+        //Terrifying loop where we increase new range until we find a TargetTile
+        while (true)
+        {
+            newTiles = new HashSet<Tile>();
+            foreach(Tile tm in MovableTiles)
+            {
+                newTiles = findAtDistance(tm, newRange, invalidTiles, solidTiles, tiles);
+                
+                foreach(Tile t in newTiles)
+                {
+                    foreach (Tile ta in TargetTiles)
+                        if (t == ta)
+                        {
+                            MovePriority = 2 + newRange;
+                            return tm;
+                        }
+                }
+
+            }
+            newRange++;
+
+            //Just in case
+            if (newRange > 100)
+            {
+                Debug.Log("Nothing Found Boss");
+                return null;
+            }
+        }
+    }
+
 
     public List<int> getDepths()
     {

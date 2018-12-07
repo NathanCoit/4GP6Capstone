@@ -84,15 +84,7 @@ public class Attackable : MonoBehaviour
             MapMan.Selected.GetComponent<Units>().EndAct();
             BoardMan.DecreaseNumActions();
 
-            //check if someone won the game
-            if (BoardMan.playerUnits.Count == 0)
-            {
-                BoardMan.Defeat();
-            }
-            else if (BoardMan.enemyUnits.Count == 0)
-            {
-                BoardMan.Victory();
-            }
+            checkEnd();
 
             //Hide Menu
             MapMan.Selected.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
@@ -103,6 +95,19 @@ public class Attackable : MonoBehaviour
             //Clean up Tiles
             MapMan.ClearSelection();
 
+        }
+    }
+
+    private void checkEnd()
+    {
+        //check if someone won the game (note we're checking if its 1 since we dont have killing gods in yet)
+        if (BoardMan.playerUnits.Count == 1)
+        {
+            BoardMan.Defeat();
+        }
+        else if (BoardMan.enemyUnits.Count == 1)
+        {
+            BoardMan.Victory();
         }
     }
 

@@ -9,7 +9,7 @@ public class Gods : MonoBehaviour {
     private bool inBattle;
     private string[] Abilities;
     private MapManager MapMan;
-
+    public int direction;
 
     public GameObject emptyButton;
     public GameObject TargetableTile;
@@ -18,6 +18,7 @@ public class Gods : MonoBehaviour {
     void Start()
     {
         inBattle = false;
+        direction = 0;
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
     }
 

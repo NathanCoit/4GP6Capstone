@@ -401,6 +401,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecc59b98d8768db42bf0f1900d164f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  direction: 0
   emptyButton: {fileID: 1404759685096050, guid: 49e3d7a008f7e1d40a697636e52d9768,
     type: 2}
   TargetableTile: {fileID: 1109967228810790, guid: 1b019e41b3c177d48b3564edf0a0cf0e,
@@ -1515,7 +1516,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -0.70000005, y: 0}
+  m_AnchoredPosition: {x: 1.6, y: -0.8}
   m_SizeDelta: {x: 1294, y: 580}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224204663439745532
@@ -1706,7 +1707,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -0.7, y: 0}
+  m_AnchoredPosition: {x: 1.6, y: -0.4}
   m_SizeDelta: {x: 1294, y: 580}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224635391274177694

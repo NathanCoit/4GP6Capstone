@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -189,6 +189,7 @@ GameObject:
   - component: {fileID: 128641587}
   - component: {fileID: 128641586}
   - component: {fileID: 128641585}
+  - component: {fileID: 128641584}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -196,6 +197,24 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &128641584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 128641583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92bc615897b73474ab3916e7b7b876c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rightHeld: 0
+  leftHeld: 0
+  downHeld: 0
+  upHeld: 0
+  sensitivity: 5
+  CameraMovementEnabled: 1
+  fov: 0
 --- !u!81 &128641585
 AudioListener:
   m_ObjectHideFlags: 0
@@ -249,13 +268,13 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 128641583}
-  m_LocalRotation: {x: 0.12491319, y: -0, z: -0, w: 0.9921677}
-  m_LocalPosition: {x: 5, y: 4, z: -5}
+  m_LocalRotation: {x: 0.29237175, y: 0, z: 0, w: 0.9563048}
+  m_LocalPosition: {x: 5, y: 5, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 14.351001, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 34, y: 0, z: 0}
 --- !u!1 &591685451
 GameObject:
   m_ObjectHideFlags: 0
@@ -394,14 +413,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 283d92cb0e3681a44a4045ce6c4a7604, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileX: 10
-  tileY: 10
   Unit: {fileID: 1538335793867966, guid: 446eb2a43afbfd945bdfcdca97fc42c3, type: 2}
   MovableTile: {fileID: 1671741471656716, guid: 5ea76647790eee4489bf8024aee91866,
     type: 2}
   Selected: {fileID: 0}
   newSelected: 0
   mapName: 
+  godFloatHeight: 0
 --- !u!4 &763523743
 Transform:
   m_ObjectHideFlags: 0
@@ -444,9 +462,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GameInfoObjectPrefab: {fileID: 1318629568701984, guid: 2c6d0661dcadf034f9fccf79768afba7,
     type: 2}
-  BoardMan: {fileID: 734046506}
-  Mapman: {fileID: 763523741}
+  BoardMan: {fileID: 0}
+  MapMan: {fileID: 0}
   Unit: {fileID: 1538335793867966, guid: 446eb2a43afbfd945bdfcdca97fc42c3, type: 2}
+  God: {fileID: 1868990832569458, guid: b8f5e365fa573c64b9c69fc073f2722c, type: 2}
   startup: 1
   playerWorshiperCount: 0
   playerMorale: 0
@@ -507,6 +526,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af8f584903c3db545a281a9e37b81319, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  newEnemyTurn: 0
 --- !u!1 &1757513413
 GameObject:
   m_ObjectHideFlags: 0

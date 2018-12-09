@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/*
+ * Basic building block of the game board.
+ * Can be a tile that can be traversed onto or impassable terrain (like water or a mountain).
+ */ 
 public class Tile
 {
     private Vector3 pos;

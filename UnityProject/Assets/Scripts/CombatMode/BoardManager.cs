@@ -2,20 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/*
+ * The class responsible for keeping track of:
+ *      - each team (i.e. the list of worshippers and God)
+ *      - their respective morale values
+ *      - each God's faith values (basically mana for Godly abilities)
+ *      - whose turn it is (player or enemy God)
+ *      - the Victory, Defeat and Retreat functions
+ *      
+ *      BASICALLY: This class is concerned with the STATE of the combat mode
+ */
 public class BoardManager : MonoBehaviour
 {
 
     public bool playerTurn;
-    //private GameObject MapMan;
 
     private SetupManager SetupMan;
     private EnemyManager EnemyMan;
 
-    public List<GameObject> playerUnits; //List of player's units, element 0 is player's God Unit
-    public List<GameObject> enemyUnits; //List of enemy's worshipper units, element 0 is enemy's God Unit
+    public List<GameObject> playerUnits; //List of player's units
+    public List<GameObject> enemyUnits; //List of enemy's worshipper units
     int numActionsLeft;
 
-    public bool endBattle = false;
+    public bool endBattle = false; //used for testing purposes - to see if the battle has ended even if there are units left
     public float playerMorale;
     public float enemyMorale;
     public float playerFaith;
@@ -23,61 +33,27 @@ public class BoardManager : MonoBehaviour
 
     public float faithCap;
 
-
-    // Use this for initialization
     void Start()
     {
         playerUnits = new List<GameObject>();
         enemyUnits = new List<GameObject>();
         numActionsLeft = playerUnits.Count; //since player always starts first
         playerTurn = true;
-
-        //It's ya boi, Map man.
-        //MapMan = GameObject.FindGameObjectWithTag("MapManager");
+        
         SetupMan = GameObject.FindGameObjectWithTag("SetupManager").GetComponent<SetupManager>();
 
         //The baddest of them all, its EnemyMan
         EnemyMan = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
     }
-
-    // Update is called once per frame
+    
     void Update()
     {
-        //Updates Morale
+        //Updates Morale frequently. Involved with attack strength calculation so we need to update it frequently.
         playerMorale = SetupMan.playerMorale;
         enemyMorale = SetupMan.enemyMorale;
 
-        
-
         if (!HasActionsLeft()) //any actions left to take? if not, switch turns
             SwitchTurns();
-
-        if (endBattle) //need to have units check if there are any enemies left after each attack
-        { //right now, endBattle will only be true if you click it in the inspector
-            SetupMan.finishedBattle = true;
-            endBattle = false; //don't want this to loop infinitely
-
-            //wow much win such proud of u
-            //insert wonderful text box appearing saying you win
-            //insert delightful victory music
-        }
-        else if (playerUnits.Count == 0)
-        {
-            //much disappoint such loss
-            //pepehands
-
-            //loss text box
-            //loss music
-        }
-
-        //Don't think the if statement below is ever true, for some weird reason
-
-        //Note new selected is only ever true on the frame when a new unit is selected. No trouble.
-        /*if (MapMan.GetComponent<MapManager>().newSelected)
-        {
-            HasActionsLeft();
-            Debug.Log("Selectrorama");
-        }*/
     }
 
     public void Victory()
@@ -97,16 +73,11 @@ public class BoardManager : MonoBehaviour
         SetupMan.battleResult = GameInfo.BATTLESTATUS.Retreat;
         SetupMan.finishedBattle = true;
 
-        //morale is broken atm
-
         int worshipersLeft = GetRemainingWorshipers(true);
-        SetupMan.playerWorshiperCount = worshipersLeft;
+        SetupMan.playerWorshiperCount = worshipersLeft; //incorrect value atm
 
     }
 
-    //Post fight stuff
-
-    //to be sent back to setup manager?
     public int GetRemainingWorshipers(bool player)
     {
         int worshipers = 0;
@@ -117,7 +88,7 @@ public class BoardManager : MonoBehaviour
                 worshipers += i.GetComponent<Units>().getWorshiperCount();
             }
         }
-        else //need to calculate enemy worshiper count if player decided to kill enemy god first/early
+        else //need to calculate enemy worshiper count if player decided to kill enemy god first/early, however not implemented yet
         {
             foreach (GameObject i in enemyUnits)
             {
@@ -178,7 +149,6 @@ public class BoardManager : MonoBehaviour
             numActionsLeft = playerUnits.Count;
         }
         playerTurn = !playerTurn; //switch turn
-
     }
 
     bool HasActionsLeft()
@@ -197,6 +167,8 @@ public class BoardManager : MonoBehaviour
         return playerTurn;
     }
 
+
+    //Used for testing purposes
     public bool surrender()
     {
         //not implemented yet so it's returning a bool

@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * Script associated with the Movable tiles (the blue tiles where worshippers can move). Pretty self explanatory.
+ */
 public class Movable : MonoBehaviour {
 
     public Vector2 pos;

@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
+ * A special type of Unit.
+ * Has many godly abilities (single target, area of effect, buff, debuffs, etc.)
+ */
+
 public class Gods : MonoBehaviour {
 
     private string Name;

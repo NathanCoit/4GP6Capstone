@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * Script associated with Godly abilities.
+ * Changes tile materials or creates shapes for better feedback to see who/what is being targeted by a Godly ability.
+ */ 
 public class Targetable : MonoBehaviour {
 
     public Vector2 pos;

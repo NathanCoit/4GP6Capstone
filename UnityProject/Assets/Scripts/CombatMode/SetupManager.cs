@@ -3,6 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/*
+ * Class responsible for:
+ *      - starting up combat mode (placement of units and division of worshippers among each group)
+ *      - communicating with management BEFORE and AFTER combat starts/ends (morale of each side, amount of worshippers left, battle result)
+ *      
+ * Basically concerned with SETTING UP combat mode and SENDING BACK updated stats
+ * 
+ */ 
 public class SetupManager : MonoBehaviour
 {
 
@@ -17,7 +25,7 @@ public class SetupManager : MonoBehaviour
 
     private Tile[,] tiles;
     public bool startup = true;
-
+    
     public int playerWorshiperCount;
     public float playerMorale;
     public int enemyWorshiperCount;
@@ -97,13 +105,14 @@ public class SetupManager : MonoBehaviour
 
     void Update()
     {
-        //Battle has ended, send stats to GameInfo object
+        //Battle has ended, send stats to GameInfo object (the object used to communicate between management mode and combat mode)
         if (finishedBattle)
         {
             //get remaining worshiper count for both sides
             int playWorLeft = BoardMan.GetRemainingWorshipers(true);
             int eneWorLeft = BoardMan.GetRemainingWorshipers(false);
-            //load back into GameInfoObject
+
+            //Update all of the gameinfo variables:
 
             //Take original amount of worshipers and add how many worshipers are left after the war
             this.gameInfo.PlayerFaction.WorshipperCount = playWorLeft + System.Convert.ToInt32(this.gameInfo.PlayerFaction.WorshipperCount * (1 - worshiperPercentage));
@@ -112,25 +121,17 @@ public class SetupManager : MonoBehaviour
             this.gameInfo.PlayerFaction.Morale = BoardMan.getPlayerMorale();
             this.gameInfo.EnemyFaction.Morale = BoardMan.getEnemyMorale();
 
-            //The battle has been finished
             gameInfo.FinishedBattle = true;
 
-            gameInfo.LastBattleStatus = battleResult;
-            /*
-            if (battleResult == GameInfo.BATTLESTATUS.Victory)
-                this.gameInfo.LastBattleStatus = GameInfo.BATTLESTATUS.Victory;
-            else if (battleResult == GameInfo.BATTLESTATUS.Defeat)
-                this.gameInfo.LastBattleStatus = GameInfo.BATTLESTATUS.Defeat;
-            else if (battleResult == GameInfo.BATTLESTATUS.Retreat)
-                this.gameInfo.LastBattleStatus = GameInfo.BATTLESTATUS.Retreat;
-            */
+            gameInfo.LastBattleStatus = battleResult; //Victory, Defeat or Retreat
+
             //Missing:
             // Change in Player's abilities? (Do they gain them here?)
             // TO DO
 
             this.finishedBattle = false; //to avoid decrementing things FOREVER
 
-            SceneManager.LoadScene("UnderGodScene"); //¿¿¿presumably loads back to management mode???
+            SceneManager.LoadScene("UnderGodScene"); //load back to management mode
         }
 
         //Note this can't be done in start as tiles hasn't been made yet.
@@ -155,7 +156,7 @@ public class SetupManager : MonoBehaviour
     public bool SplitWorshipers()
     {
         //haha not implemented
-        //will be done in a separate scene probably
+        //will be done in a separate scene maybe?
         //assign worshiper count percentages in that scene to individual units
         //can have up to ten units per side
 

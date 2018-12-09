@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/*
+ * Enemy AI!
+ */
+
 public class EnemyManager : MonoBehaviour {
 
     private MapManager MapMan;

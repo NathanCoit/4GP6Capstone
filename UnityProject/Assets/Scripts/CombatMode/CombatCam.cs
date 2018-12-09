@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * Simple camera script, slightly modified from management mode camera script
+ */
 public class CombatCam : MonoBehaviour
 {
 
@@ -18,8 +21,6 @@ public class CombatCam : MonoBehaviour
     float maxFov = 60.0f;
     float minFov = 10.0f;
     public float sensitivity = 5.0f;
-    //public GameObject gameManagerObject;
-    //private GameManager gameManagerScript;
     public bool CameraMovementEnabled = true;
 
     public float fov;
@@ -30,14 +31,6 @@ public class CombatCam : MonoBehaviour
         fov = Camera.main.fieldOfView;
         theScreenWidth = Screen.width;
         theScreenHeight = Screen.height;
-        // Move starting camera position to viewing player village
-        // -30 on the z coordinate points camera at starting village with current camera angle
-        //transform.position = new Vector3(gameManagerScript.PlayerVillage.BuildingPosition.x, 50, gameManagerScript.PlayerVillage.BuildingPosition.z - 30f);
-    }
-
-    private void Awake()
-    {
-        //gameManagerScript = gameManagerObject.GetComponent<GameManager>();
     }
 
     void Update()

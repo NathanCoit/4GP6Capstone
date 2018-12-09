@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class AOE : MonoBehaviour {
 
+    /*
+     * This class is associated with the God-like ability that does AoE (area of effect) damage.
+     * Basically used to get all targets within the AoE.
+     */
+
     public List<GameObject> targets;
     private List<GameObject> temp;
     private BoardManager BoardMan;

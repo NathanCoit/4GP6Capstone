@@ -2,6 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * Concerned with the actual map (tiles) of combat mode.
+ * Involves:
+ *      - connections between tiles
+ *      - which tiles a Unit can move onto
+ *      - who is selected? in terms of units/worshippers/gods (helpful when trying to decide who is attacking or whose menu to bring up)
+ */
 public class MapManager : MonoBehaviour
 {
     public Tile[,] tiles;

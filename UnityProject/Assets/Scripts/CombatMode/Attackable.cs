@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class Attackable : MonoBehaviour
 {
+    /*
+     * Associated with the attack tile (the red tile that appears when trying to attack with a worshipper).
+     * When a worshipper's Attack action is picked, this will be called to show the possible attackable targets that worshipper has.
+     * Also involved with the damage infliction unto target victim.
+     */
     public Vector2 pos;
     private MapManager MapMan;
     private BoardManager BoardMan;
@@ -33,6 +38,8 @@ public class Attackable : MonoBehaviour
 
     public void OnMouseOver()
     {
+        //Wait till target has been chosen, inflict damage, check (and remove if necessary) if that unit is dead, recalculate that team's morale
+        //end the attacker's turn, ans check to see if one side won the battle.
         if (Input.GetMouseButtonDown(0) || autoClick)
         {
             List<GameObject> targets = new List<GameObject>();
@@ -50,8 +57,6 @@ public class Attackable : MonoBehaviour
             foreach(GameObject g in targets)
                 if (g.GetComponent<Units>().getPos() == pos)
                     attackedUnit = g;
-
-            //MapMan.Selected.GetComponent<Units>().updateAttackStrength();
 
             //Decreases the "HP" of the attacked unit - decreases their worshipper count
             int damage = (int)MapMan.Selected.GetComponent<Units>().getAttackStrength();

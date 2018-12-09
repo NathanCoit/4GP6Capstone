@@ -2,6 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * Concerned with all of the stats involved in the making of a worshipper in combat mode.
+ *      - their morale
+ *      - their attack strength
+ *      - whether they can act during this turn
+ *      - also involves all the attack/move/end turn functions associated with each worshipper
+ */
 public class Units : MonoBehaviour {
 
     public bool canAct;
@@ -39,10 +46,8 @@ public class Units : MonoBehaviour {
     {
         //You know who to call, ITS MAP MAN!
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
-
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
-
-        //AllowAct(); //this actually broke it for the longest time but i FOUND IT 
+        
         if(isPlayer)
             GetComponent<MeshRenderer>().material = playerNotAvailable;
         else

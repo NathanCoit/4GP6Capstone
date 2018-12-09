@@ -76,6 +76,7 @@ public class GameManager : MonoBehaviour
     // Use this for any initializations needed by other scripts
     void Awake()
     {
+        Building.BuildingRadiusSize = BuildingRadius;
         InitializeGameInfo();
         if(!gameInfo.NewGame)
         {
@@ -126,7 +127,6 @@ public class GameManager : MonoBehaviour
     }
     private void StartNewGame()
     {
-        Building.BuildingRadiusSize = BuildingRadius;
         Building.BuildingCostModifier = BuildingCostModifier;
         Building bldEnemyBuilding = null;
         Faction facEnemyFaction = null;

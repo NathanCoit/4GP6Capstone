@@ -141,17 +141,116 @@ public class TierReward
     }
     public static List<TierReward> CreateDuckRewardTree()
     {
+        TierReward BasePlayerTierReward;
+        TierReward NextPlayerTierReward;
         List<TierReward> PlayerRewardTree = new List<TierReward>();
+
+        // First tier, player gets this tier upon game start
+        BasePlayerTierReward = new TierReward("Quack");
+        PlayerRewardTree.Add(BasePlayerTierReward);
+
+        // Second tier, unlocked at 1 * TierCount (100)
+        NextPlayerTierReward = new TierReward("Quack!!", BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+        BasePlayerTierReward = NextPlayerTierReward;
+        
+        NextPlayerTierReward = new TierReward("Quack?", BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+        NextPlayerTierReward = new TierReward("Quack¿", BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+        BasePlayerTierReward = new TierReward("Materials", "100 Materials", TierReward.RESOURCETYPE.Material, 100);
+        PlayerRewardTree.Add(BasePlayerTierReward);
+
+        NextPlayerTierReward = new TierReward("2xMat", "2x material growth", TierReward.RESOURCETYPE.Material, 2.0f, BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+        NextPlayerTierReward = new TierReward("2xWorshipper", "2x worshipper growth", TierReward.RESOURCETYPE.Worshipper, 2.0f, BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+        BasePlayerTierReward = NextPlayerTierReward;
+
+        NextPlayerTierReward = new TierReward("2xWorshipperAgain", "2x worshipper growth", TierReward.RESOURCETYPE.Worshipper, 2.0f, BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+        NextPlayerTierReward = new TierReward("MOARWorshippers", "2x worshipper growth", TierReward.RESOURCETYPE.Worshipper, 2.0f, BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
         return PlayerRewardTree;
     }
     public static List<TierReward> CreateShoeRewardTree()
     {
+        TierReward BasePlayerTierReward;
+        TierReward NextPlayerTierReward;
         List<TierReward> PlayerRewardTree = new List<TierReward>();
+
+        // First tier, player gets this tier upon game start
+        BasePlayerTierReward = new TierReward("Kick");
+        PlayerRewardTree.Add(BasePlayerTierReward);
+
+        // Second tier, unlocked at 1 * TierCount (100)
+        NextPlayerTierReward = new TierReward("Yeezys", BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+        BasePlayerTierReward = NextPlayerTierReward;
+        
+        NextPlayerTierReward = new TierReward("Leg Sweep", BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+        NextPlayerTierReward = new TierReward("Broken Ankles", BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+        BasePlayerTierReward = new TierReward("Materials", "100 Materials", TierReward.RESOURCETYPE.Material, 100);
+        PlayerRewardTree.Add(BasePlayerTierReward);
+
+        NextPlayerTierReward = new TierReward("2xMat", "2x material growth", TierReward.RESOURCETYPE.Material, 2.0f, BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+        NextPlayerTierReward = new TierReward("2xWorshipper", "2x worshipper growth", TierReward.RESOURCETYPE.Worshipper, 2.0f, BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+        BasePlayerTierReward = NextPlayerTierReward;
+
+        NextPlayerTierReward = new TierReward("2xWorshipperAgain", "2x worshipper growth", TierReward.RESOURCETYPE.Worshipper, 2.0f, BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+        NextPlayerTierReward = new TierReward("MOARWorshippers", "2x worshipper growth", TierReward.RESOURCETYPE.Worshipper, 2.0f, BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
         return PlayerRewardTree;
     }
     public static List<TierReward> CreateForkRewardTree()
     {
+        TierReward BasePlayerTierReward;
+        TierReward NextPlayerTierReward;
         List<TierReward> PlayerRewardTree = new List<TierReward>();
+
+        // First tier, player gets this tier upon game start
+        BasePlayerTierReward = new TierReward("Throw Fork");
+        PlayerRewardTree.Add(BasePlayerTierReward);
+
+        // Second tier, unlocked at 1 * TierCount (100)
+        NextPlayerTierReward = new TierReward("Fork Sweep", BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+        BasePlayerTierReward = NextPlayerTierReward;
+        
+        NextPlayerTierReward = new TierReward("Eat Spaghett", BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+        NextPlayerTierReward = new TierReward("Fork Flash", BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+        BasePlayerTierReward = new TierReward("Materials", "100 Materials", TierReward.RESOURCETYPE.Material, 100);
+        PlayerRewardTree.Add(BasePlayerTierReward);
+
+        NextPlayerTierReward = new TierReward("2xMat", "2x material growth", TierReward.RESOURCETYPE.Material, 2.0f, BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+        NextPlayerTierReward = new TierReward("2xWorshipper", "2x worshipper growth", TierReward.RESOURCETYPE.Worshipper, 2.0f, BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+        BasePlayerTierReward = NextPlayerTierReward;
+
+        NextPlayerTierReward = new TierReward("2xWorshipperAgain", "2x worshipper growth", TierReward.RESOURCETYPE.Worshipper, 2.0f, BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
+
+        NextPlayerTierReward = new TierReward("MOARWorshippers", "2x worshipper growth", TierReward.RESOURCETYPE.Worshipper, 2.0f, BasePlayerTierReward);
+        BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
         return PlayerRewardTree;
     }
 
@@ -169,8 +268,7 @@ public class TierReward
         NextPlayerTierReward = new TierReward("Eat Mushroom", BasePlayerTierReward);
         BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
         BasePlayerTierReward = NextPlayerTierReward;
-
-        // Third tier, unlocked at 2 * TierCount (200). Final tier for Demo
+        
         NextPlayerTierReward = new TierReward("Mushroom Laser", BasePlayerTierReward);
         BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
 
@@ -187,10 +285,10 @@ public class TierReward
         BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
         BasePlayerTierReward = NextPlayerTierReward;
 
-        NextPlayerTierReward = new TierReward("2xWorshipperA", "2x worshipper growth", TierReward.RESOURCETYPE.Worshipper, 2.0f, BasePlayerTierReward);
+        NextPlayerTierReward = new TierReward("2xWorshipperAgain", "2x worshipper growth", TierReward.RESOURCETYPE.Worshipper, 2.0f, BasePlayerTierReward);
         BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
 
-        NextPlayerTierReward = new TierReward("2xWorshipperB", "2x worshipper growth", TierReward.RESOURCETYPE.Worshipper, 2.0f, BasePlayerTierReward);
+        NextPlayerTierReward = new TierReward("MOARWorshippers", "2x worshipper growth", TierReward.RESOURCETYPE.Worshipper, 2.0f, BasePlayerTierReward);
         BasePlayerTierReward.ChildRewards.Add(NextPlayerTierReward);
         return PlayerRewardTree;
     }

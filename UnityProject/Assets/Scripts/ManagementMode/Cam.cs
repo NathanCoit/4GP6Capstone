@@ -111,8 +111,15 @@ public class Cam : MonoBehaviour {
             // Camera movement occurred, validate movement
             if(NewCameraPosition != transform.position)
             {
+                // Check if movement will put camera out of bounding area
                 if(Vector3.Distance(NewCameraPosition, Vector3.zero - new Vector3(0, 0, 30f)) < (gameManagerScript.MapRadius / 2) / gameManagerScript.MapTierCount * (gameManagerScript.CurrentTier+1))
                 {
+                    transform.position = NewCameraPosition;
+                }
+                else if(Vector3.Distance(NewCameraPosition, Vector3.zero - new Vector3(0, 0, 30f)) < Vector3.Distance(transform.position, Vector3.zero - new Vector3(0, 0, 30f)))
+                {
+                    // Camera is out of bounding area, check if player is trying to move back into bounding area
+                    // Prevents camera from being locked if it leaves bounding area
                     transform.position = NewCameraPosition;
                 }
             }

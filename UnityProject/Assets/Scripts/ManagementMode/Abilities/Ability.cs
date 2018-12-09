@@ -133,7 +133,7 @@ public class Ability{
 
         if (SingleTargetAbilities.Contains(strFormattedAbilityName))
         {
-            loadedAbility = new SingleTargetAbility(strFormattedAbilityName);
+            loadedAbility = new SingleTargetAbility(pstrAbilityName);
         }
         else if (MultiTargetAbilities.Contains(strFormattedAbilityName))
         {

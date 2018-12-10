@@ -27,6 +27,7 @@ public class Tile
         Mapman = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
         Mapman.InstantiateTile(typeID, pos);
 
+        //Defining tile type
         switch (typeID)
         {
             //Air
@@ -50,15 +51,7 @@ public class Tile
         Connected = newConnections;
     }
 
-    public void showConnected(Tile[,] tiles)
-    {
-        for (int i = 0; i < Connected.Count; i++)
-        {
-            //new Unit(new Vector2(Connected[i].getX(), Connected[i].getZ()), tiles);
-        }
-    }
-
-    //Code from https://stackoverflow.com/questions/10258305/how-to-implement-a-breadth-first-search-to-a-certain-depth
+    //Code (partially) from https://stackoverflow.com/questions/10258305/how-to-implement-a-breadth-first-search-to-a-certain-depth
     //This is how we figure our what tiles Units can move to or attack.
     public HashSet<Tile> findAtDistance(Tile start, int distance, List<GameObject> invalidTiles, List<GameObject> solidTiles, Tile[,] tiles)
     {
@@ -91,12 +84,6 @@ public class Tile
         {
             Tile current = queue.Dequeue();
 
-
-            //Jumps to next itereation if we've already visited
-            //if (visited.Contains(current))
-            //continue;
-
-
             //If we have not visited, add to visited
             if (!visited.Contains(current))
                 depths.Add(currentDepth);
@@ -109,17 +96,6 @@ public class Tile
             {
                 if (++currentDepth > distance)
                 {
-                    /*
-                    foreach (GameObject g in opposingTeam)
-                    {
-                        foreach (Tile t in visited)
-                            if (g.GetComponent<Units>().getPos() == new Vector2(t.getX(), t.getZ()))
-                                toBeRemoved.Add(t);
-
-                    }
-                    foreach (Tile t in toBeRemoved)
-                        visited.Remove(t);
-                    */
                     foreach (GameObject g in invalidTiles)
                         visited.Remove(tiles[(int)g.GetComponent<Units>().getPos().x, (int)g.GetComponent<Units>().getPos().y]);
                     return visited;
@@ -131,7 +107,6 @@ public class Tile
 
             foreach (Tile connect in current.getConnected())
             {
-                //if (!visited.Contains(connect))
                 queue.Enqueue(connect);
             }
         }
@@ -145,9 +120,8 @@ public class Tile
     {
         List<Tile> MovableTiles = findAtDistance(this, range, invalidTiles, new List<GameObject>(), tiles).ToList();
         HashSet<Tile> TargetTiles = new HashSet<Tile>();
-        //MovePriority = 0;
 
-        //Figure out where we're trying to go
+        //Figure out where we're trying to go (the tiles next to player units)
         foreach (Tile t in tiles)
         {
             foreach (GameObject g in endingPoints)
@@ -187,7 +161,7 @@ public class Tile
                 }
         }
 
-        //Note we keep track of priority
+        //Note we keep track of priority (and actually call this function to update it)
         //This is to avoid the AI making dumbs moves and ruining oppertunities to attack
 
         //If we're already there or there is no available TargetTiles (all taken up by team mates)

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 /*
  * A special type of Unit.
  * Has many godly abilities (single target, area of effect, buff, debuffs, etc.)
+ * Is attached to god units
  */
 
 public class Gods : MonoBehaviour {
@@ -38,6 +39,8 @@ public class Gods : MonoBehaviour {
         //Disable first canvas and show abilites canvas
         transform.GetChild(1).GetComponent<Canvas>().gameObject.SetActive(false);
         transform.GetChild(2).GetComponent<Canvas>().gameObject.SetActive(true);
+
+        //Make ability buttons
         for(int i = 0; i < Abilities.Length; i++)
         {
             GameObject temp = Instantiate(emptyButton);
@@ -66,12 +69,14 @@ public class Gods : MonoBehaviour {
         temp2.GetComponent<Button>().onClick.AddListener(delegate { returnToActions(); });
     }
 
+    //Called on the button press. Starts the target selection.
     public void useAbility(string name)
     {
         transform.GetChild(2).GetComponent<Canvas>().gameObject.SetActive(false);
 
         Ability a = Ability.LoadAbilityFromName(name);
 
+        //Put targetable tiles everywhere
         foreach(Tile t in MapMan.tiles)
         {
             GameObject temp = Instantiate(TargetableTile);
@@ -83,6 +88,7 @@ public class Gods : MonoBehaviour {
         
     }
 
+    //Flip flop the menus
     private void returnToActions()
     {
         transform.GetChild(1).GetComponent<Canvas>().gameObject.SetActive(true);

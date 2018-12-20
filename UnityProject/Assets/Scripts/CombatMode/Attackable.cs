@@ -8,7 +8,9 @@ public class Attackable : MonoBehaviour
      * Associated with the attack tile (the red tile that appears when trying to attack with a worshipper).
      * When a worshipper's Attack action is picked, this will be called to show the possible attackable targets that worshipper has.
      * Also involved with the damage infliction unto target victim.
+     * Is attached to attackable tiles (the red ones)
      */
+
     public Vector2 pos;
     private MapManager MapMan;
     private BoardManager BoardMan;
@@ -18,6 +20,7 @@ public class Attackable : MonoBehaviour
 
     void Start()
     {
+        //*******EVERYBODYS'S HERE********//
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
 
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
@@ -89,6 +92,7 @@ public class Attackable : MonoBehaviour
             MapMan.Selected.GetComponent<Units>().EndAct();
             BoardMan.DecreaseNumActions();
 
+            //Checking if anyone won
             checkEnd();
 
             //Hide Menu

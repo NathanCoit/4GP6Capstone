@@ -25,9 +25,10 @@ public class MapManager : MonoBehaviour
     public string mapName;
     public float godFloatHeight;
 
-    // Use this for initialization
+    // Use this for initialization. We're loading our maps from a txt and building them here so we can easily add more maps without the need for more scenes.
     void Start ()
     {
+        //If we don't have a specified map, it's testmap
         if (mapName == "")
             mapName = "testMap";
 
@@ -52,60 +53,29 @@ public class MapManager : MonoBehaviour
             }
         }
 
+        //Made as a seperate function as we need to do it a lot
         DefineConnections();
 
         Movable = new List<GameObject>();
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager");
 
+        //How high gods float above the map
         godFloatHeight = 3.5f;
 
-        /*
-        foreach (Tile t in tiles[5, 5].findAtDistance(2))
-        {
-            GameObject temp = Instantiate(Unit);
-            temp.GetComponent<Units>().Move(new Vector2(t.getX(), t.getZ()), tiles);
-        }
-        */
     }
 
 	// Update is called once per frame
 	void Update ()
     {
-        /*
-        //tiles[5, 5].showConnected(tiles);
-        if (Input.GetKeyDown("w"))
-        {
-            //test.Move(new Vector2(0, 1), tiles);
-        }
-        if (Input.GetKeyDown("s"))
-        {
-            //test.Move(new Vector2(0, -1), tiles);
-        }
-        if (Input.GetKeyDown("a"))
-        {
-            //test.Move(new Vector2(-1, 0), tiles);
-        }
-        if (Input.GetKeyDown("d"))
-        {
-            //test.Move(new Vector2(1, 0), tiles);
-        }
-        */
 
         //For Selected Unit
-
         if(Selected != null && newSelected)
         {
             //Clean up Previous selection
             ClearSelection();
-            //Destroy(SelectionIndicator);
+
             if(previousSelected != null)
                 previousSelected.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
-
-            //Selection Indicator
-            //SelectionIndicator = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            //SelectionIndicator.transform.position = new Vector3(Selected.transform.position.x, Selected.transform.position.y + 2, Selected.transform.position.z);
-            //Movable = new List<GameObject>();
-
 
 
             //Show Menu
@@ -115,40 +85,6 @@ public class MapManager : MonoBehaviour
                 Selected.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(true);
             else if(!Selected.GetComponent<Gods>().isInBattle())
                 Selected.transform.GetChild(1).GetComponent<Canvas>().gameObject.SetActive(true);
-
-            /*
-            //Calculate Movable Tiles
-            MovableTiles = tiles[(int)Selected.GetComponent<Units>().getPos().x, (int)Selected.GetComponent<Units>().getPos().y].findAtDistance(2, invalidTiles, tiles);
-
-            //Restore Connections
-            for (int x = 0; x < tileX; x++)
-                for (int y = 0; y < tileY; y++)
-                {
-                    Tile temp = tiles[x, y];
-                    List<Tile> tempConnections = new List<Tile>();
-                    if (y < tiles.GetLength(1) - 1)
-                        tempConnections.Add(tiles[x, y + 1]);
-                    if (x < tiles.GetLength(0) - 1)
-                        tempConnections.Add(tiles[x + 1, y]);
-                    if (y > 0)
-                        tempConnections.Add(tiles[x, y - 1]);
-                    if (x > 0)
-                        tempConnections.Add(tiles[x - 1, y]);
-                    temp.updateConnections(tempConnections);
-                    tiles[x, y] = temp;
-
-                }
-
-            //Draw movable tiles
-            foreach (Tile t in MovableTiles)
-            {
-                GameObject temp = Instantiate(MovableTile);
-                temp.GetComponent<Movable>().pos = new Vector2((int)t.getX(), (int)t.getZ());
-                temp.transform.position = new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2, t.getY() + 0.5f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
-                temp.GetComponent<Renderer>().material.color = new Color(0, 0, 1, 0.5f);
-                Movable.Add(temp);
-            }
-            */
 
             previousSelected = Selected;
 
@@ -160,6 +96,7 @@ public class MapManager : MonoBehaviour
 
     }
 
+    //Define which tiles are connected to which tiles
     public void DefineConnections()
     {
         //Define Connections
@@ -181,6 +118,7 @@ public class MapManager : MonoBehaviour
             }
     }
 
+    //Cleans all the tiles (the ones that go on top of the actual tiles (the interactable ones))
     public void ClearSelection()
     {
         //Clean up tiles
@@ -197,7 +135,7 @@ public class MapManager : MonoBehaviour
             Destroy(TargetableTiles[i]);
     }
 
-    //For making the gameObject of a tile
+    //For making the gameObject of a tile (the real ones)
     public void InstantiateTile(string typeID, Vector3 pos)
     {
         GameObject temp = Instantiate(Resources.Load("Tiles/" + typeID) as GameObject);

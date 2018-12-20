@@ -24,7 +24,7 @@ public class EnemyManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-
+        //I dont need no update!
 	}
 
     private Tile[,] getTiles()
@@ -32,6 +32,7 @@ public class EnemyManager : MonoBehaviour {
         return MapMan.tiles;
     }
 
+    //Puts a moveable tile on the optimal tile for an enemy unit to move to
     public void showClosestTile(Units Unit)
     {
         Tile[,] tiles = getTiles();
@@ -46,10 +47,12 @@ public class EnemyManager : MonoBehaviour {
 
         Tile t = tiles[(int)Unit.getPos().x, (int)Unit.getPos().y].getClosestTile(BoardMan.playerUnits, Unit.MaxMovement, invalidTiles, BoardMan.playerUnits, tiles);
 
+        //Redefine connection because we broke some above
         MapMan.DefineConnections();
 
         Unit.MovePriority = tiles[(int)Unit.getPos().x, (int)Unit.getPos().y].MovePriority;
 
+        //If we actually found a tile (we may not if the map is huge or I messed up)
         if (t != null)
         {
             GameObject temp = Instantiate(Unit.MovableTile);
@@ -59,12 +62,10 @@ public class EnemyManager : MonoBehaviour {
 
     }
 
-    //Yes this is redundant. We lookup everything before to get the priorities right. It's dumb but it works
+    //Yes this is redundant. We lookup everything before to get the priorities right. It's dumb but it works.
     public void updatePriorities()
     {
         Tile[,] tiles = getTiles();
-
-        
 
         foreach (GameObject g in BoardMan.enemyUnits)
         {
@@ -83,10 +84,13 @@ public class EnemyManager : MonoBehaviour {
         }
     }
 
+    //Fancy cooroutines because we need delays for the AI to work
     public IEnumerator EnemyActions(float delay)
     {
+        //Updates the order the enemy units move in (no move and attack goes first, followed by move + attack, followed by move no attack) also order by how far away they are
         updatePriorities();
 
+        //Sort by priority
         BoardMan.enemyUnits.Sort((x, y) => x.GetComponent<Units>().MovePriority.CompareTo(y.GetComponent<Units>().MovePriority));
         
         foreach (GameObject g in BoardMan.enemyUnits)
@@ -99,9 +103,13 @@ public class EnemyManager : MonoBehaviour {
 
             MapMan.Selected = g;
             GameObject closestTile = GameObject.FindGameObjectWithTag("MoveableTile");
+
+            //Wait a frame so we can check if we can actually move (or need to)
             yield return null;
+
             if (closestTile != null)
             {
+                //Woo for using function we made for testing
                 closestTile.GetComponent<Movable>().testClick();
                 closestTile.GetComponent<Movable>().OnMouseOver();
                 yield return new WaitForSeconds(delay);
@@ -109,9 +117,14 @@ public class EnemyManager : MonoBehaviour {
 
             MapMan.Selected = g;
             u.showAttackable();
+
+            //Wait a frame to see if we can attack
             yield return null;
+
+            //Yes this is semi random if there's more than one. Will be based off remaining health in future
             GameObject AttackableTile = GameObject.FindGameObjectWithTag("AttackableTile");
 
+            //Attack if we can, then end turn
             if (AttackableTile != null)
             {
                 yield return new WaitForSeconds(delay);

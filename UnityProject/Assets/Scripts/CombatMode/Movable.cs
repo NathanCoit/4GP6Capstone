@@ -54,7 +54,7 @@ public class Movable : MonoBehaviour {
                j++;
             }
 
-            MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().Movement -= depths[j];
+            MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().Movement -= depths[j] + 1;
 
             //Move the selected unit
             MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().MoveTo(pos, MapMan.GetComponent<MapManager>().tiles);

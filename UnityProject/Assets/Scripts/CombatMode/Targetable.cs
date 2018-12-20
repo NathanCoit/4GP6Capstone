@@ -5,6 +5,7 @@ using UnityEngine;
 /*
  * Script associated with Godly abilities.
  * Changes tile materials or creates shapes for better feedback to see who/what is being targeted by a Godly ability.
+ * Is attached to targetable tiles that are created on every tile when an ability is being used
  */ 
 public class Targetable : MonoBehaviour {
 
@@ -50,6 +51,7 @@ public class Targetable : MonoBehaviour {
         List<GameObject> targets = new List<GameObject>();
         bool valid = false;
 
+        //If it's single target we're just target the one tile
         if (a.Type == Ability.AbilityType.SingleTarget)
         {
             if (BoardMan.playerUnits.Contains(MapMan.Selected))
@@ -76,13 +78,14 @@ public class Targetable : MonoBehaviour {
                 GetComponent<MeshRenderer>().material = mousedOverInvalid;
             }
         }
+
+        //If it's multi target, we gotta worry about shapes
         else if(a.Type == Ability.AbilityType.MultiTarget)
         {
             MultiTargetAbility aMi = (MultiTargetAbility)MultiTargetAbility.LoadAbilityFromName(a.AbilityName);
             if (AOEShape == null)
             {
-                
-
+                //Cone is actually a sphere (just didn't change the name elsewhere yet)
                 if (aMi.AbilityShape == Ability.MultiTargetShape.Cone)
                 {
                     AOEShape = Instantiate(SphereAOEPrefab);
@@ -107,6 +110,7 @@ public class Targetable : MonoBehaviour {
 
             }
 
+            //Get the line offset and facing the right way
             if(aMi.AbilityShape == Ability.MultiTargetShape.Line)
             {
                 if (MapMan.Selected.GetComponent<Gods>().direction == 0)
@@ -135,6 +139,7 @@ public class Targetable : MonoBehaviour {
                 }
             }
 
+            //Check what units we should be targeting.
             if (BoardMan.playerUnits.Contains(MapMan.Selected))
             {
                 targets = AOEShape.GetComponent<AOE>().getTargets(true);
@@ -165,9 +170,10 @@ public class Targetable : MonoBehaviour {
         }
 
 
-        //Actually clicking
+        //Actually clicking (using the ability)
         if (Input.GetMouseButtonDown(0) || autoClick)
         {
+            //Just damage the one unit if single target
             if (a.Type == Ability.AbilityType.SingleTarget)
             {
                 SingleTargetAbility aSi = (SingleTargetAbility)SingleTargetAbility.LoadAbilityFromName(a.AbilityName);
@@ -189,8 +195,8 @@ public class Targetable : MonoBehaviour {
                     Destroy(target);
                     checkEnd();
                 }
-                Debug.Log("Using single target ability " + a.AbilityName + " !!!");
             }
+            //Damage all the target within the AOE if it's multi
             else if (a.Type == Ability.AbilityType.MultiTarget)
             {
                 MultiTargetAbility aMi = (MultiTargetAbility)MultiTargetAbility.LoadAbilityFromName(a.AbilityName);
@@ -208,25 +214,25 @@ public class Targetable : MonoBehaviour {
                         checkEnd();
                     }
                 }
-
                 GameObject[] AOEShapes = GameObject.FindGameObjectsWithTag("AOEShapes");
                 foreach(GameObject g in AOEShapes)
                 {
                     Destroy(g);
                 }
 
-                Debug.Log("Using multi target ability " + a.AbilityName + " !!!");
             }
+            //TODO
             else if (a.Type == Ability.AbilityType.Buff)
             {
                 Debug.Log("Using buff ability " + a.AbilityName + " !!!");
             }
+            //TODO
             else if (a.Type == Ability.AbilityType.Debuff)
             {
                 Debug.Log("Using debuff ability " + a.AbilityName + " !!!");
             }
 
-            //Hide Menu
+            //End turn once we used an ability
             MapMan.Selected.GetComponent<Units>().EndTurnButton();
 
             //Unslecting
@@ -237,6 +243,7 @@ public class Targetable : MonoBehaviour {
 
         }
 
+        //Udating direction for the line AOE
         if (Input.GetMouseButtonDown(1))
             if (MapMan.Selected.GetComponent<Gods>().direction < 3)
                 MapMan.Selected.GetComponent<Gods>().direction++;
@@ -245,9 +252,9 @@ public class Targetable : MonoBehaviour {
 
     }
 
+    //This is here in case we kill everything with an ability
     private void checkEnd()
     {
-        //check if someone won the game (note we're checking if its 1 since we dont have killing gods in yet)
         if (BoardMan.playerUnits.Count == 1)
         {
             BoardMan.Defeat();
@@ -258,13 +265,14 @@ public class Targetable : MonoBehaviour {
         }
     }
 
+    //Unhighlight a tile we mouse out
     public void OnMouseExit()
     {
         GetComponent<MeshRenderer>().material = air;
         Destroy(AOEShape);
     }
 
-    //For spoofing clicks for testing
+    //For spoofing clicks for testing (and AI)
     public void testClick()
     {
         autoClick = true;

@@ -48,7 +48,7 @@ public class BoardManager : MonoBehaviour
     
     void Update()
     {
-        //Updates Morale frequently. Involved with attack strength calculation so we need to update it frequently.
+        //Updates Morale frequently. Involved with attack strength calculation so we need to update it frequently. Maybe. We're not really sure. But this works!
         playerMorale = SetupMan.playerMorale;
         enemyMorale = SetupMan.enemyMorale;
 

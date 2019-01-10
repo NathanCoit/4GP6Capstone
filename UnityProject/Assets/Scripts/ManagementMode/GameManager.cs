@@ -93,6 +93,7 @@ public class GameManager : MonoBehaviour
         else
         {
             StartNewGame();
+            gameInfo.NewGame = false;
         }
         foreach (Faction faction in CurrentFactions.FindAll(MatchingFaction => MatchingFaction.GodTier > CurrentTier))
         {

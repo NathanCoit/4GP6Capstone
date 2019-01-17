@@ -111,7 +111,7 @@ public class MultiTargetAbility : Ability
                 FaithCost = 10;
                 break;
             case "tsunami":
-                AbilityDescription = "Shoot a water mushroom laser to erase your foes.";
+                AbilityDescription = "Shoot a water water laser to erase your foes.";
                 AbilityDamage = 100;
                 AbilityScalingDamage = 0.8f;
                 AbilityShape = MultiTargetShape.Line;
@@ -120,7 +120,7 @@ public class MultiTargetAbility : Ability
                 FaithCost = 10;
                 break;
             case "electricfield":
-                AbilityDescription = "Shoot a electric mushroom laser to erase your foes.";
+                AbilityDescription = "Shoot a electric electric laser to erase your foes.";
                 AbilityDamage = 100;
                 AbilityScalingDamage = 0.8f;
                 AbilityShape = MultiTargetShape.Line;

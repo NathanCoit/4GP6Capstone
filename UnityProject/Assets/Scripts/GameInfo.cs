@@ -9,8 +9,7 @@ using System.Linq;
 
 /// <summary>
 /// Game info object to be used for reading/writing and cross scene info
-/// Check for the existence of this object at the beginning of a scene, if it does not yet
-/// exist, create a new instance of one
+/// Check for existence of this object at beginning of scene to load data
 /// </summary>
 public class GameInfo : MonoBehaviour {
     public enum BATTLESTATUS
@@ -72,11 +71,13 @@ public class GameInfo : MonoBehaviour {
     public int EnemyChallengeTimer;
     public float[] MaterialMultipliers;
     public float[] WorshipperMultipliers;
+
     // Use this for initialization
     void Start () {
         DontDestroyOnLoad(gameObject);
 	}
 
+    // Method for serializing a Building instance.
     public static SavedBuilding CreateSavedBuilding(Building buildingToSave)
     {
         SavedBuilding savedBuilding = new SavedBuilding
@@ -92,6 +93,7 @@ public class GameInfo : MonoBehaviour {
         return savedBuilding;
     }
 
+    // Method for serializing a Faction instance
     public static SavedFaction CreateSavedFaction(Faction factionToSave)
     {
         SavedFaction savedFaction = new SavedFaction
@@ -123,6 +125,7 @@ public class GameInfo : MonoBehaviour {
         return savedFaction;
     }
 
+    // Method for serializing an area List
     public static SavedArea CreatedSavedFactionArea(float[] parrAreatoSave)
     {
         SavedArea savedArea = new SavedArea

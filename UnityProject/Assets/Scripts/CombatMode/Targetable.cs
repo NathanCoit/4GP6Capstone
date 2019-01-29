@@ -22,7 +22,7 @@ public class Targetable : MonoBehaviour {
     public GameObject CubeAOEPrefab;
     public GameObject SphereAOEPrefab;
     private GameObject AOEShape;
-
+    private bool buttonSwitch = false;
     // Use this for initialization
     void Start ()
     {
@@ -169,10 +169,10 @@ public class Targetable : MonoBehaviour {
             
         }
 
-
         //Actually clicking (using the ability)
-        if (Input.GetMouseButtonDown(0) || autoClick)
+        if ((Input.GetMouseButtonDown(0) || autoClick) && !buttonSwitch)
         {
+            buttonSwitch = true;
             //Just damage the one unit if single target
             if (a.Type == Ability.AbilityType.SingleTarget)
             {
@@ -200,7 +200,7 @@ public class Targetable : MonoBehaviour {
             else if (a.Type == Ability.AbilityType.MultiTarget)
             {
                 MultiTargetAbility aMi = (MultiTargetAbility)MultiTargetAbility.LoadAbilityFromName(a.AbilityName);
-
+                Debug.Log(targets.Count);
                 foreach (GameObject g in targets)
                 {
                     g.GetComponent<Units>().setWorshiperCount(g.GetComponent<Units>().getWorshiperCount() - aMi.AbilityDamage);
@@ -240,7 +240,13 @@ public class Targetable : MonoBehaviour {
 
             //Clean up Tiles
             MapMan.ClearSelection();
+            Debug.Log("Succeed");
+        }
 
+        if (Input.GetMouseButtonUp(0) && buttonSwitch)
+        {
+            buttonSwitch = false;
+            Debug.Log("Fail");
         }
 
         //Udating direction for the line AOE

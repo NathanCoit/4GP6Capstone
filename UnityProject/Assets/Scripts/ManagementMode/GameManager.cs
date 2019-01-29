@@ -23,7 +23,8 @@ public class GameManager : MonoBehaviour
         Tier_Reward_State,
         Upgrade_State,
         Paused_State,
-        Settings_Menu_State
+        Settings_Menu_State,
+        End_Game_State
     }
     public int InitialPlayerMaterials = 0;
     public int InitialPlayerWorshippers = 0;
@@ -71,11 +72,11 @@ public class GameManager : MonoBehaviour
     private bool mblnNewGame = false;
     private bool blnVictory = false;
     private bool blnGameOver = false;
-    public bool mblnPauseKeyDown = false;
     public HotKeyManager hotKeyManager = new HotKeyManager();
     // Use this for any initializations needed by other scripts
     void Awake()
     {
+        Building.BuildingRadiusSize = BuildingRadius;
         InitializeGameInfo();
         if(!gameInfo.NewGame)
         {
@@ -92,6 +93,7 @@ public class GameManager : MonoBehaviour
         else
         {
             StartNewGame();
+            gameInfo.NewGame = false;
         }
         foreach (Faction faction in CurrentFactions.FindAll(MatchingFaction => MatchingFaction.GodTier > CurrentTier))
         {
@@ -126,7 +128,6 @@ public class GameManager : MonoBehaviour
     }
     private void StartNewGame()
     {
-        Building.BuildingRadiusSize = BuildingRadius;
         Building.BuildingCostModifier = BuildingCostModifier;
         Building bldEnemyBuilding = null;
         Faction facEnemyFaction = null;
@@ -442,6 +443,7 @@ public class GameManager : MonoBehaviour
         {
             PauseGame();
             PausedMenuPanel.SetActive(false);
+            CurrentMenuState = MENUSTATE.End_Game_State;
         }
         hotKeyManager.LoadHotkeyProfile();
         InvokeRepeating("CalculateResources", 0.5f, 2.0f);
@@ -450,26 +452,6 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Global pause hotkey, game can be paused from any menu state
-        if(Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"]) && CurrentMenuState == MENUSTATE.Default_State && !mblnPauseKeyDown)
-        {
-            mblnPauseKeyDown = true;
-            PauseGame();
-        }
-        else if(Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"]) && CurrentMenuState == MENUSTATE.Paused_State && !mblnPauseKeyDown)
-        {
-            mblnPauseKeyDown = true;
-            UnPauseGame();
-        }
-        else if (Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"]) && CurrentMenuState == MENUSTATE.Settings_Menu_State && !mblnPauseKeyDown)
-        {
-            mblnPauseKeyDown = true;
-            ReturnToPauseMenu();
-        }
-        if (Input.GetKeyUp(hotKeyManager.HotKeys["EscapeKeyCode"]))
-        {
-            mblnPauseKeyDown = false;
-        }
         if(CurrentMenuState != MENUSTATE.Paused_State && CurrentMenuState != MENUSTATE.Tier_Reward_State)
         {
             if (BufferedBuilding != null)

@@ -43,6 +43,7 @@ public class AOE : MonoBehaviour {
                     targets.Add(g);
             }
         }
+        temp = new List<GameObject>();
         return targets;
     }
 

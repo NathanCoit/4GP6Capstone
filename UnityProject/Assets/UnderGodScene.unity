@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 2d056ac30ecc9e542b26e06133f23602, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -345,7 +345,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 435552160}
+      - m_Target: {fileID: 435552162}
         m_MethodName: QuitToMenu
         m_Mode: 1
         m_Arguments:
@@ -1206,11 +1206,11 @@ RectTransform:
   m_Father: {fileID: 1860688482}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -36}
   m_SizeDelta: {x: 160, y: 30}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &206217823
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2005,11 +2005,11 @@ RectTransform:
   m_Father: {fileID: 1860688482}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -103}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -139}
   m_SizeDelta: {x: 160, y: 30}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &350158941
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2477,7 +2477,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31c92683dc0d65f43818e4b32b3e76bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InitialPlayerMaterials: 1000
+  InitialPlayerMaterials: 1000000
   InitialPlayerWorshippers: 1000
   mapTexture: {fileID: 2800000, guid: 8436acd77d5b60948bfc146c5031540d, type: 3}
   GameInfoObjectPrefab: {fileID: 1318629568701984, guid: 2c6d0661dcadf034f9fccf79768afba7,
@@ -2497,14 +2497,13 @@ MonoBehaviour:
   CurrentTier: 0
   TierDifficultyIncrease: 10
   EnemyChallengeTimer: 300
-  BuildingRadius: 10
+  BuildingRadius: 2
   PausedMenuPanel: {fileID: 1860688481}
   MenuControlObject: {fileID: 424929391}
   OptionsMenuPanel: {fileID: 139222487}
   GameOverPanel: {fileID: 803584161}
   VictoryPanel: {fileID: 1759801437}
   PlayerMoraleCap: 1
-  mblnPauseKeyDown: 0
 --- !u!4 &435552161
 Transform:
   m_ObjectHideFlags: 0
@@ -3599,6 +3598,8 @@ GameObject:
   m_Component:
   - component: {fileID: 789415319}
   - component: {fileID: 789415320}
+  - component: {fileID: 789415322}
+  - component: {fileID: 789415321}
   m_Layer: 5
   m_Name: ResourceDisplays
   m_TagString: Untagged
@@ -3626,7 +3627,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 64.48, y: 54.95}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &789415320
 MonoBehaviour:
@@ -3644,6 +3645,40 @@ MonoBehaviour:
   MoraleTextObject: {fileID: 12644509}
   RewardsTextObject: {fileID: 1384164293}
   RewardsDisplayObject: {fileID: 908511777}
+--- !u!114 &789415321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 789415318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_Sprite: {fileID: 10911, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+--- !u!222 &789415322
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 789415318}
+  m_CullTransparentMesh: 0
 --- !u!1 &803584161
 GameObject:
   m_ObjectHideFlags: 0
@@ -3660,7 +3695,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &803584162
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5088,9 +5123,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Options
-
-'
+  m_Text: Options
 --- !u!222 &1264437200
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6805,7 +6838,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1759801438
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7244,7 +7277,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1860688482
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7261,10 +7294,10 @@ RectTransform:
   m_Father: {fileID: 412790386}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 600}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 39}
+  m_SizeDelta: {x: 312.64, y: 198.75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1860688483
 MonoBehaviour:
@@ -8421,11 +8454,11 @@ RectTransform:
   m_Father: {fileID: 1860688482}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -51}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -87}
   m_SizeDelta: {x: 160, y: 30}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &2105145279
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8652,7 +8685,7 @@ Prefab:
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 435552160}
+      objectReference: {fileID: 435552162}
     - target: {fileID: 114060075722255706, guid: c2a96bf0d70001d43aeb6a439141a1f1,
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName

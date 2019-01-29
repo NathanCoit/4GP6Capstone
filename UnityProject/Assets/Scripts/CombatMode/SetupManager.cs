@@ -105,6 +105,19 @@ public class SetupManager : MonoBehaviour
 
     void Update()
     {
+#if DEBUG
+        // Debug Precompile Directive to allow ending a battle immediatly.
+        if(Input.GetKeyDown(KeyCode.J))
+        {
+            finishedBattle = true;
+            battleResult = GameInfo.BATTLESTATUS.Defeat;
+        }
+        else if (Input.GetKeyDown(KeyCode.K))
+        {
+            finishedBattle = true;
+            battleResult = GameInfo.BATTLESTATUS.Victory;
+        }
+#endif
         //Battle has ended, send stats to GameInfo object (the object used to communicate between management mode and combat mode)
         if (finishedBattle)
         {

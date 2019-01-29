@@ -26,13 +26,13 @@ public class OnClickFunctions : MonoBehaviour {
 
     public void LoadLastSave()
     {
-        SaveAndSettingsHelper.LoadLastSave(Application.persistentDataPath + "/SaveFiles", GameManagerScript.gameInfo);
+        SaveAndSettingsHelper.LoadLastSave(Application.persistentDataPath + "/SaveFiles", GameManagerScript.GameInfo);
     }
 
     public void SaveGameSettings()
     {
         SaveAndSettingsHelper.SaveSettingsFromOptionsMenu();
-        GameManagerScript.hotKeyManager.LoadHotkeyProfile();
+        GameManagerScript.HotKeyManager.LoadHotkeyProfile();
         MenuPanelController.SetButtonText();
         SaveAndSettingsHelper.ApplyGameSettings();
     }
@@ -40,7 +40,7 @@ public class OnClickFunctions : MonoBehaviour {
     public void QuitToMenu()
     {
         // Destroy gameinfo object
-        Destroy(GameManagerScript.gameInfo.gameObject);
+        Destroy(GameManagerScript.GameInfo.gameObject);
         SceneManager.LoadScene("MainMenu");
     }
 
@@ -48,7 +48,7 @@ public class OnClickFunctions : MonoBehaviour {
     {
         PausedMenuPanel.SetActive(false);
         OptionsMenuPanel.SetActive(true);
-        GameManagerScript.CurrentMenuState = GameManager.MENUSTATE.Settings_Menu_State;
+        GameManagerScript.EnterSettingsMenuState();
         SaveAndSettingsHelper.ApplySettingsToOptionsMenu();
     }
 

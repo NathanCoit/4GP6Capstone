@@ -26,78 +26,88 @@ public class GameManager : MonoBehaviour
         Settings_Menu_State,
         End_Game_State
     }
-    public int InitialPlayerMaterials = 0;
-    public int InitialPlayerWorshippers = 0;
-	public Texture mapTexture;
+
+    // Public variables used and unity properties of the Game Manger object.
+    // Defined in by Unity on the Game Object
+    public int InitialPlayerMaterials;
+    public int InitialPlayerWorshippers;
+	public Texture MapTexture;
     public GameObject GameInfoObjectPrefab;
-    public GameInfo gameInfo;
-	ResourceUIScript ResourceUIController;
     public GameObject RewardUI;
     public GameObject AudioObject;
-    private ExecuteSound sound;
-    public TerrainMap GameMap;
-    public Building PlayerVillage;
     public float MapRadius;
-    public List<Faction> CurrentFactions;
-    public int BuildingCostModifier = 1;
-    public MENUSTATE CurrentMenuState = MENUSTATE.Default_State;
-    public Building BufferedBuilding = null;
-	public Faction PlayerFaction = null;
-    public List<Faction> EnemyFactions = null;
-    private GameObject SelectedGameObject = null;
-    public Building SelectedBuilding = null;
-    public Vector3 OriginalBuildingPosition;
-    public float MinimumMorale = 0.2f;
-    public List<TierReward> PlayerRewardTree;
-    public int TierUnlockPoint = 100; // Initial tier unlock count
-    public int TierUnlockPointMultiplier = 2; // After every tier, tier count is multiplied by this
-    public int MapTierCount = 3;
-    public int EnemiesPerTier = 3;
-    public int CurrentTier = 0;
-    public int TierDifficultyIncrease = 10; // Each tier gets X*Tier buildings to start
-    private MENUSTATE LastMenuState = MENUSTATE.Default_State;
-    private List<float> MaterialMultipliers = new List<float>();
-    private List<float> WorshipperMultipliers = new List<float>();
-    public int EnemyChallengeTimer = 300; // Seconds until an enemy attacks
-    private int CurrentTimer = 0;
-    public float BuildingRadius = 10;
-    public int ResourceTicks { get; private set; }
-    public GameObject PausedMenuPanel = null;
-    public GameObject MenuControlObject = null;
+    public int BuildingCostModifier;
+    public float MinimumMorale;
+    public int TierUnlockPoint; // Initial tier unlock count
+    public int TierUnlockPointMultiplier; // After every tier, tier count is multiplied by this
+    public int MapTierCount;
+    public int EnemiesPerTier;
+    public int CurrentTier;
+    public int TierDifficultyIncrease; // Each tier gets X*Tier buildings to start
+    public int EnemyChallengeTimer; // Seconds until an enemy attacks
+    public float BuildingRadius;
+    public GameObject PausedMenuPanel;
+    public GameObject MenuControlObject;
     public GameObject OptionsMenuPanel;
     public GameObject GameOverPanel;
     public GameObject VictoryPanel;
+    public float PlayerMoraleCap;
+
+    // Public accessor variables, only to be accessed by other scripts, not modified
+    // Mainly for testing purposes
     public MenuPanelControls MenuPanelController { get; private set; }
-    public float PlayerMoraleCap = 1.0f;
+    public int ResourceTicks { get; private set; }
+    public GameInfo GameInfo { get; private set; }
+    public Building BufferedBuilding { get; private set; }
+    public MENUSTATE CurrentMenuState { get; private set; }
+    public Faction PlayerFaction { get; private set; }
+    public List<Faction> EnemyFactions { get; private set; }
+    public List<Faction> CurrentFactions { get; private set; }
+    public Building PlayerVillage { get; private set; }
+    public TerrainMap GameMap { get; private set; }
+    public Building SelectedBuilding { get; private set; }
+    public Vector3 OriginalBuildingPosition { get; private set; }
+    public HotKeyManager HotKeyManager { get; private set; }
+
+    // Private member variables for the game manager script
+    private GameObject muniSelectedGameObject = null;
+    private ExecuteSound mmusSoundManager;
+    private List<float> marrMaterialMultipliers = new List<float>();
+    private List<float> marrWorshipperMultipliers = new List<float>();
+    private MENUSTATE menumLastMenuState = MENUSTATE.Default_State;
     private bool mblnNewGame = false;
-    private bool blnVictory = false;
-    private bool blnGameOver = false;
-    public HotKeyManager hotKeyManager = new HotKeyManager();
+    private bool mblnVictory = false;
+    private bool mblnGameOver = false;
+    private int mintCurrentTimer = 0;
+    private ResourceUIScript mmusResourceUIController;
+    private List<TierReward> marrPlayerRewardTree;
+
     // Use this for any initializations needed by other scripts
     void Awake()
     {
+        HotKeyManager = new HotKeyManager();
         Building.BuildingRadiusSize = BuildingRadius;
         InitializeGameInfo();
-        if(!gameInfo.NewGame)
+        if(!GameInfo.NewGame)
         {
             StartFromSaveState();
-            if(!gameInfo.FromSave)
+            if(!GameInfo.FromSave)
             {
                 LoadBattleResults();
             }
             else
             {
-                EnemyChallengeTimer = gameInfo.EnemyChallengeTimer;
+                EnemyChallengeTimer = GameInfo.EnemyChallengeTimer;
             }
         }
         else
         {
             StartNewGame();
-            gameInfo.NewGame = false;
+            GameInfo.NewGame = false;
         }
-        foreach (Faction faction in CurrentFactions.FindAll(MatchingFaction => MatchingFaction.GodTier > CurrentTier))
+        foreach (Faction musFaction in CurrentFactions.FindAll(musMatchingFaction => musMatchingFaction.GodTier > CurrentTier))
         {
-            faction.SetHidden(true);
+            musFaction.SetHidden(true);
         }
         GameMap.DrawFactionArea(PlayerFaction);
     }
@@ -107,7 +117,7 @@ public class GameManager : MonoBehaviour
         GameObject GameInfoObject = GameObject.Find("GameInfo");
         if(GameInfoObject != null)
         {
-            gameInfo = GameInfoObject.GetComponent<GameInfo>();
+            GameInfo = GameInfoObject.GetComponent<GameInfo>();
         }
         else
         {
@@ -115,10 +125,10 @@ public class GameManager : MonoBehaviour
             Debug.Log("Loaded directly into management mode, creating a default god.");
             GameObject NewGameInfoObject = (GameObject)Instantiate(GameInfoObjectPrefab);
             NewGameInfoObject.name = "GameInfo";
-            gameInfo = NewGameInfoObject.GetComponent<GameInfo>();
-            gameInfo.PlayerFaction.GodName = "TestGod";
-            gameInfo.PlayerFaction.Type = Faction.GodType.Mushrooms;
-            gameInfo.NewGame = true;
+            GameInfo = NewGameInfoObject.GetComponent<GameInfo>();
+            GameInfo.PlayerFaction.GodName = "TestGod";
+            GameInfo.PlayerFaction.Type = Faction.GodType.Mushrooms;
+            GameInfo.NewGame = true;
 #else
             // Couldn't find gameinfo object
             throw new Exception("Something went wrong :(");
@@ -141,15 +151,15 @@ public class GameManager : MonoBehaviour
 
         mblnNewGame = true;
         // Remove chance of player having same name as another god.
-        GodNames.Remove(gameInfo.PlayerFaction.GodName);
+        GodNames.Remove(GameInfo.PlayerFaction.GodName);
         // Starting new game scene, initialize map, players, and buildings
         CurrentFactions = new List<Faction>();
         EnemyFactions = new List<Faction>();
         //Create map terrain
-        GameMap = new TerrainMap(MapRadius, mapTexture);
+        GameMap = new TerrainMap(MapRadius, MapTexture);
 
         // Create the player Faction
-        PlayerFaction = new Faction(gameInfo.PlayerFaction.GodName, gameInfo.PlayerFaction.Type, 0)
+        PlayerFaction = new Faction(GameInfo.PlayerFaction.GodName, GameInfo.PlayerFaction.Type, 0)
         {
             WorshipperCount = InitialPlayerWorshippers,
             MaterialCount = InitialPlayerMaterials
@@ -239,6 +249,25 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
+    public void UnselectBuilding()
+    {
+        SelectedBuilding.ToggleBuildingOutlines(false);
+        SelectedBuilding = null;
+    }
+
+    public void ClearBufferedBuilding(bool pblnDestroyBuiling = false)
+    {
+        if (BufferedBuilding != null)
+        {
+            if(pblnDestroyBuiling)
+            {
+                BufferedBuilding.Destroy();
+            }
+            BufferedBuilding = null;
+        }
+    }
+
     /// <summary>
     /// Method for initializing the gameinfo object
     /// Either creates a gameinfo object if one does not exist, or reads the values if one does
@@ -249,39 +278,39 @@ public class GameManager : MonoBehaviour
         List<Faction.GodType> GodTypes = null;
         bool blnFromSave = false;
 
-        blnFromSave = gameInfo.FromSave;
+        blnFromSave = GameInfo.FromSave;
         if (blnFromSave)
         {
             // Load building resources as they may not have been loaded yet.
             GodTypes = new List<Faction.GodType>
             {
-                gameInfo.PlayerFaction.Type
+                GameInfo.PlayerFaction.Type
             };
-            foreach (GameInfo.SavedFaction savedFaction in gameInfo.SavedFactions)
+            foreach (GameInfo.SavedFaction savedFaction in GameInfo.SavedFactions)
             {
                 GodTypes.Add(savedFaction.Type);
             }
             Building.LoadBuildingResources(GodTypes);
         }
-        CurrentTier = gameInfo.CurrentTier;
-        PlayerMoraleCap = gameInfo.PlayerMoraleCap;
-        WorshipperMultipliers = new List<float>(gameInfo.WorshipperMultipliers);
-        MaterialMultipliers = new List<float>(gameInfo.MaterialMultipliers);
+        CurrentTier = GameInfo.CurrentTier;
+        PlayerMoraleCap = GameInfo.PlayerMoraleCap;
+        marrWorshipperMultipliers = new List<float>(GameInfo.WorshipperMultipliers);
+        marrMaterialMultipliers = new List<float>(GameInfo.MaterialMultipliers);
         CurrentFactions = new List<Faction>();
         EnemyFactions = new List<Faction>();
         // Create scene with values from gameInfo
         // Load Game Map
-        GameMap = new TerrainMap(gameInfo.MapRadius, mapTexture);
+        GameMap = new TerrainMap(GameInfo.MapRadius, MapTexture);
         // Load factions
-        foreach (GameInfo.SavedFaction savedFaction in gameInfo.SavedFactions)
+        foreach (GameInfo.SavedFaction savedFaction in GameInfo.SavedFactions)
         {
             InitFaction = new Faction(savedFaction);
             GameMap.PlaceSavedFactionBuildings(savedFaction.OwnedBuildings, InitFaction);
             CurrentFactions.Add(InitFaction);
             EnemyFactions.Add(InitFaction);
         }
-        PlayerFaction = new Faction(gameInfo.PlayerFaction);
-        GameMap.PlaceSavedFactionBuildings(gameInfo.PlayerFaction.OwnedBuildings, PlayerFaction);
+        PlayerFaction = new Faction(GameInfo.PlayerFaction);
+        GameMap.PlaceSavedFactionBuildings(GameInfo.PlayerFaction.OwnedBuildings, PlayerFaction);
         PlayerVillage = PlayerFaction.OwnedBuildings.Find(villageBuilding => villageBuilding.BuildingType == Building.BUILDING_TYPE.VILLAGE);
         CurrentFactions.Add(PlayerFaction);
     }
@@ -290,10 +319,10 @@ public class GameManager : MonoBehaviour
     {
         Faction EnemyFaction = null;
         List<Faction> arrFactionsLeft = null;
-        EnemyFaction = new Faction(gameInfo.EnemyFaction);
-        GameMap.PlaceSavedFactionBuildings(gameInfo.EnemyFaction.OwnedBuildings, EnemyFaction);
+        EnemyFaction = new Faction(GameInfo.EnemyFaction);
+        GameMap.PlaceSavedFactionBuildings(GameInfo.EnemyFaction.OwnedBuildings, EnemyFaction);
 
-        if (gameInfo.LastBattleStatus == GameInfo.BATTLESTATUS.Victory)
+        if (GameInfo.LastBattleStatus == GameInfo.BATTLESTATUS.Victory)
         {
             // Take over enemy factions buildings, area, and resources
             foreach (float[] enemyArea in EnemyFaction.FactionArea)
@@ -321,7 +350,7 @@ public class GameManager : MonoBehaviour
                 {
                     // No gods in the current tier, no gods in the next tier => game over you win
                     // END GAME
-                    blnVictory = true;
+                    mblnVictory = true;
                 }
                 else
                 {
@@ -337,7 +366,7 @@ public class GameManager : MonoBehaviour
             }
             PlayerMoraleCap = PlayerMoraleCap + 0.4f < 1.0f ? PlayerMoraleCap + 0.4f : 1.0f;
         }
-        else if (gameInfo.LastBattleStatus == GameInfo.BATTLESTATUS.Retreat)
+        else if (GameInfo.LastBattleStatus == GameInfo.BATTLESTATUS.Retreat)
         {
             PlayerMoraleCap = PlayerMoraleCap - 0.2f > 0.2f ? PlayerMoraleCap - 0.2f : 0.2f;
             CurrentFactions.Add(EnemyFaction);
@@ -345,7 +374,7 @@ public class GameManager : MonoBehaviour
         else
         {
             // Run defeat animation/reset to tier checkpoint
-            blnGameOver = true;
+            mblnGameOver = true;
         }
     }
 
@@ -363,30 +392,30 @@ public class GameManager : MonoBehaviour
     private void EnterCombatMode(Faction EnemyFaction)
     {
         // save player faction
-        gameInfo.PlayerFaction = GameInfo.CreateSavedFaction(PlayerFaction);
+        GameInfo.PlayerFaction = GameInfo.CreateSavedFaction(PlayerFaction);
 
         // save challenging faction
-        gameInfo.EnemyFaction = GameInfo.CreateSavedFaction(EnemyFaction);
+        GameInfo.EnemyFaction = GameInfo.CreateSavedFaction(EnemyFaction);
 
         // Save the rest of the factions
-        gameInfo.SavedFactions = new GameInfo.SavedFaction[EnemyFactions.Count - 1];
+        GameInfo.SavedFactions = new GameInfo.SavedFaction[EnemyFactions.Count - 1];
         int intFactionIndex = 0;
         foreach(Faction faction in EnemyFactions)
         {
             if(faction != EnemyFaction)
             {
-                gameInfo.SavedFactions[intFactionIndex] = GameInfo.CreateSavedFaction(faction);
+                GameInfo.SavedFactions[intFactionIndex] = GameInfo.CreateSavedFaction(faction);
                 intFactionIndex++;
             }
         }
         
-        gameInfo.MapRadius = MapRadius;
-        gameInfo.CurrentTier = CurrentTier;
-        gameInfo.PlayerRewards = TierReward.SaveRewardTree(PlayerRewardTree).ToArray();
-        gameInfo.PlayerMoraleCap = PlayerMoraleCap;
-        gameInfo.FromSave = false;
-        gameInfo.MaterialMultipliers = MaterialMultipliers.ToArray();
-        gameInfo.WorshipperMultipliers = WorshipperMultipliers.ToArray();
+        GameInfo.MapRadius = MapRadius;
+        GameInfo.CurrentTier = CurrentTier;
+        GameInfo.PlayerRewards = TierReward.SaveRewardTree(marrPlayerRewardTree).ToArray();
+        GameInfo.PlayerMoraleCap = PlayerMoraleCap;
+        GameInfo.FromSave = false;
+        GameInfo.MaterialMultipliers = marrMaterialMultipliers.ToArray();
+        GameInfo.WorshipperMultipliers = marrWorshipperMultipliers.ToArray();
         SceneManager.LoadScene("CombatMode");
     }
 
@@ -423,15 +452,15 @@ public class GameManager : MonoBehaviour
     // Use this for any initializations not needed by other scripts.
     void Start()
     {
-        ResourceUIController = FindObjectOfType<ResourceUIScript>();
-        sound = AudioObject.GetComponent<ExecuteSound>();
+        mmusResourceUIController = FindObjectOfType<ResourceUIScript>();
+        mmusSoundManager = AudioObject.GetComponent<ExecuteSound>();
         MenuPanelController = MenuControlObject.GetComponent<MenuPanelControls>();
         SaveAndSettingsHelper.ApplyGameSettings();
         Time.timeScale = 1;
         PausedMenuPanel.SetActive(false);
         OptionsMenuPanel.SetActive(false);
-        GameOverPanel.SetActive(blnGameOver);
-        VictoryPanel.SetActive(blnVictory);
+        GameOverPanel.SetActive(mblnGameOver);
+        VictoryPanel.SetActive(mblnVictory);
         CreateRewardTree();
         ResourceTicks = 0;
         if(mblnNewGame)
@@ -439,13 +468,13 @@ public class GameManager : MonoBehaviour
             SaveGame();
             mblnNewGame = false;
         }
-        if(blnVictory || blnGameOver)
+        if(mblnVictory || mblnGameOver)
         {
             PauseGame();
             PausedMenuPanel.SetActive(false);
             CurrentMenuState = MENUSTATE.End_Game_State;
         }
-        hotKeyManager.LoadHotkeyProfile();
+        HotKeyManager.LoadHotkeyProfile();
         InvokeRepeating("CalculateResources", 0.5f, 2.0f);
     }
 
@@ -463,7 +492,7 @@ public class GameManager : MonoBehaviour
                 CheckForSelectedBuilding();
             }
         }
-		ResourceUIController.UpdateResourceUIElements (PlayerFaction.MaterialCount, PlayerFaction.WorshipperCount, PlayerFaction.Morale, PlayerFaction.TierRewardPoints);
+		mmusResourceUIController.UpdateResourceUIElements (PlayerFaction.MaterialCount, PlayerFaction.WorshipperCount, PlayerFaction.Morale, PlayerFaction.TierRewardPoints);
     }
 
     private void CheckForSelectedBuilding()
@@ -479,11 +508,11 @@ public class GameManager : MonoBehaviour
                 // Code for selecting a building
                 if (Physics.Raycast(ray, out hitInfo))
                 {
-                    SelectedGameObject = hitInfo.collider.gameObject;
+                    muniSelectedGameObject = hitInfo.collider.gameObject;
                     // If the user clicked the map, do nothing
-                    if (SelectedGameObject == GameMap.GetMapObject())
+                    if (muniSelectedGameObject == GameMap.GetMapObject())
                     {
-                        SelectedGameObject = null;
+                        muniSelectedGameObject = null;
                         if (SelectedBuilding != null)
                         {
                             SelectedBuilding.ToggleBuildingOutlines(false);
@@ -496,7 +525,7 @@ public class GameManager : MonoBehaviour
                     }
                     else
                     {
-                        SetSelectedBuilding(GameMap.GetBuildings().Find(ClickedBuilding => ClickedBuilding.BuildingObject == SelectedGameObject));
+                        SetSelectedBuilding(GameMap.GetBuildings().Find(ClickedBuilding => ClickedBuilding.BuildingObject == muniSelectedGameObject));
                     }
                 }
             }
@@ -536,9 +565,8 @@ public class GameManager : MonoBehaviour
                 {
                     // Reenable the collider component for selecting
                     BufferedBuilding.BuildingObject.GetComponent<Collider>().enabled = true;
-                    sound.PlaySound("PlaceBuilding");
+                    mmusSoundManager.PlaySound("PlaceBuilding");
                     // If the building did place, go back to building menu
-                    PlayerFaction.MaterialCount -= BufferedBuilding.BuildingCost;
                     foreach (Building BuildingOnMap in GameMap.GetBuildings())
                     {
                         BuildingOnMap.ToggleBuildingOutlines(false);
@@ -551,6 +579,7 @@ public class GameManager : MonoBehaviour
                     }
                     else
                     {
+                        PlayerFaction.MaterialCount -= BufferedBuilding.BuildingCost;
                         EnterBuildMenuState();
                     }
                     BufferedBuilding = null;
@@ -629,11 +658,11 @@ public class GameManager : MonoBehaviour
 
                     if (CurrentFaction == PlayerFaction)
                     {
-                        foreach(float multiplier in MaterialMultipliers)
+                        foreach(float multiplier in marrMaterialMultipliers)
                         {
                             intMaterialsToAdd += (int)((multiplier - 1) * intMaterialsToAdd);
                         }
-                        foreach (float multiplier in WorshipperMultipliers)
+                        foreach (float multiplier in marrWorshipperMultipliers)
                         {
                             intWorshippersToAdd += (int)((multiplier - 1) * intWorshippersToAdd);
                         }
@@ -742,8 +771,8 @@ public class GameManager : MonoBehaviour
             //    PlayerFaction.TierRewardPoints));
         }
         ResourceTicks++;
-        CurrentTimer += 2;
-        if(CurrentTimer > EnemyChallengeTimer)
+        mintCurrentTimer += 2;
+        if(mintCurrentTimer > EnemyChallengeTimer)
         {
             ChallengingFaction = CurrentFactions.Find(MatchingFaction => MatchingFaction != PlayerFaction && MatchingFaction.GodTier == CurrentTier);
             Debug.Log(string.Format("{0} has challenged you!", ChallengingFaction.GodName));
@@ -790,31 +819,31 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                sound.PlaySound("NotMaterials");
+                mmusSoundManager.PlaySound("NotMaterials");
             }
         }
         else
         {
-            sound.PlaySound("NotMaterials");
+            mmusSoundManager.PlaySound("NotMaterials");
         }
     }
 
     private void CreateRewardTree()
     {
         // Create a reward tree for the player
-        PlayerRewardTree = TierReward.CreateTierRewardTree(PlayerFaction.Type);
-        if (gameInfo.PlayerRewards.Length > 0 )
+        marrPlayerRewardTree = TierReward.CreateTierRewardTree(PlayerFaction.Type);
+        if (GameInfo.PlayerRewards.Length > 0 )
         {
-            LoadRewardTree(new List<string>(gameInfo.PlayerRewards));
+            LoadRewardTree(new List<string>(GameInfo.PlayerRewards));
         }
-        RewardUI.GetComponentInChildren<PopulateTierIcons>().InitializeButtons(PlayerRewardTree);
+        RewardUI.GetComponentInChildren<PopulateTierIcons>().InitializeButtons(marrPlayerRewardTree);
         RewardUI.SetActive(false);
     }
 
     private List<TierReward> GetUnlockableRewards()
     {
         // Get this list of all rewards that can be unlocked now.
-        return PlayerRewardTree.FindAll(UnlockableReward => 
+        return marrPlayerRewardTree.FindAll(UnlockableReward => 
         ((UnlockableReward.PreviousRequiredReward!= null 
         && UnlockableReward.PreviousRequiredReward.Unlocked) 
         || UnlockableReward.PreviousRequiredReward == null) 
@@ -891,10 +920,10 @@ public class GameManager : MonoBehaviour
                     switch(reward.ResourceType)
                     {
                         case TierReward.RESOURCETYPE.Material:
-                            MaterialMultipliers.Add(reward.Multiplier);
+                            marrMaterialMultipliers.Add(reward.Multiplier);
                             break;
                         case TierReward.RESOURCETYPE.Worshipper:
-                            WorshipperMultipliers.Add(reward.Multiplier);
+                            marrWorshipperMultipliers.Add(reward.Multiplier);
                             break;
                     }
                     break;
@@ -910,7 +939,7 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 0;
         Camera.main.GetComponent<Cam>().CameraMovementEnabled = false;
-        LastMenuState = CurrentMenuState;
+        menumLastMenuState = CurrentMenuState;
         CurrentMenuState = MENUSTATE.Paused_State;
         PausedMenuPanel.SetActive(true);
     }
@@ -919,7 +948,7 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1;
         Camera.main.GetComponent<Cam>().CameraMovementEnabled = true;
-        CurrentMenuState = LastMenuState;
+        CurrentMenuState = menumLastMenuState;
         PausedMenuPanel.SetActive(false);
     }
 
@@ -929,7 +958,7 @@ public class GameManager : MonoBehaviour
         TierReward reward; 
         foreach(string savedReward in savedRewards)
         {
-            reward = TierReward.FindRewardByName(savedReward, PlayerRewardTree);
+            reward = TierReward.FindRewardByName(savedReward, marrPlayerRewardTree);
             if(reward != null)
             {
                 reward.Unlocked = true;
@@ -1022,7 +1051,7 @@ public class GameManager : MonoBehaviour
     {
         if (SelectedBuilding.UpgradeBuilding())
         {
-            sound.PlaySound("PlaceBuilding");
+            mmusSoundManager.PlaySound("PlaceBuilding");
             EnterBuildingSelectedMenuState();
         }
         else
@@ -1036,7 +1065,7 @@ public class GameManager : MonoBehaviour
                 Debug.Log(string.Format("Not enough materials to upgrade ({0} required)",
                 Building.CalculateBuildingUpgradeCost(SelectedBuilding.BuildingType)));
             }
-            sound.PlaySound("NotMaterials");
+            mmusSoundManager.PlaySound("NotMaterials");
         }
     }
 
@@ -1044,7 +1073,7 @@ public class GameManager : MonoBehaviour
     {
         if (!((MineBuilding)SelectedBuilding).BuyMiners((int)Math.Pow(10, SelectedBuilding.UpgradeLevel)))
         {
-            sound.PlaySound("NotMaterials");
+            mmusSoundManager.PlaySound("NotMaterials");
         }
         EnterBuildingSelectedMenuState();
     }
@@ -1052,23 +1081,23 @@ public class GameManager : MonoBehaviour
     public void SaveGame()
     {
         // Set data to save
-        gameInfo.PlayerFaction = GameInfo.CreateSavedFaction(PlayerFaction);
-        gameInfo.SavedFactions = new GameInfo.SavedFaction[EnemyFactions.Count];
+        GameInfo.PlayerFaction = GameInfo.CreateSavedFaction(PlayerFaction);
+        GameInfo.SavedFactions = new GameInfo.SavedFaction[EnemyFactions.Count];
         int intFactionIndex = 0;
         foreach (Faction faction in EnemyFactions)
         {
-            gameInfo.SavedFactions[intFactionIndex] = GameInfo.CreateSavedFaction(faction);
+            GameInfo.SavedFactions[intFactionIndex] = GameInfo.CreateSavedFaction(faction);
             intFactionIndex++;
         }
-        gameInfo.MapRadius = MapRadius;
-        gameInfo.CurrentTier = CurrentTier;
-        gameInfo.PlayerRewards = TierReward.SaveRewardTree(PlayerRewardTree).ToArray();
-        gameInfo.PlayerMoraleCap = PlayerMoraleCap;
-        gameInfo.FromSave = true;
-        gameInfo.FinishedBattle = false;
-        gameInfo.EnemyChallengeTimer = EnemyChallengeTimer;
-        gameInfo.EnemyFaction = new GameInfo.SavedFaction();
-        if(SaveAndSettingsHelper.SaveGame(Application.persistentDataPath + "/SaveFiles", gameInfo))
+        GameInfo.MapRadius = MapRadius;
+        GameInfo.CurrentTier = CurrentTier;
+        GameInfo.PlayerRewards = TierReward.SaveRewardTree(marrPlayerRewardTree).ToArray();
+        GameInfo.PlayerMoraleCap = PlayerMoraleCap;
+        GameInfo.FromSave = true;
+        GameInfo.FinishedBattle = false;
+        GameInfo.EnemyChallengeTimer = EnemyChallengeTimer;
+        GameInfo.EnemyFaction = new GameInfo.SavedFaction();
+        if(SaveAndSettingsHelper.SaveGame(Application.persistentDataPath + "/SaveFiles", GameInfo))
         {
             // TODO Display game saved
         }
@@ -1083,6 +1112,11 @@ public class GameManager : MonoBehaviour
         PausedMenuPanel.SetActive(true);
         CurrentMenuState = GameManager.MENUSTATE.Paused_State;
         OptionsMenuPanel.SetActive(false);
+    }
+
+    public void EnterSettingsMenuState()
+    {
+        CurrentMenuState = MENUSTATE.Settings_Menu_State;
     }
 }
 

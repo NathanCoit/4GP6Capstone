@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Single target ability class containing properties for single target abilites
+/// Single target abilities may only damage one target a time
+/// Inheritrs from Ability superclass.
+/// </summary>
 public class SingleTargetAbility : Ability
 {
     public int AbilityDamage;
@@ -13,10 +18,15 @@ public class SingleTargetAbility : Ability
         
     }
 
+    /// <summary>
+    /// Load the single target ability and its properties
+    /// </summary>
+    /// <param name="pstrAbilityName"></param>
+    /// <returns></returns>
     protected override bool LoadAbility(string pstrAbilityName)
     {
-        bool AbilityFound = true;
-        Type = AbilityType.SingleTarget;
+        bool blnAbilityFound = true;
+        AbiltyType = ABILITYTYPE.SingleTarget;
         switch (pstrAbilityName.ToLower().Replace(" ", string.Empty))
         {
             case "throwmushroom":
@@ -111,10 +121,10 @@ public class SingleTargetAbility : Ability
                 FaithCost = 10;
                 break;
             default:
-                AbilityFound = false;
+                blnAbilityFound = false;
                 break;
         }
-        return AbilityFound;
+        return blnAbilityFound;
     }
 
     public string GetDamageString(int GodStrength)

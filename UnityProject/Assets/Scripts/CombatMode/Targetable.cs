@@ -52,7 +52,7 @@ public class Targetable : MonoBehaviour {
         bool valid = false;
 
         //If it's single target we're just target the one tile
-        if (a.Type == Ability.AbilityType.SingleTarget)
+        if (a.AbiltyType == Ability.ABILITYTYPE.SingleTarget)
         {
             if (BoardMan.playerUnits.Contains(MapMan.Selected))
             {
@@ -80,7 +80,7 @@ public class Targetable : MonoBehaviour {
         }
 
         //If it's multi target, we gotta worry about shapes
-        else if(a.Type == Ability.AbilityType.MultiTarget)
+        else if(a.AbiltyType == Ability.ABILITYTYPE.MultiTarget)
         {
             MultiTargetAbility aMi = (MultiTargetAbility)MultiTargetAbility.LoadAbilityFromName(a.AbilityName);
             if (AOEShape == null)
@@ -174,7 +174,7 @@ public class Targetable : MonoBehaviour {
         {
             buttonSwitch = true;
             //Just damage the one unit if single target
-            if (a.Type == Ability.AbilityType.SingleTarget)
+            if (a.AbiltyType == Ability.ABILITYTYPE.SingleTarget)
             {
                 SingleTargetAbility aSi = (SingleTargetAbility)SingleTargetAbility.LoadAbilityFromName(a.AbilityName);
                 GameObject target = new GameObject();
@@ -197,7 +197,7 @@ public class Targetable : MonoBehaviour {
                 }
             }
             //Damage all the target within the AOE if it's multi
-            else if (a.Type == Ability.AbilityType.MultiTarget)
+            else if (a.AbiltyType == Ability.ABILITYTYPE.MultiTarget)
             {
                 MultiTargetAbility aMi = (MultiTargetAbility)MultiTargetAbility.LoadAbilityFromName(a.AbilityName);
                 Debug.Log(targets.Count);
@@ -222,12 +222,12 @@ public class Targetable : MonoBehaviour {
 
             }
             //TODO
-            else if (a.Type == Ability.AbilityType.Buff)
+            else if (a.AbiltyType == Ability.ABILITYTYPE.Buff)
             {
                 Debug.Log("Using buff ability " + a.AbilityName + " !!!");
             }
             //TODO
-            else if (a.Type == Ability.AbilityType.Debuff)
+            else if (a.AbiltyType == Ability.ABILITYTYPE.Debuff)
             {
                 Debug.Log("Using debuff ability " + a.AbilityName + " !!!");
             }

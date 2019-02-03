@@ -973,16 +973,16 @@ public class GameManager : MonoBehaviour
             switch(pmusReward.RewardType)
             {
                 case TierReward.REWARDTYPE.Ability:
-                    PlayerFaction.CurrentAbilites.Add(pmusReward.UnlockAbility());
+                    PlayerFaction.CurrentAbilites.Add(((AbilityTierReward)pmusReward).TierAbility);
                     break;
                 case TierReward.REWARDTYPE.Resource:
                     switch(pmusReward.ResourceType)
                     {
                         case TierReward.RESOURCETYPE.Material:
-                            PlayerFaction.MaterialCount += pmusReward.Amount;
+                            PlayerFaction.MaterialCount += ((ResourceTierReward)pmusReward).Amount;
                             break;
                         case TierReward.RESOURCETYPE.Worshipper:
-                            PlayerFaction.WorshipperCount += pmusReward.Amount;
+                            PlayerFaction.WorshipperCount += ((ResourceTierReward)pmusReward).Amount;
                             break;
                     }
                     break;
@@ -990,10 +990,10 @@ public class GameManager : MonoBehaviour
                     switch(pmusReward.ResourceType)
                     {
                         case TierReward.RESOURCETYPE.Material:
-                            marrMaterialMultipliers.Add(pmusReward.Multiplier);
+                            marrMaterialMultipliers.Add(((ResourceMultiplierTierReward)pmusReward).Multiplier);
                             break;
                         case TierReward.RESOURCETYPE.Worshipper:
-                            marrWorshipperMultipliers.Add(pmusReward.Multiplier);
+                            marrWorshipperMultipliers.Add(((ResourceMultiplierTierReward)pmusReward).Multiplier);
                             break;
                     }
                     break;

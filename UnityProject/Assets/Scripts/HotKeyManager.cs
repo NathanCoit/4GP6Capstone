@@ -31,12 +31,12 @@ public class HotKeyManager
     /// </summary>
     public void LoadHotkeyProfile()
     {
-        List<string> keys = new List<string>(HotKeys.Keys);
-        foreach(string hotkey in keys)
+        List<string> arrKeys = new List<string>(HotKeys.Keys);
+        foreach(string strHotkey in arrKeys)
         {
-            if(PlayerPrefs.HasKey(hotkey))
+            if(PlayerPrefs.HasKey(strHotkey))
             {
-                HotKeys[hotkey] = (KeyCode)PlayerPrefs.GetInt(hotkey);
+                HotKeys[strHotkey] = (KeyCode)PlayerPrefs.GetInt(strHotkey);
             }
         }
     }
@@ -61,9 +61,9 @@ public class HotKeyManager
     /// </summary>
     public void SaveHotKeys()
     {
-        foreach(KeyValuePair<string,KeyCode> hotKey in HotKeys)
+        foreach(KeyValuePair<string,KeyCode> kvalHtoKey in HotKeys)
         {
-            PlayerPrefs.SetInt(hotKey.Key, (int)hotKey.Value);
+            PlayerPrefs.SetInt(kvalHtoKey.Key, (int)kvalHtoKey.Value);
         }
     }
 }

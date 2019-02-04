@@ -78,63 +78,63 @@ public class GameInfo : MonoBehaviour {
 	}
 
     // Method for serializing a Building instance.
-    public static SavedBuilding CreateSavedBuilding(Building buildingToSave)
+    public static SavedBuilding CreateSavedBuilding(Building pmusBuildingToSave)
     {
-        SavedBuilding savedBuilding = new SavedBuilding
+        SavedBuilding musSavedBuilding = new SavedBuilding
         {
-            x = buildingToSave.BuildingPosition.x,
-            y = buildingToSave.BuildingPosition.y,
-            z = buildingToSave.BuildingPosition.z,
-            BuildingType = buildingToSave.BuildingType,
-            UpgradeLevel = buildingToSave.UpgradeLevel,
-            Miners = buildingToSave.BuildingType == Building.BUILDING_TYPE.MATERIAL ? ((MineBuilding)buildingToSave).Miners : 0
+            x = pmusBuildingToSave.BuildingPosition.x,
+            y = pmusBuildingToSave.BuildingPosition.y,
+            z = pmusBuildingToSave.BuildingPosition.z,
+            BuildingType = pmusBuildingToSave.BuildingType,
+            UpgradeLevel = pmusBuildingToSave.UpgradeLevel,
+            Miners = pmusBuildingToSave.BuildingType == Building.BUILDING_TYPE.MATERIAL ? ((MineBuilding)pmusBuildingToSave).Miners : 0
         };
 
-        return savedBuilding;
+        return musSavedBuilding;
     }
 
     // Method for serializing a Faction instance
-    public static SavedFaction CreateSavedFaction(Faction factionToSave)
+    public static SavedFaction CreateSavedFaction(Faction pmusFactionToSave)
     {
-        SavedFaction savedFaction = new SavedFaction
+        SavedFaction pmusSavedFaction = new SavedFaction
         {
-            GodName = factionToSave.GodName,
-            MatieralCount = factionToSave.MaterialCount,
-            Morale = factionToSave.Morale,
-            WorshipperCount = factionToSave.WorshipperCount,
-            FactionArea = new SavedArea[factionToSave.FactionArea.Count],
-            Type = factionToSave.Type,
-            GodTier = factionToSave.GodTier,
-            RewardPoints = factionToSave.TierRewardPoints,
-            OwnedBuildings = new SavedBuilding[factionToSave.OwnedBuildings.Count],
-            Abilities = new string[factionToSave.CurrentAbilites.Count]
+            GodName = pmusFactionToSave.GodName,
+            MatieralCount = pmusFactionToSave.MaterialCount,
+            Morale = pmusFactionToSave.Morale,
+            WorshipperCount = pmusFactionToSave.WorshipperCount,
+            FactionArea = new SavedArea[pmusFactionToSave.FactionArea.Count],
+            Type = pmusFactionToSave.Type,
+            GodTier = pmusFactionToSave.GodTier,
+            RewardPoints = pmusFactionToSave.TierRewardPoints,
+            OwnedBuildings = new SavedBuilding[pmusFactionToSave.OwnedBuildings.Count],
+            Abilities = new string[pmusFactionToSave.CurrentAbilites.Count]
         };
-        for (int i = 0; i < factionToSave.CurrentAbilites.Count; i++)
+        for (int i = 0; i < pmusFactionToSave.CurrentAbilites.Count; i++)
         {
-            savedFaction.Abilities[i] = factionToSave.CurrentAbilites[i].AbilityName;
+            pmusSavedFaction.Abilities[i] = pmusFactionToSave.CurrentAbilites[i].AbilityName;
         }
-        for(int i = 0; i < factionToSave.OwnedBuildings.Count; i++)
+        for(int i = 0; i < pmusFactionToSave.OwnedBuildings.Count; i++)
         {
-            savedFaction.OwnedBuildings[i] = CreateSavedBuilding(factionToSave.OwnedBuildings[i]);
+            pmusSavedFaction.OwnedBuildings[i] = CreateSavedBuilding(pmusFactionToSave.OwnedBuildings[i]);
         }
-        for (int i = 0; i < factionToSave.FactionArea.Count; i++)
+        for (int i = 0; i < pmusFactionToSave.FactionArea.Count; i++)
         {
-            savedFaction.FactionArea[i] = CreatedSavedFactionArea(factionToSave.FactionArea[i]);
+            pmusSavedFaction.FactionArea[i] = CreatedSavedFactionArea(pmusFactionToSave.FactionArea[i]);
         }
 
-        return savedFaction;
+        return pmusSavedFaction;
     }
 
     // Method for serializing an area List
     public static SavedArea CreatedSavedFactionArea(float[] parrAreatoSave)
     {
-        SavedArea savedArea = new SavedArea
+        SavedArea musSavedArea = new SavedArea
         {
             StartingRad = parrAreatoSave[0],
             EndingRad = parrAreatoSave[1],
             StartingAngle = parrAreatoSave[2],
             EndingAngle = parrAreatoSave[3]
         };
-        return savedArea;
+        return musSavedArea;
     }
 }

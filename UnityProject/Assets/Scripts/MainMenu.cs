@@ -37,7 +37,9 @@ public class MainMenu : MonoBehaviour {
         DisableAllPanels();
         MainUIPanel.SetActive(true);
         SaveAndSettingsHelper.ApplyGameSettings();
-	}
+        gameObject.GetComponent<TooltipDisplayController>().AttachTooltipToObject(GameObject.Find("NewGameButton"), "New");
+        //gameObject.GetComponent<TooltipDisplayController>().AttachTooltipToObject(gameObject, "Main");
+    }
 	
 	// Update is called once per frame
 	void Update () {

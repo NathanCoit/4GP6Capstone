@@ -19,22 +19,22 @@ public class HotKeyManager
         { "BuildKeyCode", KeyCode.B },
         { "TierRewardKeyCode", KeyCode.V },
         { "EscapeKeyCode", KeyCode.Escape },
-        { "BuildingUpgradeKeyCode", KeyCode.U},
+        { "BuildingUpgradeKeyCode", KeyCode.U },
         { "BuildingMoveKeyCode", KeyCode.M },
         { "BlackSmithUIKeyCode", KeyCode.X },
         { "BuyMinersKeyCode", KeyCode.K },
         { "StartBattleKeyCode", KeyCode.B }
     };
-    
+
     /// <summary>
     /// Load the current hotkeyprofile stored on this computer, if one exists.
     /// </summary>
     public void LoadHotkeyProfile()
     {
         List<string> arrKeys = new List<string>(HotKeys.Keys);
-        foreach(string strHotkey in arrKeys)
+        foreach (string strHotkey in arrKeys)
         {
-            if(PlayerPrefs.HasKey(strHotkey))
+            if (PlayerPrefs.HasKey(strHotkey))
             {
                 HotKeys[strHotkey] = (KeyCode)PlayerPrefs.GetInt(strHotkey);
             }
@@ -49,7 +49,7 @@ public class HotKeyManager
     public void SetHotKey(string pstrKey, string pstrHotKey)
     {
         KeyCode newHotKey = (KeyCode)Enum.Parse(typeof(KeyCode), pstrHotKey, true);
-        if(HotKeys.ContainsKey(pstrKey))
+        if (HotKeys.ContainsKey(pstrKey))
         {
             PlayerPrefs.SetInt(pstrKey, (int)newHotKey);
             HotKeys[pstrKey] = newHotKey;
@@ -61,7 +61,7 @@ public class HotKeyManager
     /// </summary>
     public void SaveHotKeys()
     {
-        foreach(KeyValuePair<string,KeyCode> kvalHtoKey in HotKeys)
+        foreach (KeyValuePair<string, KeyCode> kvalHtoKey in HotKeys)
         {
             PlayerPrefs.SetInt(kvalHtoKey.Key, (int)kvalHtoKey.Value);
         }

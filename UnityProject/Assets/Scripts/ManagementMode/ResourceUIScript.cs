@@ -20,6 +20,7 @@ public class ResourceUIScript : MonoBehaviour {
         MoraleText = MoraleTextObject.GetComponent<TextMeshProUGUI>();
         WorshipperText = WorshipperTextObject.GetComponent<TextMeshProUGUI>();
         RewardsText = RewardsTextObject.GetComponent<TextMeshProUGUI>();
+        GameObject.Find("Canvas").GetComponent<TooltipDisplayController>().AttachTooltipToObject(MaterialTextObject.transform.parent.gameObject, "Materials");
     }
 
 	// Update is called once per frame

@@ -74,34 +74,34 @@ public class Building{
     /// <returns></returns>
     private GameObject CreateBuildingObject(BUILDING_TYPE penumBuildingType, Faction.GodType type)
     {
-        GameObject gobjBuilding = null;
+        GameObject uniBuildingGameObject = null;
         // TODO, reduce all seperate into a single create functin and pass in building type
         // Seperate needed while not all models are present.
         switch (penumBuildingType)
         {
             case BUILDING_TYPE.ALTAR:
-                gobjBuilding = CreateAltarBuildingObject(type);
+                uniBuildingGameObject = CreateAltarBuildingObject(type);
                 break;
             case BUILDING_TYPE.VILLAGE:
-                gobjBuilding = CreateVillageBuildingObject(type);
+                uniBuildingGameObject = CreateVillageBuildingObject(type);
                 break;
             case BUILDING_TYPE.MATERIAL:
-                gobjBuilding = CreateMaterialBuildingObject(type);
+                uniBuildingGameObject = CreateMaterialBuildingObject(type);
                 break;
             case BUILDING_TYPE.HOUSING:
-                gobjBuilding = CreateHousingBuildingObject(type);
+                uniBuildingGameObject = CreateHousingBuildingObject(type);
                 break;
             case BUILDING_TYPE.UPGRADE:
-                gobjBuilding = CreateUpgradeBuildingObject(type);
+                uniBuildingGameObject = CreateUpgradeBuildingObject(type);
                 break;
         }
-        if(gobjBuilding != null)
+        if(uniBuildingGameObject != null)
         {
             // Add a linerenderer for outlining, scale based on scene parmeters
-            gobjBuilding.AddComponent<LineRenderer>().positionCount = 0;
-            gobjBuilding.transform.localScale = new Vector3(BuildingRadiusSize, BuildingRadiusSize, BuildingRadiusSize);
+            uniBuildingGameObject.AddComponent<LineRenderer>().positionCount = 0;
+            uniBuildingGameObject.transform.localScale = new Vector3(BuildingRadiusSize, BuildingRadiusSize, BuildingRadiusSize);
         }
-        return gobjBuilding;
+        return uniBuildingGameObject;
     }
 
     /// <summary>

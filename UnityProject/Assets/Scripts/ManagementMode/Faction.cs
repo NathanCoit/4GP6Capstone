@@ -112,7 +112,7 @@ public class Faction
     public static List<string> GodNames = new List<string>
     {
         "Jim",
-        "Jimithy",
+        "Jimothy",
         "Tim",
         "Joe",
         "Leon",
@@ -157,7 +157,8 @@ public class Faction
         "Qiserin",
         "Qhilos",
         "Sakesis",
-        "Ezdite"
+        "Ezdite",
+        "Martavias"
     };
 
     public static List<Ability> GetGodAbilities(GodType penumGodType)

@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class Cam : MonoBehaviour {
 
-	int Boundary = 30;
+	private int Boundary = 30;
 
-	int theScreenWidth;
-	int theScreenHeight;
+	private int theScreenWidth;
+	private int theScreenHeight;
 
 	public bool rightHeld;
 	public bool leftHeld;
 	public bool downHeld;
 	public bool upHeld;
 
-	float maxFov = 60.0f;
-	float minFov = 10.0f;
+	private float maxFov = 60.0f;
+	private float minFov = 10.0f;
 	public float sensitivity = 5.0f;
     public GameObject gameManagerObject;
     private GameManager gameManagerScript;

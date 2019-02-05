@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class OnClickFunctions : MonoBehaviour {
+public class OnClickFunctions : MonoBehaviour
+{
     public GameObject GameManagerObject;
     private GameManager GameManagerScript;
 
@@ -14,15 +15,17 @@ public class OnClickFunctions : MonoBehaviour {
     public GameObject OptionsMenuPanel;
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         GameManagerScript = GameManagerObject.GetComponent<GameManager>();
         MenuPanelController = MenuPanelObject.GetComponent<MenuPanelControls>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 
     public void LoadLastSave()
     {

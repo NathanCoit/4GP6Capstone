@@ -18,15 +18,15 @@ public class BoardManager : MonoBehaviour
 
     public bool playerTurn;
 
-    private SetupManager SetupMan;
-    private EnemyManager EnemyMan;
+    private SetupManager musSetupMan;
+    private EnemyManager musEnemyMan;
 
     public List<GameObject> playerUnits; //List of player's units
     public List<GameObject> enemyUnits; //List of enemy's worshipper units
-    int numActionsLeft;
+    private int numActionsLeft;
 
     public bool endBattle = false; //used for testing purposes - to see if the battle has ended even if there are units left
-    public float playerMorale;
+    public float PlayerMorale;
     public float enemyMorale;
     public float playerFaith;
     public float enemyFaith;
@@ -40,17 +40,18 @@ public class BoardManager : MonoBehaviour
         numActionsLeft = playerUnits.Count; //since player always starts first
         playerTurn = true;
         
-        SetupMan = GameObject.FindGameObjectWithTag("SetupManager").GetComponent<SetupManager>();
+        musSetupMan = GameObject.FindGameObjectWithTag("SetupManager").GetComponent<SetupManager>();
 
         //The baddest of them all, its EnemyMan
-        EnemyMan = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
+        musEnemyMan = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
     }
     
     void Update()
     {
         //Updates Morale frequently. Involved with attack strength calculation so we need to update it frequently. Maybe. We're not really sure. But this works!
-        playerMorale = SetupMan.playerMorale;
-        enemyMorale = SetupMan.enemyMorale;
+        // TODO fix
+        PlayerMorale = musSetupMan.playerMorale;
+        enemyMorale = musSetupMan.enemyMorale;
 
         if (!HasActionsLeft()) //any actions left to take? if not, switch turns
             SwitchTurns();
@@ -58,74 +59,74 @@ public class BoardManager : MonoBehaviour
 
     public void Victory()
     {
-        SetupMan.battleResult = GameInfo.BATTLESTATUS.Victory;
-        SetupMan.finishedBattle = true;
+        musSetupMan.battleResult = GameInfo.BATTLESTATUS.Victory;
+        musSetupMan.finishedBattle = true;
     }
 
     public void Defeat()
     {
-        SetupMan.battleResult = GameInfo.BATTLESTATUS.Defeat;
-        SetupMan.finishedBattle = true;
+        musSetupMan.battleResult = GameInfo.BATTLESTATUS.Defeat;
+        musSetupMan.finishedBattle = true;
     }
 
     public void Retreat()
     {
-        SetupMan.battleResult = GameInfo.BATTLESTATUS.Retreat;
-        SetupMan.finishedBattle = true;
+        musSetupMan.battleResult = GameInfo.BATTLESTATUS.Retreat;
+        musSetupMan.finishedBattle = true;
 
-        int worshipersLeft = GetRemainingWorshipers(true);
-        SetupMan.playerWorshiperCount = worshipersLeft; //incorrect value atm
+        int worshipersLeft = GetRemainingWorshippers(true);
+        musSetupMan.playerWorshiperCount = worshipersLeft; //incorrect value atm
 
     }
 
-    public int GetRemainingWorshipers(bool player)
+    public int GetRemainingWorshippers(bool player)
     {
-        int worshipers = 0;
+        int worshippers = 0;
         if (player)
         {
             foreach (GameObject i in playerUnits)
             {
-                worshipers += i.GetComponent<Units>().getWorshiperCount();
+                worshippers += i.GetComponent<Units>().getWorshiperCount();
             }
         }
         else //need to calculate enemy worshiper count if player decided to kill enemy god first/early, however not implemented yet
         {
             foreach (GameObject i in enemyUnits)
             {
-                worshipers += i.GetComponent<Units>().getWorshiperCount();
+                worshippers += i.GetComponent<Units>().getWorshiperCount();
             }
         }
-        return worshipers;
+        return worshippers;
     }
 
-    public float getPlayerMorale()
+    public float GetPlayerMorale()
     {
-        return playerMorale;
+        return PlayerMorale;
     }
 
-    public float getEnemyMorale()
+    public float GetEnemyMorale()
     {
         return enemyMorale;
     }
 
-    public float getPlayerFaith()
+    public float GetPlayerFaith()
     {
         return playerFaith;
     }
 
-    public float getEnemyFaith()
+    public float GetEnemyFaith()
     {
         return enemyFaith;
     }
 
-    public float getFaithCap()
+    public float GetFaithCap()
     {
         return faithCap;
     }
 
     public void setPlayerMorale(float m)
     {
-        playerMorale = m;
+        PlayerMorale = m;
     }
 
     public void setEnemyMorale(float m)
@@ -140,7 +141,7 @@ public class BoardManager : MonoBehaviour
             foreach (GameObject i in enemyUnits) //allow each of enemy units to act
                 i.GetComponent<Units>().AllowAct();
             numActionsLeft = enemyUnits.Count;
-            StartCoroutine(EnemyMan.EnemyActions(0.5f));
+            StartCoroutine(musEnemyMan.EnemyActions(0.5f));
         }
         else
         { //it was the enemy's turn

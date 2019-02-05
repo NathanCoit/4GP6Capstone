@@ -67,7 +67,7 @@ public class Units : MonoBehaviour {
     {
         //Updating morale every frame becuase it's very broken on occasion.
         if (isPlayer)
-            morale = BoardMan.playerMorale;
+            morale = BoardMan.PlayerMorale;
         else
             morale = BoardMan.enemyMorale;
 

@@ -33,7 +33,7 @@ public class SetupManager : MonoBehaviour
     public bool finishedBattle = false;
     public GameInfo.BATTLESTATUS battleResult; //0 for victory, 1 for defeat, 2 for retreat
 
-    private double worshiperPercentage = 0.80;
+    private readonly double worshipperPercentage = 0.80;
 
 
     //NOTE THIS CLASS IS WHERE WE WILL GET INFO FROM MANAGEMENT MODE
@@ -48,17 +48,18 @@ public class SetupManager : MonoBehaviour
             gameInfo = GameInfoObject.GetComponent<GameInfo>();
             //Found a game object, load values
             //Since only 80% of the worshippers go to war
-            double a = gameInfo.PlayerFaction.WorshipperCount * worshiperPercentage;
+            double a = gameInfo.PlayerFaction.WorshipperCount * worshipperPercentage;
             this.playerWorshiperCount = (int)a;
 
             //Since only 80% of the worshippers go to war
-            double b = gameInfo.EnemyFaction.WorshipperCount * worshiperPercentage;
+            double b = gameInfo.EnemyFaction.WorshipperCount * worshipperPercentage;
             //and then truncate it so you don't have a partial worshiper lol
             this.enemyWorshiperCount = (int)b;
 
             playerMorale = gameInfo.PlayerFaction.Morale;
             enemyMorale = gameInfo.EnemyFaction.Morale;
         }
+#if DEBUG
         else
         {
             Debug.Log("No gameInfo object found, setting a test scene for you boyo");
@@ -101,6 +102,7 @@ public class SetupManager : MonoBehaviour
             //Call start setup stuff
             Start();
         }
+#endif
     }
 
     void Update()
@@ -122,17 +124,17 @@ public class SetupManager : MonoBehaviour
         if (finishedBattle)
         {
             //get remaining worshiper count for both sides
-            int playWorLeft = BoardMan.GetRemainingWorshipers(true);
-            int eneWorLeft = BoardMan.GetRemainingWorshipers(false);
+            int playWorLeft = BoardMan.GetRemainingWorshippers(true);
+            int eneWorLeft = BoardMan.GetRemainingWorshippers(false);
 
             //Update all of the gameinfo variables:
 
             //Take original amount of worshipers and add how many worshipers are left after the war
-            this.gameInfo.PlayerFaction.WorshipperCount = playWorLeft + System.Convert.ToInt32(this.gameInfo.PlayerFaction.WorshipperCount * (1 - worshiperPercentage));
-            this.gameInfo.EnemyFaction.WorshipperCount = eneWorLeft + System.Convert.ToInt32(this.gameInfo.EnemyFaction.WorshipperCount * (1 - worshiperPercentage));
+            this.gameInfo.PlayerFaction.WorshipperCount = playWorLeft + System.Convert.ToInt32(this.gameInfo.PlayerFaction.WorshipperCount * (1 - worshipperPercentage));
+            this.gameInfo.EnemyFaction.WorshipperCount = eneWorLeft + System.Convert.ToInt32(this.gameInfo.EnemyFaction.WorshipperCount * (1 - worshipperPercentage));
 
-            this.gameInfo.PlayerFaction.Morale = BoardMan.getPlayerMorale();
-            this.gameInfo.EnemyFaction.Morale = BoardMan.getEnemyMorale();
+            this.gameInfo.PlayerFaction.Morale = BoardMan.GetPlayerMorale();
+            this.gameInfo.EnemyFaction.Morale = BoardMan.GetEnemyMorale();
 
             gameInfo.FinishedBattle = true;
 
@@ -140,7 +142,7 @@ public class SetupManager : MonoBehaviour
 
             //Missing:
             // Change in Player's abilities? (Do they gain them here?)
-            // TO DO
+            // TODO
 
             this.finishedBattle = false; //to avoid decrementing things FOREVER
 

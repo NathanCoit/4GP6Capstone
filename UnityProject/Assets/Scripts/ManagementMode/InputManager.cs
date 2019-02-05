@@ -5,20 +5,23 @@ using UnityEngine;
 /// <summary>
 /// Class for tracking keyboard inputs from the user in Management mode.
 /// </summary>
-public class InputManager : MonoBehaviour {
+public class InputManager : MonoBehaviour
+{
     public GameObject GamemanagerObject;
     private GameManager GameManagerScript;
     private HotKeyManager hotKeyManager = new HotKeyManager();
     private KeyCode CurrentKeyDown = KeyCode.None;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         GameManagerScript = GamemanagerObject.GetComponent<GameManager>();
         hotKeyManager.LoadHotkeyProfile();
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
         // Check for keybaord inputs depending on current gamestate
         switch (GameManagerScript.CurrentMenuState)
         {
@@ -60,7 +63,7 @@ public class InputManager : MonoBehaviour {
     /// </summary>
     private void CheckPausedMenuStateInputs()
     {
-        
+
         if (Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"])
         && CurrentKeyDown != hotKeyManager.HotKeys["EscapeKeyCode"])
         {
@@ -96,7 +99,7 @@ public class InputManager : MonoBehaviour {
         {
             GameManagerScript.EnterTierRewardsMenuState();
         }
-        else if(Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"]) 
+        else if (Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"])
             && CurrentKeyDown != hotKeyManager.HotKeys["EscapeKeyCode"])
         {
             CurrentKeyDown = hotKeyManager.HotKeys["EscapeKeyCode"];

@@ -31,19 +31,7 @@ public class TerrainMap
         gobjMap.AddComponent<LineRenderer>().positionCount = 0;
         gobjMap.GetComponent<Renderer>().material.mainTexture = mapTexture;
         gobjMap.GetComponent<Renderer>().material.SetTextureScale("_MainTex", new Vector2(40, 40));
-        ////Create map
-        //GameObject gobjMap = new GameObject("GameMap");
-        //TerrainData _TerrainData = new TerrainData();
-        //_TerrainData.size = new Vector3(10, 10, 10);
-        //_TerrainData.heightmapResolution = 512;
-        //_TerrainData.baseMapResolution = 1024;
-        //_TerrainData.SetDetailResolution(1024, 16);
 
-        //TerrainCollider _TerrainCollider = gobjMap.AddComponent<TerrainCollider>();
-        //Terrain _Terrain2 = gobjMap.AddComponent<Terrain>();
-
-        //_TerrainCollider.terrainData = _TerrainData;
-        //_Terrain2.terrainData = _TerrainData;
 
         return gobjMap;
     }

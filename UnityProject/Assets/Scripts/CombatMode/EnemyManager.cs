@@ -110,7 +110,7 @@ public class EnemyManager : MonoBehaviour {
             if (closestTile != null)
             {
                 //Woo for using function we made for testing
-                closestTile.GetComponent<Movable>().testClick();
+                closestTile.GetComponent<Movable>().TestClick();
                 closestTile.GetComponent<Movable>().OnMouseOver();
                 yield return new WaitForSeconds(delay);
             }

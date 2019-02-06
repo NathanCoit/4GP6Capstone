@@ -155,7 +155,7 @@ public class Units : MonoBehaviour {
     }
 
     //For spoofing clicks for testing
-    public void testClick()
+    public void TestClick()
     {
         autoClick = true;
     }

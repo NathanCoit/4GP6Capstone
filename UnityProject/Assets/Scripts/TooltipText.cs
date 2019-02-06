@@ -29,7 +29,7 @@ public class TooltipText : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         {
             TooltipGameObject.SetActive(true);
             TooltipTextComponent.text = Tooltip;
-            TooltipGameObject.transform.position = Input.mousePosition + OffsetVector;
+            TooltipGameObject.transform.position = gameObject.transform.position + OffsetVector;
             mintFrameCounter = 0;
             mblnEntered = false;
         }

@@ -2004,6 +2004,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TooltipTextGameObject: {fileID: 573089457}
   TooltipTextComponent: {fileID: 573089456}
+  OffsetVector: {x: 50, y: -40, z: 0}
 --- !u!1 &339143260
 GameObject:
   m_ObjectHideFlags: 0
@@ -2397,6 +2398,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TooltipTextGameObject: {fileID: 5842812008702065311}
   TooltipTextComponent: {fileID: 4189747885692026611}
+  OffsetVector: {x: 50, y: -60, z: 0}
 --- !u!114 &412790388
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10008,6 +10010,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354843410105364890, guid: 7db44b4c894db814da902c66c9515399,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354843410105364890, guid: 7db44b4c894db814da902c66c9515399,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354843410105364890, guid: 7db44b4c894db814da902c66c9515399,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.0000076293945
       objectReference: {fileID: 0}
     - target: {fileID: 7576206749878223453, guid: 7db44b4c894db814da902c66c9515399,
         type: 3}

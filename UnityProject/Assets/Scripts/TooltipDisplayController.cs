@@ -13,23 +13,13 @@ public class TooltipDisplayController : MonoBehaviour
     public GameObject TooltipTextGameObject;
     public TextMeshProUGUI TooltipTextComponent;
     // Offset of tooltip from mouse
-    private Vector3 muniOffsetVector = new Vector3(50, -50, 0);
+    public Vector3 OffsetVector = new Vector3(50, -25, 0);
     // Start is called before the first frame update
     void Awake()
     {
         // Find the tooltip text object
         TooltipTextComponent.text = string.Empty;
         TooltipTextGameObject.SetActive(false);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if(!string.IsNullOrEmpty(TooltipTextComponent.text))
-        {
-            // tooltip text exists, ensure tooltip follows mouse
-            TooltipTextGameObject.transform.position = Input.mousePosition + muniOffsetVector;
-        }
     }
 
     /// <summary>
@@ -43,6 +33,6 @@ public class TooltipDisplayController : MonoBehaviour
         musTooltip.Tooltip = pstrTooltip;
         musTooltip.TooltipTextComponent = TooltipTextComponent;
         musTooltip.TooltipGameObject = TooltipTextGameObject;
-        musTooltip.OffsetVector = muniOffsetVector;
+        musTooltip.OffsetVector = OffsetVector;
     }
 }

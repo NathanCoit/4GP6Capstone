@@ -13,6 +13,7 @@ public class OnClickFunctions : MonoBehaviour
 
     public GameObject PausedMenuPanel;
     public GameObject OptionsMenuPanel;
+    public ConfirmationBoxController ConfirmationBoxScript;
 
     // Use this for initialization
     void Start()
@@ -57,7 +58,7 @@ public class OnClickFunctions : MonoBehaviour
 
     public void SaveGame()
     {
-        GameManagerScript.SaveGame();
+        ConfirmationBoxScript.AttachCallbackToConfirmationBox(GameManagerScript.SaveGame, "Do you want to save?");
     }
 
     public void BuyMiners()

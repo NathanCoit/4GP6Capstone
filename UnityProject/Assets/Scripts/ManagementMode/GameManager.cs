@@ -93,7 +93,8 @@ public class GameManager : MonoBehaviour
         HotKeyManager = new HotKeyManager();
         Building.BuildingRadiusSize = BuildingRadius;
         InitializeGameInfo();
-        if(!GameInfo.NewGame)
+        Cursor.lockState = CursorLockMode.Confined;
+        if (!GameInfo.NewGame)
         {
             // Not a new game, either returning from combat mode or loading a save
             StartFromSaveState();
@@ -117,6 +118,7 @@ public class GameManager : MonoBehaviour
             musFaction.SetHidden(true);
         }
         GameMap.DrawFactionArea(PlayerFaction);
+        
     }
 
     /// <summary>

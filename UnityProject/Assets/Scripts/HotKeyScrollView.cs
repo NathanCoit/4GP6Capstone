@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -88,7 +90,7 @@ public class HotKeyScrollView : MonoBehaviour {
             uniHotKeySettorGameObject = (GameObject)Instantiate(HotKeySettorPrefab);
             // Remove KeyCode from label
             // TODO add spaces before capitol letters
-            uniHotKeySettorGameObject.GetComponentInChildren<Text>().text = kvalHotKeyCode.Key.Substring(0, kvalHotKeyCode.Key.Length - 7);
+            uniHotKeySettorGameObject.GetComponentInChildren<Text>().text = AddSpacesToSentence(kvalHotKeyCode.Key.Substring(0, kvalHotKeyCode.Key.Length - 7));
             uniHotKeySettorGameObject.GetComponentInChildren<InputField>().text = kvalHotKeyCode.Value.ToString();
             uniEventTrigger = uniHotKeySettorGameObject.GetComponentInChildren<InputField>().gameObject.GetComponent<EventTrigger>();
             unitEventTriggerEntry = new EventTrigger.Entry
@@ -139,5 +141,16 @@ public class HotKeyScrollView : MonoBehaviour {
             mdictHotKeySettorObjects[pstrKey].GetComponentInChildren<InputField>().colors = uniColorBlock;
             muniSelectedHotKeySettorObject = mdictHotKeySettorObjects[pstrKey];
         }
+    }
+    /// <summary>
+    /// Add a space before capital letters for nicely printing labels
+    /// See https://stackoverflow.com/questions/272633/add-spaces-before-capital-letters
+    /// </summary>
+    /// <param name="pstrBadLabel"></param>
+    /// <returns></returns>
+    private string AddSpacesToSentence(string pstrBadLabel)
+    {
+        // Regexs are weird
+        return  Regex.Replace(pstrBadLabel, @"((?<=\p{Ll})\p{Lu})|((?!\A)\p{Lu}(?>\p{Ll}))", " $0");
     }
 }

@@ -41,13 +41,11 @@ public class TooltipText : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     /// <param name="eventData"></param>
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log("Entered: " + Tooltip);
         mblnEntered = true;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        Debug.Log("Exited: " + Tooltip);
         mblnEntered = false;
         mintFrameCounter = 0;
         TooltipTextComponent.text = string.Empty;

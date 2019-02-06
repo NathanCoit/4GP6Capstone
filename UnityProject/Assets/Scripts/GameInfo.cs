@@ -71,6 +71,7 @@ public class GameInfo : MonoBehaviour {
     public int EnemyChallengeTimer;
     public float[] MaterialMultipliers;
     public float[] WorshipperMultipliers;
+    public InformationBoxDisplay.TutorialFlag TutorialFlag;
 
     // Use this for initialization
     void Start () {

@@ -83,6 +83,7 @@ public class SaveAndSettingsHelper
             pmusGameInfo.EnemyChallengeTimer = musLoadedSaveData.EnemyChallengeTimer;
             pmusGameInfo.WorshipperMultipliers = musLoadedSaveData.WorshipperMultipliers;
             pmusGameInfo.MaterialMultipliers = musLoadedSaveData.MaterialMultipliers;
+            pmusGameInfo.TutorialFlag = musLoadedSaveData.TutorialFlag;
             pmusGameInfo.FromSave = true;
             pmusGameInfo.NewGame = false;
             SceneManager.LoadScene("UnderGodScene");

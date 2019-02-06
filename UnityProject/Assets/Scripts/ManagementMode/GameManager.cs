@@ -52,6 +52,7 @@ public class GameManager : MonoBehaviour
     public GameObject GameOverPanel;
     public GameObject VictoryPanel;
     public float PlayerMoraleCap;
+    public InformationBoxDisplay InformationBoxController;
 
     // Public accessor variables, only to be accessed by other scripts, not modified
     // Mainly for testing purposes
@@ -81,6 +82,7 @@ public class GameManager : MonoBehaviour
     private int mintCurrentTimer = 0;
     private ResourceUIScript mmusResourceUIController;
     private List<TierReward> marrPlayerRewardTree;
+    private InformationBoxDisplay.TutorialFlag menumTutorialFlag = 0;
 
     /// <summary>
     /// Default function run by unity on scene start up
@@ -266,30 +268,6 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-    /// <summary>
-    /// Method for unselecting a building from outside scripts
-    /// </summary>
-    public void UnselectBuilding()
-    {
-        SelectedBuilding.ToggleBuildingOutlines(false);
-        SelectedBuilding = null;
-    }
-
-    /// <summary>
-    /// Clear the currently buffered building
-    /// </summary>
-    /// <param name="pblnDestroyBuiling">Optional parameter, if true will also destroy the currently buffered building object</param>
-    public void ClearBufferedBuilding(bool pblnDestroyBuiling = false)
-    {
-        if (BufferedBuilding != null)
-        {
-            if(pblnDestroyBuiling)
-            {
-                BufferedBuilding.Destroy();
-            }
-            BufferedBuilding = null;
-        }
-    }
 
     /// <summary>
     /// Load the game from a save state that is within the GameInfo object
@@ -316,6 +294,7 @@ public class GameManager : MonoBehaviour
             Building.LoadBuildingResources(arrGodTypes);
         }
         CurrentTier = GameInfo.CurrentTier;
+        menumTutorialFlag = GameInfo.TutorialFlag;
         PlayerMoraleCap = GameInfo.PlayerMoraleCap;
         marrWorshipperMultipliers = new List<float>(GameInfo.WorshipperMultipliers);
         marrMaterialMultipliers = new List<float>(GameInfo.MaterialMultipliers);
@@ -503,6 +482,7 @@ public class GameManager : MonoBehaviour
         {
             SaveGame();
             mblnNewGame = false;
+            CheckForAndDisplayTutorialBox(InformationBoxDisplay.TutorialFlag.NewGame);
         }
         if(mblnVictory || mblnGameOver)
         {
@@ -636,6 +616,11 @@ public class GameManager : MonoBehaviour
                     {
                         PlayerFaction.MaterialCount -= BufferedBuilding.BuildingCost;
                         EnterBuildMenuState();
+                        // Tutorial for first mine, how to buy miners
+                        if(BufferedBuilding.BuildingType == Building.BUILDING_TYPE.MATERIAL)
+                        {
+                            CheckForAndDisplayTutorialBox(InformationBoxDisplay.TutorialFlag.FirstMine);
+                        }
                     }
                     BufferedBuilding = null;
                 }
@@ -744,7 +729,8 @@ public class GameManager : MonoBehaviour
                             if(musCurrentFaction.MaterialCount > musTempBuilding.CalculateBuildingUpgradeCost() * 2)
                             {
                                 musCurrentFaction.MaterialCount -= musTempBuilding.CalculateBuildingUpgradeCost();
-                                musTempBuilding.UpgradeBuilding();
+                                musTempBuilding.UpgradeBuilding(false);
+                                musTempBuilding.BuildingObject.SetActive(false);
                             }
                         }
                         else
@@ -1222,6 +1208,7 @@ public class GameManager : MonoBehaviour
         GameInfo.FinishedBattle = false;
         GameInfo.EnemyChallengeTimer = EnemyChallengeTimer;
         GameInfo.EnemyFaction = new GameInfo.SavedFaction();
+        GameInfo.TutorialFlag = menumTutorialFlag;
         if(SaveAndSettingsHelper.SaveGame(Application.persistentDataPath + "/SaveFiles", GameInfo))
         {
             // TODO Display game saved
@@ -1250,6 +1237,39 @@ public class GameManager : MonoBehaviour
     public void EnterSettingsMenuState()
     {
         CurrentMenuState = MENUSTATE.Settings_Menu_State;
+    }
+
+    private void CheckForAndDisplayTutorialBox(InformationBoxDisplay.TutorialFlag penumFlagToCheckFor)
+    {
+        if(menumTutorialFlag == penumFlagToCheckFor)
+        {
+            InformationBoxController.DisplayTutorialBox(menumTutorialFlag++);
+        }
+    }
+
+    /// <summary>
+    /// Method for unselecting a building from outside scripts
+    /// </summary>
+    public void UnselectBuilding()
+    {
+        SelectedBuilding.ToggleBuildingOutlines(false);
+        SelectedBuilding = null;
+    }
+
+    /// <summary>
+    /// Clear the currently buffered building
+    /// </summary>
+    /// <param name="pblnDestroyBuiling">Optional parameter, if true will also destroy the currently buffered building object</param>
+    public void ClearBufferedBuilding(bool pblnDestroyBuiling = false)
+    {
+        if (BufferedBuilding != null)
+        {
+            if (pblnDestroyBuiling)
+            {
+                BufferedBuilding.Destroy();
+            }
+            BufferedBuilding = null;
+        }
     }
 }
 

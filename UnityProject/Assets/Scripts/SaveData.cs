@@ -27,4 +27,5 @@ public class SaveData
     public int EnemyChallengeTimer;
     public float[] MaterialMultipliers;
     public float[] WorshipperMultipliers;
+    public InformationBoxDisplay.TutorialFlag TutorialFlag;
 }

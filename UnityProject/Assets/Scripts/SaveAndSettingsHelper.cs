@@ -18,7 +18,7 @@ public class SaveAndSettingsHelper
         uniAudioSlider.minValue = 0;
         uniAudioSlider.maxValue = 1;
         uniAudioSlider.value = PlayerPrefs.GetFloat("MasterVolume", 0.5f);
-        GameObject.Find("GraphicsDropDownMenu").GetComponent<Dropdown>().value = PlayerPrefs.GetInt("GraphicsSetting");
+        GameObject.Find("GraphicsDropDownMenu").GetComponent<Dropdown>().value = PlayerPrefs.GetInt("GraphicsSetting", 0);
         GameObject.Find("HotKeySettors").GetComponent<HotKeyScrollView>().CreateHotKeySettors();
     }
 
@@ -204,8 +204,8 @@ public class SaveAndSettingsHelper
         Dictionary<string, KeyCode> dictChangedHotkeys = new Dictionary<string, KeyCode>(GameObject.Find("HotKeySettors").GetComponent<HotKeyScrollView>().SettingsHotkeyManager.HotKeys);
 
         // Get saved settings
-        float fSavedVolume = PlayerPrefs.GetFloat("MasterVolume");
-        int intSavedGraphicsSetting = PlayerPrefs.GetInt("GraphicsSetting");
+        float fSavedVolume = PlayerPrefs.GetFloat("MasterVolume", 0.5f);
+        int intSavedGraphicsSetting = PlayerPrefs.GetInt("GraphicsSetting", 0);
         HotKeyManager musHotKeyManager = new HotKeyManager();
         musHotKeyManager.LoadHotkeyProfile();
         Dictionary<string, KeyCode> dictSavedHotkeys = musHotKeyManager.HotKeys;

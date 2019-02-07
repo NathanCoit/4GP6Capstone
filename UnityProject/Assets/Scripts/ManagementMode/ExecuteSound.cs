@@ -4,18 +4,25 @@ using UnityEngine;
 
 public class ExecuteSound : MonoBehaviour
 {
+    [System.Serializable]
+    public struct NamedSound
+    {
+        public string Name;
+        public AudioClip Sound;
+    }
 
-    public AudioClip NotMaterials;
-    public AudioClip PlaceBuilding;
-    public AudioClip StartMusic;
+    public NamedSound[] Sounds;
+    private Dictionary<string, AudioClip> sounddict = new Dictionary<string, AudioClip>();
 
     public AudioSource musicSource;
 
     // Use this for initialization
     void Start()
     {
-        musicSource.clip = StartMusic;
-        musicSource.Play();
+        foreach (NamedSound sound in Sounds)
+        {
+            sounddict.Add(sound.Name, sound.Sound);
+        }
     }
 
     // Update is called once per frame
@@ -23,20 +30,12 @@ public class ExecuteSound : MonoBehaviour
     {
     }
 
-
     public void PlaySound(string soundName)
     {
-        switch (soundName)
+        if (sounddict.ContainsKey(soundName))
         {
-            case "NotMaterials":
-                musicSource.clip = NotMaterials;
-                musicSource.Play();
-                break;
-            case "PlaceBuilding":
-                musicSource.clip = PlaceBuilding;
-                musicSource.Play();
-                break;
-
+            musicSource.clip = sounddict[soundName];
+            musicSource.Play();
         }
     }
 

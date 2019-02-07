@@ -2680,7 +2680,7 @@ MonoBehaviour:
   CurrentTier: 0
   TierDifficultyIncrease: 10
   EnemyChallengeTimer: 300
-  BuildingRadius: 2
+  BuildingRadius: 4
   PausedMenuPanel: {fileID: 1860688481}
   MenuControlObject: {fileID: 424929391}
   OptionsMenuPanel: {fileID: 139222487}
@@ -4629,7 +4629,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1061140097}
   - component: {fileID: 1061140096}
-  - component: {fileID: 1061140095}
   m_Layer: 0
   m_Name: StartMusicObject
   m_TagString: Untagged
@@ -4637,22 +4636,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1061140095
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1061140094}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b338bc0e09a3145329c49ffbc55775a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NotMaterials: {fileID: 0}
-  PlaceBuilding: {fileID: 0}
-  StartMusic: {fileID: 8300000, guid: 0bdace44e96bd48e7bad9c1251153373, type: 3}
-  musicSource: {fileID: 1061140096}
 --- !u!82 &1061140096
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4663,7 +4646,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 0bdace44e96bd48e7bad9c1251153373, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.1
   m_Pitch: 1
@@ -5457,9 +5440,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b338bc0e09a3145329c49ffbc55775a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NotMaterials: {fileID: 8300000, guid: a4d29a0deeaaa4f109f69fff3308bc39, type: 3}
-  PlaceBuilding: {fileID: 8300000, guid: 2bb711a5d15944fac926c451cb73c041, type: 3}
-  StartMusic: {fileID: 0}
+  Sounds:
+  - Name: PlaceBuilding
+    Sound: {fileID: 8300000, guid: 2bb711a5d15944fac926c451cb73c041, type: 3}
+  - Name: NotMaterials
+    Sound: {fileID: 8300000, guid: a4d29a0deeaaa4f109f69fff3308bc39, type: 3}
   musicSource: {fileID: 1207449815}
 --- !u!82 &1207449815
 AudioSource:

@@ -14,9 +14,9 @@ public class Cam : MonoBehaviour {
 	public bool downHeld;
 	public bool upHeld;
 
-	private float maxFov = 60.0f;
+	private float maxFov = 80.0f;
 	private float minFov = 10.0f;
-	public float sensitivity = 5.0f;
+	public float sensitivity = 7.0f;
     public GameObject gameManagerObject;
     private GameManager gameManagerScript;
     public bool CameraMovementEnabled = true;

@@ -1061,6 +1061,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 292161859}
   m_CullTransparentMesh: 0
+--- !u!114 &324979851 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7448475038324450117, guid: 68bb6650f41143d49b08acb52b477a5d,
+    type: 3}
+  m_PrefabInstance: {fileID: 1466610883}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &364485336
 GameObject:
   m_ObjectHideFlags: 0
@@ -2774,6 +2786,7 @@ MonoBehaviour:
   SaveButtonPrefab: {fileID: 1171056903718002, guid: f6379ec1e01f43f48a5c31bce801ed98,
     type: 3}
   ConfirmationBoxScript: {fileID: 1158920150}
+  CloseOptionsMenuButton: {fileID: 0}
 --- !u!114 &1158920150
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2789,6 +2802,7 @@ MonoBehaviour:
   ConfirmationBoxGameObject: {fileID: 1466610887}
   ConfirmationBoxText: {fileID: 1466610886}
   ConfirmationBoxYesButtonComponent: {fileID: 1466610884}
+  ConfirmationBoxNoButtonComponent: {fileID: 324979851}
 --- !u!1 &1213406897
 GameObject:
   m_ObjectHideFlags: 0
@@ -3095,6 +3109,11 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1158920149}
+    - target: {fileID: 114175933170076418, guid: c2a96bf0d70001d43aeb6a439141a1f1,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: CloseOptionsMenu
+      objectReference: {fileID: 0}
     - target: {fileID: 114060075722255706, guid: c2a96bf0d70001d43aeb6a439141a1f1,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size

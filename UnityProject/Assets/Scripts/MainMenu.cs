@@ -95,6 +95,8 @@ public class MainMenu : MonoBehaviour {
     public void OpenNewGameOptions()
     {
         DisableAllPanels();
+        InputField uniGodNameInputFiled = GodNameInputFieldObject.GetComponent<InputField>();
+        uniGodNameInputFiled.text = string.Empty;
         NewGameOptionsPanel.SetActive(true);
     }
 

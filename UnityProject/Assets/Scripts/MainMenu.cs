@@ -270,32 +270,7 @@ public class MainMenu : MonoBehaviour {
     /// </summary>
     public void CloseOptionsMenu()
     {
-        bool blnUnsavedChanges = false;
-        // Get options menu settings
-        float fChangedVolume = GameObject.Find("AudioSliderObject").GetComponent<Slider>().value;
-        int intChangedGraphicsSetting = GameObject.Find("GraphicsDropDownMenu").GetComponent<Dropdown>().value;
-        Dictionary<string, KeyCode> dictChangedHotkeys = new Dictionary<string, KeyCode>(GameObject.Find("HotKeySettors").GetComponent<HotKeyScrollView>().SettingsHotkeyManager.HotKeys);
-
-        // Get saved settings
-        float fSavedVolume = PlayerPrefs.GetFloat("MasterVolume");
-        int intSavedGraphicsSetting = PlayerPrefs.GetInt("GraphicsSetting");
-        HotKeyManager musHotKeyManager = new HotKeyManager();
-        musHotKeyManager.LoadHotkeyProfile();
-        Dictionary<string, KeyCode> dictSavedHotkeys = musHotKeyManager.HotKeys;
-
-        // Compare
-        if(!fChangedVolume.Equals(fSavedVolume)
-            || intChangedGraphicsSetting != intSavedGraphicsSetting)
-        {
-            blnUnsavedChanges = true;
-        }
-        foreach(KeyValuePair<string, KeyCode> kvalHotkey in dictChangedHotkeys)
-        {
-            if(kvalHotkey.Value != dictSavedHotkeys[kvalHotkey.Key])
-            {
-                blnUnsavedChanges = true;
-            }
-        }
+        bool blnUnsavedChanges = SaveAndSettingsHelper.CheckForChangesInOptionsMenu();
 
         if(blnUnsavedChanges)
         {

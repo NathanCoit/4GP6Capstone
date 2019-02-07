@@ -87,7 +87,18 @@ public class InputManager : MonoBehaviour
         && CurrentKeyDown != hotKeyManager.HotKeys["EscapeKeyCode"])
         {
             CurrentKeyDown = hotKeyManager.HotKeys["EscapeKeyCode"];
-            GameManagerScript.ReturnToPauseMenu();
+            if(SaveAndSettingsHelper.CheckForChangesInOptionsMenu())
+            {
+                ConfirmationBoxScript.AttachCallbackToConfirmationBox(
+                GameManagerScript.ReturnToPauseMenu,
+                "Unsaved changes will be lost. Are you sure you don't want to save?",
+                "Don't Save",
+                "Cancel");
+            }
+            else
+            {
+                GameManagerScript.ReturnToPauseMenu();
+            }
         }
     }
 

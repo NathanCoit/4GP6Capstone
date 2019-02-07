@@ -44,6 +44,7 @@ public class OnClickFunctions : MonoBehaviour
         GameManagerScript.HotKeyManager.LoadHotkeyProfile();
         MenuPanelController.SetButtonText();
         SaveAndSettingsHelper.ApplyGameSettings();
+        GameManagerScript.ReturnToPauseMenu();
     }
 
     public void QuitToMenu()
@@ -163,6 +164,22 @@ public class OnClickFunctions : MonoBehaviour
             return;
         }
         GameManagerScript.PauseGame();
+    }
+
+    public void OptionsMenuCancelButtonClicked()
+    {
+        if (SaveAndSettingsHelper.CheckForChangesInOptionsMenu())
+        {
+            ConfirmationBoxScript.AttachCallbackToConfirmationBox(
+            GameManagerScript.ReturnToPauseMenu,
+            "Unsaved changes will be lost. Are you sure you don't want to save?",
+            "Don't Save",
+            "Cancel");
+        }
+        else
+        {
+            GameManagerScript.ReturnToPauseMenu();
+        }
     }
 
     private bool CheckIfPaused()

@@ -19,6 +19,7 @@ public class MainMenu : MonoBehaviour {
     public GameObject OptionsPanel;
     public GameObject AudioSliderObject;
     public UnityEngine.Object SaveButtonPrefab;
+    public ConfirmationBoxController ConfirmationBoxScript;
 
     private string mstrGameSaveFileDirectory;
     private List<GameObject> marrButtonObjects;
@@ -177,7 +178,13 @@ public class MainMenu : MonoBehaviour {
             untButtonComponent = uniButtonGameObject.GetComponent<Button>();
             uniButtonTextComponent = uniButtonGameObject.GetComponentInChildren<Text>();
             untButtonComponent.onClick.AddListener(() => LoadSaveGame(sysFileInfo.FullName));
-            uniButtonGameObject.transform.GetChild(1).gameObject.GetComponent<Button>().onClick.AddListener(() => DeleteSaveFile(sysFileInfo.FullName));
+            // Add callback to delete save file to callback of confirmation box
+            // Callbacks within Callbacks, we javascript now
+            uniButtonGameObject.transform.GetChild(1).gameObject.GetComponent<Button>().onClick.AddListener(
+                () => ConfirmationBoxScript.AttachCallbackToConfirmationBox( 
+                    () => DeleteSaveFile(sysFileInfo.FullName),
+                    "Are you sure you want do delete this file?",
+                    "Delete"));
 
             musLoadedSaveData = SaveAndSettingsHelper.LoadSaveData(sysFileInfo.FullName);
             strSaveFileInfoText =

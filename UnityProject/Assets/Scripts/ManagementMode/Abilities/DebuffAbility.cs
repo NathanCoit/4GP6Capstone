@@ -3,28 +3,38 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DebuffAbility : Ability{
-    public DebuffType debuffType;
-    public int debuffAmount;
-    public float debuffScalingAmount;
+    public DEBUFFTYPE DebuffType;
+    public int DebuffAmount;
+    public float DebuffScalingAmount;
     public bool SingleTarget;
     public int EffectDuration;
 
+    /// <summary>
+    /// Override constructor for loading debuff abilties
+    /// </summary>
+    /// <param name="pstrAbilityName"></param>
     public DebuffAbility(string pstrAbilityName) :
         base(pstrAbilityName)
     {
     }
 
+    /// <summary>
+    /// Override function for loading debuff abilites.
+    /// Set properties of the debuff abiltiy.
+    /// </summary>
+    /// <param name="pstrAbilityName"></param>
+    /// <returns></returns>
     protected override bool LoadAbility(string pstrAbilityName)
     {
-        bool AbilityFound = true;
-        Type = AbilityType.Buff;
+        bool blnAbilityFound = true;
+        AbiltyType = ABILITYTYPE.Buff;
         switch (pstrAbilityName.ToLower().Replace(" ", string.Empty))
         {
             case "spreadspores":
                 AbilityDescription = "Spread the great word of the mushroom god, through deadly posionous spores.";
-                debuffType = DebuffType.Poison;
-                debuffAmount = 50;
-                debuffScalingAmount = 0.5f;
+                DebuffType = DEBUFFTYPE.Poison;
+                DebuffAmount = 50;
+                DebuffScalingAmount = 0.5f;
                 SingleTarget = false;
                 Range = 3;
                 EffectDuration = 2;
@@ -32,9 +42,9 @@ public class DebuffAbility : Ability{
                 break;
             case "forkflash":
                 AbilityDescription = "Spread the great word of the fork god, through flashy forks.";
-                debuffType = DebuffType.Blind;
-                debuffAmount = 50;
-                debuffScalingAmount = 0.5f;
+                DebuffType = DEBUFFTYPE.Blind;
+                DebuffAmount = 50;
+                DebuffScalingAmount = 0.5f;
                 SingleTarget = false;
                 Range = 3;
                 EffectDuration = 2;
@@ -42,9 +52,9 @@ public class DebuffAbility : Ability{
                 break;
             case "coloursplash":
                 AbilityDescription = "Spread the great word of the paint god, through deadly paint.";
-                debuffType = DebuffType.Slow;
-                debuffAmount = 50;
-                debuffScalingAmount = 0.5f;
+                DebuffType = DEBUFFTYPE.Slow;
+                DebuffAmount = 50;
+                DebuffScalingAmount = 0.5f;
                 SingleTarget = false;
                 Range = 3;
                 EffectDuration = 2;
@@ -52,9 +62,9 @@ public class DebuffAbility : Ability{
                 break;
             case "brokenankles":
                 AbilityDescription = "Spread the great word of the shoe god, through deadly ankle.";
-                debuffType = DebuffType.Slow;
-                debuffAmount = 50;
-                debuffScalingAmount = 0.5f;
+                DebuffType = DEBUFFTYPE.Slow;
+                DebuffAmount = 50;
+                DebuffScalingAmount = 0.5f;
                 SingleTarget = false;
                 Range = 3;
                 EffectDuration = 2;
@@ -62,9 +72,9 @@ public class DebuffAbility : Ability{
                 break;
             case "quack¿":
                 AbilityDescription = "Spread the great word of the duck god, through deadly quacks.";
-                debuffType = DebuffType.Burn;
-                debuffAmount = 50;
-                debuffScalingAmount = 0.5f;
+                DebuffType = DEBUFFTYPE.Burn;
+                DebuffAmount = 50;
+                DebuffScalingAmount = 0.5f;
                 SingleTarget = true;
                 Range = 3;
                 EffectDuration = 2;
@@ -72,9 +82,9 @@ public class DebuffAbility : Ability{
                 break;
             case "cat":
                 AbilityDescription = "Spread the great word of the hound god, through deadly cats.";
-                debuffType = DebuffType.DefenseReduction;
-                debuffAmount = 50;
-                debuffScalingAmount = 0.5f;
+                DebuffType = DEBUFFTYPE.DefenseReduction;
+                DebuffAmount = 50;
+                DebuffScalingAmount = 0.5f;
                 SingleTarget = false;
                 Range = 3;
                 EffectDuration = 2;
@@ -82,17 +92,17 @@ public class DebuffAbility : Ability{
                 break;
             case "outoftunesolo":
                 AbilityDescription = "Spread the great word of the jazz god, through deadly terrible music.";
-                debuffType = DebuffType.Paralyze;
-                debuffAmount = 50;
-                debuffScalingAmount = 0.5f;
+                DebuffType = DEBUFFTYPE.Paralyze;
+                DebuffAmount = 50;
+                DebuffScalingAmount = 0.5f;
                 SingleTarget = false;
                 Range = 3;
                 break;
             case "charm":
                 AbilityDescription = "Spread the great word of the love god, through deadly love.";
-                debuffType = DebuffType.Charm;
-                debuffAmount = 50;
-                debuffScalingAmount = 0.5f;
+                DebuffType = DEBUFFTYPE.Charm;
+                DebuffAmount = 50;
+                DebuffScalingAmount = 0.5f;
                 SingleTarget = false;
                 Range = 3;
                 EffectDuration = 2;
@@ -100,9 +110,9 @@ public class DebuffAbility : Ability{
                 break;
             case "armorbreak":
                 AbilityDescription = "Spread the great word of the smith god, through deadly broken armor.";
-                debuffType = DebuffType.DefenseReduction;
-                debuffAmount = 50;
-                debuffScalingAmount = 0.5f;
+                DebuffType = DEBUFFTYPE.DefenseReduction;
+                DebuffAmount = 50;
+                DebuffScalingAmount = 0.5f;
                 SingleTarget = false;
                 Range = 3;
                 EffectDuration = 2;
@@ -110,9 +120,9 @@ public class DebuffAbility : Ability{
                 break;
             case "burn":
                 AbilityDescription = "Spread the great word of the fire god, through deadly fire.";
-                debuffType = DebuffType.Burn;
-                debuffAmount = 50;
-                debuffScalingAmount = 0.5f;
+                DebuffType = DEBUFFTYPE.Burn;
+                DebuffAmount = 50;
+                DebuffScalingAmount = 0.5f;
                 SingleTarget = false;
                 Range = 3;
                 EffectDuration = 2;
@@ -120,9 +130,9 @@ public class DebuffAbility : Ability{
                 break;
             case "stun":
                 AbilityDescription = "Spread the great word of the thunder god, through deadly thunder.";
-                debuffType = DebuffType.Stun;
-                debuffAmount = 50;
-                debuffScalingAmount = 0.5f;
+                DebuffType = DEBUFFTYPE.Stun;
+                DebuffAmount = 50;
+                DebuffScalingAmount = 0.5f;
                 SingleTarget = false;
                 Range = 3;
                 EffectDuration = 2;
@@ -130,18 +140,18 @@ public class DebuffAbility : Ability{
                 break;
             case "root":
                 AbilityDescription = "Spread the great word of the nature god, through deadly roots.";
-                debuffType = DebuffType.Paralyze;
-                debuffAmount = 50;
-                debuffScalingAmount = 0.5f;
+                DebuffType = DEBUFFTYPE.Paralyze;
+                DebuffAmount = 50;
+                DebuffScalingAmount = 0.5f;
                 SingleTarget = false;
                 Range = 3;
                 EffectDuration = 2;
                 FaithCost = 10;
                 break;
             default:
-                AbilityFound = false;
+                blnAbilityFound = false;
                 break;
         }
-        return AbilityFound;
+        return blnAbilityFound;
     }
 }

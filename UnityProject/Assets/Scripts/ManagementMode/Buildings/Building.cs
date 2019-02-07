@@ -7,9 +7,10 @@ using UnityEngine;
 /// </summary>
 public class Building{
     public GameObject BuildingObject;
-    static public float BuildingRadiusSize = 10f; // Radius around a building that can not be built on
+    static public float BuildingRadiusSize = 10f; // Radius around a building that can not be built on, overriden by gamemanager
     static public float BuildingCostModifier = 1;
-    private static Dictionary<string, UnityEngine.Object> BuildingResources = new Dictionary<string, UnityEngine.Object>();
+    private static Dictionary<string, UnityEngine.Object> mdictBuildingResources = new Dictionary<string, UnityEngine.Object>();
+
     public Vector3 BuildingPosition
     {
         get
@@ -38,23 +39,39 @@ public class Building{
 
     public int BuildingCost = 0;
 
-	public Building(BUILDING_TYPE penumBuildingType, Faction pFactionOwner)
+    /// <summary>
+    /// Building contructor for a default building of a certain type
+    /// </summary>
+    /// <param name="penumBuildingType">The building type to create.</param>
+    /// <param name="pmusFactionOwner">The owning faction of the building.</param>
+	public Building(BUILDING_TYPE penumBuildingType, Faction pmusFactionOwner)
     {
-        BuildingObject = CreateBuildingObject(penumBuildingType, pFactionOwner.Type);
+        BuildingObject = CreateBuildingObject(penumBuildingType, pmusFactionOwner.Type);
         BuildingType = penumBuildingType;
-        OwningFaction = pFactionOwner;
+        OwningFaction = pmusFactionOwner;
         BuildingCost = CalculateBuildingCost(penumBuildingType);
     }
 
-    public Building(GameInfo.SavedBuilding pobjSavedBuilding, Faction pobjFactionOwner)
+    /// <summary>
+    /// Building constructor for loading a serialized building
+    /// </summary>
+    /// <param name="pmusSavedBuilding">A serialized building.</param>
+    /// <param name="pmusFactionOwner">The owning faction of the building to be loaded.</param>
+    public Building(GameInfo.SavedBuilding pmusSavedBuilding, Faction pmusFactionOwner)
     {
-        UpgradeLevel = pobjSavedBuilding.UpgradeLevel;
-        BuildingObject = CreateBuildingObject(pobjSavedBuilding.BuildingType, pobjFactionOwner.Type);
-        BuildingType = pobjSavedBuilding.BuildingType;
-        OwningFaction = pobjFactionOwner;
-        BuildingCost = CalculateBuildingCost(pobjSavedBuilding.BuildingType);
+        UpgradeLevel = pmusSavedBuilding.UpgradeLevel;
+        BuildingObject = CreateBuildingObject(pmusSavedBuilding.BuildingType, pmusFactionOwner.Type);
+        BuildingType = pmusSavedBuilding.BuildingType;
+        OwningFaction = pmusFactionOwner;
+        BuildingCost = CalculateBuildingCost(pmusSavedBuilding.BuildingType);
     }
 
+    /// <summary>
+    /// Method used to create a building game object based on the type of building.
+    /// </summary>
+    /// <param name="penumBuildingType"></param>
+    /// <param name="type"></param>
+    /// <returns></returns>
     private GameObject CreateBuildingObject(BUILDING_TYPE penumBuildingType, Faction.GodType type)
     {
         GameObject gobjBuilding = null;
@@ -80,96 +97,133 @@ public class Building{
         }
         if(gobjBuilding != null)
         {
+            // Add a linerenderer for outlining, scale based on scene parmeters
             gobjBuilding.AddComponent<LineRenderer>().positionCount = 0;
             gobjBuilding.transform.localScale = new Vector3(BuildingRadiusSize, BuildingRadiusSize, BuildingRadiusSize);
         }
         return gobjBuilding;
     }
 
+    /// <summary>
+    /// Method for loading and creating a blacksmith building game object
+    /// </summary>
+    /// <param name="type">The god type which owns this building.</param>
+    /// <returns></returns>
     private GameObject CreateUpgradeBuildingObject(Faction.GodType type)
     {
-        GameObject gobjUpgradeBuilding = null;
+        GameObject uniUpgradeBuildingGameObject = null;
+        // Build the resource key for the building type and check if it exists
         string strResourceKey = "Buildings/" + type.ToString() + BUILDING_TYPE.UPGRADE.ToString() + UpgradeLevel.ToString();
-        if (BuildingResources.ContainsKey(strResourceKey) && BuildingResources[strResourceKey] != null)
+        if (mdictBuildingResources.ContainsKey(strResourceKey) && mdictBuildingResources[strResourceKey] != null)
         {
-            gobjUpgradeBuilding = (GameObject)GameObject.Instantiate(
-            BuildingResources[strResourceKey]);
+            uniUpgradeBuildingGameObject = (GameObject)GameObject.Instantiate(
+            mdictBuildingResources[strResourceKey]);
         }
         else
         {
-            gobjUpgradeBuilding = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            gobjUpgradeBuilding.transform.localScale += new Vector3(UpgradeLevel - 1, UpgradeLevel - 1, UpgradeLevel - 1);
+            // Resource doesn't exist, create a cube
+            uniUpgradeBuildingGameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            uniUpgradeBuildingGameObject.transform.localScale += new Vector3(UpgradeLevel - 1, UpgradeLevel - 1, UpgradeLevel - 1);
         }
-        return gobjUpgradeBuilding;
+        return uniUpgradeBuildingGameObject;
     }
 
+    /// <summary>
+    /// Method for loading and creating an altar building game object
+    /// </summary>
+    /// <param name="type">The god type which owns this building.</param>
+    /// <returns></returns>
     private GameObject CreateHousingBuildingObject(Faction.GodType type)
     {
-        GameObject gobjHousingBuilding = null;
+        GameObject uniHousingBuildingGameObject = null;
         string strResourceKey = "Buildings/" + type.ToString() + BUILDING_TYPE.HOUSING.ToString() + UpgradeLevel.ToString();
-        if (BuildingResources.ContainsKey(strResourceKey) && BuildingResources[strResourceKey] != null)
+        if (mdictBuildingResources.ContainsKey(strResourceKey) && mdictBuildingResources[strResourceKey] != null)
         {
-            gobjHousingBuilding = (GameObject)GameObject.Instantiate(
-            BuildingResources[strResourceKey]);
+            uniHousingBuildingGameObject = (GameObject)GameObject.Instantiate(
+            mdictBuildingResources[strResourceKey]);
         }
         else
         {
-            gobjHousingBuilding = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            gobjHousingBuilding.transform.localScale += new Vector3(UpgradeLevel - 1, UpgradeLevel - 1, UpgradeLevel - 1);
+            // If resource does not exist, load a capsule game object.
+            uniHousingBuildingGameObject = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            uniHousingBuildingGameObject.transform.localScale += new Vector3(UpgradeLevel - 1, UpgradeLevel - 1, UpgradeLevel - 1);
         }
-        return gobjHousingBuilding;
+        return uniHousingBuildingGameObject;
     }
 
+    /// <summary>
+    /// Method for loading or creating material building game objects
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
     private GameObject CreateMaterialBuildingObject(Faction.GodType type)
     {
-        GameObject gobjMaterialBuilding = null;
+        GameObject uniMaterialBuildingGameObject = null;
         string strResourceKey = "Buildings/" + type.ToString() + BUILDING_TYPE.MATERIAL.ToString() + UpgradeLevel.ToString();
-        if(BuildingResources.ContainsKey(strResourceKey) && BuildingResources[strResourceKey] != null)
+        if(mdictBuildingResources.ContainsKey(strResourceKey) && mdictBuildingResources[strResourceKey] != null)
         {
-            gobjMaterialBuilding = (GameObject)GameObject.Instantiate(
-            BuildingResources[strResourceKey]);
+            uniMaterialBuildingGameObject = (GameObject)GameObject.Instantiate(
+            mdictBuildingResources[strResourceKey]);
         }
         else
         {
-            gobjMaterialBuilding = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            gobjMaterialBuilding.transform.localScale += new Vector3(UpgradeLevel - 1, UpgradeLevel - 1, UpgradeLevel - 1);
+            uniMaterialBuildingGameObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            uniMaterialBuildingGameObject.transform.localScale += new Vector3(UpgradeLevel - 1, UpgradeLevel - 1, UpgradeLevel - 1);
         }
-		return gobjMaterialBuilding;
+		return uniMaterialBuildingGameObject;
     }
 
+    /// <summary>
+    /// Method for loading or creating a village building game object
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
     private GameObject CreateVillageBuildingObject(Faction.GodType type)
     {
-        GameObject gobjVillageBuilding = null;
+        GameObject uniVillageBuildingGameObject = null;
         string strResourceKey = "Buildings/" + type.ToString() + BUILDING_TYPE.VILLAGE.ToString() + UpgradeLevel.ToString();
-        if (BuildingResources.ContainsKey(strResourceKey) && BuildingResources[strResourceKey] != null)
+        if (mdictBuildingResources.ContainsKey(strResourceKey) && mdictBuildingResources[strResourceKey] != null)
         {
-            gobjVillageBuilding = (GameObject)GameObject.Instantiate(
-            BuildingResources[strResourceKey]);
+            uniVillageBuildingGameObject = (GameObject)GameObject.Instantiate(
+            mdictBuildingResources[strResourceKey]);
         }
         else
         {
-            gobjVillageBuilding = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            gobjVillageBuilding.transform.localScale += new Vector3(UpgradeLevel - 1, UpgradeLevel - 1, UpgradeLevel - 1);
+            uniVillageBuildingGameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            uniVillageBuildingGameObject.transform.localScale += new Vector3(UpgradeLevel - 1, UpgradeLevel - 1, UpgradeLevel - 1);
         }
-        return gobjVillageBuilding;
-    }
-    private GameObject CreateAltarBuildingObject(Faction.GodType type)
-    {
-        GameObject gobjAltarBuilding = null;
-        string strResourceKey = "Buildings/" + type.ToString() + BUILDING_TYPE.ALTAR.ToString() + UpgradeLevel.ToString();
-        if (BuildingResources.ContainsKey(strResourceKey) && BuildingResources[strResourceKey] != null)
-        {
-            gobjAltarBuilding = (GameObject)GameObject.Instantiate(
-            BuildingResources[strResourceKey]);
-        }
-        else
-        {
-            gobjAltarBuilding = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            gobjAltarBuilding.transform.localScale += new Vector3(UpgradeLevel - 1, UpgradeLevel - 1, UpgradeLevel - 1);
-        }
-        return gobjAltarBuilding;
+        return uniVillageBuildingGameObject;
     }
 
+    /// <summary>
+    /// Method for loading or creating an altar building game object
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    private GameObject CreateAltarBuildingObject(Faction.GodType type)
+    {
+        GameObject uniAltarBuildingGameObject = null;
+        string strResourceKey = "Buildings/" + type.ToString() + BUILDING_TYPE.ALTAR.ToString() + UpgradeLevel.ToString();
+        if (mdictBuildingResources.ContainsKey(strResourceKey) && mdictBuildingResources[strResourceKey] != null)
+        {
+            uniAltarBuildingGameObject = (GameObject)GameObject.Instantiate(
+            mdictBuildingResources[strResourceKey]);
+        }
+        else
+        {
+            uniAltarBuildingGameObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            uniAltarBuildingGameObject.transform.localScale += new Vector3(UpgradeLevel - 1, UpgradeLevel - 1, UpgradeLevel - 1);
+        }
+        return uniAltarBuildingGameObject;
+    }
+
+    /// <summary>
+    /// Method for upgrading the current instance of building
+    /// Updates the buildings model
+    /// </summary>
+    /// <param name="outline"></param>
+    /// <param name="pblnNoCost"></param>
+    /// <returns></returns>
     public virtual bool UpgradeBuilding(bool outline = true, bool pblnNoCost = false)
     {
         bool Upgraded = false;
@@ -185,12 +239,12 @@ public class Building{
             UpgradeLevel++;
             Vector3 OriginalPos;
             string strResourceKey = "Buildings/" + OwningFaction.Type.ToString() + BuildingType.ToString() + UpgradeLevel.ToString();
-            if (BuildingResources.ContainsKey(strResourceKey) && BuildingResources[strResourceKey] != null)
+            if (mdictBuildingResources.ContainsKey(strResourceKey) && mdictBuildingResources[strResourceKey] != null)
             {
                 OriginalPos = BuildingPosition;
                 GameObject.Destroy(BuildingObject);
                 BuildingObject = (GameObject)GameObject.Instantiate(
-                    BuildingResources[strResourceKey]);
+                    mdictBuildingResources[strResourceKey]);
                 BuildingObject.transform.localScale = new Vector3(BuildingRadiusSize, BuildingRadiusSize, BuildingRadiusSize);
                 BuildingPosition = OriginalPos;
                 BuildingObject.AddComponent<LineRenderer>();
@@ -325,73 +379,73 @@ public class Building{
         {
             strResourcePath = "Buildings/" + type.ToString() + BUILDING_TYPE.ALTAR.ToString();
             // Load all 5 building types and the upgrade levels of each
-            if(!BuildingResources.ContainsKey(strResourcePath + "1"))
+            if(!mdictBuildingResources.ContainsKey(strResourcePath + "1"))
             {
-                BuildingResources.Add(strResourcePath + "1", Resources.Load(strResourcePath + "1"));
+                mdictBuildingResources.Add(strResourcePath + "1", Resources.Load(strResourcePath + "1"));
             }
-            if (!BuildingResources.ContainsKey(strResourcePath + "2"))
+            if (!mdictBuildingResources.ContainsKey(strResourcePath + "2"))
             {
-                BuildingResources.Add(strResourcePath + "2", Resources.Load(strResourcePath + "2"));
+                mdictBuildingResources.Add(strResourcePath + "2", Resources.Load(strResourcePath + "2"));
             }
-            if (!BuildingResources.ContainsKey(strResourcePath + "3"))
+            if (!mdictBuildingResources.ContainsKey(strResourcePath + "3"))
             {
-                BuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
+                mdictBuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
             }
 
             strResourcePath = "Buildings/" + type.ToString() + BUILDING_TYPE.MATERIAL.ToString();
-            if (!BuildingResources.ContainsKey(strResourcePath + "1"))
+            if (!mdictBuildingResources.ContainsKey(strResourcePath + "1"))
             {
-                BuildingResources.Add(strResourcePath + "1", Resources.Load(strResourcePath + "1"));
+                mdictBuildingResources.Add(strResourcePath + "1", Resources.Load(strResourcePath + "1"));
             }
-            if (!BuildingResources.ContainsKey(strResourcePath + "2"))
+            if (!mdictBuildingResources.ContainsKey(strResourcePath + "2"))
             {
-                BuildingResources.Add(strResourcePath + "2", Resources.Load(strResourcePath + "2"));
+                mdictBuildingResources.Add(strResourcePath + "2", Resources.Load(strResourcePath + "2"));
             }
-            if (!BuildingResources.ContainsKey(strResourcePath + "3"))
+            if (!mdictBuildingResources.ContainsKey(strResourcePath + "3"))
             {
-                BuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
+                mdictBuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
             }
 
             strResourcePath = "Buildings/" + type.ToString() + BUILDING_TYPE.VILLAGE.ToString();
-            if (!BuildingResources.ContainsKey(strResourcePath + "1"))
+            if (!mdictBuildingResources.ContainsKey(strResourcePath + "1"))
             {
-                BuildingResources.Add(strResourcePath + "1", Resources.Load(strResourcePath + "1"));
+                mdictBuildingResources.Add(strResourcePath + "1", Resources.Load(strResourcePath + "1"));
             }
-            if (!BuildingResources.ContainsKey(strResourcePath + "2"))
+            if (!mdictBuildingResources.ContainsKey(strResourcePath + "2"))
             {
-                BuildingResources.Add(strResourcePath + "2", Resources.Load(strResourcePath + "2"));
+                mdictBuildingResources.Add(strResourcePath + "2", Resources.Load(strResourcePath + "2"));
             }
-            if (!BuildingResources.ContainsKey(strResourcePath + "3"))
+            if (!mdictBuildingResources.ContainsKey(strResourcePath + "3"))
             {
-                BuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
+                mdictBuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
             }
 
             strResourcePath = "Buildings/" + type.ToString() + BUILDING_TYPE.HOUSING.ToString();
-            if (!BuildingResources.ContainsKey(strResourcePath + "1"))
+            if (!mdictBuildingResources.ContainsKey(strResourcePath + "1"))
             {
-                BuildingResources.Add(strResourcePath + "1", Resources.Load(strResourcePath + "1"));
+                mdictBuildingResources.Add(strResourcePath + "1", Resources.Load(strResourcePath + "1"));
             }
-            if (!BuildingResources.ContainsKey(strResourcePath + "2"))
+            if (!mdictBuildingResources.ContainsKey(strResourcePath + "2"))
             {
-                BuildingResources.Add(strResourcePath + "2", Resources.Load(strResourcePath + "2"));
+                mdictBuildingResources.Add(strResourcePath + "2", Resources.Load(strResourcePath + "2"));
             }
-            if (!BuildingResources.ContainsKey(strResourcePath + "3"))
+            if (!mdictBuildingResources.ContainsKey(strResourcePath + "3"))
             {
-                BuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
+                mdictBuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
             }
 
             strResourcePath = "Buildings/" + type.ToString() + BUILDING_TYPE.UPGRADE.ToString();
-            if (!BuildingResources.ContainsKey(strResourcePath + "1"))
+            if (!mdictBuildingResources.ContainsKey(strResourcePath + "1"))
             {
-                BuildingResources.Add(strResourcePath + "1", Resources.Load(strResourcePath + "1"));
+                mdictBuildingResources.Add(strResourcePath + "1", Resources.Load(strResourcePath + "1"));
             }
-            if (!BuildingResources.ContainsKey(strResourcePath + "2"))
+            if (!mdictBuildingResources.ContainsKey(strResourcePath + "2"))
             {
-                BuildingResources.Add(strResourcePath + "2", Resources.Load(strResourcePath + "2"));
+                mdictBuildingResources.Add(strResourcePath + "2", Resources.Load(strResourcePath + "2"));
             }
-            if (!BuildingResources.ContainsKey(strResourcePath + "3"))
+            if (!mdictBuildingResources.ContainsKey(strResourcePath + "3"))
             {
-                BuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
+                mdictBuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
             }
         }
     }

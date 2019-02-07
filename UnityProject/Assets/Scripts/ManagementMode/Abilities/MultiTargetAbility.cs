@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Multi target ability class containing properties for multi target abilites
+/// Multi target abilities may target multiple units
+/// Inheritrs from Ability superclass.
+/// </summary>
 public class MultiTargetAbility : Ability
 {
     public int AbilityDamage;
@@ -14,10 +19,15 @@ public class MultiTargetAbility : Ability
     {
     }
 
+    /// <summary>
+    /// Override method for loading multi target abilties from ability name.
+    /// </summary>
+    /// <param name="pstrAbilityName">Name of ability to load.</param>
+    /// <returns></returns>
     protected override bool LoadAbility(string pstrAbilityName)
     {
-        bool AbilityFound = true;
-        Type = AbilityType.MultiTarget;
+        bool blnAbilityFound = true;
+        AbiltyType = ABILITYTYPE.MultiTarget;
         switch(pstrAbilityName.ToLower().Replace(" ", string.Empty))
         {
             case "mushroomlaser":
@@ -138,9 +148,9 @@ public class MultiTargetAbility : Ability
                 FaithCost = 10;
                 break;
             default:
-                AbilityFound = false;
+                blnAbilityFound = false;
                 break;
         }
-        return AbilityFound;
+        return blnAbilityFound;
     }
 }

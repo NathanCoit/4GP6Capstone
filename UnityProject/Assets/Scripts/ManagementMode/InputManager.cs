@@ -172,8 +172,7 @@ public class InputManager : MonoBehaviour {
         // Exit back to default state.
         if (Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"]))
         {
-            GameManagerScript.SelectedBuilding.ToggleBuildingOutlines(false);
-            GameManagerScript.SelectedBuilding = null;
+            GameManagerScript.UnselectBuilding();
             GameManagerScript.GoToDefaultMenuState();
             CurrentKeyDown = hotKeyManager.HotKeys["EscapeKeyCode"];
         }
@@ -231,9 +230,8 @@ public class InputManager : MonoBehaviour {
                 GameManagerScript.BufferedBuilding.BuildingObject.GetComponent<Collider>().enabled = true;
             }
             // Move back to the selected building state.
-            GameManagerScript.SelectedBuilding = GameManagerScript.BufferedBuilding;
-            GameManagerScript.BufferedBuilding = null;
-            GameManagerScript.EnterBuildingSelectedMenuState();
+            GameManagerScript.SetSelectedBuilding(GameManagerScript.BufferedBuilding);
+            GameManagerScript.ClearBufferedBuilding();
         }
     }
 
@@ -259,7 +257,7 @@ public class InputManager : MonoBehaviour {
     {
         if (Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"]))
         {
-            GameManagerScript.CurrentMenuState = GameManager.MENUSTATE.Building_Selected_State;
+            GameManagerScript.EnterBuildingSelectedMenuState();
             GameManagerScript.SetUpgradeUIActive(false);
             CurrentKeyDown = hotKeyManager.HotKeys["EscapeKeyCode"];
         }

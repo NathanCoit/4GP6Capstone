@@ -2773,6 +2773,7 @@ MonoBehaviour:
   AudioSliderObject: {fileID: 955076844}
   SaveButtonPrefab: {fileID: 1171056903718002, guid: f6379ec1e01f43f48a5c31bce801ed98,
     type: 3}
+  ConfirmationBoxScript: {fileID: 1158920150}
 --- !u!114 &1158920150
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3096,9 +3097,39 @@ PrefabInstance:
       objectReference: {fileID: 1158920149}
     - target: {fileID: 114060075722255706, guid: c2a96bf0d70001d43aeb6a439141a1f1,
         type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114060075722255706, guid: c2a96bf0d70001d43aeb6a439141a1f1,
+        type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1158920149}
+    - target: {fileID: 114060075722255706, guid: c2a96bf0d70001d43aeb6a439141a1f1,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114060075722255706, guid: c2a96bf0d70001d43aeb6a439141a1f1,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114060075722255706, guid: c2a96bf0d70001d43aeb6a439141a1f1,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1158920149}
+    - target: {fileID: 114060075722255706, guid: c2a96bf0d70001d43aeb6a439141a1f1,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: OpenMainUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 114060075722255706, guid: c2a96bf0d70001d43aeb6a439141a1f1,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 224197103089473450, guid: c2a96bf0d70001d43aeb6a439141a1f1,
         type: 3}
       propertyPath: m_AnchorMin.y

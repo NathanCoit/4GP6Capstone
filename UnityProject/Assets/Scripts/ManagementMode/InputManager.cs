@@ -265,4 +265,17 @@ public class InputManager : MonoBehaviour
             CurrentKeyDown = hotKeyManager.HotKeys["EscapeKeyCode"];
         }
     }
+
+    /// <summary>
+    /// Method to detect when the game loses/gains focues
+    /// </summary>
+    /// <param name="pblnIsFocus"></param>
+    private void OnApplicationFocus(bool pblnIsFocus)
+    {
+        if(!pblnIsFocus)
+        {
+            // Pause game on tab out so camera doesn't pan all over the place when tabbed out
+            GameManagerScript.PauseGame();
+        }
+    }
 }

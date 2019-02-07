@@ -17,7 +17,7 @@ public class SaveAndSettingsHelper
         Slider uniAudioSlider = GameObject.Find("AudioSliderObject").GetComponent<Slider>();
         uniAudioSlider.minValue = 0;
         uniAudioSlider.maxValue = 1;
-        uniAudioSlider.value = PlayerPrefs.GetFloat("MasterVolume");
+        uniAudioSlider.value = PlayerPrefs.GetFloat("MasterVolume", 0.5f);
         GameObject.Find("GraphicsDropDownMenu").GetComponent<Dropdown>().value = PlayerPrefs.GetInt("GraphicsSetting");
         GameObject.Find("HotKeySettors").GetComponent<HotKeyScrollView>().CreateHotKeySettors();
     }
@@ -48,7 +48,7 @@ public class SaveAndSettingsHelper
     public static void ApplyGameSettings()
     {
         // set sound
-        AudioListener.volume = PlayerPrefs.GetFloat("MasterVolume");
+        AudioListener.volume = PlayerPrefs.GetFloat("MasterVolume", 0.5f);
         UnityEngine.Rendering.GraphicsTier uniGraphicsSetting = UnityEngine.Rendering.GraphicsTier.Tier1;
         switch (PlayerPrefs.GetInt("GraphicsSetting"))
         {

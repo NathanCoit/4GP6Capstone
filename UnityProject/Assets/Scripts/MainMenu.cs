@@ -20,6 +20,7 @@ public class MainMenu : MonoBehaviour {
     public GameObject AudioSliderObject;
     public UnityEngine.Object SaveButtonPrefab;
     public ConfirmationBoxController ConfirmationBoxScript;
+    public GameObject CloseOptionsMenuButton;
 
     private string mstrGameSaveFileDirectory;
     private List<GameObject> marrButtonObjects;
@@ -259,6 +260,55 @@ public class MainMenu : MonoBehaviour {
     public void QuitGame()
     {
         Application.Quit();
+    }
+
+    /// <summary>
+    /// Method when close is clicked in the options menu, check if any unsaved changes exist
+    /// If there are unsaved changes, display a confirmation box to warn player
+    /// </summary>
+    public void CloseOptionsMenu()
+    {
+        bool blnUnsavedChanges = false;
+        // Get options menu settings
+        float fChangedVolume = GameObject.Find("AudioSliderObject").GetComponent<Slider>().value;
+        int intChangedGraphicsSetting = GameObject.Find("GraphicsDropDownMenu").GetComponent<Dropdown>().value;
+        Dictionary<string, KeyCode> dictChangedHotkeys = new Dictionary<string, KeyCode>(GameObject.Find("HotKeySettors").GetComponent<HotKeyScrollView>().SettingsHotkeyManager.HotKeys);
+
+        // Get saved settings
+        float fSavedVolume = PlayerPrefs.GetFloat("MasterVolume");
+        int intSavedGraphicsSetting = PlayerPrefs.GetInt("GraphicsSetting");
+        HotKeyManager musHotKeyManager = new HotKeyManager();
+        musHotKeyManager.LoadHotkeyProfile();
+        Dictionary<string, KeyCode> dictSavedHotkeys = musHotKeyManager.HotKeys;
+
+        // Compare
+        if(!fChangedVolume.Equals(fSavedVolume)
+            || intChangedGraphicsSetting != intSavedGraphicsSetting)
+        {
+            blnUnsavedChanges = true;
+        }
+        foreach(KeyValuePair<string, KeyCode> kvalHotkey in dictChangedHotkeys)
+        {
+            if(kvalHotkey.Value != dictSavedHotkeys[kvalHotkey.Key])
+            {
+                blnUnsavedChanges = true;
+            }
+        }
+
+        if(blnUnsavedChanges)
+        {
+            // Unsaved changes, show confirmation
+            ConfirmationBoxScript.AttachCallbackToConfirmationBox(
+                OpenMainUI, 
+                "Unsaved changes will be lost. Are you sure you don't want to save?", 
+                "Don't Save",
+                "Cancel");
+        }
+        else
+        {
+            // No changes, close normally
+            OpenMainUI();
+        }
     }
 }
 

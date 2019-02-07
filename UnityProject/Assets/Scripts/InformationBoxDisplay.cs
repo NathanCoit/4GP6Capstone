@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
 /// <summary>
 /// Class for displaying infomation boxes to the player
@@ -24,6 +26,7 @@ public class InformationBoxDisplay : MonoBehaviour
 
     public GameObject InformationBoxGameObject;
     public TextMeshProUGUI InformationBoxTextObject;
+    public Button InformationOkButton;
 
     void Awake()
     {
@@ -34,11 +37,24 @@ public class InformationBoxDisplay : MonoBehaviour
 
     /// <summary>
     /// Public method for displaying an information box to the user.
+    /// Optional parameters to add callbacks to ok button.
     /// </summary>
     /// <param name="pstrInformation"></param>
-    public void DisplayInformationBox(string pstrInformation)
+    /// <param name="puniCallback"></param>
+    /// <param name="pstrOkButtonText"></param>
+    public void DisplayInformationBox(string pstrInformation, UnityAction puniCallback = null, string pstrOkButtonText = "Ok")
     {
         InformationBoxTextObject.text = pstrInformation;
+        InformationOkButton.onClick.RemoveAllListeners();
+        if(puniCallback == null)
+        {
+            InformationOkButton.onClick.AddListener(DefaultOkCallback);
+        }
+        else
+        {
+            InformationOkButton.onClick.AddListener(puniCallback);
+        }
+        InformationOkButton.GetComponentInChildren<Text>().text = pstrOkButtonText;
         InformationBoxGameObject.SetActive(true);
     }
 
@@ -55,4 +71,19 @@ public class InformationBoxDisplay : MonoBehaviour
             DisplayInformationBox(TutorialInformationText[(int)penumTutorialFlag]);
         }
     }
+
+    /// <summary>
+    /// Default callback when Ok button is clicked
+    /// </summary>
+    public void DefaultOkCallback()
+    {
+        InformationBoxGameObject.SetActive(false);
+    }
+
+    public void AttachCallbackToInformationBox(UnityAction puniCallbackFunction, string pstrConfirmationDialog)
+    {
+        
+    }
+
+    
 }

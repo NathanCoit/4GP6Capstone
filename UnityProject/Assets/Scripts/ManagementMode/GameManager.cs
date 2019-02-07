@@ -812,12 +812,15 @@ public class GameManager : MonoBehaviour
         }
         ResourceTicks++;
         mintCurrentTimer += 2;
-        // If set time has elapsed, enemy god will challengee the player
+        // If set time has elapsed, enemy god will challenge the player
         if(mintCurrentTimer > EnemyChallengeTimer)
         {
             musChallengingFaction = CurrentFactions.Find(MatchingFaction => MatchingFaction != PlayerFaction && MatchingFaction.GodTier == CurrentTier);
-            Debug.Log(string.Format("{0} has challenged you!", musChallengingFaction.GodName));
-            EnterCombatMode(musChallengingFaction);
+            Time.timeScale = 0;
+            InformationBoxController.DisplayInformationBox(
+                musChallengingFaction.GodName + " has challenged you! Prepare to battle.",
+                () => EnterCombatMode(musChallengingFaction),
+                "Fight");
         }
         
     }
@@ -1213,11 +1216,11 @@ public class GameManager : MonoBehaviour
         GameInfo.TutorialFlag = menumTutorialFlag;
         if(SaveAndSettingsHelper.SaveGame(Application.persistentDataPath + "/SaveFiles", GameInfo))
         {
-            // TODO Display game saved
+            InformationBoxController.DisplayInformationBox("Saved Successfully!");
         }
         else
         {
-            // TODO Error occurred while saving
+            InformationBoxController.DisplayInformationBox("Something went wrong while saving!");
         }
     }
 

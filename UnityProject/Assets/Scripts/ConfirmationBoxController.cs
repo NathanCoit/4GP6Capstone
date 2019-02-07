@@ -17,12 +17,13 @@ public class ConfirmationBoxController : MonoBehaviour
         ConfirmationBoxGameObject.SetActive(false);
     }
 
-    public void AttachCallbackToConfirmationBox(UnityAction puniCallbackFunction, string pstrConfirmationDialog)
+    public void AttachCallbackToConfirmationBox(UnityAction puniCallbackFunction, string pstrConfirmationDialog, string pstrConfirmButtonDialog = "Yes")
     {
         ConfirmationBoxYesButtonComponent.onClick.RemoveAllListeners();
         ConfirmationBoxYesButtonComponent.onClick.AddListener(puniCallbackFunction);
         ConfirmationBoxYesButtonComponent.onClick.AddListener(HideConfirmationBox);
         ConfirmationBoxText.text = pstrConfirmationDialog;
+        ConfirmationBoxYesButtonComponent.GetComponentInChildren<Text>().text = pstrConfirmButtonDialog;
         ConfirmationBoxGameObject.SetActive(true);
     }
 

@@ -11,6 +11,7 @@ public class InputManager : MonoBehaviour
     private GameManager GameManagerScript;
     private HotKeyManager hotKeyManager = new HotKeyManager();
     private KeyCode CurrentKeyDown = KeyCode.None;
+    public ConfirmationBoxController ConfirmationBoxScript;
 
     // Use this for initialization
     void Start()
@@ -63,8 +64,13 @@ public class InputManager : MonoBehaviour
     /// </summary>
     private void CheckPausedMenuStateInputs()
     {
-
-        if (Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"])
+        // If confirmation box is showing, use escape to close it instead of the pause menu
+        if (ConfirmationBoxScript.ConfirmationBoxGameObject.activeInHierarchy
+            && Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"]))
+        {
+            ConfirmationBoxScript.ConfirmationBoxGameObject.SetActive(false);
+        }
+        else if (Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"])
         && CurrentKeyDown != hotKeyManager.HotKeys["EscapeKeyCode"])
         {
             CurrentKeyDown = hotKeyManager.HotKeys["EscapeKeyCode"];

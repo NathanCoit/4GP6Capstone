@@ -2413,6 +2413,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InformationBoxGameObject: {fileID: 2054865759}
   InformationBoxTextObject: {fileID: 2054865757}
+  InformationOkButton: {fileID: 1526950256}
 --- !u!114 &412790389
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2730,6 +2731,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GamemanagerObject: {fileID: 435552159}
+  ConfirmationBoxScript: {fileID: 412790389}
 --- !u!1 &458738732
 GameObject:
   m_ObjectHideFlags: 0
@@ -3811,8 +3813,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 435552160}
-        m_MethodName: EnterBuildMenuState
+      - m_Target: {fileID: 435552162}
+        m_MethodName: EnterBuildMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5300,8 +5302,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 435552160}
-        m_MethodName: EnterTierRewardsMenuState
+      - m_Target: {fileID: 435552162}
+        m_MethodName: OpenTierRewards
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7029,6 +7031,18 @@ MonoBehaviour:
   gameManagerObject: {fileID: 435552159}
   CameraMovementEnabled: 1
   fov: 0
+--- !u!114 &1526950256 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8251516935756609129, guid: a56e3ebaba3cce94d87339bec3bf87d2,
+    type: 3}
+  m_PrefabInstance: {fileID: 2054865756}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1610075753
 GameObject:
   m_ObjectHideFlags: 0
@@ -8180,7 +8194,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 435552160}
+      - m_Target: {fileID: 435552162}
         m_MethodName: PauseGame
         m_Mode: 1
         m_Arguments:

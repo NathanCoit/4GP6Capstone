@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Class containing methods used by on click UI buttons
+/// Contains checks to prevent clicking while paused
+/// Heavily connected with game manager.
+/// </summary>
 public class OnClickFunctions : MonoBehaviour
 {
     public GameObject GameManagerObject;
@@ -63,41 +68,106 @@ public class OnClickFunctions : MonoBehaviour
 
     public void BuyMiners()
     {
+        if(CheckIfPaused())
+        {
+            return;
+        }
         GameManagerScript.BuyMinersForSelectedBuilding();
     }
 
     public void Upgrade()
     {
+        if (CheckIfPaused())
+        {
+            return;
+        }
         GameManagerScript.UpgradeSelectedBuilding();
     }
 
     public void Move()
     {
+        if (CheckIfPaused())
+        {
+            return;
+        }
         GameManagerScript.EnterMovingBuildingState();
     }
 
     public void ShowUpgradeShop()
     {
+        if (CheckIfPaused())
+        {
+            return;
+        }
         GameManagerScript.SetUpgradeUIActive();
     }
 
     public void BufferAltar()
     {
+        if (CheckIfPaused())
+        {
+            return;
+        }
         GameManagerScript.BufferBuilding(Building.BUILDING_TYPE.ALTAR);
     }
 
     public void BufferMine()
     {
+        if (CheckIfPaused())
+        {
+            return;
+        }
         GameManagerScript.BufferBuilding(Building.BUILDING_TYPE.MATERIAL);
     }
 
     public void BufferHousing()
     {
+        if (CheckIfPaused())
+        {
+            return;
+        }
         GameManagerScript.BufferBuilding(Building.BUILDING_TYPE.HOUSING);
     }
 
     public void BufferUpgrade()
     {
+        if (CheckIfPaused())
+        {
+            return;
+        }
         GameManagerScript.BufferBuilding(Building.BUILDING_TYPE.UPGRADE);
+    }
+
+    public void EnterBuildMenu()
+    {
+        if (CheckIfPaused())
+        {
+            return;
+        }
+        GameManagerScript.EnterBuildMenuState();
+    }
+
+    public void OpenTierRewards()
+    {
+        if (CheckIfPaused())
+        {
+            return;
+        }
+        GameManagerScript.EnterTierRewardsMenuState();
+    }
+
+    public void PauseGame()
+    {
+        if (CheckIfPaused())
+        {
+            return;
+        }
+        GameManagerScript.PauseGame();
+    }
+
+    private bool CheckIfPaused()
+    {
+        return GameManagerScript.CurrentMenuState == GameManager.MENUSTATE.Paused_State
+            || GameManagerScript.CurrentMenuState == GameManager.MENUSTATE.Settings_Menu_State;
     }
 }

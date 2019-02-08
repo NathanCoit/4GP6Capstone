@@ -215,14 +215,12 @@ public class SaveAndSettingsHelper
             || intChangedGraphicsSetting != intSavedGraphicsSetting)
         {
             blnUnsavedChanges = true;
-            Debug.Log("a");
         }
         foreach (KeyValuePair<string, KeyCode> kvalHotkey in dictChangedHotkeys)
         {
             if (kvalHotkey.Value != dictSavedHotkeys[kvalHotkey.Key])
             {
                 blnUnsavedChanges = true;
-                Debug.Log("b");
             }
         }
         return blnUnsavedChanges;

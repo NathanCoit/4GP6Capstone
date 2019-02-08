@@ -139,7 +139,7 @@ public class GameManager : MonoBehaviour
             GameObject NewGameInfoObject = (GameObject)Instantiate(GameInfoObjectPrefab);
             NewGameInfoObject.name = "GameInfo";
             GameInfo = NewGameInfoObject.GetComponent<GameInfo>();
-            GameInfo.PlayerFaction.GodName = "TestGod";
+            GameInfo.PlayerFaction.GodName = "@@@@@@@@@@@@@@@"; // Largest name possible for testing
             GameInfo.PlayerFaction.Type = Faction.GodType.Mushrooms;
             GameInfo.NewGame = true;
 #else

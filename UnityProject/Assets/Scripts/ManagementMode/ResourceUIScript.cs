@@ -14,13 +14,17 @@ public class ResourceUIScript : MonoBehaviour {
     public TextMeshProUGUI MoraleText { get; private set; }
     public TextMeshProUGUI WorshipperText { get; private set; }
     public TextMeshProUGUI RewardsText { get; private set; }
+    public TooltipDisplayController TooltipControllerScript;
     // Use this for initialization
     void Start () {
         MaterialText = MaterialTextObject.GetComponent<TextMeshProUGUI>();
         MoraleText = MoraleTextObject.GetComponent<TextMeshProUGUI>();
         WorshipperText = WorshipperTextObject.GetComponent<TextMeshProUGUI>();
         RewardsText = RewardsTextObject.GetComponent<TextMeshProUGUI>();
-        GameObject.Find("Canvas").GetComponent<TooltipDisplayController>().AttachTooltipToObject(MaterialTextObject.transform.parent.gameObject, "Materials");
+        TooltipControllerScript.AttachTooltipToObject(MaterialTextObject.transform.parent.gameObject, "Materials");
+        TooltipControllerScript.AttachTooltipToObject(WorshipperTextObject.transform.parent.gameObject, "Worshippers");
+        TooltipControllerScript.AttachTooltipToObject(MoraleTextObject.transform.parent.gameObject, "Morale");
+        TooltipControllerScript.AttachTooltipToObject(RewardsDisplayObject, "Tier Rewards");
     }
 
 	// Update is called once per frame

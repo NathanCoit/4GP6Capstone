@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 public class ConfirmationBoxController : MonoBehaviour
 {
@@ -11,11 +12,22 @@ public class ConfirmationBoxController : MonoBehaviour
     public TextMeshProUGUI ConfirmationBoxText;
     public Button ConfirmationBoxYesButtonComponent;
     public Button ConfirmationBoxNoButtonComponent;
+    public ExecuteSound SoundManager;
 
     // Start is called before the first frame update
     void Awake()
     {
+        // Add Click noises to no button. Click sound to yes button must be readded on every call.
         ConfirmationBoxGameObject.SetActive(false);
+    }
+
+    private void Start()
+    {
+        ConfirmationBoxNoButtonComponent.onClick.AddListener(() => SoundManager.PlaySound("MouseClick"));
+
+        // Add Pointer Enter noises
+        SoundManager.AttachOnHoverSoundToObject("MouseHover", ConfirmationBoxNoButtonComponent.gameObject);
+        SoundManager.AttachOnHoverSoundToObject("MouseHover", ConfirmationBoxYesButtonComponent.gameObject);
     }
 
     /// <summary>
@@ -34,6 +46,7 @@ public class ConfirmationBoxController : MonoBehaviour
         ConfirmationBoxYesButtonComponent.onClick.RemoveAllListeners();
         ConfirmationBoxYesButtonComponent.onClick.AddListener(puniCallbackFunction);
         ConfirmationBoxYesButtonComponent.onClick.AddListener(HideConfirmationBox);
+        ConfirmationBoxYesButtonComponent.onClick.AddListener(() => SoundManager.PlaySound("MouseClick"));
         ConfirmationBoxText.text = pstrConfirmationDialog;
         ConfirmationBoxYesButtonComponent.GetComponentInChildren<Text>().text = pstrConfirmButtonDialog;
         ConfirmationBoxNoButtonComponent.GetComponentInChildren<Text>().text = pstrCancelButtonDialog;

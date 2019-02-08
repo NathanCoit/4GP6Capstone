@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Linq;
+using UnityEngine.EventSystems;
 
 public class MainMenu : MonoBehaviour {
     
@@ -21,6 +22,7 @@ public class MainMenu : MonoBehaviour {
     public UnityEngine.Object SaveButtonPrefab;
     public ConfirmationBoxController ConfirmationBoxScript;
     public GameObject CloseOptionsMenuButton;
+    public ExecuteSound SoundManager;
 
     private string mstrGameSaveFileDirectory;
     private List<GameObject> marrButtonObjects;
@@ -152,6 +154,7 @@ public class MainMenu : MonoBehaviour {
         List<FileInfo> arrSaveFileInfos = new List<FileInfo>();
         Button untButtonComponent = null;
         GameObject uniButtonGameObject = null;
+        GameObject uniDeleteButtonGameObject = null;
         Text uniButtonTextComponent = null;
         marrButtonObjects = new List<GameObject>();
         FileInfo[] arrSavedFileInfo = null;
@@ -181,13 +184,21 @@ public class MainMenu : MonoBehaviour {
             untButtonComponent = uniButtonGameObject.GetComponent<Button>();
             uniButtonTextComponent = uniButtonGameObject.GetComponentInChildren<Text>();
             untButtonComponent.onClick.AddListener(() => LoadSaveGame(sysFileInfo.FullName));
+            untButtonComponent.onClick.AddListener(() => SoundManager.PlaySound("MouseClick"));
             // Add callback to delete save file to callback of confirmation box
             // Callbacks within Callbacks, we javascript now
-            uniButtonGameObject.transform.GetChild(1).gameObject.GetComponent<Button>().onClick.AddListener(
+            uniDeleteButtonGameObject = uniButtonGameObject.transform.GetChild(1).gameObject;
+            uniDeleteButtonGameObject.GetComponent<Button>().onClick.AddListener(
+                () => SoundManager.PlaySound("MouseClick"));
+            uniDeleteButtonGameObject.GetComponent<Button>().onClick.AddListener(
                 () => ConfirmationBoxScript.AttachCallbackToConfirmationBox( 
                     () => DeleteSaveFile(sysFileInfo.FullName),
                     "Are you sure you want do delete this file?",
                     "Delete"));
+
+            // Buttons created dynamically, sound effects must also be added dynamically
+            SoundManager.AttachOnHoverSoundToObject("MouseHover", uniDeleteButtonGameObject);
+
 
             musLoadedSaveData = SaveAndSettingsHelper.LoadSaveData(sysFileInfo.FullName);
             strSaveFileInfoText =

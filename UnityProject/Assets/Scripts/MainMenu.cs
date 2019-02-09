@@ -89,7 +89,7 @@ public class MainMenu : MonoBehaviour {
         mmusGameInfo = uniNewGameInfoObject.GetComponent<GameInfo>();
         mmusGameInfo.PlayerFaction.GodName = pstrGodName;
         mmusGameInfo.PlayerFaction.Type = penumGodType;
-        SceneManager.LoadScene("UnderGodScene");
+        StartCoroutine(PlayNewGameAnimation());
     }
     
     /// <summary>
@@ -185,7 +185,7 @@ public class MainMenu : MonoBehaviour {
             untButtonComponent = uniButtonGameObject.GetComponent<Button>();
             uniButtonTextComponent = uniButtonGameObject.GetComponentInChildren<TextMeshProUGUI>();
             untButtonComponent.onClick.AddListener(() => LoadSaveGame(sysFileInfo.FullName));
-            untButtonComponent.onClick.AddListener(() => SoundManager.PlaySound("MouseClick"));
+            untButtonComponent.onClick.AddListener(() => SoundManager.PlaySound("GameStart"));
             // Add callback to delete save file to callback of confirmation box
             // Callbacks within Callbacks, we javascript now
             uniDeleteButtonGameObject = uniButtonGameObject.transform.GetChild(1).gameObject;
@@ -255,8 +255,7 @@ public class MainMenu : MonoBehaviour {
         GameObject NewGameInfoObject = (GameObject)Instantiate(GameInfoObjectPrefab);
         NewGameInfoObject.name = "GameInfo";
         GameInfo gameInfo = NewGameInfoObject.GetComponent<GameInfo>();
-
-        SaveAndSettingsHelper.LoadSceneFromFile(pstrFilePath, gameInfo);
+        StartCoroutine(PlayLoadSaveAnimation(pstrFilePath, gameInfo));
     }
 
     /// <summary>
@@ -298,6 +297,42 @@ public class MainMenu : MonoBehaviour {
             // No changes, close normally
             OpenMainUI();
         }
+    }
+
+    private IEnumerator PlayLoadSaveAnimation(string pstrFilePath, GameInfo pmusGameInfo)
+    {
+        Animation uniAnimation = GetComponent<Animation>();
+        yield return uniAnimation.WhilePlaying("FadeToBlack");
+        SaveAndSettingsHelper.LoadSceneFromFile(pstrFilePath, pmusGameInfo);
+    }
+
+    private IEnumerator PlayNewGameAnimation()
+    {
+        Animation uniAnimation = GetComponent<Animation>();
+        yield return uniAnimation.WhilePlaying("FadeToBlack");
+        SceneManager.LoadScene("UnderGodScene");
+    }
+}
+
+/// <summary>
+/// Helper methods for waiting for animations to finish
+/// https://answers.unity.com/questions/37411/how-can-i-wait-for-an-animation-to-complete.html
+/// </summary>
+public static class AnimationExtensions
+{
+    public static IEnumerator WhilePlaying(this Animation animation)
+    {
+        do
+        {
+            yield return null;
+        } while (animation.isPlaying);
+    }
+
+    public static IEnumerator WhilePlaying(this Animation animation,
+                                               string animationName)
+    {
+        animation.PlayQueued(animationName);
+        yield return animation.WhilePlaying();
     }
 }
 

@@ -28,15 +28,17 @@ public class InformationBoxDisplay : MonoBehaviour
     public TextMeshProUGUI InformationBoxTextObject;
     public Button InformationOkButton;
     public ExecuteSound SoundManager;
+    private Animator muniAnimator;
 
     void Awake()
     {
         // Hide Information box 
-        InformationBoxGameObject.SetActive(false);
+        InformationBoxGameObject.SetActive(true);
     }
 
     private void Start()
     {
+        muniAnimator = InformationBoxGameObject.GetComponent<Animator>();
         SoundManager.AttachOnHoverSoundToObject("MouseHover", InformationOkButton.gameObject);
     }
 
@@ -62,7 +64,7 @@ public class InformationBoxDisplay : MonoBehaviour
         }
         InformationOkButton.onClick.AddListener(() => SoundManager.PlaySound("MouseClick"));
         InformationOkButton.GetComponentInChildren<Text>().text = pstrOkButtonText;
-        InformationBoxGameObject.SetActive(true);
+        muniAnimator.SetBool("Open", true);
     }
 
     /// <summary>
@@ -84,12 +86,7 @@ public class InformationBoxDisplay : MonoBehaviour
     /// </summary>
     public void DefaultOkCallback()
     {
-        InformationBoxGameObject.SetActive(false);
-    }
-
-    public void AttachCallbackToInformationBox(UnityAction puniCallbackFunction, string pstrConfirmationDialog)
-    {
-        
+        muniAnimator.SetBool("Open", false);
     }
 
     

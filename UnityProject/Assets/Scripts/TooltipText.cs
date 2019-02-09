@@ -16,6 +16,7 @@ public class TooltipText : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public TextMeshProUGUI TooltipTextComponent;
     public GameObject TooltipGameObject;
     public Vector3 OffsetVector;
+    public Animator TooltipAnimator;
     private int mintFrameCounter = 0;
     private bool mblnEntered = false;
 
@@ -25,9 +26,9 @@ public class TooltipText : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         {
             mintFrameCounter++;
         }
-        if (mintFrameCounter > 20)
+        if (mintFrameCounter > 20 && !TooltipAnimator.IsInTransition(0))
         {
-            TooltipGameObject.SetActive(true);
+            TooltipAnimator.SetBool("Open", true);
             TooltipTextComponent.text = Tooltip;
             TooltipGameObject.transform.position = gameObject.transform.position + OffsetVector;
             mintFrameCounter = 0;
@@ -48,7 +49,6 @@ public class TooltipText : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     {
         mblnEntered = false;
         mintFrameCounter = 0;
-        TooltipTextComponent.text = string.Empty;
-        TooltipGameObject.SetActive(false);
+        TooltipAnimator.SetBool("Open", false);
     }
 }

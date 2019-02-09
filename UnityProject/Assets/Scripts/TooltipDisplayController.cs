@@ -14,12 +14,14 @@ public class TooltipDisplayController : MonoBehaviour
     public TextMeshProUGUI TooltipTextComponent;
     // Offset of tooltip from mouse
     public Vector3 OffsetVector = new Vector3(50, -25, 0);
+
+    public Animator TooltipAnimator;
     // Start is called before the first frame update
     void Awake()
     {
         // Find the tooltip text object
         TooltipTextComponent.text = string.Empty;
-        TooltipTextGameObject.SetActive(false);
+        TooltipTextGameObject.SetActive(true);
     }
 
     /// <summary>
@@ -34,5 +36,6 @@ public class TooltipDisplayController : MonoBehaviour
         musTooltip.TooltipTextComponent = TooltipTextComponent;
         musTooltip.TooltipGameObject = TooltipTextGameObject;
         musTooltip.OffsetVector = OffsetVector;
+        musTooltip.TooltipAnimator = TooltipAnimator;
     }
 }

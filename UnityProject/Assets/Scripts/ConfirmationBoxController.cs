@@ -13,6 +13,9 @@ public class ConfirmationBoxController : MonoBehaviour
     public Button ConfirmationBoxYesButtonComponent;
     public Button ConfirmationBoxNoButtonComponent;
     public ExecuteSound SoundManager;
+
+    public bool BoxIsActive { get; private set; }
+
     private Animator muniAnimator;
 
     // Start is called before the first frame update
@@ -20,6 +23,7 @@ public class ConfirmationBoxController : MonoBehaviour
     {
         // Add Click noises to no button. Click sound to yes button must be readded on every call.
         ConfirmationBoxGameObject.SetActive(true);
+        BoxIsActive = false;
     }
 
     private void Start()
@@ -54,10 +58,12 @@ public class ConfirmationBoxController : MonoBehaviour
         ConfirmationBoxYesButtonComponent.GetComponentInChildren<Text>().text = pstrConfirmButtonDialog;
         ConfirmationBoxNoButtonComponent.GetComponentInChildren<Text>().text = pstrCancelButtonDialog;
         muniAnimator.SetBool("Open", true);
+        BoxIsActive = true;
     }
 
     public void HideConfirmationBox()
     {
         muniAnimator.SetBool("Open", false);
+        BoxIsActive = false;
     }
 }

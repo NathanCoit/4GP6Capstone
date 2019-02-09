@@ -65,10 +65,10 @@ public class InputManager : MonoBehaviour
     private void CheckPausedMenuStateInputs()
     {
         // If confirmation box is showing, use escape to close it instead of the pause menu
-        if (ConfirmationBoxScript.ConfirmationBoxGameObject.activeInHierarchy
+        if (ConfirmationBoxScript.BoxIsActive
             && Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"]))
         {
-            ConfirmationBoxScript.ConfirmationBoxGameObject.SetActive(false);
+            ConfirmationBoxScript.HideConfirmationBox();
         }
         else if (Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"])
         && CurrentKeyDown != hotKeyManager.HotKeys["EscapeKeyCode"])

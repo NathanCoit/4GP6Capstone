@@ -732,7 +732,10 @@ public class GameManager : MonoBehaviour
                             {
                                 musCurrentFaction.MaterialCount -= musTempBuilding.CalculateBuildingUpgradeCost();
                                 musTempBuilding.UpgradeBuilding(false);
-                                musTempBuilding.BuildingObject.SetActive(false);
+                                if(musCurrentFaction.GodTier > CurrentTier)
+                                {
+                                    musTempBuilding.BuildingObject.SetActive(false);
+                                }
                             }
                         }
                         else

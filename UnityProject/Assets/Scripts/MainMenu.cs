@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Linq;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public class MainMenu : MonoBehaviour {
     
@@ -155,7 +156,7 @@ public class MainMenu : MonoBehaviour {
         Button untButtonComponent = null;
         GameObject uniButtonGameObject = null;
         GameObject uniDeleteButtonGameObject = null;
-        Text uniButtonTextComponent = null;
+        TextMeshProUGUI uniButtonTextComponent = null;
         marrButtonObjects = new List<GameObject>();
         FileInfo[] arrSavedFileInfo = null;
         SaveData musLoadedSaveData = null;
@@ -182,7 +183,7 @@ public class MainMenu : MonoBehaviour {
             uniButtonGameObject = (GameObject)Instantiate(SaveButtonPrefab);
             uniButtonGameObject.transform.SetParent(LoadMenuScrollPanel.transform);
             untButtonComponent = uniButtonGameObject.GetComponent<Button>();
-            uniButtonTextComponent = uniButtonGameObject.GetComponentInChildren<Text>();
+            uniButtonTextComponent = uniButtonGameObject.GetComponentInChildren<TextMeshProUGUI>();
             untButtonComponent.onClick.AddListener(() => LoadSaveGame(sysFileInfo.FullName));
             untButtonComponent.onClick.AddListener(() => SoundManager.PlaySound("MouseClick"));
             // Add callback to delete save file to callback of confirmation box

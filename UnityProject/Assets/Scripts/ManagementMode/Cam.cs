@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class Cam : MonoBehaviour {
 
-	int Boundary = 30;
+	private int Boundary = 30;
 
-	int theScreenWidth;
-	int theScreenHeight;
+	private int theScreenWidth;
+	private int theScreenHeight;
 
 	public bool rightHeld;
 	public bool leftHeld;
 	public bool downHeld;
 	public bool upHeld;
 
-	float maxFov = 60.0f;
-	float minFov = 10.0f;
-	public float sensitivity = 5.0f;
+	private float maxFov = 80.0f;
+	private float minFov = 10.0f;
+	public float sensitivity = 7.0f;
     public GameObject gameManagerObject;
     private GameManager gameManagerScript;
     public bool CameraMovementEnabled = true;
@@ -41,6 +41,7 @@ public class Cam : MonoBehaviour {
 
     void Update() 
 	{
+        Vector3 NewCameraPosition = transform.position;
 		if(CameraMovementEnabled)
         {
             if (Input.GetKeyDown(KeyCode.RightArrow))
@@ -85,28 +86,43 @@ public class Cam : MonoBehaviour {
 
             if (Input.mousePosition.x > theScreenWidth - Boundary || rightHeld)
             {
-                transform.position += new Vector3(Time.deltaTime * fov,
+                NewCameraPosition += new Vector3(Time.deltaTime * fov,
                     0.0f, 0.0f);
             }
 
             if (Input.mousePosition.x < 0 + Boundary || leftHeld)
             {
-                transform.position += new Vector3(-(Time.deltaTime * fov),
+                NewCameraPosition += new Vector3(-(Time.deltaTime * fov),
                     0.0f, 0.0f);
             }
 
             if (Input.mousePosition.y > theScreenHeight - Boundary || upHeld)
             {
-                transform.position += new Vector3(0.0f,
+                NewCameraPosition += new Vector3(0.0f,
                     0.0f, Time.deltaTime * fov);
             }
 
             if (Input.mousePosition.y < 0 + Boundary || downHeld)
             {
-                transform.position += new Vector3(0.0f,
+                NewCameraPosition += new Vector3(0.0f,
                     0.0f, -(Time.deltaTime * fov));
             }
 
+            // Camera movement occurred, validate movement
+            if(NewCameraPosition != transform.position)
+            {
+                // Check if movement will put camera out of bounding area
+                if(Vector3.Distance(NewCameraPosition, Vector3.zero - new Vector3(0, 0, 30f)) < (gameManagerScript.MapRadius / 2) / gameManagerScript.MapTierCount * (gameManagerScript.CurrentTier+1))
+                {
+                    transform.position = NewCameraPosition;
+                }
+                else if(Vector3.Distance(NewCameraPosition, Vector3.zero - new Vector3(0, 0, 30f)) < Vector3.Distance(transform.position, Vector3.zero - new Vector3(0, 0, 30f)))
+                {
+                    // Camera is out of bounding area, check if player is trying to move back into bounding area
+                    // Prevents camera from being locked if it leaves bounding area
+                    transform.position = NewCameraPosition;
+                }
+            }
 
             fov -= Input.GetAxis("Mouse ScrollWheel") * sensitivity;
             fov = Mathf.Clamp(fov, minFov, maxFov);

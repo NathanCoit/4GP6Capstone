@@ -45,7 +45,7 @@ public class EnemyManager : MonoBehaviour {
                 invalidTiles.Add(g);
         }
 
-        Tile t = tiles[(int)Unit.getPos().x, (int)Unit.getPos().y].getClosestTile(BoardMan.playerUnits, Unit.MaxMovement, invalidTiles, BoardMan.playerUnits, tiles);
+        Tile validTile = tiles[(int)Unit.getPos().x, (int)Unit.getPos().y].getClosestTile(BoardMan.playerUnits, Unit.MaxMovement, invalidTiles, BoardMan.playerUnits, tiles);
 
         //Redefine connection because we broke some above
         MapMan.DefineConnections();
@@ -53,11 +53,11 @@ public class EnemyManager : MonoBehaviour {
         Unit.MovePriority = tiles[(int)Unit.getPos().x, (int)Unit.getPos().y].MovePriority;
 
         //If we actually found a tile (we may not if the map is huge or I messed up)
-        if (t != null)
+        if (validTile != null)
         {
-            GameObject temp = Instantiate(Unit.MovableTile);
-            temp.GetComponent<Movable>().pos = new Vector2((int)t.getX(), (int)t.getZ());
-            temp.transform.position = new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2, t.getY() + 0.5f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
+            GameObject tempTile = Instantiate(Unit.MovableTile);
+            tempTile.GetComponent<Movable>().pos = new Vector2((int)validTile.getX(), (int)validTile.getZ());
+            tempTile.transform.position = new Vector3(validTile.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2, validTile.getY() + 0.5f, validTile.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
         }
 
     }
@@ -67,17 +67,17 @@ public class EnemyManager : MonoBehaviour {
     {
         Tile[,] tiles = getTiles();
 
-        foreach (GameObject g in BoardMan.enemyUnits)
+        foreach (GameObject enemyUnit in BoardMan.enemyUnits)
         {
             //Setup Invalid Tiles (the one with units on)
             List<GameObject> invalidTiles = new List<GameObject>();
-            foreach (GameObject go in BoardMan.enemyUnits)
+            foreach (GameObject otherEnemyUnit in BoardMan.enemyUnits)
             {
-                if (!(go.GetComponent<Units>().getPos() == g.GetComponent<Units>().getPos()))
-                    invalidTiles.Add(go);
+                if (!(otherEnemyUnit.GetComponent<Units>().getPos() == enemyUnit.GetComponent<Units>().getPos()))
+                    invalidTiles.Add(otherEnemyUnit);
             }
 
-            Units u = g.GetComponent<Units>();
+            Units u = enemyUnit.GetComponent<Units>();
             Tile t = tiles[(int)u.getPos().x, (int)u.getPos().y].getClosestTile(BoardMan.playerUnits, u.MaxMovement, invalidTiles, BoardMan.playerUnits, tiles);
             MapMan.DefineConnections();
             u.MovePriority = tiles[(int)u.getPos().x, (int)u.getPos().y].MovePriority;
@@ -110,7 +110,7 @@ public class EnemyManager : MonoBehaviour {
             if (closestTile != null)
             {
                 //Woo for using function we made for testing
-                closestTile.GetComponent<Movable>().testClick();
+                closestTile.GetComponent<Movable>().TestClick();
                 closestTile.GetComponent<Movable>().OnMouseOver();
                 yield return new WaitForSeconds(delay);
             }
@@ -128,7 +128,7 @@ public class EnemyManager : MonoBehaviour {
             if (AttackableTile != null)
             {
                 yield return new WaitForSeconds(delay);
-                AttackableTile.GetComponent<Attackable>().testClick();
+                AttackableTile.GetComponent<Attackable>().TestClick();
                 AttackableTile.GetComponent<Attackable>().OnMouseOver();
             }
             else

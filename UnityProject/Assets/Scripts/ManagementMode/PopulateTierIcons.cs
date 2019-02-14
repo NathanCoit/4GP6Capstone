@@ -70,6 +70,7 @@ public class PopulateTierIcons : MonoBehaviour
                 btnRectTransform.anchoredPosition = new Vector3(currentx + (segment / 2), startingy + (endingy - startingy) / 2, 0);
                 btnRectTransform.localScale = new Vector3(1 / XScale, 1 / YScale, 1);
                 Button.GetComponent<Button>().onClick.AddListener(() => RewardClicked(Reward));
+                gameObject.transform.parent.gameObject.GetComponent<TooltipDisplayController>().AttachTooltipToObject(Button, Reward.RewardDescription);
                 Reward.ButtonObject = Button;
                 Buttons.Add(Reward.RewardName,Button);
                 if((Reward.PreviousRequiredReward!= null && !Reward.PreviousRequiredReward.Unlocked) || Reward.Unlocked)

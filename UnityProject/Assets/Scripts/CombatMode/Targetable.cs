@@ -15,14 +15,14 @@ public class Targetable : MonoBehaviour {
     private BoardManager BoardMan;
     private SetupManager SetupMan;
 
-    public Ability a;
+    public Ability ability;
     public Material mousedOverValid;
     public Material mousedOverInvalid;
     public Material air;
     public GameObject CubeAOEPrefab;
     public GameObject SphereAOEPrefab;
     private GameObject AOEShape;
-
+    private bool buttonSwitch = false;
     // Use this for initialization
     void Start ()
     {
@@ -52,7 +52,7 @@ public class Targetable : MonoBehaviour {
         bool valid = false;
 
         //If it's single target we're just target the one tile
-        if (a.Type == Ability.AbilityType.SingleTarget)
+        if (ability.AbiltyType == Ability.ABILITYTYPE.SingleTarget)
         {
             if (BoardMan.playerUnits.Contains(MapMan.Selected))
             {
@@ -80,9 +80,9 @@ public class Targetable : MonoBehaviour {
         }
 
         //If it's multi target, we gotta worry about shapes
-        else if(a.Type == Ability.AbilityType.MultiTarget)
+        else if(ability.AbiltyType == Ability.ABILITYTYPE.MultiTarget)
         {
-            MultiTargetAbility aMi = (MultiTargetAbility)MultiTargetAbility.LoadAbilityFromName(a.AbilityName);
+            MultiTargetAbility aMi = (MultiTargetAbility)MultiTargetAbility.LoadAbilityFromName(ability.AbilityName);
             if (AOEShape == null)
             {
                 //Cone is actually a sphere (just didn't change the name elsewhere yet)
@@ -169,14 +169,14 @@ public class Targetable : MonoBehaviour {
             
         }
 
-
         //Actually clicking (using the ability)
-        if (Input.GetMouseButtonDown(0) || autoClick)
+        if ((Input.GetMouseButtonDown(0) || autoClick) && !buttonSwitch)
         {
+            buttonSwitch = true;
             //Just damage the one unit if single target
-            if (a.Type == Ability.AbilityType.SingleTarget)
+            if (ability.AbiltyType == Ability.ABILITYTYPE.SingleTarget)
             {
-                SingleTargetAbility aSi = (SingleTargetAbility)SingleTargetAbility.LoadAbilityFromName(a.AbilityName);
+                SingleTargetAbility aSi = (SingleTargetAbility)SingleTargetAbility.LoadAbilityFromName(ability.AbilityName);
                 GameObject target = new GameObject();
                 foreach (GameObject g in targets)
                 {
@@ -196,11 +196,11 @@ public class Targetable : MonoBehaviour {
                     checkEnd();
                 }
             }
-            //Damage all the target within the AOE if it's multi
-            else if (a.Type == Ability.AbilityType.MultiTarget)
+            // Damage all the target within the AOE if it's multi
+            else if (ability.AbiltyType == Ability.ABILITYTYPE.MultiTarget)
             {
-                MultiTargetAbility aMi = (MultiTargetAbility)MultiTargetAbility.LoadAbilityFromName(a.AbilityName);
-
+                MultiTargetAbility aMi = (MultiTargetAbility)MultiTargetAbility.LoadAbilityFromName(ability.AbilityName);
+                Debug.Log(targets.Count);
                 foreach (GameObject g in targets)
                 {
                     g.GetComponent<Units>().setWorshiperCount(g.GetComponent<Units>().getWorshiperCount() - aMi.AbilityDamage);
@@ -221,15 +221,15 @@ public class Targetable : MonoBehaviour {
                 }
 
             }
-            //TODO
-            else if (a.Type == Ability.AbilityType.Buff)
+            // TODO
+            else if (ability.AbiltyType == Ability.ABILITYTYPE.Buff)
             {
-                Debug.Log("Using buff ability " + a.AbilityName + " !!!");
+                Debug.Log("Using buff ability " + ability.AbilityName + " !!!");
             }
-            //TODO
-            else if (a.Type == Ability.AbilityType.Debuff)
+            // TODO
+            else if (ability.AbiltyType == Ability.ABILITYTYPE.Debuff)
             {
-                Debug.Log("Using debuff ability " + a.AbilityName + " !!!");
+                Debug.Log("Using debuff ability " + ability.AbilityName + " !!!");
             }
 
             //End turn once we used an ability
@@ -240,7 +240,13 @@ public class Targetable : MonoBehaviour {
 
             //Clean up Tiles
             MapMan.ClearSelection();
+            Debug.Log("Succeed");
+        }
 
+        if (Input.GetMouseButtonUp(0) && buttonSwitch)
+        {
+            buttonSwitch = false;
+            Debug.Log("Fail");
         }
 
         //Udating direction for the line AOE

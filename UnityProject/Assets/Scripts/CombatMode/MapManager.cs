@@ -106,13 +106,21 @@ public class MapManager : MonoBehaviour
                 Tile temp = tiles[x, y];
                 List<Tile> tempConnections = new List<Tile>();
                 if (y < tiles.GetLength(1) - 1 && tiles[x, y + 1].isTraversable())
+                {
                     tempConnections.Add(tiles[x, y + 1]);
+                }
                 if (x < tiles.GetLength(0) - 1 && tiles[x + 1, y].isTraversable())
+                {
                     tempConnections.Add(tiles[x + 1, y]);
+                }
                 if (y > 0 && tiles[x, y - 1].isTraversable())
+                {
                     tempConnections.Add(tiles[x, y - 1]);
+                }
                 if (x > 0 && tiles[x - 1, y].isTraversable())
+                {
                     tempConnections.Add(tiles[x - 1, y]);
+                }
                 temp.updateConnections(tempConnections);
                 tiles[x, y] = temp;
             }
@@ -123,24 +131,27 @@ public class MapManager : MonoBehaviour
     {
         //Clean up tiles
         GameObject[] movableTiles = GameObject.FindGameObjectsWithTag("MoveableTile");
-        for (var i = 0; i < movableTiles.GetLength(0); i++)
+        for (int i = 0; i < movableTiles.GetLength(0); i++)
             Destroy(movableTiles[i]);
 
         GameObject[] attackableTiles = GameObject.FindGameObjectsWithTag("AttackableTile");
-        for (var i = 0; i < attackableTiles.GetLength(0); i++)
+        for (int i = 0; i < attackableTiles.GetLength(0); i++)
             Destroy(attackableTiles[i]);
 
         GameObject[] TargetableTiles = GameObject.FindGameObjectsWithTag("TargetableTile");
-        for (var i = 0; i < TargetableTiles.GetLength(0); i++)
+        for (int i = 0; i < TargetableTiles.GetLength(0); i++)
             Destroy(TargetableTiles[i]);
     }
 
     //For making the gameObject of a tile (the real ones)
     public void InstantiateTile(string typeID, Vector3 pos)
     {
-        GameObject temp = Instantiate(Resources.Load("Tiles/" + typeID) as GameObject);
+        GameObject tileGameObject = Instantiate(Resources.Load("Tiles/" + typeID) as GameObject);
 
         //Cenetering
-        temp.transform.position = new Vector3(pos.x + ((1 - temp.transform.lossyScale.x) / 2) + temp.transform.lossyScale.x / 2, 0, pos.z + ((1 - temp.transform.lossyScale.z) / 2) + temp.transform.lossyScale.x / 2);
+        tileGameObject.transform.position 
+            = new Vector3(pos.x + ((1 - tileGameObject.transform.lossyScale.x) / 2) + tileGameObject.transform.lossyScale.x / 2,
+            0,
+            pos.z + ((1 - tileGameObject.transform.lossyScale.z) / 2) + tileGameObject.transform.lossyScale.x / 2);
     }
 }

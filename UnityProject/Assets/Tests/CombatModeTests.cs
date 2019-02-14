@@ -87,7 +87,7 @@ public class CombatModeTests
             initalPosX.Add((int)unit.getPos().x);
 
             //End turn
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
             unit.EndTurnButton();
@@ -134,7 +134,7 @@ public class CombatModeTests
             initalPosX.Add((int)unit.getPos().x);
 
             //Opening Menu
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
 
@@ -154,12 +154,12 @@ public class CombatModeTests
                     break;
                 }
             }
-            forwardTile.GetComponent<Movable>().testClick();
+            forwardTile.GetComponent<Movable>().TestClick();
             forwardTile.GetComponent<Movable>().OnMouseOver();
             yield return null;
 
             //End turn
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
             unit.EndTurnButton();
@@ -205,7 +205,7 @@ public class CombatModeTests
             initalPosX.Add((int)unit.getPos().x);
 
             //Opening Menu
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
 
@@ -225,18 +225,18 @@ public class CombatModeTests
                     break;
                 }
             }
-            forwardTile.GetComponent<Movable>().testClick();
+            forwardTile.GetComponent<Movable>().TestClick();
             forwardTile.GetComponent<Movable>().OnMouseOver();
             yield return null;
 
             //Attack
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
             unit.showAttackable();
             yield return null;
             List<GameObject> AttackableTiles = GameObject.FindGameObjectsWithTag("AttackableTile").ToList();
-            AttackableTiles[0].GetComponent<Attackable>().testClick();
+            AttackableTiles[0].GetComponent<Attackable>().TestClick();
             AttackableTiles[0].GetComponent<Attackable>().OnMouseOver();
 
         }
@@ -283,7 +283,7 @@ public class CombatModeTests
             if (flip)
             {
                 //Opening Menu
-                unit.testClick();
+                unit.TestClick();
                 unit.OnMouseOver();
                 yield return null;
 
@@ -303,18 +303,18 @@ public class CombatModeTests
                         break;
                     }
                 }
-                forwardTile.GetComponent<Movable>().testClick();
+                forwardTile.GetComponent<Movable>().TestClick();
                 forwardTile.GetComponent<Movable>().OnMouseOver();
                 yield return null;
 
                 //Attack
-                unit.testClick();
+                unit.TestClick();
                 unit.OnMouseOver();
                 yield return null;
                 unit.showAttackable();
                 yield return null;
                 List<GameObject> AttackableTiles = GameObject.FindGameObjectsWithTag("AttackableTile").ToList();
-                AttackableTiles[0].GetComponent<Attackable>().testClick();
+                AttackableTiles[0].GetComponent<Attackable>().TestClick();
                 AttackableTiles[0].GetComponent<Attackable>().OnMouseOver();
 
                 flip = false;
@@ -322,7 +322,7 @@ public class CombatModeTests
             else
             {
                 //End turn
-                unit.testClick();
+                unit.TestClick();
                 unit.OnMouseOver();
                 yield return null;
                 unit.EndTurnButton();
@@ -365,7 +365,7 @@ public class CombatModeTests
 
         Units unit = BoardMan.playerUnits[0].GetComponent<Units>();
 
-        unit.testClick();
+        unit.TestClick();
         unit.OnMouseOver();
         yield return null;
         unit.EndTurnButton();
@@ -402,7 +402,7 @@ public class CombatModeTests
         Units unit = BoardMan.playerUnits[0].GetComponent<Units>();
 
         //Opening Menu
-        unit.testClick();
+        unit.TestClick();
         unit.OnMouseOver();
         yield return null;
 
@@ -422,18 +422,18 @@ public class CombatModeTests
                 break;
             }
         }
-        forwardTile.GetComponent<Movable>().testClick();
+        forwardTile.GetComponent<Movable>().TestClick();
         forwardTile.GetComponent<Movable>().OnMouseOver();
         yield return null;
 
         //Attack
-        unit.testClick();
+        unit.TestClick();
         unit.OnMouseOver();
         yield return null;
         unit.showAttackable();
         yield return null;
         List<GameObject> AttackableTiles = GameObject.FindGameObjectsWithTag("AttackableTile").ToList();
-        AttackableTiles[0].GetComponent<Attackable>().testClick();
+        AttackableTiles[0].GetComponent<Attackable>().TestClick();
         AttackableTiles[0].GetComponent<Attackable>().OnMouseOver();
 
 
@@ -472,7 +472,7 @@ public class CombatModeTests
             initialWorshiperCount.Add((int)unit.getWorshiperCount());
 
             //Opening Menu
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
 
@@ -492,18 +492,18 @@ public class CombatModeTests
                     break;
                 }
             }
-            forwardTile.GetComponent<Movable>().testClick();
+            forwardTile.GetComponent<Movable>().TestClick();
             forwardTile.GetComponent<Movable>().OnMouseOver();
             yield return null;
 
             //Attack
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
             unit.showAttackable();
             yield return null;
             List<GameObject> AttackableTiles = GameObject.FindGameObjectsWithTag("AttackableTile").ToList();
-            AttackableTiles[0].GetComponent<Attackable>().testClick();
+            AttackableTiles[0].GetComponent<Attackable>().TestClick();
             AttackableTiles[0].GetComponent<Attackable>().OnMouseOver();
 
         }
@@ -546,7 +546,7 @@ public class CombatModeTests
             Units unit = u.GetComponent<Units>();
 
             //Opening Menu
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
 
@@ -566,12 +566,12 @@ public class CombatModeTests
                     break;
                 }
             }
-            forwardTile.GetComponent<Movable>().testClick();
+            forwardTile.GetComponent<Movable>().TestClick();
             forwardTile.GetComponent<Movable>().OnMouseOver();
             yield return null;
 
             //Attack
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
             unit.showAttackable();
@@ -594,7 +594,7 @@ public class CombatModeTests
 
             yield return null;
             
-            AttackableTiles[0].GetComponent<Attackable>().testClick();
+            AttackableTiles[0].GetComponent<Attackable>().TestClick();
             AttackableTiles[0].GetComponent<Attackable>().OnMouseOver();
 
         }
@@ -628,7 +628,7 @@ public class CombatModeTests
             Units unit = u.GetComponent<Units>();
 
             //Opening Menu
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
 
@@ -648,12 +648,12 @@ public class CombatModeTests
                     break;
                 }
             }
-            forwardTile.GetComponent<Movable>().testClick();
+            forwardTile.GetComponent<Movable>().TestClick();
             forwardTile.GetComponent<Movable>().OnMouseOver();
             yield return null;
 
             //Attack
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
             unit.showAttackable();
@@ -670,7 +670,7 @@ public class CombatModeTests
 
             yield return null;
 
-            AttackableTiles[0].GetComponent<Attackable>().testClick();
+            AttackableTiles[0].GetComponent<Attackable>().TestClick();
             AttackableTiles[0].GetComponent<Attackable>().OnMouseOver();
 
         }
@@ -702,7 +702,7 @@ public class CombatModeTests
             Units unit = u.GetComponent<Units>();
 
             //Opening Menu
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
 
@@ -722,18 +722,18 @@ public class CombatModeTests
                     break;
                 }
             }
-            forwardTile.GetComponent<Movable>().testClick();
+            forwardTile.GetComponent<Movable>().TestClick();
             forwardTile.GetComponent<Movable>().OnMouseOver();
             yield return null;
 
             //Attack
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
             unit.showAttackable();
             yield return null;
             List<GameObject> AttackableTiles = GameObject.FindGameObjectsWithTag("AttackableTile").ToList();
-            AttackableTiles[0].GetComponent<Attackable>().testClick();
+            AttackableTiles[0].GetComponent<Attackable>().TestClick();
             AttackableTiles[0].GetComponent<Attackable>().OnMouseOver();
 
         }
@@ -773,7 +773,7 @@ public class CombatModeTests
             Units unit = u.GetComponent<Units>();
 
             //Opening Menu
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
 
@@ -793,7 +793,7 @@ public class CombatModeTests
                     break;
                 }
             }
-            forwardTile.GetComponent<Movable>().testClick();
+            forwardTile.GetComponent<Movable>().TestClick();
             forwardTile.GetComponent<Movable>().OnMouseOver();
 
         }
@@ -829,7 +829,7 @@ public class CombatModeTests
             Units unit = u.GetComponent<Units>();
 
             //Opening Menu
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
 
@@ -872,7 +872,7 @@ public class CombatModeTests
             Units unit = u.GetComponent<Units>();
 
             //Opening Menu
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
 
@@ -892,14 +892,14 @@ public class CombatModeTests
                     break;
                 }
             }
-            forwardTile.GetComponent<Movable>().testClick();
+            forwardTile.GetComponent<Movable>().TestClick();
             forwardTile.GetComponent<Movable>().OnMouseOver();
             
 
             //try moving again cause only moved one tile
 
             //Opening Menu
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
 
@@ -964,7 +964,7 @@ public class CombatModeTests
         Units unit = BoardMan.playerUnits[0].GetComponent<Units>();
 
         //Opens Menu
-        unit.testClick();
+        unit.TestClick();
         unit.OnMouseOver();
         yield return null;
         
@@ -994,7 +994,7 @@ public class CombatModeTests
         Units unit = BoardMan.playerUnits[0].GetComponent<Units>();
 
         //Opens Menu
-        unit.testClick();
+        unit.TestClick();
         unit.OnMouseOver();
         yield return null;
 
@@ -1021,7 +1021,7 @@ public class CombatModeTests
         yield return null;
 
         Units unit = null;
-        float initalMoral = BoardMan.getPlayerFaith();
+        float initalMoral = BoardMan.GetPlayerFaith();
 
         foreach (GameObject g in BoardMan.playerUnits)
         {
@@ -1029,7 +1029,7 @@ public class CombatModeTests
             unit = g.GetComponent<Units>();
 
             //Opening Menu
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
 
@@ -1043,7 +1043,7 @@ public class CombatModeTests
             unit = g.GetComponent<Units>();
 
             //Opening Menu
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
 
@@ -1054,7 +1054,7 @@ public class CombatModeTests
 
         yield return null;
 
-        if (initalMoral == BoardMan.getPlayerFaith())
+        if (initalMoral == BoardMan.GetPlayerFaith())
             passed = false;
 
         Assert.True(passed);
@@ -1078,7 +1078,7 @@ public class CombatModeTests
         yield return null;
 
         Units unit = null;
-        float initalMoral = BoardMan.getPlayerFaith();
+        float initalMoral = BoardMan.GetPlayerFaith();
 
         foreach (GameObject g in BoardMan.playerUnits)
         {
@@ -1086,7 +1086,7 @@ public class CombatModeTests
             unit = g.GetComponent<Units>();
 
             //Opening Menu
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
 
@@ -1096,7 +1096,7 @@ public class CombatModeTests
 
         yield return null;
 
-        if (initalMoral != BoardMan.getPlayerFaith())
+        if (initalMoral != BoardMan.GetPlayerFaith())
             passed = false;
 
         Assert.True(passed);
@@ -1120,7 +1120,7 @@ public class CombatModeTests
         yield return null;
 
         Units unit = null;
-        float initalMoral = BoardMan.getPlayerFaith();
+        float initalMoral = BoardMan.GetPlayerFaith();
 
         foreach (GameObject g in BoardMan.playerUnits)
         {
@@ -1128,14 +1128,14 @@ public class CombatModeTests
             unit = g.GetComponent<Units>();
 
             //Opening Menu
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
 
             unit.EndTurnButton();
             yield return null;
 
-            if (initalMoral != BoardMan.getPlayerFaith())
+            if (initalMoral != BoardMan.GetPlayerFaith())
                 passed = false;
             yield return null;
         }
@@ -1175,7 +1175,7 @@ public class CombatModeTests
                 unit = g.GetComponent<Units>();
 
                 //Opening Menu
-                unit.testClick();
+                unit.TestClick();
                 unit.OnMouseOver();
                 yield return null;
 
@@ -1189,7 +1189,7 @@ public class CombatModeTests
                 unit = g.GetComponent<Units>();
 
                 //Opening Menu
-                unit.testClick();
+                unit.TestClick();
                 unit.OnMouseOver();
                 yield return null;
 
@@ -1197,7 +1197,7 @@ public class CombatModeTests
                 yield return null;
             }
 
-            if (BoardMan.getPlayerFaith() > BoardMan.getFaithCap())
+            if (BoardMan.GetPlayerFaith() > BoardMan.GetFaithCap())
                 passed = false;
         }
 
@@ -1237,7 +1237,7 @@ public class CombatModeTests
                 unit = g.GetComponent<Units>();
 
                 //Opening Menu
-                unit.testClick();
+                unit.TestClick();
                 unit.OnMouseOver();
                 yield return null;
 
@@ -1254,7 +1254,7 @@ public class CombatModeTests
                 unit = g.GetComponent<Units>();
 
                 //Opening Menu
-                unit.testClick();
+                unit.TestClick();
                 unit.OnMouseOver();
                 yield return null;
 
@@ -1262,7 +1262,7 @@ public class CombatModeTests
                 yield return null;
             }
 
-            if (BoardMan.getPlayerFaith() <= 0)
+            if (BoardMan.GetPlayerFaith() <= 0)
                 passed = false;
         }
 
@@ -1295,7 +1295,7 @@ public class CombatModeTests
 
         unit.WorshiperCount = 10;
 
-        BoardMan.playerMorale = 0.2f;
+        BoardMan.PlayerMorale = 0.2f;
         unit.updateAttackStrength();
 
         yield return null;
@@ -1304,7 +1304,7 @@ public class CombatModeTests
 
         yield return null;
 
-        BoardMan.playerMorale = 1.0f;
+        BoardMan.PlayerMorale = 1.0f;
         unit.updateAttackStrength();
 
         yield return null;
@@ -1336,7 +1336,7 @@ public class CombatModeTests
 
         unit.WorshiperCount = 10;
 
-        BoardMan.playerMorale = 0.2f;
+        BoardMan.PlayerMorale = 0.2f;
         unit.updateAttackStrength();
 
         yield return null;
@@ -1345,7 +1345,7 @@ public class CombatModeTests
 
         yield return null;
 
-        BoardMan.playerMorale = 1.0f;
+        BoardMan.PlayerMorale = 1.0f;
         unit.updateAttackStrength();
 
         yield return null;
@@ -1377,7 +1377,7 @@ public class CombatModeTests
 
         unit.WorshiperCount = 10;
 
-        BoardMan.playerMorale = 0.2f;
+        BoardMan.PlayerMorale = 0.2f;
         unit.updateAttackStrength();
 
         yield return null;
@@ -1412,7 +1412,7 @@ public class CombatModeTests
         Units unit = u.GetComponent<Units>();
 
         //Opening Menu
-        unit.testClick();
+        unit.TestClick();
         unit.OnMouseOver();
         yield return null;
 
@@ -1432,18 +1432,18 @@ public class CombatModeTests
                 break;
             }
         }
-        forwardTile.GetComponent<Movable>().testClick();
+        forwardTile.GetComponent<Movable>().TestClick();
         forwardTile.GetComponent<Movable>().OnMouseOver();
         yield return null;
 
         //Attack
-        unit.testClick();
+        unit.TestClick();
         unit.OnMouseOver();
         yield return null;
         unit.showAttackable();
         yield return null;
         List<GameObject> AttackableTiles = GameObject.FindGameObjectsWithTag("AttackableTile").ToList();
-        AttackableTiles[0].GetComponent<Attackable>().testClick();
+        AttackableTiles[0].GetComponent<Attackable>().TestClick();
         AttackableTiles[0].GetComponent<Attackable>().OnMouseOver();
 
         yield return null;
@@ -1482,7 +1482,7 @@ public class CombatModeTests
         BoardMan.enemyUnits[0].GetComponent<Units>().setGod();
 
         //Opening Menu
-        unit.testClick();
+        unit.TestClick();
         unit.OnMouseOver();
         yield return null;
 
@@ -1502,18 +1502,18 @@ public class CombatModeTests
                 break;
             }
         }
-        forwardTile.GetComponent<Movable>().testClick();
+        forwardTile.GetComponent<Movable>().TestClick();
         forwardTile.GetComponent<Movable>().OnMouseOver();
         yield return null;
 
         //Attack
-        unit.testClick();
+        unit.TestClick();
         unit.OnMouseOver();
         yield return null;
         unit.showAttackable();
         yield return null;
         List<GameObject> AttackableTiles = GameObject.FindGameObjectsWithTag("AttackableTile").ToList();
-        AttackableTiles[0].GetComponent<Attackable>().testClick();
+        AttackableTiles[0].GetComponent<Attackable>().TestClick();
         AttackableTiles[0].GetComponent<Attackable>().OnMouseOver();
 
         yield return null;
@@ -1552,7 +1552,7 @@ public class CombatModeTests
         BoardMan.enemyUnits[0].GetComponent<Units>().WorshiperCount = 10000;
 
         //Opening Menu
-        unit.testClick();
+        unit.TestClick();
         unit.OnMouseOver();
         yield return null;
 
@@ -1572,18 +1572,18 @@ public class CombatModeTests
                 break;
             }
         }
-        forwardTile.GetComponent<Movable>().testClick();
+        forwardTile.GetComponent<Movable>().TestClick();
         forwardTile.GetComponent<Movable>().OnMouseOver();
         yield return null;
 
         //Attack
-        unit.testClick();
+        unit.TestClick();
         unit.OnMouseOver();
         yield return null;
         unit.showAttackable();
         yield return null;
         List<GameObject> AttackableTiles = GameObject.FindGameObjectsWithTag("AttackableTile").ToList();
-        AttackableTiles[0].GetComponent<Attackable>().testClick();
+        AttackableTiles[0].GetComponent<Attackable>().TestClick();
         AttackableTiles[0].GetComponent<Attackable>().OnMouseOver();
 
         yield return null;
@@ -1627,7 +1627,7 @@ public class CombatModeTests
             unit = g.GetComponent<Units>();
 
             //Opening Menu
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
 
@@ -1642,7 +1642,7 @@ public class CombatModeTests
         unit = u.GetComponent<Units>();
 
         //Opening Menu
-        unit.testClick();
+        unit.TestClick();
         unit.OnMouseOver();
         yield return null;
 
@@ -1662,18 +1662,18 @@ public class CombatModeTests
                 break;
             }
         }
-        forwardTile.GetComponent<Movable>().testClick();
+        forwardTile.GetComponent<Movable>().TestClick();
         forwardTile.GetComponent<Movable>().OnMouseOver();
         yield return null;
 
         //Attack
-        unit.testClick();
+        unit.TestClick();
         unit.OnMouseOver();
         yield return null;
         unit.showAttackable();
         yield return null;
         List<GameObject> AttackableTiles = GameObject.FindGameObjectsWithTag("AttackableTile").ToList();
-        AttackableTiles[0].GetComponent<Attackable>().testClick();
+        AttackableTiles[0].GetComponent<Attackable>().TestClick();
         AttackableTiles[0].GetComponent<Attackable>().OnMouseOver();
 
         yield return null;
@@ -1729,7 +1729,7 @@ public class CombatModeTests
             Units unit = u.GetComponent<Units>();
 
             //Opening Menu
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
 
@@ -1743,7 +1743,7 @@ public class CombatModeTests
 
         Units enemyUnit = BoardMan.enemyUnits[0].GetComponent<Units>();
 
-        enemyUnit.testClick();
+        enemyUnit.TestClick();
         enemyUnit.OnMouseOver();
         yield return null;
 
@@ -1764,19 +1764,19 @@ public class CombatModeTests
                 break;
             }
         }
-        forwardTile.GetComponent<Movable>().testClick();
+        forwardTile.GetComponent<Movable>().TestClick();
         forwardTile.GetComponent<Movable>().OnMouseOver();
 
         int playerUnitsCount = BoardMan.playerUnits.Count;
 
         //Attack
-        enemyUnit.testClick();
+        enemyUnit.TestClick();
         enemyUnit.OnMouseOver();
         yield return null;
         enemyUnit.showAttackable();
         yield return null;
         List<GameObject> AttackableTiles = GameObject.FindGameObjectsWithTag("AttackableTile").ToList();
-        AttackableTiles[0].GetComponent<Attackable>().testClick();
+        AttackableTiles[0].GetComponent<Attackable>().TestClick();
         AttackableTiles[0].GetComponent<Attackable>().OnMouseOver();
 
         yield return null;
@@ -1960,7 +1960,7 @@ public class CombatModeTests
             Units unit = u.GetComponent<Units>();
 
             //Opening Menu
-            unit.testClick();
+            unit.TestClick();
             unit.OnMouseOver();
             yield return null;
 
@@ -1974,7 +1974,7 @@ public class CombatModeTests
 
         Units enemyUnit = BoardMan.enemyUnits[0].GetComponent<Units>();
 
-        enemyUnit.testClick();
+        enemyUnit.TestClick();
         enemyUnit.OnMouseOver();
         yield return null;
 
@@ -1995,19 +1995,19 @@ public class CombatModeTests
                 break;
             }
         }
-        forwardTile.GetComponent<Movable>().testClick();
+        forwardTile.GetComponent<Movable>().TestClick();
         forwardTile.GetComponent<Movable>().OnMouseOver();
 
         int initialPlayerWorshiperCount = 999; //FIX HERE, add worshiper count into BoardMan that gets updated during combat
 
         //Attack
-        enemyUnit.testClick();
+        enemyUnit.TestClick();
         enemyUnit.OnMouseOver();
         yield return null;
         enemyUnit.showAttackable();
         yield return null;
         List<GameObject> AttackableTiles = GameObject.FindGameObjectsWithTag("AttackableTile").ToList();
-        AttackableTiles[0].GetComponent<Attackable>().testClick();
+        AttackableTiles[0].GetComponent<Attackable>().TestClick();
         AttackableTiles[0].GetComponent<Attackable>().OnMouseOver();
 
         yield return null;

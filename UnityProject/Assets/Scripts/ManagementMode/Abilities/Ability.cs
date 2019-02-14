@@ -2,14 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Super class for defining abilities
+/// All other abilities inherit from this class. 
+/// Each ability type will have different properties for use in combat mode.
+/// </summary>
 public class Ability{
     public string AbilityName;
     public string AbilityDescription;
-    public AbilityType Type;
+    public ABILITYTYPE AbiltyType;
     public int Range = 0;
     public int FaithCost;
 
-    public enum AbilityType
+    public enum ABILITYTYPE
     {
         SingleTarget,
         MultiTarget,
@@ -25,7 +30,7 @@ public class Ability{
         Cone // "cone" shape in front of god
     }
 
-    public enum BuffType
+    public enum BUFFTYPE
     {
         Healing,
         Damage,
@@ -34,7 +39,7 @@ public class Ability{
         Speed
     }
 
-    public enum DebuffType
+    public enum DEBUFFTYPE
     {
         DamageReduction,
         DefenseReduction,
@@ -47,6 +52,7 @@ public class Ability{
         Blind
     }
 
+    // Lists of each type of ability for loading purposes.
     public static List<string> SingleTargetAbilities = new List<string>
     {
         "throwmushroom",
@@ -109,6 +115,10 @@ public class Ability{
         "root"
     };
 
+    /// <summary>
+    /// Base constructor. Load ability and give it a name
+    /// </summary>
+    /// <param name="pstrAbilityName"></param>
     public Ability(string pstrAbilityName)
     {
         if (LoadAbility(pstrAbilityName))
@@ -121,11 +131,23 @@ public class Ability{
         }
     }
 
+    /// <summary>
+    /// Method for loading an ability.
+    /// Override this for each type of ability
+    /// </summary>
+    /// <param name="pstrAbilityName">The name of the ability to load.</param>
+    /// <returns></returns>
     protected virtual bool LoadAbility(string pstrAbilityName)
     {
         return false;
     }
 
+    /// <summary>
+    /// Method for loading ability
+    /// Returns an ability loaded based on its type.
+    /// </summary>
+    /// <param name="pstrAbilityName"></param>
+    /// <returns></returns>
     public static Ability LoadAbilityFromName(string pstrAbilityName)
     {
         Ability loadedAbility = null;
@@ -133,7 +155,7 @@ public class Ability{
 
         if (SingleTargetAbilities.Contains(strFormattedAbilityName))
         {
-            loadedAbility = new SingleTargetAbility(strFormattedAbilityName);
+            loadedAbility = new SingleTargetAbility(pstrAbilityName);
         }
         else if (MultiTargetAbilities.Contains(strFormattedAbilityName))
         {
@@ -148,5 +170,17 @@ public class Ability{
             loadedAbility = new DebuffAbility(pstrAbilityName);
         }
         return loadedAbility;
+    }
+
+    /// <summary>
+    /// Virtual method for returning the description of an ability
+    /// Override in each ability subclass to return an appropriate description of that ability type.
+    /// Used to get a nicely formatted string containing numerical data about ability.
+    /// </summary>
+    /// <returns></returns>
+    public virtual string GetAbilityDescription()
+    {
+        string strAbilityDescription = string.Empty;
+        return strAbilityDescription;
     }
 }

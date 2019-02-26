@@ -12,7 +12,7 @@ using UnityEngine.UI;
 public class Gods : MonoBehaviour {
 
     private string Name;
-    private bool inBattle;
+    private bool inBattlefield;
     private string[] Abilities;
     private MapManager MapMan;
     public int direction;
@@ -23,7 +23,7 @@ public class Gods : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        inBattle = false;
+        inBattlefield = false;
         direction = 0;
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
     }
@@ -67,6 +67,8 @@ public class Gods : MonoBehaviour {
         temp2.GetComponentInChildren<Text>().text = "Back to Actions";
 
         temp2.GetComponent<Button>().onClick.AddListener(delegate { returnToActions(); });
+
+        // TODO, clear previous menus
     }
 
     //Called on the button press. Starts the target selection.
@@ -80,7 +82,7 @@ public class Gods : MonoBehaviour {
         foreach(Tile t in MapMan.tiles)
         {
             GameObject temp = Instantiate(TargetableTile);
-            temp.GetComponent<Targetable>().a = a;
+            temp.GetComponent<Targetable>().ability = a;
             temp.GetComponent<Targetable>().pos = new Vector2((int)t.getX(), (int)t.getZ());
             temp.transform.position = new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2, t.getY() + 0.5f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
         }
@@ -101,7 +103,7 @@ public class Gods : MonoBehaviour {
     }
     public bool isInBattle()
     {
-        return inBattle;
+        return inBattlefield;
     }
 
 
@@ -113,11 +115,11 @@ public class Gods : MonoBehaviour {
 
     public void getInBattle()
     {
-        inBattle = true;
+        inBattlefield = true;
     }
 
-    public void setAbilites(string[] abilities)
+    public void setAbilites(string[] parrAbilities)
     {
-        Abilities = abilities;
+        Abilities = parrAbilities;
     }
 }

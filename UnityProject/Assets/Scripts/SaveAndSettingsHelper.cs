@@ -17,8 +17,8 @@ public class SaveAndSettingsHelper
         Slider uniAudioSlider = GameObject.Find("AudioSliderObject").GetComponent<Slider>();
         uniAudioSlider.minValue = 0;
         uniAudioSlider.maxValue = 1;
-        uniAudioSlider.value = PlayerPrefs.GetFloat("MasterVolume");
-        GameObject.Find("GraphicsDropDownMenu").GetComponent<Dropdown>().value = PlayerPrefs.GetInt("GraphicsSetting");
+        uniAudioSlider.value = PlayerPrefs.GetFloat("MasterVolume", 0.5f);
+        GameObject.Find("GraphicsDropDownMenu").GetComponent<Dropdown>().value = PlayerPrefs.GetInt("GraphicsSetting", 0);
         GameObject.Find("HotKeySettors").GetComponent<HotKeyScrollView>().CreateHotKeySettors();
     }
 
@@ -48,7 +48,7 @@ public class SaveAndSettingsHelper
     public static void ApplyGameSettings()
     {
         // set sound
-        AudioListener.volume = PlayerPrefs.GetFloat("MasterVolume");
+        AudioListener.volume = PlayerPrefs.GetFloat("MasterVolume", 0.5f);
         UnityEngine.Rendering.GraphicsTier uniGraphicsSetting = UnityEngine.Rendering.GraphicsTier.Tier1;
         switch (PlayerPrefs.GetInt("GraphicsSetting"))
         {
@@ -83,6 +83,7 @@ public class SaveAndSettingsHelper
             pmusGameInfo.EnemyChallengeTimer = musLoadedSaveData.EnemyChallengeTimer;
             pmusGameInfo.WorshipperMultipliers = musLoadedSaveData.WorshipperMultipliers;
             pmusGameInfo.MaterialMultipliers = musLoadedSaveData.MaterialMultipliers;
+            pmusGameInfo.TutorialFlag = musLoadedSaveData.TutorialFlag;
             pmusGameInfo.FromSave = true;
             pmusGameInfo.NewGame = false;
             SceneManager.LoadScene("UnderGodScene");
@@ -188,5 +189,40 @@ public class SaveAndSettingsHelper
             musSaveData = JsonUtility.FromJson<SaveData>(strGameInfoAsJSON);
         }
         return musSaveData;
+    }
+
+    /// <summary>
+    /// Check for changes in the options menu to decide if confirmation dialog is needed when closing
+    /// </summary>
+    /// <returns></returns>
+    public static bool CheckForChangesInOptionsMenu()
+    {
+        bool blnUnsavedChanges = false;
+        // Get options menu settings
+        float fChangedVolume = GameObject.Find("AudioSliderObject").GetComponent<Slider>().value;
+        int intChangedGraphicsSetting = GameObject.Find("GraphicsDropDownMenu").GetComponent<Dropdown>().value;
+        Dictionary<string, KeyCode> dictChangedHotkeys = new Dictionary<string, KeyCode>(GameObject.Find("HotKeySettors").GetComponent<HotKeyScrollView>().SettingsHotkeyManager.HotKeys);
+
+        // Get saved settings
+        float fSavedVolume = PlayerPrefs.GetFloat("MasterVolume", 0.5f);
+        int intSavedGraphicsSetting = PlayerPrefs.GetInt("GraphicsSetting", 0);
+        HotKeyManager musHotKeyManager = new HotKeyManager();
+        musHotKeyManager.LoadHotkeyProfile();
+        Dictionary<string, KeyCode> dictSavedHotkeys = musHotKeyManager.HotKeys;
+
+        // Compare
+        if (!fChangedVolume.Equals(fSavedVolume)
+            || intChangedGraphicsSetting != intSavedGraphicsSetting)
+        {
+            blnUnsavedChanges = true;
+        }
+        foreach (KeyValuePair<string, KeyCode> kvalHotkey in dictChangedHotkeys)
+        {
+            if (kvalHotkey.Value != dictSavedHotkeys[kvalHotkey.Key])
+            {
+                blnUnsavedChanges = true;
+            }
+        }
+        return blnUnsavedChanges;
     }
 }

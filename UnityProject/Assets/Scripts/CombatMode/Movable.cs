@@ -32,6 +32,10 @@ public class Movable : MonoBehaviour {
         return MapMan.GetComponent<MapManager>().tiles;
     }
 
+
+    /// <summary>
+    /// 
+    /// </summary>
     public void OnMouseOver()
     {
         if (Input.GetMouseButtonDown(0) || autoClick)
@@ -41,13 +45,15 @@ public class Movable : MonoBehaviour {
             HashSet<Tile> visited = new HashSet<Tile>();
             int j = 0;
 
-            depths = tiles[(int)MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().getPos().x, (int)MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().getPos().y].getDepths();
-            visited = tiles[(int)MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().getPos().x, (int)MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().getPos().y].getVisited();
+            depths = tiles[(int)MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().getPos().x, 
+                (int)MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().getPos().y].getDepths();
+            visited = tiles[(int)MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().getPos().x,
+                (int)MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().getPos().y].getVisited();
 
-            
-            foreach(Tile t in visited)
+
+            foreach(Tile visitedTile in visited)
             {
-                if(new Vector2(t.getX(), t.getZ()) == pos)
+                if(new Vector2(visitedTile.getX(), visitedTile.getZ()) == pos)
                 {
                     break;
                 }
@@ -76,7 +82,7 @@ public class Movable : MonoBehaviour {
     }
 
     //For spoofing clicks for testing
-    public void testClick()
+    public void TestClick()
     {
         autoClick = true;
     }

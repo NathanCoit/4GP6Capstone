@@ -5,20 +5,24 @@ using UnityEngine;
 /// <summary>
 /// Class for tracking keyboard inputs from the user in Management mode.
 /// </summary>
-public class InputManager : MonoBehaviour {
+public class InputManager : MonoBehaviour
+{
     public GameObject GamemanagerObject;
     private GameManager GameManagerScript;
     private HotKeyManager hotKeyManager = new HotKeyManager();
     private KeyCode CurrentKeyDown = KeyCode.None;
+    public ConfirmationBoxController ConfirmationBoxScript;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         GameManagerScript = GamemanagerObject.GetComponent<GameManager>();
         hotKeyManager.LoadHotkeyProfile();
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
         // Check for keybaord inputs depending on current gamestate
         switch (GameManagerScript.CurrentMenuState)
         {
@@ -60,8 +64,13 @@ public class InputManager : MonoBehaviour {
     /// </summary>
     private void CheckPausedMenuStateInputs()
     {
-        
-        if (Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"])
+        // If confirmation box is showing, use escape to close it instead of the pause menu
+        if (ConfirmationBoxScript.BoxIsActive
+            && Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"]))
+        {
+            ConfirmationBoxScript.HideConfirmationBox();
+        }
+        else if (Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"])
         && CurrentKeyDown != hotKeyManager.HotKeys["EscapeKeyCode"])
         {
             CurrentKeyDown = hotKeyManager.HotKeys["EscapeKeyCode"];
@@ -78,7 +87,18 @@ public class InputManager : MonoBehaviour {
         && CurrentKeyDown != hotKeyManager.HotKeys["EscapeKeyCode"])
         {
             CurrentKeyDown = hotKeyManager.HotKeys["EscapeKeyCode"];
-            GameManagerScript.ReturnToPauseMenu();
+            if(SaveAndSettingsHelper.CheckForChangesInOptionsMenu())
+            {
+                ConfirmationBoxScript.AttachCallbackToConfirmationBox(
+                GameManagerScript.ReturnToPauseMenu,
+                "Unsaved changes will be lost. Are you sure you don't want to save?",
+                "Don't Save",
+                "Cancel");
+            }
+            else
+            {
+                GameManagerScript.ReturnToPauseMenu();
+            }
         }
     }
 
@@ -96,7 +116,7 @@ public class InputManager : MonoBehaviour {
         {
             GameManagerScript.EnterTierRewardsMenuState();
         }
-        else if(Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"]) 
+        else if (Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"])
             && CurrentKeyDown != hotKeyManager.HotKeys["EscapeKeyCode"])
         {
             CurrentKeyDown = hotKeyManager.HotKeys["EscapeKeyCode"];
@@ -260,6 +280,19 @@ public class InputManager : MonoBehaviour {
             GameManagerScript.EnterBuildingSelectedMenuState();
             GameManagerScript.SetUpgradeUIActive(false);
             CurrentKeyDown = hotKeyManager.HotKeys["EscapeKeyCode"];
+        }
+    }
+
+    /// <summary>
+    /// Method to detect when the game loses/gains focues
+    /// </summary>
+    /// <param name="pblnIsFocus"></param>
+    private void OnApplicationFocus(bool pblnIsFocus)
+    {
+        if(!pblnIsFocus)
+        {
+            // Pause game on tab out so camera doesn't pan all over the place when tabbed out
+            GameManagerScript.PauseGame();
         }
     }
 }

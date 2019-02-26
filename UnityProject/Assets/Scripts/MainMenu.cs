@@ -6,6 +6,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Linq;
+using UnityEngine.EventSystems;
+using TMPro;
 
 public class MainMenu : MonoBehaviour {
     
@@ -19,6 +21,9 @@ public class MainMenu : MonoBehaviour {
     public GameObject OptionsPanel;
     public GameObject AudioSliderObject;
     public UnityEngine.Object SaveButtonPrefab;
+    public ConfirmationBoxController ConfirmationBoxScript;
+    public GameObject CloseOptionsMenuButton;
+    public ExecuteSound SoundManager;
 
     private string mstrGameSaveFileDirectory;
     private List<GameObject> marrButtonObjects;
@@ -37,7 +42,8 @@ public class MainMenu : MonoBehaviour {
         DisableAllPanels();
         MainUIPanel.SetActive(true);
         SaveAndSettingsHelper.ApplyGameSettings();
-	}
+        //gameObject.GetComponent<TooltipDisplayController>().AttachTooltipToObject(gameObject, "Main");
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -83,7 +89,7 @@ public class MainMenu : MonoBehaviour {
         mmusGameInfo = uniNewGameInfoObject.GetComponent<GameInfo>();
         mmusGameInfo.PlayerFaction.GodName = pstrGodName;
         mmusGameInfo.PlayerFaction.Type = penumGodType;
-        SceneManager.LoadScene("UnderGodScene");
+        StartCoroutine(PlayNewGameAnimation());
     }
     
     /// <summary>
@@ -92,6 +98,8 @@ public class MainMenu : MonoBehaviour {
     public void OpenNewGameOptions()
     {
         DisableAllPanels();
+        InputField uniGodNameInputFiled = GodNameInputFieldObject.GetComponent<InputField>();
+        uniGodNameInputFiled.text = string.Empty;
         NewGameOptionsPanel.SetActive(true);
     }
 
@@ -147,7 +155,8 @@ public class MainMenu : MonoBehaviour {
         List<FileInfo> arrSaveFileInfos = new List<FileInfo>();
         Button untButtonComponent = null;
         GameObject uniButtonGameObject = null;
-        Text uniButtonTextComponent = null;
+        GameObject uniDeleteButtonGameObject = null;
+        TextMeshProUGUI uniButtonTextComponent = null;
         marrButtonObjects = new List<GameObject>();
         FileInfo[] arrSavedFileInfo = null;
         SaveData musLoadedSaveData = null;
@@ -174,9 +183,23 @@ public class MainMenu : MonoBehaviour {
             uniButtonGameObject = (GameObject)Instantiate(SaveButtonPrefab);
             uniButtonGameObject.transform.SetParent(LoadMenuScrollPanel.transform);
             untButtonComponent = uniButtonGameObject.GetComponent<Button>();
-            uniButtonTextComponent = uniButtonGameObject.GetComponentInChildren<Text>();
+            uniButtonTextComponent = uniButtonGameObject.GetComponentInChildren<TextMeshProUGUI>();
             untButtonComponent.onClick.AddListener(() => LoadSaveGame(sysFileInfo.FullName));
-            uniButtonGameObject.transform.GetChild(1).gameObject.GetComponent<Button>().onClick.AddListener(() => DeleteSaveFile(sysFileInfo.FullName));
+            untButtonComponent.onClick.AddListener(() => SoundManager.PlaySound("GameStart"));
+            // Add callback to delete save file to callback of confirmation box
+            // Callbacks within Callbacks, we javascript now
+            uniDeleteButtonGameObject = uniButtonGameObject.transform.GetChild(1).gameObject;
+            uniDeleteButtonGameObject.GetComponent<Button>().onClick.AddListener(
+                () => SoundManager.PlaySound("MouseClick"));
+            uniDeleteButtonGameObject.GetComponent<Button>().onClick.AddListener(
+                () => ConfirmationBoxScript.AttachCallbackToConfirmationBox( 
+                    () => DeleteSaveFile(sysFileInfo.FullName),
+                    "Are you sure you want do delete this file?",
+                    "Delete"));
+
+            // Buttons created dynamically, sound effects must also be added dynamically
+            SoundManager.AttachOnHoverSoundToObject("MouseHover", uniDeleteButtonGameObject);
+
 
             musLoadedSaveData = SaveAndSettingsHelper.LoadSaveData(sysFileInfo.FullName);
             strSaveFileInfoText =
@@ -232,8 +255,7 @@ public class MainMenu : MonoBehaviour {
         GameObject NewGameInfoObject = (GameObject)Instantiate(GameInfoObjectPrefab);
         NewGameInfoObject.name = "GameInfo";
         GameInfo gameInfo = NewGameInfoObject.GetComponent<GameInfo>();
-
-        SaveAndSettingsHelper.LoadSceneFromFile(pstrFilePath, gameInfo);
+        StartCoroutine(PlayLoadSaveAnimation(pstrFilePath, gameInfo));
     }
 
     /// <summary>
@@ -251,6 +273,66 @@ public class MainMenu : MonoBehaviour {
     public void QuitGame()
     {
         Application.Quit();
+    }
+
+    /// <summary>
+    /// Method when close is clicked in the options menu, check if any unsaved changes exist
+    /// If there are unsaved changes, display a confirmation box to warn player
+    /// </summary>
+    public void CloseOptionsMenu()
+    {
+        bool blnUnsavedChanges = SaveAndSettingsHelper.CheckForChangesInOptionsMenu();
+
+        if(blnUnsavedChanges)
+        {
+            // Unsaved changes, show confirmation
+            ConfirmationBoxScript.AttachCallbackToConfirmationBox(
+                OpenMainUI, 
+                "Unsaved changes will be lost. Are you sure you don't want to save?", 
+                "Don't Save",
+                "Cancel");
+        }
+        else
+        {
+            // No changes, close normally
+            OpenMainUI();
+        }
+    }
+
+    private IEnumerator PlayLoadSaveAnimation(string pstrFilePath, GameInfo pmusGameInfo)
+    {
+        Animation uniAnimation = GetComponent<Animation>();
+        yield return uniAnimation.WhilePlaying("FadeToBlack");
+        SaveAndSettingsHelper.LoadSceneFromFile(pstrFilePath, pmusGameInfo);
+    }
+
+    private IEnumerator PlayNewGameAnimation()
+    {
+        Animation uniAnimation = GetComponent<Animation>();
+        yield return uniAnimation.WhilePlaying("FadeToBlack");
+        SceneManager.LoadScene("UnderGodScene");
+    }
+}
+
+/// <summary>
+/// Helper methods for waiting for animations to finish
+/// https://answers.unity.com/questions/37411/how-can-i-wait-for-an-animation-to-complete.html
+/// </summary>
+public static class AnimationExtensions
+{
+    public static IEnumerator WhilePlaying(this Animation animation)
+    {
+        do
+        {
+            yield return null;
+        } while (animation.isPlaying);
+    }
+
+    public static IEnumerator WhilePlaying(this Animation animation,
+                                               string animationName)
+    {
+        animation.PlayQueued(animationName);
+        yield return animation.WhilePlaying();
     }
 }
 

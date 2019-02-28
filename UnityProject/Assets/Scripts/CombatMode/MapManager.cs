@@ -109,13 +109,13 @@ public class MapManager : MonoBehaviour
                 attackButton.transform.SetParent(newUnitPanel.transform);
                 attackButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 190);
                 attackButton.GetComponentInChildren<Text>().text = "Attack";
-                attackButton.GetComponent<Button>().onClick.AddListener(delegate { BoardMan.showMovable(Selected); });
+                attackButton.GetComponent<Button>().onClick.AddListener(delegate { BoardMan.showAttackable(Selected); });
 
                 GameObject moveButton = Instantiate(unitButton);
                 moveButton.transform.SetParent(newUnitPanel.transform);
                 moveButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
                 moveButton.GetComponentInChildren<Text>().text = "Move";
-                moveButton.GetComponent<Button>().onClick.AddListener(delegate { BoardMan.showAttackable(Selected); });
+                moveButton.GetComponent<Button>().onClick.AddListener(delegate { BoardMan.showMovable(Selected); });
 
                 GameObject endTurnButton = Instantiate(unitButton);
                 endTurnButton.transform.SetParent(newUnitPanel.transform);
@@ -142,6 +142,22 @@ public class MapManager : MonoBehaviour
             //So we don't do this every frame
             newSelected = false;
             
+        }
+
+        if (!newSelected && Selected != null)
+        {
+            GameObject selectedMenu = screenCanvas.transform.GetChild(0).gameObject;
+
+            RectTransform CanvasRect = screenCanvas.GetComponent<RectTransform>();
+
+            Vector2 ViewportPosition = Camera.main.WorldToViewportPoint(Selected.unitGameObject().transform.position);
+            Vector2 WorldObject_ScreenPosition = new Vector2(
+            ((ViewportPosition.x * CanvasRect.sizeDelta.x) - (CanvasRect.sizeDelta.x * 0.5f)),
+            ((ViewportPosition.y * CanvasRect.sizeDelta.y) - (CanvasRect.sizeDelta.y * 0.5f)));
+
+
+            RectTransform selectedMenuPanelRect = selectedMenu.GetComponent<RectTransform>();
+            selectedMenuPanelRect.anchoredPosition = WorldObject_ScreenPosition;
         }
 
 

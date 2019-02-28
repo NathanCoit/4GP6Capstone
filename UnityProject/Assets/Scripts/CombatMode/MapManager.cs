@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /*
  * Concerned with the actual map (tiles) of combat mode.
@@ -18,12 +19,17 @@ public class MapManager : MonoBehaviour
 
     public GameObject Unit;
     public GameObject MovableTile;
-    public GameObject Selected;
-    private GameObject BoardMan;
-    private GameObject previousSelected;
+    public Unit Selected;
+    private BoardManager BoardMan;
+    private Unit previousSelected;
     public bool newSelected = false;
     public string mapName;
     public float godFloatHeight;
+
+    public GameObject unitPanel;
+    public GameObject unitButton;
+
+    public Canvas screenCanvas;
 
     // Use this for initialization. We're loading our maps from a txt and building them here so we can easily add more maps without the need for more scenes.
     void Start ()
@@ -57,7 +63,7 @@ public class MapManager : MonoBehaviour
         DefineConnections();
 
         Movable = new List<GameObject>();
-        BoardMan = GameObject.FindGameObjectWithTag("BoardManager");
+        BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
 
         //How high gods float above the map
         godFloatHeight = 3.5f;
@@ -71,22 +77,67 @@ public class MapManager : MonoBehaviour
         //For Selected Unit
         if(Selected != null && newSelected)
         {
-            //Clean up Previous selection
+            //Clean up Previous selection (the tiles)
             ClearSelection();
 
-            if(previousSelected != null)
-                previousSelected.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
+            //Clear previous menus
+            ClearMenu();
+            
 
 
             //Show Menu
-            if(!Selected.GetComponent<Units>().CheckIfGod())
-                Selected.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(true);
-            else if(Selected.GetComponent<Gods>().isInBattle())
-                Selected.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(true);
-            else if(!Selected.GetComponent<Gods>().isInBattle())
-                Selected.transform.GetChild(1).GetComponent<Canvas>().gameObject.SetActive(true);
+            //Selected.unitGameObject().transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(true);
 
-            previousSelected = Selected;
+            if (!Selected.CheckIfGod())
+            {
+                //World to screen space postitioning from https://answers.unity.com/questions/799616/unity-46-beta-19-how-to-convert-from-world-space-t.html
+                RectTransform CanvasRect = screenCanvas.GetComponent<RectTransform>();
+
+                Vector2 ViewportPosition = Camera.main.WorldToViewportPoint(Selected.unitGameObject().transform.position);
+                Vector2 WorldObject_ScreenPosition = new Vector2(
+                ((ViewportPosition.x * CanvasRect.sizeDelta.x) - (CanvasRect.sizeDelta.x * 0.5f)),
+                ((ViewportPosition.y * CanvasRect.sizeDelta.y) - (CanvasRect.sizeDelta.y * 0.5f)));
+
+                GameObject newUnitPanel = Instantiate(unitPanel);
+                newUnitPanel.transform.SetParent(CanvasRect);
+
+                RectTransform newUnitPanelRect = newUnitPanel.GetComponent<RectTransform>();
+                newUnitPanelRect.anchoredPosition = WorldObject_ScreenPosition;
+
+                //Add all the buttons
+                GameObject attackButton = Instantiate(unitButton);
+                attackButton.transform.SetParent(newUnitPanel.transform);
+                attackButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 190);
+                attackButton.GetComponentInChildren<Text>().text = "Attack";
+                attackButton.GetComponent<Button>().onClick.AddListener(delegate { BoardMan.showMovable(Selected); });
+
+                GameObject moveButton = Instantiate(unitButton);
+                moveButton.transform.SetParent(newUnitPanel.transform);
+                moveButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+                moveButton.GetComponentInChildren<Text>().text = "Move";
+                moveButton.GetComponent<Button>().onClick.AddListener(delegate { BoardMan.showAttackable(Selected); });
+
+                GameObject endTurnButton = Instantiate(unitButton);
+                endTurnButton.transform.SetParent(newUnitPanel.transform);
+                endTurnButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -190);
+                endTurnButton.GetComponentInChildren<Text>().text = "End";
+                endTurnButton.GetComponent<Button>().onClick.AddListener(delegate { Selected.EndTurnButton(); });
+
+
+            }
+
+                //TODO FIX GOD MENUS ONCE WE ACTUALL MAKE THE GOD CLASS
+
+                /*
+                if (!Selected.CheckIfGod())
+                    Selected.unitGameObject().GetComponent<Canvas>().gameObject.SetActive(true);
+                else if(Selected.GetComponent<Gods>().isInBattle())
+                    Selected.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(true);
+                else if(!Selected.GetComponent<Gods>().isInBattle())
+                    Selected.transform.GetChild(1).GetComponent<Canvas>().gameObject.SetActive(true);
+                */
+
+                previousSelected = Selected;
 
             //So we don't do this every frame
             newSelected = false;
@@ -94,6 +145,14 @@ public class MapManager : MonoBehaviour
         }
 
 
+    }
+
+    public void ClearMenu()
+    {
+        //Kill all children code from https://answers.unity.com/questions/611850/destroy-all-children-of-object.html
+        if (previousSelected != null)
+            foreach (Transform ui in screenCanvas.transform)
+                Destroy(ui.gameObject);
     }
 
     //Define which tiles are connected to which tiles

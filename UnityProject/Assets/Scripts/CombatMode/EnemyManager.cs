@@ -33,16 +33,16 @@ public class EnemyManager : MonoBehaviour {
     }
 
     //Puts a moveable tile on the optimal tile for an enemy unit to move to
-    public void showClosestTile(Units Unit)
+    public void showClosestTile(Unit Unit)
     {
         Tile[,] tiles = getTiles();
 
         //Setup Invalid Tiles (the one with units on)
-        List<GameObject> invalidTiles = new List<GameObject>();
-        foreach (GameObject g in BoardMan.enemyUnits)
+        List<Unit> invalidTiles = new List<Unit>();
+        foreach (Unit u in BoardMan.enemyUnits)
         {
-            if (!(g.GetComponent<Units>().getPos() == Unit.getPos()))
-                invalidTiles.Add(g);
+            if (!(u.getPos() == Unit.getPos()))
+                invalidTiles.Add(u);
         }
 
         Tile validTile = tiles[(int)Unit.getPos().x, (int)Unit.getPos().y].getClosestTile(BoardMan.playerUnits, Unit.MaxMovement, invalidTiles, BoardMan.playerUnits, tiles);
@@ -55,7 +55,7 @@ public class EnemyManager : MonoBehaviour {
         //If we actually found a tile (we may not if the map is huge or I messed up)
         if (validTile != null)
         {
-            GameObject tempTile = Instantiate(Unit.MovableTile);
+            GameObject tempTile = Instantiate(BoardMan.MovableTile);
             tempTile.GetComponent<Movable>().pos = new Vector2((int)validTile.getX(), (int)validTile.getZ());
             tempTile.transform.position = new Vector3(validTile.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2, validTile.getY() + 0.5f, validTile.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
         }
@@ -67,20 +67,19 @@ public class EnemyManager : MonoBehaviour {
     {
         Tile[,] tiles = getTiles();
 
-        foreach (GameObject enemyUnit in BoardMan.enemyUnits)
+        foreach (Unit enemyUnit in BoardMan.enemyUnits)
         {
             //Setup Invalid Tiles (the one with units on)
-            List<GameObject> invalidTiles = new List<GameObject>();
-            foreach (GameObject otherEnemyUnit in BoardMan.enemyUnits)
+            List<Unit> invalidTiles = new List<Unit>();
+            foreach (Unit otherEnemyUnit in BoardMan.enemyUnits)
             {
-                if (!(otherEnemyUnit.GetComponent<Units>().getPos() == enemyUnit.GetComponent<Units>().getPos()))
+                if (!(otherEnemyUnit.getPos() == enemyUnit.getPos()))
                     invalidTiles.Add(otherEnemyUnit);
             }
 
-            Units u = enemyUnit.GetComponent<Units>();
-            Tile t = tiles[(int)u.getPos().x, (int)u.getPos().y].getClosestTile(BoardMan.playerUnits, u.MaxMovement, invalidTiles, BoardMan.playerUnits, tiles);
+            Tile t = tiles[(int)enemyUnit.getPos().x, (int)enemyUnit.getPos().y].getClosestTile(BoardMan.playerUnits, enemyUnit.MaxMovement, invalidTiles, BoardMan.playerUnits, tiles);
             MapMan.DefineConnections();
-            u.MovePriority = tiles[(int)u.getPos().x, (int)u.getPos().y].MovePriority;
+            enemyUnit.MovePriority = tiles[(int)enemyUnit.getPos().x, (int)enemyUnit.getPos().y].MovePriority;
         }
     }
 
@@ -91,17 +90,16 @@ public class EnemyManager : MonoBehaviour {
         updatePriorities();
 
         //Sort by priority
-        BoardMan.enemyUnits.Sort((x, y) => x.GetComponent<Units>().MovePriority.CompareTo(y.GetComponent<Units>().MovePriority));
+        BoardMan.enemyUnits.Sort((x, y) => x.MovePriority.CompareTo(y.MovePriority));
         
-        foreach (GameObject g in BoardMan.enemyUnits)
+        foreach (Unit u in BoardMan.enemyUnits)
         {
-            Units u = g.GetComponent<Units>();
-
+            //**TODO**
             showClosestTile(u);
 
             yield return new WaitForSeconds(delay);
 
-            MapMan.Selected = g;
+            MapMan.Selected = u;
             GameObject closestTile = GameObject.FindGameObjectWithTag("MoveableTile");
 
             //Wait a frame so we can check if we can actually move (or need to)
@@ -115,8 +113,10 @@ public class EnemyManager : MonoBehaviour {
                 yield return new WaitForSeconds(delay);
             }
 
-            MapMan.Selected = g;
-            u.showAttackable();
+            MapMan.Selected = u;
+
+            //**TODO**
+            BoardMan.showAttackable(u);
 
             //Wait a frame to see if we can attack
             yield return null;
@@ -133,7 +133,7 @@ public class EnemyManager : MonoBehaviour {
             }
             else
             {
-                g.GetComponent<Units>().EndTurnButton();
+                u.EndTurnButton();
             }
 
         }

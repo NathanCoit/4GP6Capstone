@@ -14,6 +14,6 @@ public class WorshiperText : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        GetComponent<Text>().text = transform.root.GetComponent<Units>().getWorshiperCount().ToString();
+        //GetComponent<Text>().text = transform.root.GetComponent<Units>().getWorshiperCount().ToString();
 	}
 }

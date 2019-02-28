@@ -46,9 +46,10 @@ public class Targetable : MonoBehaviour {
         return MapMan.tiles;
     }
 
+    /*
     public void OnMouseOver()
     {
-        List<GameObject> targets = new List<GameObject>();
+        List<Unit> targets = new List<Unit>();
         bool valid = false;
 
         //If it's single target we're just target the one tile
@@ -63,9 +64,9 @@ public class Targetable : MonoBehaviour {
                 targets = BoardMan.playerUnits;
             }
 
-            foreach (GameObject g in targets)
+            foreach (Unit u in targets)
             {
-                if (pos.x == g.GetComponent<Units>().getPos().x && pos.y == g.GetComponent<Units>().getPos().y)
+                if (pos.x == u.getPos().x && pos.y == u.getPos().y)
                     valid = true;
             }
 
@@ -110,6 +111,7 @@ public class Targetable : MonoBehaviour {
 
             }
 
+           
             //Get the line offset and facing the right way
             if(aMi.AbilityShape == Ability.MultiTargetShape.Line)
             {
@@ -255,8 +257,10 @@ public class Targetable : MonoBehaviour {
                 MapMan.Selected.GetComponent<Gods>().direction++;
             else
                 MapMan.Selected.GetComponent<Gods>().direction = 0;
+        
 
     }
+    */
 
     //This is here in case we kill everything with an ability
     private void checkEnd()

@@ -157,12 +157,12 @@ public class SetupManager : MonoBehaviour
             CreatePlayerUnit(new Vector2(4, 3), tiles, playerWorshiperCount / 3, 2, playerMorale); //hello integer division
             CreatePlayerUnit(new Vector2(4, 4), tiles, playerWorshiperCount / 3, 2, playerMorale); //also assumes we have 3 units per team
             CreatePlayerUnit(new Vector2(4, 5), tiles, playerWorshiperCount / 3, 2, playerMorale);
-            CreateGod(tiles, true);
+            //CreateGod(tiles, true);
 
             CreateEnemyUnit(new Vector2(6, 3), tiles, enemyWorshiperCount / 3, 2, enemyMorale);
             CreateEnemyUnit(new Vector2(6, 4), tiles, enemyWorshiperCount / 3, 2, enemyMorale);
             CreateEnemyUnit(new Vector2(6, 5), tiles, enemyWorshiperCount / 3, 2, enemyMorale);
-            CreateGod(tiles, false);
+            //CreateGod(tiles, false);
 
             startup = false;
         }
@@ -178,7 +178,8 @@ public class SetupManager : MonoBehaviour
         return false;
     }
 
-
+    /*
+    //**TODO
     public void CreateGod(Tile[,] tiles, bool isPlayer)
     {
         GameObject temp = Instantiate(God);
@@ -206,26 +207,31 @@ public class SetupManager : MonoBehaviour
             BoardMan.enemyUnits.Add(temp);
         }
     }
+    */
 
     public void CreatePlayerUnit(Vector2 pos, Tile[,] tiles, int WorshiperCount, int MaxMovement, float morale)
     {
-        GameObject temp = Instantiate(Unit);
-        Units u = temp.GetComponent<Units>();
+        GameObject unitGo = Instantiate(Unit);
+        Unit u = new Unit();
 
+        unitGo.GetComponent<UnitObjectScript>().setUnit(u);
+        u.assignGameObject(unitGo);
         u.setWorshiperCount(WorshiperCount);
         u.MaxMovement = MaxMovement;
         u.setMorale(morale);
         u.isPlayer = true;
         u.Move(new Vector2(pos.x, pos.y), tiles);
 
-        BoardMan.playerUnits.Add(temp);
+        BoardMan.playerUnits.Add(u);
     }
 
     public void CreateEnemyUnit(Vector2 pos, Tile[,] tiles, int WorshiperCount, int MaxMovement, float morale)
     {
-        GameObject temp = Instantiate(Unit);
-        Units u = temp.GetComponent<Units>();
+        GameObject unitGo = Instantiate(Unit);
+        Unit u = new Unit();
 
+        unitGo.GetComponent<UnitObjectScript>().setUnit(u);
+        u.assignGameObject(unitGo);
         u.setWorshiperCount(WorshiperCount);
         u.MaxMovement = MaxMovement;
         u.setMorale(morale);
@@ -234,7 +240,7 @@ public class SetupManager : MonoBehaviour
 
         //Set so the players turn is first
         u.EndAct();
-        BoardMan.enemyUnits.Add(temp);
+        BoardMan.enemyUnits.Add(u);
     }
 
     public void EndBattle()

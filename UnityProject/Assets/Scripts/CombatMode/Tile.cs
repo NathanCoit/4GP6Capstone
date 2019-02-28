@@ -53,7 +53,7 @@ public class Tile
 
     //Code (partially) from https://stackoverflow.com/questions/10258305/how-to-implement-a-breadth-first-search-to-a-certain-depth
     //This is how we figure our what tiles Units can move to or attack.
-    public HashSet<Tile> findAtDistance(Tile start, int distance, List<GameObject> invalidTiles, List<GameObject> solidTiles, Tile[,] tiles)
+    public HashSet<Tile> findAtDistance(Tile start, int distance, List<Unit> invalidTiles, List<Unit> solidTiles, Tile[,] tiles)
     {
         visited = new HashSet<Tile>();
         depths = new List<int>();
@@ -64,8 +64,8 @@ public class Tile
         //Removing solid tiles connections
         foreach (Tile t in tiles)
         {
-            foreach (GameObject g in solidTiles)
-                if (g.GetComponent<Units>().getPos() == new Vector2(t.getX(), t.getZ()))
+            foreach (Unit u in solidTiles)
+                if (u.getPos() == new Vector2(t.getX(), t.getZ()))
                 {
                     t.Connected = new List<Tile>();
                     foreach (Tile t1 in tiles)
@@ -96,8 +96,8 @@ public class Tile
             {
                 if (++currentDepth > distance)
                 {
-                    foreach (GameObject g in invalidTiles)
-                        visited.Remove(tiles[(int)g.GetComponent<Units>().getPos().x, (int)g.GetComponent<Units>().getPos().y]);
+                    foreach (Unit u in invalidTiles)
+                        visited.Remove(tiles[(int)u.getPos().x, (int)u.getPos().y]);
                     return visited;
                 }
                 elementsToNextDepth = nextElementsToDepthIncrease;
@@ -110,22 +110,22 @@ public class Tile
                 queue.Enqueue(connect);
             }
         }
-        foreach (GameObject g in invalidTiles)
-            visited.Remove(tiles[(int)g.GetComponent<Units>().getPos().x, (int)g.GetComponent<Units>().getPos().y]);
+        foreach (Unit u in invalidTiles)
+            visited.Remove(tiles[(int)u.getPos().x, (int)u.getPos().y]);
         return visited;
     }
 
     //Finds the optimal tile to move towards any tile in endingPoints (this is how the AI knows where to move)
-    public Tile getClosestTile(List<GameObject> endingPoints, int range, List<GameObject> invalidTiles, List<GameObject> solidTiles, Tile[,] tiles)
+    public Tile getClosestTile(List<Unit> endingPoints, int range, List<Unit> invalidTiles, List<Unit> solidTiles, Tile[,] tiles)
     {
-        List<Tile> MovableTiles = findAtDistance(this, range, invalidTiles, new List<GameObject>(), tiles).ToList();
+        List<Tile> MovableTiles = findAtDistance(this, range, invalidTiles, new List<Unit>(), tiles).ToList();
         HashSet<Tile> TargetTiles = new HashSet<Tile>();
 
         //Figure out where we're trying to go (the tiles next to player units)
         foreach (Tile t in tiles)
         {
-            foreach (GameObject g in endingPoints)
-                if (g.GetComponent<Units>().getPos() == new Vector2(t.getX(), t.getZ()))
+            foreach (Unit u in endingPoints)
+                if (u.getPos() == new Vector2(t.getX(), t.getZ()))
                 {
                     foreach(Tile ta in t.getConnected())
                         TargetTiles.Add(ta);
@@ -135,13 +135,13 @@ public class Tile
         //Remove Invalid Target Tiles (either invalid(friendly unit already there) or solid(enemy unit already there)
         foreach (Tile t in tiles)
         {
-            foreach (GameObject g in invalidTiles)
-                if (g.GetComponent<Units>().getPos() == new Vector2(t.getX(), t.getZ()))
+            foreach (Unit u in invalidTiles)
+                if (u.getPos() == new Vector2(t.getX(), t.getZ()))
                 {
                     TargetTiles.Remove(t);
                 }
-            foreach (GameObject s in solidTiles)
-                if (s.GetComponent<Units>().getPos() == new Vector2(t.getX(), t.getZ()))
+            foreach (Unit s in solidTiles)
+                if (s.getPos() == new Vector2(t.getX(), t.getZ()))
                 {
                     TargetTiles.Remove(t);
                 }
@@ -151,8 +151,8 @@ public class Tile
         //This could be done in findAtDistance, but we need those connections to exist when we find target tiles so we do it here
         foreach (Tile t in tiles)
         {
-            foreach (GameObject g in solidTiles)
-                if (g.GetComponent<Units>().getPos() == new Vector2(t.getX(), t.getZ()))
+            foreach (Unit u in solidTiles)
+                if (u.getPos() == new Vector2(t.getX(), t.getZ()))
                 {
                     t.Connected = new List<Tile>();
                     foreach (Tile t1 in tiles)

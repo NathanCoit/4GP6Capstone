@@ -45,10 +45,10 @@ public class Movable : MonoBehaviour {
             HashSet<Tile> visited = new HashSet<Tile>();
             int j = 0;
 
-            depths = tiles[(int)MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().getPos().x, 
-                (int)MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().getPos().y].getDepths();
-            visited = tiles[(int)MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().getPos().x,
-                (int)MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().getPos().y].getVisited();
+            depths = tiles[(int)MapMan.GetComponent<MapManager>().Selected.getPos().x, 
+                (int)MapMan.GetComponent<MapManager>().Selected.getPos().y].getDepths();
+            visited = tiles[(int)MapMan.GetComponent<MapManager>().Selected.getPos().x,
+                (int)MapMan.GetComponent<MapManager>().Selected.getPos().y].getVisited();
 
 
             foreach(Tile visitedTile in visited)
@@ -60,14 +60,14 @@ public class Movable : MonoBehaviour {
                j++;
             }
 
-            MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().Movement -= depths[j] + 1;
+            MapMan.GetComponent<MapManager>().Selected.Movement -= depths[j] + 1;
 
             //Move the selected unit
-            MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().MoveTo(pos, MapMan.GetComponent<MapManager>().tiles);
+            MapMan.GetComponent<MapManager>().Selected.MoveTo(pos, MapMan.GetComponent<MapManager>().tiles);
 
 
             //Hide Menu
-            MapMan.GetComponent<MapManager>().Selected.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
+            MapMan.GetComponent<MapManager>().Selected.unitGameObject().transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
 
 
 

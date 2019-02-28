@@ -144,7 +144,7 @@ public class MapManager : MonoBehaviour
             
         }
 
-        if (!newSelected && Selected != null)
+        if (screenCanvas.transform.childCount != 0)
         {
             GameObject selectedMenu = screenCanvas.transform.GetChild(0).gameObject;
 

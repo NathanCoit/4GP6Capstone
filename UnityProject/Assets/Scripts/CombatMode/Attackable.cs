@@ -105,11 +105,11 @@ public class Attackable : MonoBehaviour
             //Checking if anyone won
             CheckEnd();
 
-            //Hide Menu
-            MapMan.Selected.unitGameObject().transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
-
             //Unslecting
             MapMan.Selected = null;
+
+            //Hide Menu
+            MapMan.ClearMenu();
 
             //Clean up Tiles
             MapMan.ClearSelection();

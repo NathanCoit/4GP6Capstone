@@ -47,7 +47,7 @@ public class Attackable : MonoBehaviour
         {
             // Get position of clicked tile
             List<Unit> targets = new List<Unit>();
-            if (BoardMan.playerUnits.Contains(MapMan.Selected))
+            if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
             {
                 targets = BoardMan.enemyUnits;
             }
@@ -64,12 +64,12 @@ public class Attackable : MonoBehaviour
                     attackedUnit = u;
 
             //Decreases the "HP" of the attacked unit - decreases their worshipper count
-            int damage = (int)MapMan.Selected.getAttackStrength();
+            int damage = (int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getAttackStrength();
             //Set remaining worshippers accordingly
             attackedUnit.setWorshiperCount(attackedUnit.getWorshiperCount() - damage);
 
             //Adjust that team's morale
-            if (BoardMan.playerUnits.Contains(MapMan.Selected)) //check to see who initiated the attack
+            if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit())) //check to see who initiated the attack
             {
                 SetupMan.enemyMorale = ((BoardMan.GetRemainingWorshippers(false)) * 1.0f / (SetupMan.enemyWorshiperCount));
                 //SetupMan.enemyWorshiperCount already takes into consideration the 0.8f (i.e. only 80% of that god's worshipper participates in war)
@@ -99,7 +99,7 @@ public class Attackable : MonoBehaviour
             }
 
             //End the turn of the unit who initiated the attack
-            MapMan.Selected.EndAct();
+            MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().EndAct();
             BoardMan.DecreaseNumActions();
 
             //Checking if anyone won
@@ -109,7 +109,7 @@ public class Attackable : MonoBehaviour
             MapMan.Selected = null;
 
             //Hide Menu
-            MapMan.ClearMenu();
+            MapMan.removeMenu();
 
             //Clean up Tiles
             MapMan.ClearSelection();

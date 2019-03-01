@@ -157,12 +157,12 @@ public class SetupManager : MonoBehaviour
             CreatePlayerUnit(new Vector2(4, 3), tiles, playerWorshiperCount / 3, 2, playerMorale); //hello integer division
             CreatePlayerUnit(new Vector2(4, 4), tiles, playerWorshiperCount / 3, 2, playerMorale); //also assumes we have 3 units per team
             CreatePlayerUnit(new Vector2(4, 5), tiles, playerWorshiperCount / 3, 2, playerMorale);
-            //CreateGod(tiles, true);
+            CreateGod(tiles, true, gameInfo.PlayerFaction.GodName, 3);
 
             CreateEnemyUnit(new Vector2(6, 3), tiles, enemyWorshiperCount / 3, 2, enemyMorale);
             CreateEnemyUnit(new Vector2(6, 4), tiles, enemyWorshiperCount / 3, 2, enemyMorale);
             CreateEnemyUnit(new Vector2(6, 5), tiles, enemyWorshiperCount / 3, 2, enemyMorale);
-            //CreateGod(tiles, false);
+            CreateGod(tiles, false, gameInfo.EnemyFaction.GodName, 3);
 
             startup = false;
         }
@@ -178,10 +178,9 @@ public class SetupManager : MonoBehaviour
         return false;
     }
 
-    /*
-    //**TODO
-    public void CreateGod(Tile[,] tiles, bool isPlayer)
+    public void CreateGod(Tile[,] tiles, bool isPlayer, string godName, int MaxMovement)
     {
+        /*
         GameObject temp = Instantiate(God);
         Units u = temp.GetComponent<Units>();
         Gods g = temp.GetComponent<Gods>();
@@ -206,8 +205,39 @@ public class SetupManager : MonoBehaviour
             temp.transform.position = new Vector3(MapMan.tiles.GetLength(0), MapMan.godFloatHeight, MapMan.tiles.GetLength(1) / 2);
             BoardMan.enemyUnits.Add(temp);
         }
+        */
+        GameObject GodGo = Instantiate(God);
+        God g = new God(godName);
+
+        GodGo.GetComponent<UnitObjectScript>().setUnit(g);
+        g.assignGameObject(GodGo);
+
+        //TODO, don't know exactly how we're handling this
+        g.setWorshiperCount(0);
+        g.setMorale(1);
+
+
+        g.MaxMovement = MaxMovement;
+
+        if (isPlayer)
+        {
+            BoardMan.playerUnits.Add(g);
+            g.isPlayer = true;
+            g.setAbilities(gameInfo.PlayerFaction.Abilities);
+            g.MoveTo(new Vector2(-1, -1), tiles);
+            g.unitGameObject().transform.position = new Vector3(0, MapMan.godFloatHeight, MapMan.tiles.GetLength(1) / 2);
+        }
+        else
+        {
+            BoardMan.enemyUnits.Add(g);
+            g.EndAct();
+            g.isPlayer = false;
+            g.setAbilities(gameInfo.PlayerFaction.Abilities);
+            g.MoveTo(new Vector2(-1, -1), tiles);
+            g.unitGameObject().transform.position = new Vector3(MapMan.tiles.GetLength(0), MapMan.godFloatHeight, MapMan.tiles.GetLength(1) / 2);
+        }
     }
-    */
+
 
     public void CreatePlayerUnit(Vector2 pos, Tile[,] tiles, int WorshiperCount, int MaxMovement, float morale)
     {
@@ -220,7 +250,7 @@ public class SetupManager : MonoBehaviour
         u.MaxMovement = MaxMovement;
         u.setMorale(morale);
         u.isPlayer = true;
-        u.Move(new Vector2(pos.x, pos.y), tiles);
+        u.MoveTo(new Vector2(pos.x, pos.y), tiles);
 
         BoardMan.playerUnits.Add(u);
     }
@@ -236,7 +266,7 @@ public class SetupManager : MonoBehaviour
         u.MaxMovement = MaxMovement;
         u.setMorale(morale);
         u.isPlayer = false;
-        u.Move(new Vector2(pos.x, pos.y), tiles);
+        u.MoveTo(new Vector2(pos.x, pos.y), tiles);
 
         //Set so the players turn is first
         u.EndAct();

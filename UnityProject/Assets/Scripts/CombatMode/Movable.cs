@@ -45,10 +45,10 @@ public class Movable : MonoBehaviour {
             HashSet<Tile> visited = new HashSet<Tile>();
             int j = 0;
 
-            depths = tiles[(int)MapMan.Selected.getPos().x, 
-                (int)MapMan.Selected.getPos().y].getDepths();
-            visited = tiles[(int)MapMan.Selected.getPos().x,
-                (int)MapMan.Selected.getPos().y].getVisited();
+            depths = tiles[(int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getPos().x, 
+                (int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getPos().y].getDepths();
+            visited = tiles[(int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getPos().x,
+                (int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getPos().y].getVisited();
 
 
             foreach(Tile visitedTile in visited)
@@ -60,16 +60,16 @@ public class Movable : MonoBehaviour {
                j++;
             }
 
-            MapMan.Selected.Movement -= depths[j] + 1;
+            MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().Movement -= depths[j] + 1;
 
             //Move the selected unit
-            MapMan.Selected.MoveTo(pos, MapMan.tiles);
+            MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().MoveTo(pos, MapMan.tiles);
 
             //Unselect it
             MapMan.Selected = null;
 
             //Hide Menu
-            MapMan.ClearMenu();
+            MapMan.removeMenu();
 
             //Get rid of blue tiles
             MapMan.ClearSelection();

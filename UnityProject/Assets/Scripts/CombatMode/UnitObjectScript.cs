@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class UnitObjectScript : MonoBehaviour
 {
@@ -27,7 +28,7 @@ public class UnitObjectScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public Unit getUnit()
@@ -45,9 +46,9 @@ public class UnitObjectScript : MonoBehaviour
     {
         if (relatedUnit != null)
         {
-            if ((Input.GetMouseButtonDown(0) || relatedUnit.autoClick) && relatedUnit.canAct && BoardMan.playerUnits.Contains(relatedUnit))
+            if ((Input.GetMouseButtonDown(0) || relatedUnit.autoClick) && relatedUnit.canAct && BoardMan.playerUnits.Contains(relatedUnit) && MapMan.Selected != relatedUnit.unitGameObject() && !EventSystem.current.IsPointerOverGameObject())
             {
-                MapMan.Selected = relatedUnit;
+                MapMan.Selected = relatedUnit.unitGameObject();
                 MapMan.newSelected = true;
                 relatedUnit.autoClick = false;
             }

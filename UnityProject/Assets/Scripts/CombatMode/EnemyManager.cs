@@ -45,12 +45,17 @@ public class EnemyManager : MonoBehaviour {
                 invalidTiles.Add(u);
         }
 
-        Tile validTile = tiles[(int)Unit.getPos().x, (int)Unit.getPos().y].getClosestTile(BoardMan.playerUnits, Unit.MaxMovement, invalidTiles, BoardMan.playerUnits, tiles);
+        Tile validTile = null;
 
-        //Redefine connection because we broke some above
-        MapMan.DefineConnections();
+        if (Unit.getPos().x != -1 && Unit.getPos().y != -1)
+        {
+            validTile = tiles[(int)Unit.getPos().x, (int)Unit.getPos().y].getClosestTile(BoardMan.playerUnits, Unit.MaxMovement, invalidTiles, BoardMan.playerUnits, tiles);
 
-        Unit.MovePriority = tiles[(int)Unit.getPos().x, (int)Unit.getPos().y].MovePriority;
+            //Redefine connection because we broke some above
+            MapMan.DefineConnections();
+
+            Unit.MovePriority = tiles[(int)Unit.getPos().x, (int)Unit.getPos().y].MovePriority;
+        }
 
         //If we actually found a tile (we may not if the map is huge or I messed up)
         if (validTile != null)
@@ -77,9 +82,14 @@ public class EnemyManager : MonoBehaviour {
                     invalidTiles.Add(otherEnemyUnit);
             }
 
-            Tile t = tiles[(int)enemyUnit.getPos().x, (int)enemyUnit.getPos().y].getClosestTile(BoardMan.playerUnits, enemyUnit.MaxMovement, invalidTiles, BoardMan.playerUnits, tiles);
-            MapMan.DefineConnections();
-            enemyUnit.MovePriority = tiles[(int)enemyUnit.getPos().x, (int)enemyUnit.getPos().y].MovePriority;
+            Tile t;
+
+            if (enemyUnit.getPos().x != -1 && enemyUnit.getPos().y != -1)
+            {
+                t = tiles[(int)enemyUnit.getPos().x, (int)enemyUnit.getPos().y].getClosestTile(BoardMan.playerUnits, enemyUnit.MaxMovement, invalidTiles, BoardMan.playerUnits, tiles);
+                MapMan.DefineConnections();
+                enemyUnit.MovePriority = tiles[(int)enemyUnit.getPos().x, (int)enemyUnit.getPos().y].MovePriority;
+            }
         }
     }
 
@@ -92,48 +102,55 @@ public class EnemyManager : MonoBehaviour {
         //Sort by priority
         BoardMan.enemyUnits.Sort((x, y) => x.MovePriority.CompareTo(y.MovePriority));
         
-        foreach (Unit u in BoardMan.enemyUnits)
+        foreach (Unit enemyUnit in BoardMan.enemyUnits)
         {
-            //**TODO**
-            showClosestTile(u);
-
-            yield return new WaitForSeconds(delay);
-
-            MapMan.Selected = u;
-            GameObject closestTile = GameObject.FindGameObjectWithTag("MoveableTile");
-
-            //Wait a frame so we can check if we can actually move (or need to)
-            yield return null;
-
-            if (closestTile != null)
+            //Logic for units in battle
+            if (enemyUnit.getPos().x != -1 && enemyUnit.getPos().y != -1)
             {
-                //Woo for using function we made for testing
-                closestTile.GetComponent<Movable>().TestClick();
-                closestTile.GetComponent<Movable>().OnMouseOver();
+                showClosestTile(enemyUnit);
+
                 yield return new WaitForSeconds(delay);
+
+                MapMan.Selected = enemyUnit.unitGameObject();
+                GameObject closestTile = GameObject.FindGameObjectWithTag("MoveableTile");
+
+                //Wait a frame so we can check if we can actually move (or need to)
+                yield return null;
+
+                if (closestTile != null)
+                {
+                    //Woo for using function we made for testing
+                    closestTile.GetComponent<Movable>().TestClick();
+                    closestTile.GetComponent<Movable>().OnMouseOver();
+                    yield return new WaitForSeconds(delay);
+                }
+
+                MapMan.Selected = enemyUnit.unitGameObject();
+
+                BoardMan.showAttackable(enemyUnit);
+
+                //Wait a frame to see if we can attack
+                yield return null;
+
+                //Yes this is semi random if there's more than one. Will be based off remaining health in future
+                GameObject AttackableTile = GameObject.FindGameObjectWithTag("AttackableTile");
+
+                //Attack if we can, then end turn
+                if (AttackableTile != null)
+                {
+                    yield return new WaitForSeconds(delay);
+                    AttackableTile.GetComponent<Attackable>().TestClick();
+                    AttackableTile.GetComponent<Attackable>().OnMouseOver();
+                }
+                else
+                {
+                    enemyUnit.EndTurnButton();
+                }
             }
-
-            MapMan.Selected = u;
-
-            //**TODO**
-            BoardMan.showAttackable(u);
-
-            //Wait a frame to see if we can attack
-            yield return null;
-
-            //Yes this is semi random if there's more than one. Will be based off remaining health in future
-            GameObject AttackableTile = GameObject.FindGameObjectWithTag("AttackableTile");
-
-            //Attack if we can, then end turn
-            if (AttackableTile != null)
-            {
-                yield return new WaitForSeconds(delay);
-                AttackableTile.GetComponent<Attackable>().TestClick();
-                AttackableTile.GetComponent<Attackable>().OnMouseOver();
-            }
+            //TODOm logic for enemy god out of battle
             else
             {
-                u.EndTurnButton();
+                enemyUnit.EndTurnButton();
             }
 
         }

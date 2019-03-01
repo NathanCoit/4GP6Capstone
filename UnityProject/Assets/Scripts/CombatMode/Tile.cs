@@ -97,6 +97,8 @@ public class Tile
                 if (++currentDepth > distance)
                 {
                     foreach (Unit u in invalidTiles)
+                        //-1 is a special position for gods that are not in battle
+                        if(u.getPos().x != -1 && u.getPos().y != -1)
                         visited.Remove(tiles[(int)u.getPos().x, (int)u.getPos().y]);
                     return visited;
                 }
@@ -111,7 +113,8 @@ public class Tile
             }
         }
         foreach (Unit u in invalidTiles)
-            visited.Remove(tiles[(int)u.getPos().x, (int)u.getPos().y]);
+            if (u.getPos().x != -1 && u.getPos().y != -1)
+                visited.Remove(tiles[(int)u.getPos().x, (int)u.getPos().y]);
         return visited;
     }
 

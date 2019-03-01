@@ -145,7 +145,7 @@ public class BoardManager : MonoBehaviour
         List<Tile> ConnectedTiles = tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y].getConnected();
         List<Unit> targets = new List<Unit>();
 
-        if (playerUnits.Contains(MapMan.Selected))
+        if (playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
         {
             targets = enemyUnits;
         }

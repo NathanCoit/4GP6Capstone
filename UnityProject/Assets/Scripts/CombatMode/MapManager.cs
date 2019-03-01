@@ -19,15 +19,17 @@ public class MapManager : MonoBehaviour
 
     public GameObject Unit;
     public GameObject MovableTile;
-    public Unit Selected;
+    public GameObject Selected;
+    private GameObject previousSelected;
     private BoardManager BoardMan;
-    private Unit previousSelected;
     public bool newSelected = false;
     public string mapName;
     public float godFloatHeight;
 
     public GameObject unitPanel;
     public GameObject unitButton;
+
+    public GameObject selectedMenu;
 
     public Canvas screenCanvas;
 
@@ -68,102 +70,171 @@ public class MapManager : MonoBehaviour
         //How high gods float above the map
         godFloatHeight = 3.5f;
 
+
     }
 
 	// Update is called once per frame
 	void Update ()
     {
+        if (screenCanvas.transform.childCount != 0 && Selected != null)
+        {
+            selectedMenu = screenCanvas.transform.GetChild(0).gameObject;
 
+            RectTransform selectedMenuPanelRect = selectedMenu.GetComponent<RectTransform>();
+            selectedMenuPanelRect.anchoredPosition = worldToScreenSpace(selectedMenu);
+        }
         //For Selected Unit
-        if(Selected != null && newSelected)
+        if (Selected != null && newSelected)
         {
             //Clean up Previous selection (the tiles)
             ClearSelection();
 
             //Clear previous menus
-            ClearMenu();
-            
+            removeMenu();
+
 
 
             //Show Menu
             //Selected.unitGameObject().transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(true);
 
-            if (!Selected.CheckIfGod())
+
+            RectTransform CanvasRect = screenCanvas.GetComponent<RectTransform>();
+            GameObject newUnitPanel = Instantiate(unitPanel);
+            newUnitPanel.transform.SetParent(CanvasRect);
+
+            RectTransform newUnitPanelRect = newUnitPanel.GetComponent<RectTransform>();
+            newUnitPanelRect.anchoredPosition = worldToScreenSpace(newUnitPanel);
+
+            selectedMenu = newUnitPanel;
+
+            if (Selected.GetComponent<UnitObjectScript>().getUnit() is God)
             {
-                //World to screen space postitioning from https://answers.unity.com/questions/799616/unity-46-beta-19-how-to-convert-from-world-space-t.html
-                RectTransform CanvasRect = screenCanvas.GetComponent<RectTransform>();
+                makeGodButtons();
 
-                Vector2 ViewportPosition = Camera.main.WorldToViewportPoint(Selected.unitGameObject().transform.position);
-                Vector2 WorldObject_ScreenPosition = new Vector2(
-                ((ViewportPosition.x * CanvasRect.sizeDelta.x) - (CanvasRect.sizeDelta.x * 0.5f)),
-                ((ViewportPosition.y * CanvasRect.sizeDelta.y) - (CanvasRect.sizeDelta.y * 0.5f)));
-
-                GameObject newUnitPanel = Instantiate(unitPanel);
-                newUnitPanel.transform.SetParent(CanvasRect);
-
-                RectTransform newUnitPanelRect = newUnitPanel.GetComponent<RectTransform>();
-                newUnitPanelRect.anchoredPosition = WorldObject_ScreenPosition;
+            }
+            else if (Selected.GetComponent<UnitObjectScript>().getUnit() is Unit)
+            {
 
                 //Add all the buttons
-                GameObject attackButton = Instantiate(unitButton);
-                attackButton.transform.SetParent(newUnitPanel.transform);
-                attackButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 190);
-                attackButton.GetComponentInChildren<Text>().text = "Attack";
-                attackButton.GetComponent<Button>().onClick.AddListener(delegate { BoardMan.showAttackable(Selected); });
-
-                GameObject moveButton = Instantiate(unitButton);
-                moveButton.transform.SetParent(newUnitPanel.transform);
-                moveButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
-                moveButton.GetComponentInChildren<Text>().text = "Move";
-                moveButton.GetComponent<Button>().onClick.AddListener(delegate { BoardMan.showMovable(Selected); });
-
-                GameObject endTurnButton = Instantiate(unitButton);
-                endTurnButton.transform.SetParent(newUnitPanel.transform);
-                endTurnButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -190);
-                endTurnButton.GetComponentInChildren<Text>().text = "End";
-                endTurnButton.GetComponent<Button>().onClick.AddListener(delegate { Selected.EndTurnButton(); });
-
+                makeUnitButtons();
 
             }
 
-                //TODO FIX GOD MENUS ONCE WE ACTUALL MAKE THE GOD CLASS
 
-                /*
-                if (!Selected.CheckIfGod())
-                    Selected.unitGameObject().GetComponent<Canvas>().gameObject.SetActive(true);
-                else if(Selected.GetComponent<Gods>().isInBattle())
-                    Selected.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(true);
-                else if(!Selected.GetComponent<Gods>().isInBattle())
-                    Selected.transform.GetChild(1).GetComponent<Canvas>().gameObject.SetActive(true);
-                */
+            makeEndTurnButton();
+            
 
-                previousSelected = Selected;
+            //TODO FIX GOD MENUS ONCE WE ACTUALL MAKE THE GOD CLASS
+
+            /*
+            if (!Selected.CheckIfGod())
+                Selected.unitGameObject().GetComponent<Canvas>().gameObject.SetActive(true);
+            else if(Selected.GetComponent<Gods>().isInBattle())
+                Selected.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(true);
+            else if(!Selected.GetComponent<Gods>().isInBattle())
+                Selected.transform.GetChild(1).GetComponent<Canvas>().gameObject.SetActive(true);
+            */
+
+            previousSelected = Selected;
 
             //So we don't do this every frame
             newSelected = false;
             
         }
 
-        if (screenCanvas.transform.childCount != 0)
-        {
-            GameObject selectedMenu = screenCanvas.transform.GetChild(0).gameObject;
-
-            RectTransform CanvasRect = screenCanvas.GetComponent<RectTransform>();
-
-            Vector2 ViewportPosition = Camera.main.WorldToViewportPoint(Selected.unitGameObject().transform.position);
-            Vector2 WorldObject_ScreenPosition = new Vector2(
-            ((ViewportPosition.x * CanvasRect.sizeDelta.x) - (CanvasRect.sizeDelta.x * 0.5f)),
-            ((ViewportPosition.y * CanvasRect.sizeDelta.y) - (CanvasRect.sizeDelta.y * 0.5f)));
-
-
-            RectTransform selectedMenuPanelRect = selectedMenu.GetComponent<RectTransform>();
-            selectedMenuPanelRect.anchoredPosition = WorldObject_ScreenPosition;
-        }
-
 
     }
 
-    public void ClearMenu()
+    private void showAbilities(string[] Abilities)
+    {
+        clearMenu();
+
+        GameObject endTurnButton = Instantiate(unitButton);
+        endTurnButton.transform.SetParent(selectedMenu.transform);
+        endTurnButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -(selectedMenu.GetComponent<RectTransform>().rect.height * 2 * selectedMenu.GetComponent<RectTransform>().localScale.y - 10));
+        endTurnButton.GetComponentInChildren<Text>().text = "Return";
+        endTurnButton.GetComponent<Button>().onClick.AddListener(delegate { clearMenu(); makeGodButtons(); makeEndTurnButton(); });
+
+        //Make ability buttons
+        for (int i = 0; i < Abilities.Length; i++)
+        {
+            GameObject abilityButton = Instantiate(unitButton);
+            abilityButton.transform.SetParent(selectedMenu.transform);
+
+            //Unity stupidity to postion the buttons
+            abilityButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -(selectedMenu.GetComponent<RectTransform>().rect.height * 2 * selectedMenu.GetComponent<RectTransform>().localScale.y - 10) + (i + 1) * (selectedMenu.GetComponent<RectTransform>().rect.height * 2 * selectedMenu.GetComponent<RectTransform>().localScale.y + 10*Abilities.Length) / ((Abilities.Length+ 1f)/2));
+            abilityButton.transform.position = new Vector3(abilityButton.transform.position.x, abilityButton.transform.position.y, abilityButton.transform.root.position.z);
+
+            //Set appopritate text
+            abilityButton.GetComponentInChildren<Text>().text = Abilities[i];
+
+            //Add listener to acutally use stuff
+            abilityButton.GetComponent<Button>().onClick.AddListener(delegate { Debug.Log("Boop"); });
+        }
+    }
+
+    private void makeUnitButtons()
+    {
+        GameObject attackButton = Instantiate(unitButton);
+        attackButton.transform.SetParent(selectedMenu.transform);
+        attackButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, selectedMenu.GetComponent<RectTransform>().rect.height * 2 * selectedMenu.GetComponent<RectTransform>().localScale.y - 10);
+        attackButton.GetComponentInChildren<Text>().text = "Attack";
+        attackButton.GetComponent<Button>().onClick.AddListener(delegate { BoardMan.showAttackable(Selected.GetComponent<UnitObjectScript>().getUnit()); });
+
+        GameObject moveButton = Instantiate(unitButton);
+        moveButton.transform.SetParent(selectedMenu.transform);
+        moveButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+        moveButton.GetComponentInChildren<Text>().text = "Move";
+        moveButton.GetComponent<Button>().onClick.AddListener(delegate { BoardMan.showMovable(Selected.GetComponent<UnitObjectScript>().getUnit()); });
+    }
+
+    private void makeGodButtons()
+    {
+        GameObject abilitiesButton = Instantiate(unitButton);
+        abilitiesButton.transform.SetParent(selectedMenu.transform);
+        abilitiesButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, selectedMenu.GetComponent<RectTransform>().rect.height * 2 * selectedMenu.GetComponent<RectTransform>().localScale.y - 10);
+        abilitiesButton.GetComponentInChildren<Text>().text = "Abilites";
+        abilitiesButton.GetComponent<Button>().onClick.AddListener(delegate { showAbilities((Selected.GetComponent<UnitObjectScript>().getUnit() as God).getAbilites()); });
+
+        GameObject enterBattleButton = Instantiate(unitButton);
+        enterBattleButton.transform.SetParent(selectedMenu.transform);
+        enterBattleButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+        enterBattleButton.GetComponentInChildren<Text>().text = "Enter Battle";
+        enterBattleButton.GetComponent<Button>().onClick.AddListener(delegate { BoardMan.showAttackable(Selected.GetComponent<UnitObjectScript>().getUnit()); });
+    }
+
+    private void makeEndTurnButton()
+    {
+        GameObject endTurnButton = Instantiate(unitButton);
+        endTurnButton.transform.SetParent(selectedMenu.transform);
+        endTurnButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -(selectedMenu.GetComponent<RectTransform>().rect.height * 2 * selectedMenu.GetComponent<RectTransform>().localScale.y - 10));
+        endTurnButton.GetComponentInChildren<Text>().text = "End";
+        endTurnButton.GetComponent<Button>().onClick.AddListener(delegate { Selected.GetComponent<UnitObjectScript>().getUnit().EndTurnButton(); });
+    }
+
+    private Vector2 worldToScreenSpace(GameObject Go)
+    {
+        //World to screen space postitioning from https://answers.unity.com/questions/799616/unity-46-beta-19-how-to-convert-from-world-space-t.html
+
+        GameObject selectedMenu = screenCanvas.transform.GetChild(0).gameObject;
+
+        RectTransform CanvasRect = screenCanvas.GetComponent<RectTransform>();
+
+        Vector2 ViewportPosition = Camera.main.WorldToViewportPoint(Selected.transform.position);
+        Vector2 WorldObject_ScreenPosition = new Vector2(
+        ((ViewportPosition.x * CanvasRect.sizeDelta.x) - (CanvasRect.sizeDelta.x * 0.5f)),
+        ((ViewportPosition.y * CanvasRect.sizeDelta.y) - (CanvasRect.sizeDelta.y * 0.5f)));
+
+        return WorldObject_ScreenPosition;
+    }
+
+    private void clearMenu()
+    {
+        foreach (Transform button in selectedMenu.transform)
+            Destroy(button.gameObject);
+    }
+
+    public void removeMenu()
     {
         //Kill all children code from https://answers.unity.com/questions/611850/destroy-all-children-of-object.html
         if (previousSelected != null)

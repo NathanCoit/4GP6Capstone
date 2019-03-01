@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class Unit
 {
-    private GameObject parentObject;
+    protected GameObject parentObject;
 
     public bool canAct;
 
     private bool isGod;
 
     private MapManager MapMan;
-    private Vector2 pos;
+    protected Vector2 pos;
     private BoardManager BoardMan;
     private List<int> depths = new List<int>();
     private HashSet<Tile> visited = new HashSet<Tile>();
@@ -29,7 +29,6 @@ public class Unit
 
     public bool autoClick = false;
 
-    // Use this for initialization
     public Unit()
     {
         //You know who to call, ITS MAP MAN!
@@ -76,13 +75,21 @@ public class Unit
     }
     */
 
-    public void Draw(Tile[,] tiles)
+    public virtual void Draw(Tile[,] tiles)
     {
         //Centers Unit on tile (I know it looks ugly but it SHOULD work for any model)
         parentObject.transform.position = new Vector3(tiles[(int)pos.x, (int)pos.y].getX() + ((1 - parentObject.transform.lossyScale.x) / 2) + parentObject.transform.lossyScale.x / 2, tiles[(int)pos.x, (int)pos.y].getY() + parentObject.transform.lossyScale.y + 0.5f, tiles[(int)pos.x, (int)pos.y].getZ() + ((1 - parentObject.transform.lossyScale.z) / 2) + parentObject.transform.lossyScale.x / 2);
     }
 
-    //I'm honestly not sure if we use this anymore
+    //This is what we actually use to move (who knows what the above is for) (god i wish past me knew how dumb he sounds sometimes)
+    public void MoveTo(Vector2 pos, Tile[,] tiles)
+    {
+        this.pos = pos;
+
+        Draw(tiles);
+    }
+
+    //For moving unit by a certain amount, rather than to a specfic tile. Could be used to knockback, for example.
     public void Move(Vector2 amount, Tile[,] tiles)
     {
         //Check array bounds on tiles
@@ -142,7 +149,7 @@ public class Unit
         }
 
         MapMan.ClearSelection();
-        MapMan.ClearMenu();
+        MapMan.removeMenu();
         EndAct();
         BoardMan.GetComponent<BoardManager>().DecreaseNumActions();
     }
@@ -153,14 +160,6 @@ public class Unit
     public void TestClick()
     {
         autoClick = true;
-    }
-
-    //This is what we actually use to move (who knows what the above is for)
-    public void MoveTo(Vector2 pos, Tile[,] tiles)
-    {
-        this.pos = pos;
-
-        Draw(tiles);
     }
 
     public Vector2 getPos()

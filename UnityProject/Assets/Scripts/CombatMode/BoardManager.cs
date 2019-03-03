@@ -36,6 +36,9 @@ public class BoardManager : MonoBehaviour
 
     public GameObject MovableTile;
     public GameObject AttackableTile;
+    public GameObject TargetableTile;
+
+    public int abilityDirection;
 
     void Start()
     {
@@ -50,6 +53,8 @@ public class BoardManager : MonoBehaviour
         EnemyMan = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
 
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
+
+        abilityDirection = 0;
     }
     
     void Update()
@@ -173,6 +178,25 @@ public class BoardManager : MonoBehaviour
             //temp.GetComponent<Renderer>().material.color = new Color(0, 0, 1, 0.5f);
             //Movable.Add(temp);
         }
+
+    }
+
+    //Called on the button press. Starts the target selection.
+    public void useAbility(string name)
+    {
+        //TODO ui things here (like hiding menu)
+
+        Ability a = Ability.LoadAbilityFromName(name);
+
+        //Put targetable tiles everywhere
+        foreach (Tile t in MapMan.tiles)
+        {
+            GameObject targetTile = Instantiate(TargetableTile);
+            targetTile.GetComponent<Targetable>().ability = a;
+            targetTile.GetComponent<Targetable>().pos = new Vector2((int)t.getX(), (int)t.getZ());
+            targetTile.transform.position = new Vector3(t.getX() + ((1 - targetTile.transform.lossyScale.x) / 2) + targetTile.transform.lossyScale.x / 2, t.getY() + 0.5f, t.getZ() + ((1 - targetTile.transform.lossyScale.z) / 2) + targetTile.transform.lossyScale.x / 2);
+        }
+
 
     }
 

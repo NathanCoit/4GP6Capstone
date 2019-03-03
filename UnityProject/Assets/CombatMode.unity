@@ -487,6 +487,9 @@ MonoBehaviour:
     type: 3}
   AttackableTile: {fileID: 1458115486241402, guid: 5e079157d2190ab468b118c291e13b4d,
     type: 3}
+  TargetableTile: {fileID: 1109967228810790, guid: 1b019e41b3c177d48b3564edf0a0cf0e,
+    type: 3}
+  abilityDirection: 0
 --- !u!4 &734046508
 Transform:
   m_ObjectHideFlags: 0
@@ -533,12 +536,18 @@ MonoBehaviour:
   Unit: {fileID: 1538335793867966, guid: 446eb2a43afbfd945bdfcdca97fc42c3, type: 3}
   MovableTile: {fileID: 1671741471656716, guid: 5ea76647790eee4489bf8024aee91866,
     type: 3}
+  Selected: {fileID: 0}
   newSelected: 0
   mapName: 
   godFloatHeight: 0
   unitPanel: {fileID: 3379576031373003753, guid: 4fda897531d15ad4f86061f490202557,
     type: 3}
   unitButton: {fileID: 1404759685096050, guid: 49e3d7a008f7e1d40a697636e52d9768, type: 3}
+  abilityPanel: {fileID: 3543649336412185485, guid: ecb1af8ad9af8324eb0ca2094915c7d9,
+    type: 3}
+  abilityButton: {fileID: 544674801737561436, guid: 023d06c1b2eeed443b838e4ca7bf1546,
+    type: 3}
+  selectedMenu: {fileID: 0}
   screenCanvas: {fileID: 65526521}
 --- !u!4 &763523743
 Transform:

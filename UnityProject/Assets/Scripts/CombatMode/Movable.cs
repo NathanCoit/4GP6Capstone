@@ -10,6 +10,7 @@ public class Movable : MonoBehaviour {
     public Vector2 pos;
     private MapManager MapMan;
     private BoardManager BoardMan;
+    private UIManager UIMan;
 
     private bool autoClick;
 
@@ -19,6 +20,7 @@ public class Movable : MonoBehaviour {
         //ITS THE MAP MAN
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
+        UIMan = GameObject.Find("UIManager").GetComponent<UIManager>();
     }
 	
 	// Update is called once per frame
@@ -69,7 +71,7 @@ public class Movable : MonoBehaviour {
             MapMan.Selected = null;
 
             //Hide Menu
-            MapMan.removeMenu();
+            UIMan.removeMenu();
 
             //Get rid of blue tiles
             MapMan.ClearSelection();

@@ -11,8 +11,11 @@ public class Unit
     private bool isGod;
 
     private MapManager MapMan;
-    protected Vector2 pos;
     private BoardManager BoardMan;
+    private UIManager UIMan;
+
+    protected Vector2 pos;
+    
     private List<int> depths = new List<int>();
     private HashSet<Tile> visited = new HashSet<Tile>();
 
@@ -37,13 +40,14 @@ public class Unit
         //Boardman is here also
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
 
+        UIMan = GameObject.Find("UIManager").GetComponent<UIManager>();
         /*
         if (isPlayer)
             parentObject.GetComponent<MeshRenderer>().material = parentObject.GetComponent<UnitObjectScript>().playerNotAvailable;
         else
             parentObject.GetComponent<MeshRenderer>().material = parentObject.GetComponent<UnitObjectScript>().enemyNotAvailable;
         */
-        
+
 
         AttackStrength = WorshiperCount * 0.25f * morale;
 
@@ -149,7 +153,7 @@ public class Unit
         }
 
         MapMan.ClearSelection();
-        MapMan.removeMenu();
+        UIMan.removeMenu();
         EndAct();
         BoardMan.GetComponent<BoardManager>().DecreaseNumActions();
     }

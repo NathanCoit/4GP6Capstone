@@ -190,7 +190,7 @@ public class Targetable : MonoBehaviour {
                 target.setWorshiperCount(target.getWorshiperCount() - aSi.AbilityDamage);
 
                 //Kill target if it died
-                if(target.WorshiperCount >= 0)
+                if(target.WorshiperCount <= 0)
                 {
                     if (BoardMan.enemyUnits.Contains(target))
                         BoardMan.enemyUnits.Remove(target);
@@ -244,7 +244,6 @@ public class Targetable : MonoBehaviour {
 
             //Clean up Tiles
             MapMan.ClearSelection();
-            Debug.Log("Succeed");
         }
 
         if (Input.GetMouseButtonUp(0) && buttonSwitch)

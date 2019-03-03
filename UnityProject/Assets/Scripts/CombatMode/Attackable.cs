@@ -16,6 +16,8 @@ public class Attackable : MonoBehaviour
     private BoardManager BoardMan;
     private SetupManager SetupMan;
 
+    private UIManager UIMan;
+
     private bool autoClick;
 
     void Start()
@@ -26,6 +28,8 @@ public class Attackable : MonoBehaviour
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
 
         SetupMan = GameObject.Find("SetupManager").GetComponent<SetupManager>();
+
+        UIMan = GameObject.Find("UIManager").GetComponent<UIManager>();
     }
 
 
@@ -109,7 +113,7 @@ public class Attackable : MonoBehaviour
             MapMan.Selected = null;
 
             //Hide Menu
-            MapMan.removeMenu();
+            UIMan.removeMenu();
 
             //Clean up Tiles
             MapMan.ClearSelection();

@@ -18,11 +18,12 @@ public class BoardManager : MonoBehaviour
 
     public bool playerTurn;
 
-    private SetupManager musSetupMan;
-    private EnemyManager musEnemyMan;
+    private SetupManager SetupMan;
+    private EnemyManager EnemyMan;
+    private MapManager MapMan;
 
-    public List<GameObject> playerUnits; //List of player's units
-    public List<GameObject> enemyUnits; //List of enemy's worshipper units
+    public List<Unit> playerUnits; //List of player's units
+    public List<Unit> enemyUnits; //List of enemy's worshipper units
     private int numActionsLeft;
 
     public bool endBattle = false; //used for testing purposes - to see if the battle has ended even if there are units left
@@ -33,25 +34,30 @@ public class BoardManager : MonoBehaviour
 
     public float faithCap;
 
+    public GameObject MovableTile;
+    public GameObject AttackableTile;
+
     void Start()
     {
-        playerUnits = new List<GameObject>();
-        enemyUnits = new List<GameObject>();
+        playerUnits = new List<Unit>();
+        enemyUnits = new List<Unit>();
         numActionsLeft = playerUnits.Count; //since player always starts first
         playerTurn = true;
         
-        musSetupMan = GameObject.FindGameObjectWithTag("SetupManager").GetComponent<SetupManager>();
+        SetupMan = GameObject.FindGameObjectWithTag("SetupManager").GetComponent<SetupManager>();
 
         //The baddest of them all, its EnemyMan
-        musEnemyMan = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
+        EnemyMan = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
+
+        MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
     }
     
     void Update()
     {
         //Updates Morale frequently. Involved with attack strength calculation so we need to update it frequently. Maybe. We're not really sure. But this works!
         // TODO fix
-        PlayerMorale = musSetupMan.playerMorale;
-        enemyMorale = musSetupMan.enemyMorale;
+        PlayerMorale = SetupMan.playerMorale;
+        enemyMorale = SetupMan.enemyMorale;
 
         if (!HasActionsLeft()) //any actions left to take? if not, switch turns
             SwitchTurns();
@@ -59,23 +65,23 @@ public class BoardManager : MonoBehaviour
 
     public void Victory()
     {
-        musSetupMan.battleResult = GameInfo.BATTLESTATUS.Victory;
-        musSetupMan.finishedBattle = true;
+        SetupMan.battleResult = GameInfo.BATTLESTATUS.Victory;
+        SetupMan.finishedBattle = true;
     }
 
     public void Defeat()
     {
-        musSetupMan.battleResult = GameInfo.BATTLESTATUS.Defeat;
-        musSetupMan.finishedBattle = true;
+        SetupMan.battleResult = GameInfo.BATTLESTATUS.Defeat;
+        SetupMan.finishedBattle = true;
     }
 
     public void Retreat()
     {
-        musSetupMan.battleResult = GameInfo.BATTLESTATUS.Retreat;
-        musSetupMan.finishedBattle = true;
+        SetupMan.battleResult = GameInfo.BATTLESTATUS.Retreat;
+        SetupMan.finishedBattle = true;
 
         int worshipersLeft = GetRemainingWorshippers(true);
-        musSetupMan.playerWorshiperCount = worshipersLeft; //incorrect value atm
+        SetupMan.playerWorshiperCount = worshipersLeft; //incorrect value atm
 
     }
 
@@ -84,19 +90,90 @@ public class BoardManager : MonoBehaviour
         int worshippers = 0;
         if (player)
         {
-            foreach (GameObject i in playerUnits)
+            foreach (Unit u in playerUnits)
             {
-                worshippers += i.GetComponent<Units>().getWorshiperCount();
+                worshippers += u.getWorshiperCount();
             }
         }
         else //need to calculate enemy worshiper count if player decided to kill enemy god first/early, however not implemented yet
         {
-            foreach (GameObject i in enemyUnits)
+            foreach (Unit u in enemyUnits)
             {
-                worshippers += i.GetComponent<Units>().getWorshiperCount();
+                worshippers += u.getWorshiperCount();
             }
         }
         return worshippers;
+    }
+
+    //Get all the tiles a unit can move to, based on their remaining movement
+    public void showMovable(Unit currentUnit)
+    {
+        Tile[,] tiles = MapMan.tiles;
+
+        HashSet<Tile> MovableTiles = new HashSet<Tile>();
+
+        //Setup Invalid Tiles (the one with units on)
+        List<Unit> invalidTiles = new List<Unit>();
+        invalidTiles.AddRange(playerUnits);
+        invalidTiles.Remove(currentUnit);
+
+        //Calculate Movable Tiles
+        MovableTiles = tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y].findAtDistance(tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y], currentUnit.Movement, invalidTiles, enemyUnits, tiles);
+
+        //We need to do this because the above function breaks some connection (like the one that can't be moved through)
+        MapMan.DefineConnections();
+
+        //Clean up all the other tiles
+        MapMan.ClearSelection();
+
+        //Draw movable tiles
+        foreach (Tile t in MovableTiles)
+        {
+            GameObject temp = Instantiate(MovableTile);
+            temp.GetComponent<Movable>().pos = new Vector2((int)t.getX(), (int)t.getZ());
+            temp.transform.position = new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2, t.getY() + 0.5f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
+            //temp.GetComponent<Renderer>().material.color = new Color(0, 0, 1, 0.5f);
+            //Movable.Add(temp);
+        }
+    }
+
+    //Shows attackable tiles (for attacking)
+    public void showAttackable(Unit currentUnit)
+    {
+        Tile[,] tiles = MapMan.tiles;
+        HashSet<Tile> AttackableTiles = new HashSet<Tile>();
+        List<Tile> ConnectedTiles = tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y].getConnected();
+        List<Unit> targets = new List<Unit>();
+
+        if (playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
+        {
+            targets = enemyUnits;
+        }
+        else
+        {
+            targets = playerUnits;
+        }
+
+        //Take the tiles connect to this unit's tile and see if theres an enemy unit on it
+        foreach (Tile t in ConnectedTiles)
+            foreach (Unit u in targets)
+                if (new Vector2(t.getX(), t.getZ()) == u.getPos())
+                    AttackableTiles.Add(t);
+
+
+        //Clean up all the other tiles
+        MapMan.ClearSelection();
+
+        //Draw movable tiles
+        foreach (Tile t in AttackableTiles)
+        {
+            GameObject temp = Instantiate(AttackableTile);
+            temp.GetComponent<Attackable>().pos = new Vector2((int)t.getX(), (int)t.getZ());
+            temp.transform.position = new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2, t.getY() + 0.5f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
+            //temp.GetComponent<Renderer>().material.color = new Color(0, 0, 1, 0.5f);
+            //Movable.Add(temp);
+        }
+
     }
 
     public float GetPlayerMorale()
@@ -138,15 +215,15 @@ public class BoardManager : MonoBehaviour
     {
         if (playerTurn)
         { //it was player's turn
-            foreach (GameObject i in enemyUnits) //allow each of enemy units to act
-                i.GetComponent<Units>().AllowAct();
+            foreach (Unit u in enemyUnits) //allow each of enemy units to act
+                u.AllowAct();
             numActionsLeft = enemyUnits.Count;
-            StartCoroutine(musEnemyMan.EnemyActions(0.5f));
+            StartCoroutine(EnemyMan.EnemyActions(0.5f));
         }
         else
         { //it was the enemy's turn
-            foreach (GameObject i in playerUnits) //allow each of player's units to act
-                i.GetComponent<Units>().AllowAct();
+            foreach (Unit u in playerUnits) //allow each of player's units to act
+                u.AllowAct();
             numActionsLeft = playerUnits.Count;
         }
         playerTurn = !playerTurn; //switch turn

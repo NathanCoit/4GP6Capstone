@@ -46,8 +46,8 @@ public class Attackable : MonoBehaviour
         if (Input.GetMouseButtonDown(0) || autoClick)
         {
             // Get position of clicked tile
-            List<GameObject> targets = new List<GameObject>();
-            if (BoardMan.playerUnits.Contains(MapMan.Selected))
+            List<Unit> targets = new List<Unit>();
+            if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
             {
                 targets = BoardMan.enemyUnits;
             }
@@ -57,19 +57,19 @@ public class Attackable : MonoBehaviour
             }
             // Find unit that matches tiles position
             Tile[,] tiles = GetTiles();
-            GameObject attackedUnit = new GameObject();
+            Unit attackedUnit = new Unit();
 
-            foreach (GameObject g in targets)
-                if (g.GetComponent<Units>().getPos() == pos)
-                    attackedUnit = g;
+            foreach (Unit u in targets)
+                if (u.getPos() == pos)
+                    attackedUnit = u;
 
             //Decreases the "HP" of the attacked unit - decreases their worshipper count
-            int damage = (int)MapMan.Selected.GetComponent<Units>().getAttackStrength();
+            int damage = (int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getAttackStrength();
             //Set remaining worshippers accordingly
-            attackedUnit.GetComponent<Units>().setWorshiperCount(attackedUnit.GetComponent<Units>().getWorshiperCount() - damage);
+            attackedUnit.setWorshiperCount(attackedUnit.getWorshiperCount() - damage);
 
             //Adjust that team's morale
-            if (BoardMan.playerUnits.Contains(MapMan.Selected)) //check to see who initiated the attack
+            if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit())) //check to see who initiated the attack
             {
                 SetupMan.enemyMorale = ((BoardMan.GetRemainingWorshippers(false)) * 1.0f / (SetupMan.enemyWorshiperCount));
                 //SetupMan.enemyWorshiperCount already takes into consideration the 0.8f (i.e. only 80% of that god's worshipper participates in war)
@@ -81,27 +81,35 @@ public class Attackable : MonoBehaviour
 
 
             //Did the attacked unit's HP reach 0? If so, remove them from the board AND from the appropriate unit array
-            if (attackedUnit.GetComponent<Units>().getWorshiperCount() <= 0)
+            if (attackedUnit.getWorshiperCount() <= 0)
             {
                 if (BoardMan.playerUnits.Contains(attackedUnit))
                     BoardMan.playerUnits.Remove(attackedUnit);
                 else
                     BoardMan.enemyUnits.Remove(attackedUnit);
-                Destroy(attackedUnit);
+                Destroy(attackedUnit.unitGameObject());
+                if (BoardMan.playerUnits.Contains(attackedUnit))
+                {
+                    BoardMan.playerUnits.Remove(attackedUnit);
+                }
+                else
+                {
+                    BoardMan.enemyUnits.Remove(attackedUnit);
+                }
             }
 
             //End the turn of the unit who initiated the attack
-            MapMan.Selected.GetComponent<Units>().EndAct();
+            MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().EndAct();
             BoardMan.DecreaseNumActions();
 
             //Checking if anyone won
             CheckEnd();
 
-            //Hide Menu
-            MapMan.Selected.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
-
             //Unslecting
             MapMan.Selected = null;
+
+            //Hide Menu
+            MapMan.removeMenu();
 
             //Clean up Tiles
             MapMan.ClearSelection();

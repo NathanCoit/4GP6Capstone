@@ -12,6 +12,9 @@ using UnityEngine;
  */
 public class Units : MonoBehaviour {
 
+    //LEGACY
+
+    /*
     public bool canAct;
 
     private bool isGod;
@@ -41,7 +44,7 @@ public class Units : MonoBehaviour {
 
 
     private bool autoClick = false;
-
+    
     // Use this for initialization
     void Start()
     {
@@ -299,5 +302,5 @@ public class Units : MonoBehaviour {
     {
         AttackStrength = WorshiperCount * 0.25f * morale;
     }
-
+    */
 }

@@ -8,8 +8,8 @@ using UnityEngine;
 public class Movable : MonoBehaviour {
 
     public Vector2 pos;
-    private GameObject MapMan;
-    private GameObject BoardMan;
+    private MapManager MapMan;
+    private BoardManager BoardMan;
 
     private bool autoClick;
 
@@ -17,8 +17,8 @@ public class Movable : MonoBehaviour {
     void Start ()
     {
         //ITS THE MAP MAN
-        MapMan = GameObject.FindGameObjectWithTag("MapManager");
-        BoardMan = GameObject.FindGameObjectWithTag("BoardManager");
+        MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
+        BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
     }
 	
 	// Update is called once per frame
@@ -45,10 +45,10 @@ public class Movable : MonoBehaviour {
             HashSet<Tile> visited = new HashSet<Tile>();
             int j = 0;
 
-            depths = tiles[(int)MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().getPos().x, 
-                (int)MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().getPos().y].getDepths();
-            visited = tiles[(int)MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().getPos().x,
-                (int)MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().getPos().y].getVisited();
+            depths = tiles[(int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getPos().x, 
+                (int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getPos().y].getDepths();
+            visited = tiles[(int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getPos().x,
+                (int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getPos().y].getVisited();
 
 
             foreach(Tile visitedTile in visited)
@@ -60,22 +60,19 @@ public class Movable : MonoBehaviour {
                j++;
             }
 
-            MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().Movement -= depths[j] + 1;
+            MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().Movement -= depths[j] + 1;
 
             //Move the selected unit
-            MapMan.GetComponent<MapManager>().Selected.GetComponent<Units>().MoveTo(pos, MapMan.GetComponent<MapManager>().tiles);
-
-
-            //Hide Menu
-            MapMan.GetComponent<MapManager>().Selected.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
-
-
+            MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().MoveTo(pos, MapMan.tiles);
 
             //Unselect it
-            MapMan.GetComponent<MapManager>().Selected = null;
+            MapMan.Selected = null;
+
+            //Hide Menu
+            MapMan.removeMenu();
 
             //Get rid of blue tiles
-            MapMan.GetComponent<MapManager>().ClearSelection();
+            MapMan.ClearSelection();
 
             autoClick = false;
         }

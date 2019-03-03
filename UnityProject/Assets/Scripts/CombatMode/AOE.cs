@@ -11,7 +11,7 @@ public class AOE : MonoBehaviour {
      */
 
     //Use two lists because c# doesn't like it when you change what you're iterating
-    private List<GameObject> targets;
+    private List<Unit> targets;
     private List<GameObject> marrAllCollisions;
 
     private BoardManager BoardMan;
@@ -19,7 +19,7 @@ public class AOE : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
-        targets = new List<GameObject>();
+        targets = new List<Unit>();
         marrAllCollisions = new List<GameObject>();
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
     }
@@ -31,16 +31,32 @@ public class AOE : MonoBehaviour {
 	}
 
 
-    public List<GameObject> getTargets(bool isPlayer)
+    public List<Unit> getTargets(bool isPlayer)
     {
         if (marrAllCollisions != null)
         {
             foreach (GameObject g in marrAllCollisions)
             {
-                if (BoardMan.enemyUnits.Contains(g) && isPlayer)
-                    targets.Add(g);
-                else if (BoardMan.playerUnits.Contains(g) && !isPlayer)
-                    targets.Add(g);
+                if (isPlayer)
+                {
+                    foreach (Unit u in BoardMan.enemyUnits)
+                    {
+                        if (g == u.unitGameObject())
+                        {
+                            targets.Add(u);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (Unit u in BoardMan.playerUnits)
+                    {
+                        if (g == u.unitGameObject())
+                        {
+                            targets.Add(u);
+                        }
+                    }
+                }
             }
         }
         marrAllCollisions = new List<GameObject>();

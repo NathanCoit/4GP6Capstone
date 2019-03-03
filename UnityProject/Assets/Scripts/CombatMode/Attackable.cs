@@ -69,6 +69,9 @@ public class Attackable : MonoBehaviour
 
             //Decreases the "HP" of the attacked unit - decreases their worshipper count
             int damage = (int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getAttackStrength();
+
+            Debug.Log((int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getAttackStrength());
+
             //Set remaining worshippers accordingly
             attackedUnit.setWorshiperCount(attackedUnit.getWorshiperCount() - damage);
 

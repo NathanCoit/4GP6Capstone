@@ -10,12 +10,13 @@ public class UIManager : MonoBehaviour
     public GameObject unitButton;
     public GameObject abilityPanel;
     public GameObject abilityButton;
+    public Camera mainCamera;
 
     private int uiPadding;
 
     public GameObject selectedMenu;
 
-    public Canvas screenCanvas;
+    public Canvas UICanvas;
 
     private MapManager MapMan;
     private BoardManager BoardMan;
@@ -33,14 +34,16 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (screenCanvas.transform.childCount != 0 && MapMan.Selected != null)
+        //Position menu if one is made
+        if (UICanvas.transform.childCount != 0 && MapMan.Selected != null)
         {
-            selectedMenu = screenCanvas.transform.GetChild(0).gameObject;
+            selectedMenu = UICanvas.transform.GetChild(0).gameObject;
 
             RectTransform selectedMenuPanelRect = selectedMenu.GetComponent<RectTransform>();
-            selectedMenuPanelRect.anchoredPosition = worldToScreenSpace(selectedMenu);
+            selectedMenuPanelRect.anchoredPosition = worldToScreenSpace(UICanvas, selectedMenu, MapMan.Selected);
         }
-        //For Selected Unit
+
+        //When we select a new unit
         if (MapMan.Selected != null && MapMan.newSelected)
         {
             //Clean up Previous selection (the tiles)
@@ -130,12 +133,12 @@ public class UIManager : MonoBehaviour
     //Makes the regular sized unit panel
     private void makePanel(GameObject panel)
     {
-        RectTransform CanvasRect = screenCanvas.GetComponent<RectTransform>();
+        RectTransform CanvasRect = UICanvas.GetComponent<RectTransform>();
         GameObject newUnitPanel = Instantiate(panel);
         newUnitPanel.transform.SetParent(CanvasRect);
 
         RectTransform newUnitPanelRect = newUnitPanel.GetComponent<RectTransform>();
-        newUnitPanelRect.anchoredPosition = worldToScreenSpace(newUnitPanel);
+        newUnitPanelRect.anchoredPosition = worldToScreenSpace(UICanvas, newUnitPanel, MapMan.Selected);
 
         selectedMenu = newUnitPanel;
     }
@@ -192,15 +195,11 @@ public class UIManager : MonoBehaviour
     }
 
     //World to screen space postitioning from https://answers.unity.com/questions/799616/unity-46-beta-19-how-to-convert-from-world-space-t.html
-    private Vector2 worldToScreenSpace(GameObject Go)
+    public Vector2 worldToScreenSpace(Canvas canvas,GameObject uiElement, GameObject center)
     {
+        RectTransform CanvasRect = canvas.GetComponent<RectTransform>();
 
-
-        GameObject selectedMenu = screenCanvas.transform.GetChild(0).gameObject;
-
-        RectTransform CanvasRect = screenCanvas.GetComponent<RectTransform>();
-
-        Vector2 ViewportPosition = Camera.main.WorldToViewportPoint(MapMan.Selected.transform.position);
+        Vector2 ViewportPosition = Camera.main.WorldToViewportPoint(center.transform.position);
 
         //Dont really know what this is doing, but it works
         Vector2 WorldObject_ScreenPosition = new Vector2(
@@ -222,7 +221,7 @@ public class UIManager : MonoBehaviour
     {
         //Kill all children code from https://answers.unity.com/questions/611850/destroy-all-children-of-object.html
         if (MapMan.previousSelected != null)
-            foreach (Transform ui in screenCanvas.transform)
+            foreach (Transform ui in UICanvas.transform)
                 Destroy(ui.gameObject);
     }
 }

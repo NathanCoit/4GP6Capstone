@@ -128,12 +128,14 @@ public class Unit
         else
             parentObject.GetComponent<MeshRenderer>().material = parentObject.GetComponent<UnitObjectScript>().enemyNotAvailable;
 
+        /*
         if (!isGod)
             parentObject.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
         else if (parentObject.GetComponent<Gods>().isInBattle())
             parentObject.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
         else if (!parentObject.GetComponent<Gods>().isInBattle())
             parentObject.transform.GetChild(1).GetComponent<Canvas>().gameObject.SetActive(false);
+        */
 
     }
 

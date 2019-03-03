@@ -249,6 +249,7 @@ public class SetupManager : MonoBehaviour
         u.setWorshiperCount(WorshiperCount);
         u.MaxMovement = MaxMovement;
         u.setMorale(morale);
+        u.updateAttackStrength();
         u.isPlayer = true;
         u.MoveTo(new Vector2(pos.x, pos.y), tiles);
 
@@ -265,6 +266,7 @@ public class SetupManager : MonoBehaviour
         u.setWorshiperCount(WorshiperCount);
         u.MaxMovement = MaxMovement;
         u.setMorale(morale);
+        u.updateAttackStrength();
         u.isPlayer = false;
         u.MoveTo(new Vector2(pos.x, pos.y), tiles);
 

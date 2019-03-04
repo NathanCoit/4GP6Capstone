@@ -24,12 +24,16 @@ public class UIManager : MonoBehaviour
 
     private MapManager MapMan;
     private BoardManager BoardMan;
+    private SoundManager SoundMan;
 
     // Start is called before the first frame update
     void Start()
     {
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
+
+        //Dropping some phat beats right in here
+        SoundMan = GameObject.FindGameObjectWithTag("SoundManager").GetComponent<SoundManager>();
 
         //Padding for ui
         uiPadding = 10;
@@ -105,6 +109,8 @@ public class UIManager : MonoBehaviour
             */
 
             MapMan.previousSelected = MapMan.Selected;
+
+            SoundMan.playUnitSelect();
 
             //So we don't do this every frame
             MapMan.newSelected = false;

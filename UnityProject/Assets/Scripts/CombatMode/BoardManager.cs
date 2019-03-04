@@ -129,10 +129,6 @@ public class BoardManager : MonoBehaviour
     {
         HashSet<Tile> MovableTiles = new HashSet<Tile>();
 
-        //Setup Invalid Tiles (the one with units on)
-        List<Unit> unitsOnSameTeam = new List<Unit>();
-        
-
         if (playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
         {
             //Use our lovely tile function <3
@@ -141,16 +137,39 @@ public class BoardManager : MonoBehaviour
         }
         else
         {
-            unitsOnSameTeam.AddRange(playerUnits);
-            unitsOnSameTeam.Remove(currentUnit);
+            MovableTiles = MapMan.tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y].findAtDistance(
+                MapMan.tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y], currentUnit.Movement, findTeamTiles(enemyUnits), findTeamTiles(playerUnits), MapMan.tiles);
         }
-
-        
 
         //We need to do this because the above function breaks some connection (like the one that can't be moved through)
         MapMan.DefineConnections();
 
         return MovableTiles;
+    }
+
+    public HashSet<Tile> findAttackable(Unit currentUnit)
+    {
+        HashSet<Tile> AttackableTiles = new HashSet<Tile>();
+
+        List<Tile> invalidTiles = new List<Tile>();
+
+        if (playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
+        {
+            foreach (Tile t in MapMan.tiles)
+                if (!findTeamTiles(enemyUnits).Contains(t))
+                    invalidTiles.Add(t);
+        }
+        else
+        {
+            foreach (Tile t in MapMan.tiles)
+                if (!findTeamTiles(playerUnits).Contains(t))
+                    invalidTiles.Add(t);  
+        }
+
+        AttackableTiles = MapMan.tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y].findAtDistance(
+                MapMan.tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y], currentUnit.attackRange, invalidTiles, new List<Tile>(), MapMan.tiles);
+
+        return AttackableTiles;
     }
 
     public bool canMove(Unit currentUnit)
@@ -186,26 +205,7 @@ public class BoardManager : MonoBehaviour
     //Shows attackable tiles (for attacking)
     public void showAttackable(Unit currentUnit)
     {
-        Tile[,] tiles = MapMan.tiles;
-        HashSet<Tile> AttackableTiles = new HashSet<Tile>();
-        List<Tile> ConnectedTiles = tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y].getConnected();
-        List<Unit> targets = new List<Unit>();
-
-        if (playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
-        {
-            targets = enemyUnits;
-        }
-        else
-        {
-            targets = playerUnits;
-        }
-
-        //Take the tiles connect to this unit's tile and see if theres an enemy unit on it
-        foreach (Tile t in ConnectedTiles)
-            foreach (Unit u in targets)
-                if (new Vector2(t.getX(), t.getZ()) == u.getPos())
-                    AttackableTiles.Add(t);
-
+        HashSet<Tile> AttackableTiles = findAttackable(currentUnit);
 
         //Clean up all the other tiles
         MapMan.ClearSelection();

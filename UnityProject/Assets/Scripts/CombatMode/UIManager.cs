@@ -248,6 +248,9 @@ public class UIManager : MonoBehaviour
     //Kill all menus
     public void removeMenu()
     {
+        //In case ui canvas is disable (by previous menu)
+        showMenu();
+
         //Kill all children code from https://answers.unity.com/questions/611850/destroy-all-children-of-object.html
         if (MapMan.previousSelected != null)
             foreach (Transform ui in UICanvas.transform)

@@ -40,7 +40,13 @@ public class UIManager : MonoBehaviour
             selectedMenu = UICanvas.transform.GetChild(0).gameObject;
 
             RectTransform selectedMenuPanelRect = selectedMenu.GetComponent<RectTransform>();
-            selectedMenuPanelRect.anchoredPosition = worldToScreenSpace(UICanvas, selectedMenu, MapMan.Selected);
+            
+            //Postioning
+            selectedMenuPanelRect.anchoredPosition = worldToScreenSpace(UICanvas, selectedMenu, 
+                new Vector3(MapMan.Selected.transform.position.x - 1, MapMan.Selected.transform.position.y + 1, MapMan.Selected.transform.position.z));
+
+            //Scale based on distance to camera
+            scaleOnCameraDistance(selectedMenu);
         }
 
         //When we select a new unit
@@ -53,7 +59,6 @@ public class UIManager : MonoBehaviour
             removeMenu();
 
             makePanel(unitPanel);
-
 
             if (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() is God)
             {
@@ -70,6 +75,11 @@ public class UIManager : MonoBehaviour
 
 
             makeEndTurnButton();
+
+            selectedMenu = UICanvas.transform.GetChild(0).gameObject;
+
+            //Scale based on distance to camera
+            scaleOnCameraDistance(selectedMenu);
 
 
             //TODO FIX GOD MENUS ONCE WE ACTUALL MAKE THE GOD CLASS
@@ -138,7 +148,8 @@ public class UIManager : MonoBehaviour
         newUnitPanel.transform.SetParent(CanvasRect);
 
         RectTransform newUnitPanelRect = newUnitPanel.GetComponent<RectTransform>();
-        newUnitPanelRect.anchoredPosition = worldToScreenSpace(UICanvas, newUnitPanel, MapMan.Selected);
+        newUnitPanelRect.anchoredPosition = worldToScreenSpace(UICanvas, newUnitPanel, 
+            new Vector3 (MapMan.Selected.transform.position.x - 1, MapMan.Selected.transform.position.y + 1, MapMan.Selected.transform.position.z));
 
         selectedMenu = newUnitPanel;
     }
@@ -195,11 +206,12 @@ public class UIManager : MonoBehaviour
     }
 
     //World to screen space postitioning from https://answers.unity.com/questions/799616/unity-46-beta-19-how-to-convert-from-world-space-t.html
-    public Vector2 worldToScreenSpace(Canvas canvas,GameObject uiElement, GameObject center)
+    public Vector2 worldToScreenSpace(Canvas canvas,GameObject uiElement, Vector3 center)
     {
         RectTransform CanvasRect = canvas.GetComponent<RectTransform>();
 
-        Vector2 ViewportPosition = Camera.main.WorldToViewportPoint(center.transform.position);
+
+        Vector2 ViewportPosition = Camera.main.WorldToViewportPoint(center);
 
         //Dont really know what this is doing, but it works
         Vector2 WorldObject_ScreenPosition = new Vector2(
@@ -207,6 +219,23 @@ public class UIManager : MonoBehaviour
         ((ViewportPosition.y * CanvasRect.sizeDelta.y) - (CanvasRect.sizeDelta.y * 0.5f)));
 
         return WorldObject_ScreenPosition;
+    }
+
+    //Scales a ui element based on the distance between selected and the camera (only z and y, it looks stupid if you do x as well)
+    private void scaleOnCameraDistance(GameObject ui)
+    {
+        ui.transform.localScale = new Vector3(0.5f, 1, 1) * 1 / Vector3.Distance(new Vector3(0, MapMan.Selected.transform.position.y, MapMan.Selected.transform.position.z),
+                        new Vector3(0, Camera.main.transform.position.y, Camera.main.transform.position.z));
+    }
+
+    public void hideMenu()
+    {
+        UICanvas.enabled = false;
+    }
+
+    public void showMenu()
+    {
+        UICanvas.enabled = true;
     }
 
     //Clear menu without killing the panel. Currently not using, but could be useful later

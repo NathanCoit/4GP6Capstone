@@ -47,6 +47,8 @@ public class EnemyManager : MonoBehaviour {
 
         Tile validTile = null;
 
+        //TODODODODO
+        /*
         if (Unit.getPos().x != -1 && Unit.getPos().y != -1)
         {
             validTile = tiles[(int)Unit.getPos().x, (int)Unit.getPos().y].getClosestTile(BoardMan.playerUnits, Unit.MaxMovement, invalidTiles, BoardMan.playerUnits, tiles);
@@ -56,13 +58,14 @@ public class EnemyManager : MonoBehaviour {
 
             Unit.MovePriority = tiles[(int)Unit.getPos().x, (int)Unit.getPos().y].MovePriority;
         }
+        */
 
         //If we actually found a tile (we may not if the map is huge or I messed up)
         if (validTile != null)
         {
             GameObject tempTile = Instantiate(BoardMan.MovableTile);
-            tempTile.GetComponent<Movable>().pos = new Vector2((int)validTile.getX(), (int)validTile.getZ());
-            tempTile.transform.position = new Vector3(validTile.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2, validTile.getY() + 0.5f, validTile.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
+            tempTile.GetComponent<Movable>().pos = new Vector2((int)validTile.getX(), (int)validTile.getY());
+            tempTile.transform.position = new Vector3(validTile.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2, validTile.getY() + 0.5f, validTile.getX() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
         }
 
     }
@@ -84,12 +87,14 @@ public class EnemyManager : MonoBehaviour {
 
             Tile t;
 
+            /*
             if (enemyUnit.getPos().x != -1 && enemyUnit.getPos().y != -1)
             {
                 t = tiles[(int)enemyUnit.getPos().x, (int)enemyUnit.getPos().y].getClosestTile(BoardMan.playerUnits, enemyUnit.MaxMovement, invalidTiles, BoardMan.playerUnits, tiles);
                 MapMan.DefineConnections();
                 enemyUnit.MovePriority = tiles[(int)enemyUnit.getPos().x, (int)enemyUnit.getPos().y].MovePriority;
             }
+            */
         }
     }
 

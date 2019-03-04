@@ -83,8 +83,8 @@ public class Gods : MonoBehaviour {
         {
             GameObject temp = Instantiate(TargetableTile);
             temp.GetComponent<Targetable>().ability = a;
-            temp.GetComponent<Targetable>().pos = new Vector2((int)t.getX(), (int)t.getZ());
-            temp.transform.position = new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2, t.getY() + 0.5f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
+            temp.GetComponent<Targetable>().pos = new Vector2((int)t.getX(), (int)t.getY());
+            temp.transform.position = new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2, t.getY() + 0.5f, t.getX() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
         }
 
         

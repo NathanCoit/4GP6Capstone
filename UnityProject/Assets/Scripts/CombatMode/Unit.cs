@@ -21,6 +21,7 @@ public class Unit
 
     public int Movement = 2;
     public int MaxMovement;
+    public int attackRange;
     public float morale;
     public bool isPlayer;
     public int MovePriority;

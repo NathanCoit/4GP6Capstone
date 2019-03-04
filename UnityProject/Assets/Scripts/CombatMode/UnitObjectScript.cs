@@ -71,9 +71,9 @@ public class UnitObjectScript : MonoBehaviour
             */
             //Base scale on how far away the camera is
             //infoPanel.transform.localScale = new Vector3(0.75f,0.5f,0.75f) * 1/Vector3.Distance(gameObject.transform.position, UIMan.mainCamera.transform.position);
-            infoPanel.transform.localEulerAngles = new Vector3(-Mathf.Atan2(gameObject.transform.position.y - Camera.main.transform.position.y, gameObject.transform.position.z - Camera.main.transform.position.z) * 180 / Mathf.PI, 0, 0);
+            infoPanel.transform.localEulerAngles = new Vector3(-Mathf.Atan2(gameObject.transform.position.y - Camera.main.transform.position.y, 
+                gameObject.transform.position.z - Camera.main.transform.position.z) * 180 / Mathf.PI, 0, 0);
         }
-        
         
     }
 

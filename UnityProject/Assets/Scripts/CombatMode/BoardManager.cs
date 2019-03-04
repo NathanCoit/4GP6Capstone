@@ -21,6 +21,7 @@ public class BoardManager : MonoBehaviour
     private SetupManager SetupMan;
     private EnemyManager EnemyMan;
     private MapManager MapMan;
+    private UIManager UIMan;
 
     public List<Unit> playerUnits; //List of player's units
     public List<Unit> enemyUnits; //List of enemy's worshipper units
@@ -53,6 +54,9 @@ public class BoardManager : MonoBehaviour
         EnemyMan = GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
 
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
+
+        //Here to spit some hot ui
+        UIMan = GameObject.FindGameObjectWithTag("UIManager").GetComponent<UIManager>();
 
         abilityDirection = 0;
     }
@@ -110,26 +114,63 @@ public class BoardManager : MonoBehaviour
         return worshippers;
     }
 
-    //Get all the tiles a unit can move to, based on their remaining movement
-    public void showMovable(Unit currentUnit)
+    private List<Tile> findTeamTiles(List<Unit> team)
     {
-        Tile[,] tiles = MapMan.tiles;
+        List<Tile> teamTiles = new List<Tile>();
 
+        foreach (Unit currentUnit in team)
+            if((int)currentUnit.getPos().x != -1 && (int)currentUnit.getPos().y != -1)
+                teamTiles.Add(MapMan.tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y]);
+
+        return teamTiles;
+    }
+
+    private HashSet<Tile> findMoveable(Unit currentUnit)
+    {
         HashSet<Tile> MovableTiles = new HashSet<Tile>();
 
         //Setup Invalid Tiles (the one with units on)
-        List<Unit> invalidTiles = new List<Unit>();
-        invalidTiles.AddRange(playerUnits);
-        invalidTiles.Remove(currentUnit);
+        List<Unit> unitsOnSameTeam = new List<Unit>();
+        
 
-        //Calculate Movable Tiles
-        MovableTiles = tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y].findAtDistance(tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y], currentUnit.Movement, invalidTiles, enemyUnits, tiles);
+        if (playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
+        {
+            //Use our lovely tile function <3
+            MovableTiles = MapMan.tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y].findAtDistance(
+                MapMan.tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y], currentUnit.Movement, findTeamTiles(playerUnits), findTeamTiles(enemyUnits), MapMan.tiles);
+        }
+        else
+        {
+            unitsOnSameTeam.AddRange(playerUnits);
+            unitsOnSameTeam.Remove(currentUnit);
+        }
+
+        
 
         //We need to do this because the above function breaks some connection (like the one that can't be moved through)
         MapMan.DefineConnections();
 
-        //Clean up all the other tiles
+        return MovableTiles;
+    }
+
+    public bool canMove(Unit currentUnit)
+    {
+        if (findMoveable(currentUnit).Count != 0)
+            return true;
+        else
+            return false;
+    }
+
+    //Get all the tiles a unit can move to, based on their remaining movement
+    public void showMovable(Unit currentUnit)
+    {
+        //Calculate Moveable tiles
+        HashSet<Tile> MovableTiles = findMoveable(currentUnit);
+
+        //Clean up all the other tiles (before we make more tiles)
         MapMan.ClearSelection();
+
+        UIMan.hideMenu();
 
         //Draw movable tiles
         foreach (Tile t in MovableTiles)

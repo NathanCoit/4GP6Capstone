@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -34,6 +35,11 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() && !MapMan.newSelected)
+        {
+            MapMan.Selected = null;
+            removeMenu();
+        }
         //Position menu if one is made
         if (UICanvas.transform.childCount != 0 && MapMan.Selected != null && MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().isPlayer)
         {
@@ -99,8 +105,6 @@ public class UIManager : MonoBehaviour
             MapMan.newSelected = false;
 
         }
-
-
     }
 
     //For making the abilities menu

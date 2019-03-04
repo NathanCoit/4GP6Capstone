@@ -180,6 +180,14 @@ public class BoardManager : MonoBehaviour
             return false;
     }
 
+    public bool canAttack(Unit currentUnit)
+    {
+        if (findAttackable(currentUnit).Count != 0)
+            return true;
+        else
+            return false;
+    }
+
     //Get all the tiles a unit can move to, based on their remaining movement
     public void showMovable(Unit currentUnit)
     {

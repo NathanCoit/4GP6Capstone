@@ -228,6 +228,24 @@ public class UIManager : MonoBehaviour
                         new Vector3(0, Camera.main.transform.position.y, Camera.main.transform.position.z));
     }
 
+    //Show menu if a unit can still act, hides it otherwise. Used after an action.
+    public void showMenuIfCanAct()
+    {
+        if (BoardMan.canMove(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()) || BoardMan.canAttack(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
+            showMenu();
+        else
+        {
+            //AUTO END TURN IF WE CAN ACT WOOOOOOOO WE DID IT BOIS
+            MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().EndAct();
+
+            //Unselect, as we can act anymore
+            MapMan.Selected = null;
+
+            //eh hem, clean up the menus
+            removeMenu();
+        }
+    }
+
     public void hideMenu()
     {
         UICanvas.enabled = false;

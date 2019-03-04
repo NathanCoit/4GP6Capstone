@@ -154,15 +154,15 @@ public class SetupManager : MonoBehaviour
         {
             tiles = MapMan.tiles;
             //Test Setup
-            CreatePlayerUnit(new Vector2(4, 3), tiles, playerWorshiperCount / 3, 2, playerMorale); //hello integer division
-            CreatePlayerUnit(new Vector2(4, 4), tiles, playerWorshiperCount / 3, 2, playerMorale); //also assumes we have 3 units per team
-            CreatePlayerUnit(new Vector2(4, 5), tiles, playerWorshiperCount / 3, 2, playerMorale);
-            CreateGod(tiles, true, gameInfo.PlayerFaction.GodName, 3);
+            CreatePlayerUnit(new Vector2(4, 3), tiles, playerWorshiperCount / 3, 2, 1, playerMorale); //hello integer division
+            CreatePlayerUnit(new Vector2(4, 4), tiles, playerWorshiperCount / 3, 2, 1, playerMorale); //also assumes we have 3 units per team
+            CreatePlayerUnit(new Vector2(4, 5), tiles, playerWorshiperCount / 3, 2, 1, playerMorale);
+            CreateGod(tiles, true, gameInfo.PlayerFaction.GodName, 3, 2, 50, 300);
 
-            CreateEnemyUnit(new Vector2(6, 3), tiles, enemyWorshiperCount / 3, 2, enemyMorale);
-            CreateEnemyUnit(new Vector2(6, 4), tiles, enemyWorshiperCount / 3, 2, enemyMorale);
-            CreateEnemyUnit(new Vector2(6, 5), tiles, enemyWorshiperCount / 3, 2, enemyMorale);
-            CreateGod(tiles, false, gameInfo.EnemyFaction.GodName, 3);
+            CreateEnemyUnit(new Vector2(6, 3), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
+            CreateEnemyUnit(new Vector2(6, 4), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
+            CreateEnemyUnit(new Vector2(6, 5), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
+            CreateGod(tiles, false, gameInfo.EnemyFaction.GodName, 3, 2, 50, 300);
 
             startup = false;
         }
@@ -178,7 +178,7 @@ public class SetupManager : MonoBehaviour
         return false;
     }
 
-    public void CreateGod(Tile[,] tiles, bool isPlayer, string godName, int MaxMovement)
+    public void CreateGod(Tile[,] tiles, bool isPlayer, string godName, int MaxMovement, int attackRange, int attackStregnth, int health)
     {
         /*
         GameObject temp = Instantiate(God);
@@ -218,6 +218,9 @@ public class SetupManager : MonoBehaviour
 
 
         g.MaxMovement = MaxMovement;
+        g.attackRange = attackRange;
+        g.AttackStrength = attackStregnth;
+        g.WorshiperCount = health;
 
         if (isPlayer)
         {
@@ -239,7 +242,7 @@ public class SetupManager : MonoBehaviour
     }
 
 
-    public void CreatePlayerUnit(Vector2 pos, Tile[,] tiles, int WorshiperCount, int MaxMovement, float morale)
+    public void CreatePlayerUnit(Vector2 pos, Tile[,] tiles, int WorshiperCount, int MaxMovement, int attackRange, float morale)
     {
         GameObject unitGo = Instantiate(Unit);
         Unit u = new Unit();
@@ -248,14 +251,16 @@ public class SetupManager : MonoBehaviour
         u.assignGameObject(unitGo);
         u.setWorshiperCount(WorshiperCount);
         u.MaxMovement = MaxMovement;
+        u.attackRange = attackRange;
         u.setMorale(morale);
+        u.updateAttackStrength();
         u.isPlayer = true;
         u.MoveTo(new Vector2(pos.x, pos.y), tiles);
 
         BoardMan.playerUnits.Add(u);
     }
 
-    public void CreateEnemyUnit(Vector2 pos, Tile[,] tiles, int WorshiperCount, int MaxMovement, float morale)
+    public void CreateEnemyUnit(Vector2 pos, Tile[,] tiles, int WorshiperCount, int MaxMovement, int attackRange, float morale)
     {
         GameObject unitGo = Instantiate(Unit);
         Unit u = new Unit();
@@ -264,7 +269,9 @@ public class SetupManager : MonoBehaviour
         u.assignGameObject(unitGo);
         u.setWorshiperCount(WorshiperCount);
         u.MaxMovement = MaxMovement;
+        u.attackRange = attackRange;
         u.setMorale(morale);
+        u.updateAttackStrength();
         u.isPlayer = false;
         u.MoveTo(new Vector2(pos.x, pos.y), tiles);
 

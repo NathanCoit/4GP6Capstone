@@ -10,14 +10,18 @@ public class Unit
 
     private bool isGod;
 
-    private MapManager MapMan;
-    protected Vector2 pos;
+    protected MapManager MapMan;
     private BoardManager BoardMan;
+    protected UIManager UIMan;
+
+    protected Vector2 pos;
+    
     private List<int> depths = new List<int>();
     private HashSet<Tile> visited = new HashSet<Tile>();
 
     public int Movement = 2;
     public int MaxMovement;
+    public int attackRange;
     public float morale;
     public bool isPlayer;
     public int MovePriority;
@@ -37,13 +41,14 @@ public class Unit
         //Boardman is here also
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
 
+        UIMan = GameObject.Find("UIManager").GetComponent<UIManager>();
         /*
         if (isPlayer)
             parentObject.GetComponent<MeshRenderer>().material = parentObject.GetComponent<UnitObjectScript>().playerNotAvailable;
         else
             parentObject.GetComponent<MeshRenderer>().material = parentObject.GetComponent<UnitObjectScript>().enemyNotAvailable;
         */
-        
+
 
         AttackStrength = WorshiperCount * 0.25f * morale;
 
@@ -124,12 +129,14 @@ public class Unit
         else
             parentObject.GetComponent<MeshRenderer>().material = parentObject.GetComponent<UnitObjectScript>().enemyNotAvailable;
 
+        /*
         if (!isGod)
             parentObject.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
         else if (parentObject.GetComponent<Gods>().isInBattle())
             parentObject.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
         else if (!parentObject.GetComponent<Gods>().isInBattle())
             parentObject.transform.GetChild(1).GetComponent<Canvas>().gameObject.SetActive(false);
+        */
 
     }
 
@@ -149,7 +156,7 @@ public class Unit
         }
 
         MapMan.ClearSelection();
-        MapMan.removeMenu();
+        UIMan.removeMenu();
         EndAct();
         BoardMan.GetComponent<BoardManager>().DecreaseNumActions();
     }
@@ -218,7 +225,7 @@ public class Unit
     }
 
     //Attack strength = 1/4 of worshipper count * morale
-    public void updateAttackStrength()
+    public virtual void updateAttackStrength()
     {
         AttackStrength = WorshiperCount * 0.25f * morale;
     }

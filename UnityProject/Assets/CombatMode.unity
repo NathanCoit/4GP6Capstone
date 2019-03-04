@@ -194,7 +194,7 @@ GameObject:
   - component: {fileID: 65526520}
   - component: {fileID: 65526519}
   m_Layer: 5
-  m_Name: ScreenCanvas
+  m_Name: UICanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -485,8 +485,17 @@ MonoBehaviour:
   faithCap: 0
   MovableTile: {fileID: 1671741471656716, guid: 5ea76647790eee4489bf8024aee91866,
     type: 3}
+  InMoveRangeTile: {fileID: 6951534097669304281, guid: 38b41711fcf0b4b4899f7efd763aa326,
+    type: 3}
+  PreviewMoveTile: {fileID: 3065346719500588968, guid: 776342058f263d646babe79c35b6ef8f,
+    type: 3}
   AttackableTile: {fileID: 1458115486241402, guid: 5e079157d2190ab468b118c291e13b4d,
     type: 3}
+  PreviewAttackTile: {fileID: 6254618008044791847, guid: 841da85ef7f87f741a2df7f0eba84742,
+    type: 3}
+  TargetableTile: {fileID: 1109967228810790, guid: 1b019e41b3c177d48b3564edf0a0cf0e,
+    type: 3}
+  abilityDirection: 0
 --- !u!4 &734046508
 Transform:
   m_ObjectHideFlags: 0
@@ -534,6 +543,7 @@ MonoBehaviour:
   MovableTile: {fileID: 1671741471656716, guid: 5ea76647790eee4489bf8024aee91866,
     type: 3}
   Selected: {fileID: 0}
+  previousSelected: {fileID: 0}
   newSelected: 0
   mapName: 
   godFloatHeight: 0
@@ -542,6 +552,7 @@ MonoBehaviour:
   unitButton: {fileID: 1404759685096050, guid: 49e3d7a008f7e1d40a697636e52d9768, type: 3}
   selectedMenu: {fileID: 0}
   screenCanvas: {fileID: 65526521}
+
 --- !u!4 &763523743
 Transform:
   m_ObjectHideFlags: 0
@@ -783,3 +794,57 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1793198888
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1793198889}
+  - component: {fileID: 1793198890}
+  m_Layer: 0
+  m_Name: UIManager
+  m_TagString: UIManager
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1793198889
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1793198888}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 533.5094, y: 305.1969, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1793198890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1793198888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3c71e3fff9c66d43baabeb4581f83f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unitPanel: {fileID: 3379576031373003753, guid: 4fda897531d15ad4f86061f490202557,
+    type: 3}
+  unitButton: {fileID: 1404759685096050, guid: 49e3d7a008f7e1d40a697636e52d9768, type: 3}
+  abilityPanel: {fileID: 3543649336412185485, guid: ecb1af8ad9af8324eb0ca2094915c7d9,
+    type: 3}
+  abilityButton: {fileID: 544674801737561436, guid: 023d06c1b2eeed443b838e4ca7bf1546,
+    type: 3}
+  mainCamera: {fileID: 128641586}
+  selectedMenu: {fileID: 0}
+  UICanvas: {fileID: 65526521}
+  godEnteringBattle: 0

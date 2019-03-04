@@ -10,6 +10,7 @@ public class Movable : MonoBehaviour {
     public Vector2 pos;
     private MapManager MapMan;
     private BoardManager BoardMan;
+    private UIManager UIMan;
 
     private bool autoClick;
 
@@ -19,6 +20,7 @@ public class Movable : MonoBehaviour {
         //ITS THE MAP MAN
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
+        UIMan = GameObject.Find("UIManager").GetComponent<UIManager>();
     }
 	
 	// Update is called once per frame
@@ -41,38 +43,36 @@ public class Movable : MonoBehaviour {
         if (Input.GetMouseButtonDown(0) || autoClick)
         {
             Tile[,] tiles = getTiles();
-            List<int> depths = new List<int>();
+            int depth = 0;
             HashSet<Tile> visited = new HashSet<Tile>();
             int j = 0;
 
-            depths = tiles[(int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getPos().x, 
-                (int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getPos().y].getDepths();
-            visited = tiles[(int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getPos().x,
-                (int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getPos().y].getVisited();
 
+            depth = tiles[(int)gameObject.transform.position.x, (int)gameObject.transform.position.z].getDepth();
 
-            foreach(Tile visitedTile in visited)
-            {
-                if(new Vector2(visitedTile.getX(), visitedTile.getZ()) == pos)
-                {
-                    break;
-                }
-               j++;
-            }
-
-            MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().Movement -= depths[j] + 1;
+            MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().Movement -= depth;
 
             //Move the selected unit
             MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().MoveTo(pos, MapMan.tiles);
 
-            //Unselect it
-            MapMan.Selected = null;
-
-            //Hide Menu
-            MapMan.removeMenu();
-
             //Get rid of blue tiles
             MapMan.ClearSelection();
+
+            //Show menu if we can still act, otherwise hide it
+            if (!UIMan.godEnteringBattle)
+            {
+                if (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().isPlayer)
+                    UIMan.showMenuIfCanAct();
+            }
+            else
+            {
+                UIMan.makePanel(UIMan.unitPanel);
+                UIMan.makeUnitButtons();
+                UIMan.makeEndTurnButton();
+                UIMan.godEnteringBattle = false;
+            }
+
+            
 
             autoClick = false;
         }

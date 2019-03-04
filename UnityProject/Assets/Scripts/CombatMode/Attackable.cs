@@ -16,6 +16,8 @@ public class Attackable : MonoBehaviour
     private BoardManager BoardMan;
     private SetupManager SetupMan;
 
+    private UIManager UIMan;
+
     private bool autoClick;
 
     void Start()
@@ -26,6 +28,8 @@ public class Attackable : MonoBehaviour
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
 
         SetupMan = GameObject.Find("SetupManager").GetComponent<SetupManager>();
+
+        UIMan = GameObject.Find("UIManager").GetComponent<UIManager>();
     }
 
 
@@ -65,6 +69,7 @@ public class Attackable : MonoBehaviour
 
             //Decreases the "HP" of the attacked unit - decreases their worshipper count
             int damage = (int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getAttackStrength();
+
             //Set remaining worshippers accordingly
             attackedUnit.setWorshiperCount(attackedUnit.getWorshiperCount() - damage);
 
@@ -102,14 +107,16 @@ public class Attackable : MonoBehaviour
             MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().EndAct();
             BoardMan.DecreaseNumActions();
 
+            BoardMan.checkIfGodShouldBeInBattle();
+
             //Checking if anyone won
-            CheckEnd();
+            BoardMan.CheckEnd();
 
             //Unslecting
             MapMan.Selected = null;
 
             //Hide Menu
-            MapMan.removeMenu();
+            UIMan.removeMenu();
 
             //Clean up Tiles
             MapMan.ClearSelection();
@@ -117,18 +124,7 @@ public class Attackable : MonoBehaviour
         }
     }
 
-    private void CheckEnd()
-    {
-        //check if someone won the game (note we're checking if its 1 since we dont have killing gods in yet)
-        if (BoardMan.playerUnits.Count == 1)
-        {
-            BoardMan.Defeat();
-        }
-        else if (BoardMan.enemyUnits.Count == 1)
-        {
-            BoardMan.Victory();
-        }
-    }
+    
 
     //For spoofing clicks for testing
     public void TestClick()

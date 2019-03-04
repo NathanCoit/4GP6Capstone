@@ -46,7 +46,7 @@ public class Targetable : MonoBehaviour {
         return MapMan.tiles;
     }
 
-    /*
+    
     public void OnMouseOver()
     {
         List<Unit> targets = new List<Unit>();
@@ -55,7 +55,7 @@ public class Targetable : MonoBehaviour {
         //If it's single target we're just target the one tile
         if (ability.AbiltyType == Ability.ABILITYTYPE.SingleTarget)
         {
-            if (BoardMan.playerUnits.Contains(MapMan.Selected))
+            if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
             {
                 targets = BoardMan.enemyUnits;
             }
@@ -115,25 +115,25 @@ public class Targetable : MonoBehaviour {
             //Get the line offset and facing the right way
             if(aMi.AbilityShape == Ability.MultiTargetShape.Line)
             {
-                if (MapMan.Selected.GetComponent<Gods>().direction == 0)
+                if (BoardMan.abilityDirection == 0)
                 {
                     AOEShape.transform.eulerAngles = new Vector3(0, 0, 0);
                     AOEShape.transform.position = new Vector3(transform.position.x + aMi.Length / 2, transform.position.y, transform.position.z);
 
                 }
-                else if (MapMan.Selected.GetComponent<Gods>().direction == 1)
+                else if (BoardMan.abilityDirection == 1)
                 {
                     AOEShape.transform.eulerAngles = new Vector3(0, 270, 0);
                     AOEShape.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + aMi.Length / 2);
 
                 }
-                else if (MapMan.Selected.GetComponent<Gods>().direction == 2)
+                else if (BoardMan.abilityDirection == 2)
                 {
                     AOEShape.transform.eulerAngles = new Vector3(0, 180, 0);
                     AOEShape.transform.position = new Vector3(transform.position.x - aMi.Length / 2, transform.position.y, transform.position.z);
 
                 }
-                else if (MapMan.Selected.GetComponent<Gods>().direction == 3)
+                else if (BoardMan.abilityDirection == 3)
                 {
                     AOEShape.transform.eulerAngles = new Vector3(0, 90, 0);
                     AOEShape.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - aMi.Length / 2);
@@ -142,7 +142,7 @@ public class Targetable : MonoBehaviour {
             }
 
             //Check what units we should be targeting.
-            if (BoardMan.playerUnits.Contains(MapMan.Selected))
+            if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
             {
                 targets = AOEShape.GetComponent<AOE>().getTargets(true);
             }
@@ -152,7 +152,7 @@ public class Targetable : MonoBehaviour {
             }
             
 
-            if (targets != new List<GameObject>())
+            if (targets != new List<Unit>())
                 valid = true;
             else
                 valid = false;
@@ -175,27 +175,30 @@ public class Targetable : MonoBehaviour {
         if ((Input.GetMouseButtonDown(0) || autoClick) && !buttonSwitch)
         {
             buttonSwitch = true;
+
             //Just damage the one unit if single target
             if (ability.AbiltyType == Ability.ABILITYTYPE.SingleTarget)
             {
                 SingleTargetAbility aSi = (SingleTargetAbility)SingleTargetAbility.LoadAbilityFromName(ability.AbilityName);
-                GameObject target = new GameObject();
-                foreach (GameObject g in targets)
+                Unit target = new Unit();
+                foreach (Unit u in targets)
                 {
-                    if (pos.x == g.GetComponent<Units>().getPos().x && pos.y == g.GetComponent<Units>().getPos().y)
-                        target = g;
+                    if (pos.x == u.getPos().x && pos.y == u.getPos().y)
+                        target = u;
                 }
 
-                target.GetComponent<Units>().setWorshiperCount(target.GetComponent<Units>().getWorshiperCount() - aSi.AbilityDamage);
+                target.setWorshiperCount(target.getWorshiperCount() - aSi.AbilityDamage);
 
-                if(target.GetComponent<Units>().WorshiperCount >= 0)
+                //Kill target if it died
+                if(target.WorshiperCount <= 0)
                 {
                     if (BoardMan.enemyUnits.Contains(target))
                         BoardMan.enemyUnits.Remove(target);
                     else if (BoardMan.playerUnits.Contains(target))
                         BoardMan.playerUnits.Remove(target);
-                    Destroy(target);
-                    checkEnd();
+                    Destroy(target.unitGameObject());
+                    BoardMan.CheckEnd();
+                    BoardMan.checkIfGodShouldBeInBattle();
                 }
             }
             // Damage all the target within the AOE if it's multi
@@ -203,17 +206,18 @@ public class Targetable : MonoBehaviour {
             {
                 MultiTargetAbility aMi = (MultiTargetAbility)MultiTargetAbility.LoadAbilityFromName(ability.AbilityName);
                 Debug.Log(targets.Count);
-                foreach (GameObject g in targets)
+                foreach (Unit u in targets)
                 {
-                    g.GetComponent<Units>().setWorshiperCount(g.GetComponent<Units>().getWorshiperCount() - aMi.AbilityDamage);
-                    if (g.GetComponent<Units>().WorshiperCount <= 0)
+                    u.setWorshiperCount(u.getWorshiperCount() - aMi.AbilityDamage);
+                    if (u.WorshiperCount <= 0)
                     {
-                        if (BoardMan.enemyUnits.Contains(g))
-                            BoardMan.enemyUnits.Remove(g);
-                        else if (BoardMan.playerUnits.Contains(g))
-                            BoardMan.playerUnits.Remove(g);
-                        Destroy(g);
-                        checkEnd();
+                        if (BoardMan.enemyUnits.Contains(u))
+                            BoardMan.enemyUnits.Remove(u);
+                        else if (BoardMan.playerUnits.Contains(u))
+                            BoardMan.playerUnits.Remove(u);
+                        Destroy(u.unitGameObject());
+                        BoardMan.CheckEnd();
+                        BoardMan.checkIfGodShouldBeInBattle();
                     }
                 }
                 GameObject[] AOEShapes = GameObject.FindGameObjectsWithTag("AOEShapes");
@@ -235,14 +239,13 @@ public class Targetable : MonoBehaviour {
             }
 
             //End turn once we used an ability
-            MapMan.Selected.GetComponent<Units>().EndTurnButton();
+            MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().EndTurnButton();
 
             //Unslecting
             MapMan.Selected = null;
 
             //Clean up Tiles
             MapMan.ClearSelection();
-            Debug.Log("Succeed");
         }
 
         if (Input.GetMouseButtonUp(0) && buttonSwitch)
@@ -253,27 +256,14 @@ public class Targetable : MonoBehaviour {
 
         //Udating direction for the line AOE
         if (Input.GetMouseButtonDown(1))
-            if (MapMan.Selected.GetComponent<Gods>().direction < 3)
-                MapMan.Selected.GetComponent<Gods>().direction++;
+            if (BoardMan.abilityDirection < 3)
+                BoardMan.abilityDirection++;
             else
-                MapMan.Selected.GetComponent<Gods>().direction = 0;
+                BoardMan.abilityDirection = 0;
         
 
     }
-    */
-
-    //This is here in case we kill everything with an ability
-    private void checkEnd()
-    {
-        if (BoardMan.playerUnits.Count == 1)
-        {
-            BoardMan.Defeat();
-        }
-        else if (BoardMan.enemyUnits.Count == 1)
-        {
-            BoardMan.Victory();
-        }
-    }
+    
 
     //Unhighlight a tile we mouse out
     public void OnMouseExit()

@@ -11,7 +11,7 @@ public class Tile
 {
     private Vector3 pos;
     private List<Tile> Connected = new List<Tile>();
-    private List<int> depths = new List<int>();
+    private int depth;
     private HashSet<Tile> visited = new HashSet<Tile>();
     private string typeID;
     private string type;
@@ -56,7 +56,7 @@ public class Tile
     public HashSet<Tile> findAtDistance(Tile start, int distance, List<Tile> invalidTiles, List<Tile> solidTiles, Tile[,] tiles)
     {
         visited = new HashSet<Tile>();
-        depths = new List<int>();
+        depth = 0;
         Queue<Tile> queue = new Queue<Tile>();
         List<Tile> toBeRemoved = new List<Tile>();
         Tile root = start;
@@ -83,10 +83,9 @@ public class Tile
         while (queue.Count > 0)
         {
             Tile current = queue.Dequeue();
-
             //If we have not visited, add to visited
             if (!visited.Contains(current))
-                depths.Add(currentDepth);
+                current.depth = currentDepth;
             visited.Add(current);
 
             nextElementsToDepthIncrease += current.getConnected().Count;
@@ -96,10 +95,12 @@ public class Tile
             {
                 if (++currentDepth > distance)
                 {
+
                     foreach (Tile t in invalidTiles)
                         //-1 is a special position for gods that are not in battle
-                        if(t.pos.x != -1 && t.pos.y != -1)
+                        if(t.getX() != -1 && t.getZ() != -1)
                             visited.Remove(tiles[(int)t.getX(), (int)t.getZ()]);
+                            
                     return visited;
                 }
                 elementsToNextDepth = nextElementsToDepthIncrease;
@@ -112,10 +113,13 @@ public class Tile
                 queue.Enqueue(connect);
             }
         }
+
         foreach (Tile t in invalidTiles)
-            if (t.pos.x != -1 && t.pos.y != -1)
+            if (t.getX() != -1 && t.getZ() != -1)
                 visited.Remove(tiles[(int)t.getX(), (int)t.getZ()]);
+
         return visited;
+        
     }
 
     //Finds the optimal tile to move towards any tile in endingPoints (this is how the AI knows where to move)
@@ -226,9 +230,9 @@ public class Tile
     }
 
 
-    public List<int> getDepths()
+    public int getDepth()
     {
-        return depths;
+        return depth;
     }
 
     public HashSet<Tile> getVisited()

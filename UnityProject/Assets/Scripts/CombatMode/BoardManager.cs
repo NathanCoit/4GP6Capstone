@@ -36,7 +36,10 @@ public class BoardManager : MonoBehaviour
     public float faithCap;
 
     public GameObject MovableTile;
+    public GameObject InMoveRangeTile;
+    public GameObject PreviewMoveTile;
     public GameObject AttackableTile;
+    public GameObject PreviewAttackTile;
     public GameObject TargetableTile;
 
     public int abilityDirection;
@@ -114,6 +117,7 @@ public class BoardManager : MonoBehaviour
         return worshippers;
     }
 
+    //Find the tiles that a list of units are on
     public List<Tile> findTeamTiles(List<Unit> team)
     {
         List<Tile> teamTiles = new List<Tile>();
@@ -125,6 +129,7 @@ public class BoardManager : MonoBehaviour
         return teamTiles;
     }
 
+    //Helper function for show moveable and similar
     private HashSet<Tile> findMoveable(Unit currentUnit)
     {
         HashSet<Tile> MovableTiles = new HashSet<Tile>();
@@ -147,6 +152,7 @@ public class BoardManager : MonoBehaviour
         return MovableTiles;
     }
 
+    //Helper function for show attackable and similar
     private HashSet<Tile> findAttackable(Unit currentUnit)
     {
         HashSet<Tile> AttackableTiles = new HashSet<Tile>();
@@ -172,6 +178,7 @@ public class BoardManager : MonoBehaviour
         return AttackableTiles;
     }
 
+    //Checks if a unit can still move
     public bool canMove(Unit currentUnit)
     {
         if (findMoveable(currentUnit).Count != 0)
@@ -180,6 +187,7 @@ public class BoardManager : MonoBehaviour
             return false;
     }
 
+    //Check if a unit can still attack
     public bool canAttack(Unit currentUnit)
     {
         if (findAttackable(currentUnit).Count != 0)
@@ -194,6 +202,14 @@ public class BoardManager : MonoBehaviour
         //Calculate Moveable tiles
         HashSet<Tile> MovableTiles = findMoveable(currentUnit);
 
+        HashSet<Tile> inMoveRangeTiles = new HashSet<Tile>();
+
+        inMoveRangeTiles = MapMan.tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y].findAtDistance(
+            MapMan.tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y], currentUnit.Movement, new List<Tile>(), findTeamTiles(enemyUnits), MapMan.tiles);
+
+        foreach (Tile t in MovableTiles)
+            inMoveRangeTiles.Remove(t);
+
         //Clean up all the other tiles (before we make more tiles)
         MapMan.ClearSelection();
 
@@ -204,9 +220,36 @@ public class BoardManager : MonoBehaviour
         {
             GameObject temp = Instantiate(MovableTile);
             temp.GetComponent<Movable>().pos = new Vector2((int)t.getX(), (int)t.getZ());
-            temp.transform.position = new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2, t.getY() + 0.5f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
-            //temp.GetComponent<Renderer>().material.color = new Color(0, 0, 1, 0.5f);
-            //Movable.Add(temp);
+            temp.transform.position = new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2,
+                t.getY() + 0.5f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
+        }
+
+        foreach (Tile t in inMoveRangeTiles)
+        {
+            GameObject temp = Instantiate(InMoveRangeTile);
+            temp.transform.position = new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2,
+                t.getY() + 0.5f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
+        }
+    }
+
+    //Previews units movement. Can't pass unit due to it being use with event tiggers (At least I couldn't figure out how)
+    public void previewMoveable()
+    {
+        Unit currentUnit = MapMan.Selected.GetComponent<UnitObjectScript>().getUnit();
+        HashSet<Tile> previewMoveTiles = new HashSet<Tile>();
+
+        //Use our lovely tile function <3
+        previewMoveTiles = MapMan.tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y].findAtDistance(
+            MapMan.tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y], currentUnit.Movement, new List<Tile>(), findTeamTiles(enemyUnits), MapMan.tiles);
+
+        MapMan.DefineConnections();
+
+        //Draw movable tiles
+        foreach (Tile t in previewMoveTiles)
+        {
+            GameObject temp = Instantiate(PreviewMoveTile);
+            temp.transform.position = new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2, 
+                t.getY() + 0.5f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
         }
     }
 
@@ -228,6 +271,25 @@ public class BoardManager : MonoBehaviour
             //Movable.Add(temp);
         }
 
+    }
+
+    public void previewAttackable()
+    {
+        Unit currentUnit = MapMan.Selected.GetComponent<UnitObjectScript>().getUnit();
+
+        HashSet<Tile> preveiwAttackTiles = new HashSet<Tile>();
+
+        preveiwAttackTiles = MapMan.tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y].findAtDistance(
+                MapMan.tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y], currentUnit.attackRange, new List<Tile>(), new List<Tile>(), MapMan.tiles);
+
+        MapMan.DefineConnections();
+
+        foreach (Tile t in preveiwAttackTiles)
+        {
+            GameObject temp = Instantiate(PreviewAttackTile);
+            temp.transform.position = new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2,
+                t.getY() + 0.5f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
+        }
     }
 
     //Called on the button press. Starts the target selection.

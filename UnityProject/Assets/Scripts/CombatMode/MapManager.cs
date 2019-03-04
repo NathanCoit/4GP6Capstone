@@ -118,7 +118,21 @@ public class MapManager : MonoBehaviour
 
         GameObject[] TargetableTiles = GameObject.FindGameObjectsWithTag("TargetableTile");
         for (int i = 0; i < TargetableTiles.GetLength(0); i++)
-            Destroy(TargetableTiles[i]);
+            Destroy(TargetableTiles[i]);   
+    }
+
+    public void ClearPreview()
+    {
+        GameObject[] PreviewTiles = GameObject.FindGameObjectsWithTag("PreviewTile");
+        for (int i = 0; i < PreviewTiles.GetLength(0); i++)
+            Destroy(PreviewTiles[i]);
+    }
+
+    public bool tilesPresent()
+    {
+        if (GameObject.FindGameObjectsWithTag("AttackableTile").Length != 0 || GameObject.FindGameObjectsWithTag("MoveableTile").Length != 0 || GameObject.FindGameObjectsWithTag("TargetableTile").Length != 0)
+            return true;
+        return false;
     }
 
     //For making the gameObject of a tile (the real ones)

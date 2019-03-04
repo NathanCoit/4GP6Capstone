@@ -43,12 +43,11 @@ public class Movable : MonoBehaviour {
         if (Input.GetMouseButtonDown(0) || autoClick)
         {
             Tile[,] tiles = getTiles();
-            List<int> depths = new List<int>();
+            int depth = 0;
             HashSet<Tile> visited = new HashSet<Tile>();
             int j = 0;
 
-            depths = tiles[(int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getPos().x, 
-                (int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getPos().y].getDepths();
+            depth = tiles[(int)gameObject.transform.position.x, (int)gameObject.transform.position.z].getDepth();
             visited = tiles[(int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getPos().x,
                 (int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getPos().y].getVisited();
 
@@ -62,17 +61,22 @@ public class Movable : MonoBehaviour {
                j++;
             }
 
-            MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().Movement -= depths[j] + 1;
+
+            Debug.Log(depth);
+
+            MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().Movement -= depth;
 
             //Move the selected unit
             MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().MoveTo(pos, MapMan.tiles);
+
+            //Get rid of blue tiles
+            MapMan.ClearSelection();
 
             //Show menu if we can still act, otherwise hide it
             if (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().isPlayer)
                 UIMan.showMenuIfCanAct();
 
-            //Get rid of blue tiles
-            MapMan.ClearSelection();
+            
 
             autoClick = false;
         }

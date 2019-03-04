@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -35,10 +36,12 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() && !MapMan.newSelected)
+        //Unselecting unit by clicking off
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() && !MapMan.newSelected && !MapMan.tilesPresent())
         {
-            MapMan.Selected = null;
-            removeMenu();
+            //MapMan.ClearSelection();
+           //MapMan.Selected = null;
+            //removeMenu();
         }
         //Position menu if one is made
         if (UICanvas.transform.childCount != 0 && MapMan.Selected != null && MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().isPlayer)
@@ -161,6 +164,7 @@ public class UIManager : MonoBehaviour
     //Makes the attack and move buttons
     private void makeUnitButtons()
     {
+        //Attack button is at the top
         GameObject attackButton = Instantiate(unitButton);
         attackButton.transform.SetParent(selectedMenu.transform);
 
@@ -171,6 +175,14 @@ public class UIManager : MonoBehaviour
         attackButton.GetComponentInChildren<Text>().text = "Attack";
         attackButton.GetComponent<Button>().onClick.AddListener(delegate { BoardMan.showAttackable(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()); });
 
+        //Event Tigger for showing preview
+        EventTrigger attackButtonTrigger = attackButton.GetComponent<EventTrigger>();
+        AddEventTrigger(attackButtonTrigger, BoardMan.previewAttackable, EventTriggerType.PointerEnter);
+        AddEventTrigger(attackButtonTrigger, MapMan.ClearPreview, EventTriggerType.PointerExit);
+        attackButton.tag = "attackButton";
+
+
+        //Followed by the move button
         GameObject moveButton = Instantiate(unitButton);
         moveButton.transform.SetParent(selectedMenu.transform);
 
@@ -179,7 +191,15 @@ public class UIManager : MonoBehaviour
 
         moveButton.GetComponentInChildren<Text>().text = "Move";
         moveButton.GetComponent<Button>().onClick.AddListener(delegate { BoardMan.showMovable(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()); });
+
+        //Event Tigger for showing preview
+        EventTrigger moveButtonTrigger = moveButton.GetComponent<EventTrigger>();
+        AddEventTrigger(moveButtonTrigger, BoardMan.previewMoveable, EventTriggerType.PointerEnter);
+        AddEventTrigger(moveButtonTrigger, MapMan.ClearPreview, EventTriggerType.PointerExit);
+        moveButton.tag = "moveButton";
     }
+
+
 
     //Make the god button (when out of battle). Similar to above.
     private void makeGodButtons()
@@ -235,6 +255,7 @@ public class UIManager : MonoBehaviour
     //Show menu if a unit can still act, hides it otherwise. Used after an action.
     public void showMenuIfCanAct()
     {
+        Debug.Log("Value of canMove" + BoardMan.canMove(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()));
         if (BoardMan.canMove(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()) || BoardMan.canAttack(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
             showMenu();
         else
@@ -248,6 +269,20 @@ public class UIManager : MonoBehaviour
             //eh hem, clean up the menus
             removeMenu();
         }
+    }
+
+    //Add event tigger code from https://answers.unity.com/questions/781726/how-do-i-add-a-listener-to-onpointerenter-ugui.html
+    private void AddEventTrigger(EventTrigger eventTrigger, UnityAction action, EventTriggerType triggerType)
+    {
+        // Create a nee TriggerEvent and add a listener
+        EventTrigger.TriggerEvent trigger = new EventTrigger.TriggerEvent();
+        trigger.AddListener((eventData) => action()); // you can capture and pass the event data to the listener
+
+        // Create and initialise EventTrigger.Entry using the created TriggerEvent
+        EventTrigger.Entry entry = new EventTrigger.Entry() { callback = trigger, eventID = triggerType };
+
+        // Add the EventTrigger.Entry to delegates list on the EventTrigger
+        eventTrigger.triggers.Add(entry);
     }
 
     public void hideMenu()

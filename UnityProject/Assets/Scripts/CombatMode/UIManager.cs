@@ -20,6 +20,8 @@ public class UIManager : MonoBehaviour
 
     public Canvas UICanvas;
 
+    public bool godEnteringBattle;
+
     private MapManager MapMan;
     private BoardManager BoardMan;
 
@@ -39,9 +41,9 @@ public class UIManager : MonoBehaviour
         //Unselecting unit by clicking off
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() && !MapMan.newSelected && !MapMan.tilesPresent())
         {
-            //MapMan.ClearSelection();
-           //MapMan.Selected = null;
-            //removeMenu();
+            MapMan.ClearSelection();
+            MapMan.Selected = null;
+            removeMenu();
         }
         //Position menu if one is made
         if (UICanvas.transform.childCount != 0 && MapMan.Selected != null && MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().isPlayer)
@@ -69,7 +71,7 @@ public class UIManager : MonoBehaviour
 
             makePanel(unitPanel);
 
-            if (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() is God)
+            if (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() is God && !(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() as God).isInBattle)
             {
                 makeGodButtons();
 
@@ -148,7 +150,7 @@ public class UIManager : MonoBehaviour
     }
 
     //Makes the regular sized unit panel
-    private void makePanel(GameObject panel)
+    public void makePanel(GameObject panel)
     {
         RectTransform CanvasRect = UICanvas.GetComponent<RectTransform>();
         GameObject newUnitPanel = Instantiate(panel);
@@ -162,7 +164,7 @@ public class UIManager : MonoBehaviour
     }
 
     //Makes the attack and move buttons
-    private void makeUnitButtons()
+    public void makeUnitButtons()
     {
         //Attack button is at the top
         GameObject attackButton = Instantiate(unitButton);
@@ -215,11 +217,11 @@ public class UIManager : MonoBehaviour
         enterBattleButton.transform.SetParent(selectedMenu.transform);
         enterBattleButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 1 / 2f * (selectedMenu.GetComponent<RectTransform>().rect.height));
         enterBattleButton.GetComponentInChildren<Text>().text = "Enter Battle";
-        enterBattleButton.GetComponent<Button>().onClick.AddListener(delegate { BoardMan.showAttackable(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()); });
+        enterBattleButton.GetComponent<Button>().onClick.AddListener(delegate { (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() as God).enterBattle(); });
     }
 
     //Make the end turn button. Not specific to god or unit, so it gets it's own function. What a special snowflake.
-    private void makeEndTurnButton()
+    public void makeEndTurnButton()
     {
         GameObject endTurnButton = Instantiate(unitButton);
         endTurnButton.transform.SetParent(selectedMenu.transform);
@@ -255,7 +257,6 @@ public class UIManager : MonoBehaviour
     //Show menu if a unit can still act, hides it otherwise. Used after an action.
     public void showMenuIfCanAct()
     {
-        Debug.Log("Value of canMove" + BoardMan.canMove(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()));
         if (BoardMan.canMove(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()) || BoardMan.canAttack(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
             showMenu();
         else

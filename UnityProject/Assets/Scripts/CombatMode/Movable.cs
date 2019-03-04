@@ -47,22 +47,8 @@ public class Movable : MonoBehaviour {
             HashSet<Tile> visited = new HashSet<Tile>();
             int j = 0;
 
+
             depth = tiles[(int)gameObject.transform.position.x, (int)gameObject.transform.position.z].getDepth();
-            visited = tiles[(int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getPos().x,
-                (int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getPos().y].getVisited();
-
-
-            foreach(Tile visitedTile in visited)
-            {
-                if(new Vector2(visitedTile.getX(), visitedTile.getZ()) == pos)
-                {
-                    break;
-                }
-               j++;
-            }
-
-
-            Debug.Log(depth);
 
             MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().Movement -= depth;
 
@@ -73,8 +59,18 @@ public class Movable : MonoBehaviour {
             MapMan.ClearSelection();
 
             //Show menu if we can still act, otherwise hide it
-            if (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().isPlayer)
-                UIMan.showMenuIfCanAct();
+            if (!UIMan.godEnteringBattle)
+            {
+                if (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().isPlayer)
+                    UIMan.showMenuIfCanAct();
+            }
+            else
+            {
+                UIMan.makePanel(UIMan.unitPanel);
+                UIMan.makeUnitButtons();
+                UIMan.makeEndTurnButton();
+                UIMan.godEnteringBattle = false;
+            }
 
             
 

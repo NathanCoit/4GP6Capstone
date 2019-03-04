@@ -107,8 +107,10 @@ public class Attackable : MonoBehaviour
             MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().EndAct();
             BoardMan.DecreaseNumActions();
 
+            BoardMan.checkIfGodShouldBeInBattle();
+
             //Checking if anyone won
-            CheckEnd();
+            BoardMan.CheckEnd();
 
             //Unslecting
             MapMan.Selected = null;
@@ -122,18 +124,7 @@ public class Attackable : MonoBehaviour
         }
     }
 
-    private void CheckEnd()
-    {
-        //check if someone won the game (note we're checking if its 1 since we dont have killing gods in yet)
-        if (BoardMan.playerUnits.Count == 1)
-        {
-            BoardMan.Defeat();
-        }
-        else if (BoardMan.enemyUnits.Count == 1)
-        {
-            BoardMan.Victory();
-        }
-    }
+    
 
     //For spoofing clicks for testing
     public void TestClick()

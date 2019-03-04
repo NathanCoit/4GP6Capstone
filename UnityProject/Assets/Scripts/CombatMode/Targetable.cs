@@ -197,7 +197,8 @@ public class Targetable : MonoBehaviour {
                     else if (BoardMan.playerUnits.Contains(target))
                         BoardMan.playerUnits.Remove(target);
                     Destroy(target.unitGameObject());
-                    checkEnd();
+                    BoardMan.CheckEnd();
+                    BoardMan.checkIfGodShouldBeInBattle();
                 }
             }
             // Damage all the target within the AOE if it's multi
@@ -215,7 +216,8 @@ public class Targetable : MonoBehaviour {
                         else if (BoardMan.playerUnits.Contains(u))
                             BoardMan.playerUnits.Remove(u);
                         Destroy(u.unitGameObject());
-                        checkEnd();
+                        BoardMan.CheckEnd();
+                        BoardMan.checkIfGodShouldBeInBattle();
                     }
                 }
                 GameObject[] AOEShapes = GameObject.FindGameObjectsWithTag("AOEShapes");
@@ -262,19 +264,6 @@ public class Targetable : MonoBehaviour {
 
     }
     
-
-    //This is here in case we kill everything with an ability
-    private void checkEnd()
-    {
-        if (BoardMan.playerUnits.Count == 1)
-        {
-            BoardMan.Defeat();
-        }
-        else if (BoardMan.enemyUnits.Count == 1)
-        {
-            BoardMan.Victory();
-        }
-    }
 
     //Unhighlight a tile we mouse out
     public void OnMouseExit()

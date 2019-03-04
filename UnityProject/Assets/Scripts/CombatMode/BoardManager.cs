@@ -75,6 +75,33 @@ public class BoardManager : MonoBehaviour
             SwitchTurns();
     }
 
+    public void CheckEnd()
+    {
+        //check if someone won the game (note we're checking if its 1 since we dont have killing gods in yet)
+        if (playerUnits.Count == 0)
+        {
+            Defeat();
+        }
+        else if (enemyUnits.Count == 0)
+        {
+            Victory();
+        }
+    }
+
+    public void checkIfGodShouldBeInBattle()
+    {
+        if (playerUnits.Count == 1)
+        {
+            if(!(playerUnits[0] as God).isInBattle)
+                (playerUnits[0] as God).forcedEnterBattle();
+        }
+        else if (enemyUnits.Count == 1)
+        {
+            if (!(enemyUnits[0] as God).isInBattle)
+                (enemyUnits[0] as God).forcedEnterBattle();
+        }
+    }
+
     public void Victory()
     {
         SetupMan.battleResult = GameInfo.BATTLESTATUS.Victory;

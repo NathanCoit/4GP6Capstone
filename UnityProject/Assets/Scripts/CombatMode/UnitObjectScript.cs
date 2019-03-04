@@ -87,6 +87,20 @@ public class UnitObjectScript : MonoBehaviour
         relatedUnit = u;
     }
 
+    public void drawEnterBattleTiles()
+    {
+        foreach (Tile t in MapMan.tiles)
+        {
+            if (t.isTraversable())
+            {
+                GameObject temp = Instantiate(BoardMan.MovableTile);
+                temp.GetComponent<Movable>().pos = new Vector2((int)t.getX(), (int)t.getZ());
+                temp.transform.position = new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2,
+                    t.getY() + 0.5f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
+            }
+        }
+    }
+
     //Sets a clicked unit to be selected
     public void OnMouseOver()
     {

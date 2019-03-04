@@ -10,9 +10,9 @@ public class Unit
 
     private bool isGod;
 
-    private MapManager MapMan;
+    protected MapManager MapMan;
     private BoardManager BoardMan;
-    private UIManager UIMan;
+    protected UIManager UIMan;
 
     protected Vector2 pos;
     
@@ -225,7 +225,7 @@ public class Unit
     }
 
     //Attack strength = 1/4 of worshipper count * morale
-    public void updateAttackStrength()
+    public virtual void updateAttackStrength()
     {
         AttackStrength = WorshiperCount * 0.25f * morale;
     }

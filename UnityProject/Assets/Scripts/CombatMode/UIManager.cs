@@ -35,7 +35,7 @@ public class UIManager : MonoBehaviour
     void Update()
     {
         //Position menu if one is made
-        if (UICanvas.transform.childCount != 0 && MapMan.Selected != null)
+        if (UICanvas.transform.childCount != 0 && MapMan.Selected != null && MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().isPlayer)
         {
             selectedMenu = UICanvas.transform.GetChild(0).gameObject;
 
@@ -50,7 +50,7 @@ public class UIManager : MonoBehaviour
         }
 
         //When we select a new unit
-        if (MapMan.Selected != null && MapMan.newSelected)
+        if (MapMan.Selected != null && MapMan.newSelected && MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().isPlayer)
         {
             //Clean up Previous selection (the tiles)
             MapMan.ClearSelection();
@@ -236,7 +236,7 @@ public class UIManager : MonoBehaviour
         else
         {
             //AUTO END TURN IF WE CAN ACT WOOOOOOOO WE DID IT BOIS
-            MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().EndAct();
+            MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().EndTurnButton();
 
             //Unselect, as we can act anymore
             MapMan.Selected = null;

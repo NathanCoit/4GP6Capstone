@@ -114,7 +114,7 @@ public class BoardManager : MonoBehaviour
         return worshippers;
     }
 
-    private List<Tile> findTeamTiles(List<Unit> team)
+    public List<Tile> findTeamTiles(List<Unit> team)
     {
         List<Tile> teamTiles = new List<Tile>();
 
@@ -147,7 +147,7 @@ public class BoardManager : MonoBehaviour
         return MovableTiles;
     }
 
-    public HashSet<Tile> findAttackable(Unit currentUnit)
+    private HashSet<Tile> findAttackable(Unit currentUnit)
     {
         HashSet<Tile> AttackableTiles = new HashSet<Tile>();
 

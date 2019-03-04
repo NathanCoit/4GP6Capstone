@@ -68,7 +68,8 @@ public class Movable : MonoBehaviour {
             MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().MoveTo(pos, MapMan.tiles);
 
             //Show menu if we can still act, otherwise hide it
-            UIMan.showMenuIfCanAct();
+            if (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().isPlayer)
+                UIMan.showMenuIfCanAct();
 
             //Get rid of blue tiles
             MapMan.ClearSelection();

@@ -33,10 +33,11 @@ public class EnemyManager : MonoBehaviour {
     }
 
     //Puts a moveable tile on the optimal tile for an enemy unit to move to
-    public void showClosestTile(Unit Unit)
+    public void showClosestTile(Unit enemyUnit)
     {
         Tile[,] tiles = getTiles();
 
+        /*
         //Setup Invalid Tiles (the one with units on)
         List<Unit> invalidTiles = new List<Unit>();
         foreach (Unit u in BoardMan.enemyUnits)
@@ -44,28 +45,40 @@ public class EnemyManager : MonoBehaviour {
             if (!(u.getPos() == Unit.getPos()))
                 invalidTiles.Add(u);
         }
+        */
 
         Tile validTile = null;
 
-        //TODODODODO
-        /*
-        if (Unit.getPos().x != -1 && Unit.getPos().y != -1)
+
+        List<Tile> targetTiles = new List<Tile>();
+
+        //Find target tiles that are in the attack range of this unit
+        foreach(Unit playerUnit in BoardMan.playerUnits)
         {
-            validTile = tiles[(int)Unit.getPos().x, (int)Unit.getPos().y].getClosestTile(BoardMan.playerUnits, Unit.MaxMovement, invalidTiles, BoardMan.playerUnits, tiles);
+            if (playerUnit.getPos().x != -1 && playerUnit.getPos().y != -1 && enemyUnit.getPos().x != -1 && enemyUnit.getPos().y != -1)
+                targetTiles.AddRange(tiles[(int)enemyUnit.getPos().x, (int)enemyUnit.getPos().y].findAtDistance(
+                    MapMan.tiles[(int)playerUnit.getPos().x, (int)playerUnit.getPos().y], (enemyUnit.attackRange - 1), new List<Tile>(), new List<Tile>(), MapMan.tiles));
+        }
+        if (enemyUnit.getPos().x != -1 && enemyUnit.getPos().y != -1)
+        {
+
+            validTile = tiles[(int)enemyUnit.getPos().x, (int)enemyUnit.getPos().y].getClosestTile(
+                targetTiles, enemyUnit.MaxMovement, BoardMan.findTeamTiles(BoardMan.enemyUnits), BoardMan.findTeamTiles(BoardMan.playerUnits), tiles);
 
             //Redefine connection because we broke some above
             MapMan.DefineConnections();
 
-            Unit.MovePriority = tiles[(int)Unit.getPos().x, (int)Unit.getPos().y].MovePriority;
+            enemyUnit.MovePriority = tiles[(int)enemyUnit.getPos().x, (int)enemyUnit.getPos().y].MovePriority;
         }
-        */
+        
 
         //If we actually found a tile (we may not if the map is huge or I messed up)
         if (validTile != null)
         {
             GameObject tempTile = Instantiate(BoardMan.MovableTile);
-            tempTile.GetComponent<Movable>().pos = new Vector2((int)validTile.getX(), (int)validTile.getY());
-            tempTile.transform.position = new Vector3(validTile.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2, validTile.getY() + 0.5f, validTile.getX() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
+            tempTile.GetComponent<Movable>().pos = new Vector2((int)validTile.getX(), (int)validTile.getZ());
+            tempTile.transform.position = new Vector3(validTile.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2, 
+                validTile.getY() + 0.5f, validTile.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
         }
 
     }
@@ -77,6 +90,7 @@ public class EnemyManager : MonoBehaviour {
 
         foreach (Unit enemyUnit in BoardMan.enemyUnits)
         {
+            /*
             //Setup Invalid Tiles (the one with units on)
             List<Unit> invalidTiles = new List<Unit>();
             foreach (Unit otherEnemyUnit in BoardMan.enemyUnits)
@@ -84,17 +98,28 @@ public class EnemyManager : MonoBehaviour {
                 if (!(otherEnemyUnit.getPos() == enemyUnit.getPos()))
                     invalidTiles.Add(otherEnemyUnit);
             }
+            */
 
-            Tile t;
+            List<Tile> targetTiles = new List<Tile>();
+            Tile validTile = null;
 
-            /*
+            foreach (Unit playerUnit in BoardMan.playerUnits)
+            {
+                if(playerUnit.getPos().x != -1 && playerUnit.getPos().y != -1 && enemyUnit.getPos().x != -1 && enemyUnit.getPos().y != -1)
+                    targetTiles.AddRange(tiles[(int)enemyUnit.getPos().x, (int)enemyUnit.getPos().y].findAtDistance(
+                        MapMan.tiles[(int)playerUnit.getPos().x, (int)playerUnit.getPos().y], (enemyUnit.attackRange - 1), new List<Tile>(), new List<Tile>(), MapMan.tiles));
+            }
             if (enemyUnit.getPos().x != -1 && enemyUnit.getPos().y != -1)
             {
-                t = tiles[(int)enemyUnit.getPos().x, (int)enemyUnit.getPos().y].getClosestTile(BoardMan.playerUnits, enemyUnit.MaxMovement, invalidTiles, BoardMan.playerUnits, tiles);
+
+                validTile = tiles[(int)enemyUnit.getPos().x, (int)enemyUnit.getPos().y].getClosestTile(
+                    targetTiles, enemyUnit.MaxMovement, BoardMan.findTeamTiles(BoardMan.enemyUnits), BoardMan.findTeamTiles(BoardMan.playerUnits), tiles);
+
+                //Redefine connection because we broke some above
                 MapMan.DefineConnections();
+
                 enemyUnit.MovePriority = tiles[(int)enemyUnit.getPos().x, (int)enemyUnit.getPos().y].MovePriority;
             }
-            */
         }
     }
 

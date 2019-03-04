@@ -159,9 +159,9 @@ public class SetupManager : MonoBehaviour
             CreatePlayerUnit(new Vector2(4, 5), tiles, playerWorshiperCount / 3, 2, 2, playerMorale);
             CreateGod(tiles, true, gameInfo.PlayerFaction.GodName, 3);
 
-            CreateEnemyUnit(new Vector2(6, 3), tiles, enemyWorshiperCount / 3, 2, 1, enemyMorale);
-            CreateEnemyUnit(new Vector2(6, 4), tiles, enemyWorshiperCount / 3, 2, 1, enemyMorale);
-            CreateEnemyUnit(new Vector2(6, 5), tiles, enemyWorshiperCount / 3, 2, 1, enemyMorale);
+            CreateEnemyUnit(new Vector2(6, 3), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
+            CreateEnemyUnit(new Vector2(6, 4), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
+            CreateEnemyUnit(new Vector2(6, 5), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
             CreateGod(tiles, false, gameInfo.EnemyFaction.GodName, 3);
 
             startup = false;

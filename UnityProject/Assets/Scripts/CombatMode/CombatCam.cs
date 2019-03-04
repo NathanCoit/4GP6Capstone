@@ -7,8 +7,10 @@ using UnityEngine;
  */
 public class CombatCam : MonoBehaviour
 {
-
-    int Boundary = 30;
+    private MapManager MapMan; // used to get size of tile map so we can determine boundary
+    private bool start; // really awful way of avoiding organising awake/start stuff (for now!!)
+    private int xBoundary;
+    private int zBoundary;
 
     int theScreenWidth;
     int theScreenHeight;
@@ -25,16 +27,30 @@ public class CombatCam : MonoBehaviour
 
     public float fov;
 
+    // i tried putting this here and the boundaries in start - didn't work :(
+    private void Awake()
+    {
+        MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
+    }
 
     void Start()
     {
         fov = Camera.main.fieldOfView;
         theScreenWidth = Screen.width;
         theScreenHeight = Screen.height;
+        start = true;
     }
 
     void Update()
     {
+        
+        if (start)
+        {
+            xBoundary = MapMan.tiles.GetLength(0);
+            zBoundary = MapMan.tiles.GetLength(1) / 2;
+            start = false;
+        }
+
         if (CameraMovementEnabled)
         {
             if (Input.GetKeyDown(KeyCode.RightArrow))
@@ -77,34 +93,51 @@ public class CombatCam : MonoBehaviour
                 downHeld = false;
             }
 
-            if (rightHeld)
+            if (rightHeld && transform.position.x < xBoundary)
             {
                 transform.position += new Vector3(0.005f * fov,
                     0.0f, 0.0f);
+
+                // set position to boundary incase above line caused it to go past boundary
+                if (transform.position.x > xBoundary)
+                    transform.position = new Vector3(xBoundary * 1.0f,
+                        transform.position.y, transform.position.z);
             }
 
-            if (leftHeld)
+            if (leftHeld && transform.position.x > 0)
             {
                 transform.position += new Vector3(-(0.005f * fov),
                     0.0f, 0.0f);
+
+                if (transform.position.x < 0)
+                    transform.position = new Vector3(0.0f,
+                        transform.position.y, transform.position.z);
             }
 
-            if (upHeld)
+            if (upHeld && transform.position.z < zBoundary)
             {
                 transform.position += new Vector3(0.0f,
                     0.0f, 0.005f * fov);
+
+                if (transform.position.z > zBoundary)
+                    transform.position = new Vector3(transform.position.x,
+                        transform.position.y, zBoundary * 1.0f);
             }
 
-            if (downHeld)
+            // arbitrarily set to -3 atm but it seems like a good distance
+            // from the bottom of the map
+            if (downHeld && transform.position.z > -3)
             {
                 transform.position += new Vector3(0.0f, 0.0f, -(0.005f * fov));
-            }
 
+                if (transform.position.z < -3)
+                    transform.position = new Vector3(transform.position.x,
+                        transform.position.y, -3.0f);
+            }
 
             fov -= Input.GetAxis("Mouse ScrollWheel") * sensitivity;
             fov = Mathf.Clamp(fov, minFov, maxFov);
             Camera.main.fieldOfView = fov;
         }
-
     }
 }

@@ -33,6 +33,7 @@ public class God : Unit
     {
         isInBattle = true;
         unitGameObject().GetComponent<UnitObjectScript>().drawEnterBattleTiles();
+        
         UIMan.removeMenu();
         UIMan.godEnteringBattle = true;
     }
@@ -40,7 +41,8 @@ public class God : Unit
     public void forcedEnterBattle()
     {
         isInBattle = true;
-        
+        unitGameObject().transform.GetChild(0).gameObject.SetActive(true);
+
 
         List<Tile> travesableTiles = new List<Tile>();
 

@@ -66,6 +66,7 @@ public class Movable : MonoBehaviour {
             }
             else
             {
+                MapMan.Selected.transform.GetChild(0).gameObject.SetActive(true);
                 UIMan.makePanel(UIMan.unitPanel);
                 UIMan.makeUnitButtons();
                 UIMan.makeEndTurnButton();

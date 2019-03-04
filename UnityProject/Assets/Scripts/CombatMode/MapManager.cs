@@ -61,7 +61,7 @@ public class MapManager : MonoBehaviour
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
 
         //How high gods float above the map
-        godFloatHeight = 3.5f;
+        godFloatHeight = 2.0f;
 
         
 

@@ -97,8 +97,11 @@ public class UIManager : MonoBehaviour
                 //Add all the buttons
                 makeUnitButtons();
 
-                //Play unit select sound
-                SoundMan.playUnitSelect();
+                //If the unit is a god in battle, we play the god select sound, otherwise its the unit select sound
+                if(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() is God)
+                    SoundMan.playGodSelect();
+                else
+                    SoundMan.playUnitSelect();
 
             }
 
@@ -134,7 +137,7 @@ public class UIManager : MonoBehaviour
 
         }
         //Right click cleans up everything
-        else if(Input.GetMouseButtonDown(1))
+        else if(Input.GetMouseButtonDown(1) && GameObject.FindGameObjectsWithTag("TargetableTile").Length == 0)
         {
             removeMenu();
             MapMan.ClearSelection();

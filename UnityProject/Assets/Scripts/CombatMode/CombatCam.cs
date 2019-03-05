@@ -154,7 +154,6 @@ public class CombatCam : MonoBehaviour
             {
                 Camera.main.transform.position = Vector3.SmoothDamp(
                     Camera.main.transform.position, cameraTarget, ref camSmoothDampV, 0.1f);
-                Debug.Log("Boop");
             }
             else
                 cameraMoving = false;
@@ -192,8 +191,6 @@ public class CombatCam : MonoBehaviour
                 unitsCounted++;
             }
         }
-
-        Debug.Log(xSum);
 
         Camera.main.GetComponent<CombatCam>().lookAt(new Vector3(xSum / unitsCounted, 0, zSum / unitsCounted - 2));
     }

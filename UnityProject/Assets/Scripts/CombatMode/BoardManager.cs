@@ -447,7 +447,6 @@ public class BoardManager : MonoBehaviour
     {
         if (playerTurn)
         { //it was player's turn
-            Debug.Log(enemyUnits.Count);
             foreach (Unit u in enemyUnits) //allow each of enemy units to act
                 u.AllowAct();
             numActionsLeft = enemyUnits.Count;

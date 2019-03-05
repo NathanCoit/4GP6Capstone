@@ -288,6 +288,8 @@ public class BoardManager : MonoBehaviour
         //Clean up all the other tiles
         MapMan.ClearSelection();
 
+        UIMan.hideMenu();
+
         //Draw movable tiles
         foreach (Tile t in AttackableTiles)
         {

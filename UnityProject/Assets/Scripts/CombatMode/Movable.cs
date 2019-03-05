@@ -11,6 +11,10 @@ public class Movable : MonoBehaviour {
     private MapManager MapMan;
     private BoardManager BoardMan;
     private UIManager UIMan;
+    private SoundManager SoundMan;
+
+    public Material hoverMaterial;
+    public Material baseMaterial;
 
     private bool autoClick;
 
@@ -21,6 +25,7 @@ public class Movable : MonoBehaviour {
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
         UIMan = GameObject.Find("UIManager").GetComponent<UIManager>();
+        SoundMan = GameObject.FindGameObjectWithTag("SoundManager").GetComponent<SoundManager>();
     }
 	
 	// Update is called once per frame
@@ -73,10 +78,21 @@ public class Movable : MonoBehaviour {
                 UIMan.godEnteringBattle = false;
             }
 
-            
+            SoundMan.playUiSelect();
 
             autoClick = false;
         }
+    }
+
+    private void OnMouseEnter()
+    {
+        SoundMan.playUiHover();
+        gameObject.GetComponent<Renderer>().material = hoverMaterial;
+    }
+
+    private void OnMouseExit()
+    {
+        gameObject.GetComponent<Renderer>().material = baseMaterial;
     }
 
     //For spoofing clicks for testing

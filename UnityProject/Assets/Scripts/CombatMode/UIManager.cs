@@ -22,14 +22,20 @@ public class UIManager : MonoBehaviour
 
     public bool godEnteringBattle;
 
+    public bool abilityPanelInUse;
+
     private MapManager MapMan;
     private BoardManager BoardMan;
+    private SoundManager SoundMan;
 
     // Start is called before the first frame update
     void Start()
     {
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
+
+        //Dropping some phat beats right in here
+        SoundMan = GameObject.FindGameObjectWithTag("SoundManager").GetComponent<SoundManager>();
 
         //Padding for ui
         uiPadding = 10;
@@ -45,7 +51,8 @@ public class UIManager : MonoBehaviour
             MapMan.Selected = null;
             removeMenu();
         }
-        //Position menu if one is made
+
+        //Position menu if one is made (runs every frame if a menu is visible)
         if (UICanvas.transform.childCount != 0 && MapMan.Selected != null && MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().isPlayer)
         {
             selectedMenu = UICanvas.transform.GetChild(0).gameObject;
@@ -69,11 +76,19 @@ public class UIManager : MonoBehaviour
             //Clear previous menus
             removeMenu();
 
+            //Hide menu while we make it
+            hideMenu();
+
+            Camera.main.GetComponent<CombatCam>().lookAt(MapMan.Selected.transform.position);
+
             makePanel(unitPanel);
 
             if (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() is God && !(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() as God).isInBattle)
             {
                 makeGodButtons();
+
+                //Play god select sound
+                SoundMan.playGodSelect();
 
             }
             else if (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() is Unit)
@@ -81,6 +96,12 @@ public class UIManager : MonoBehaviour
 
                 //Add all the buttons
                 makeUnitButtons();
+
+                //If the unit is a god in battle, we play the god select sound, otherwise its the unit select sound
+                if(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() is God)
+                    SoundMan.playGodSelect();
+                else
+                    SoundMan.playUnitSelect();
 
             }
 
@@ -91,6 +112,9 @@ public class UIManager : MonoBehaviour
 
             //Scale based on distance to camera
             scaleOnCameraDistance(selectedMenu);
+
+            //Menu is done, now we show
+            showMenu();
 
 
             //TODO FIX GOD MENUS ONCE WE ACTUALL MAKE THE GOD CLASS
@@ -106,9 +130,18 @@ public class UIManager : MonoBehaviour
 
             MapMan.previousSelected = MapMan.Selected;
 
+            
+
             //So we don't do this every frame
             MapMan.newSelected = false;
 
+        }
+        //Right click cleans up everything
+        else if(Input.GetMouseButtonDown(1) && GameObject.FindGameObjectsWithTag("TargetableTile").Length == 0)
+        {
+            removeMenu();
+            MapMan.ClearSelection();
+            MapMan.Selected = null;
         }
     }
 
@@ -121,13 +154,15 @@ public class UIManager : MonoBehaviour
         //Replace with the larger panel
         makePanel(abilityPanel);
 
+        abilityPanelInUse = true;
+
         //Make the return button
-        GameObject endTurnButton = Instantiate(abilityButton);
-        endTurnButton.transform.SetParent(selectedMenu.transform);
-        endTurnButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0,
-            endTurnButton.GetComponent<RectTransform>().rect.height / (2 * selectedMenu.GetComponent<RectTransform>().localScale.y) + uiPadding);
-        endTurnButton.GetComponentInChildren<Text>().text = "Return";
-        endTurnButton.GetComponent<Button>().onClick.AddListener(delegate { removeMenu(); makePanel(unitPanel); makeGodButtons(); makeEndTurnButton(); });
+        GameObject returnButton = Instantiate(abilityButton);
+        returnButton.transform.SetParent(selectedMenu.transform);
+        returnButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0,
+            returnButton.GetComponent<RectTransform>().rect.height / (2 * selectedMenu.GetComponent<RectTransform>().localScale.y) + uiPadding);
+        returnButton.GetComponentInChildren<Text>().text = "Return";
+        returnButton.GetComponent<Button>().onClick.AddListener(delegate { removeMenu(); makePanel(unitPanel); makeGodButtons(); makeEndTurnButton(); abilityPanelInUse = false; });
 
         //Make ability buttons
         for (int i = 0; i < Abilities.Length; i++)
@@ -175,13 +210,16 @@ public class UIManager : MonoBehaviour
             selectedMenu.GetComponent<RectTransform>().rect.height - attackButton.GetComponent<RectTransform>().rect.height / (2 * selectedMenu.GetComponent<RectTransform>().localScale.y) - uiPadding);
 
         attackButton.GetComponentInChildren<Text>().text = "Attack";
-        attackButton.GetComponent<Button>().onClick.AddListener(delegate { BoardMan.showAttackable(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()); });
+        attackButton.GetComponent<Button>().onClick.AddListener(delegate { BoardMan.showAttackable(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()); SoundMan.playUiSelect(); });
 
         //Event Tigger for showing preview
         EventTrigger attackButtonTrigger = attackButton.GetComponent<EventTrigger>();
-        AddEventTrigger(attackButtonTrigger, BoardMan.previewAttackable, EventTriggerType.PointerEnter);
+        AddEventTrigger(attackButtonTrigger, onAttackButtonEnter, EventTriggerType.PointerEnter);
         AddEventTrigger(attackButtonTrigger, MapMan.ClearPreview, EventTriggerType.PointerExit);
         attackButton.tag = "attackButton";
+
+        if (!BoardMan.canAttack(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
+            attackButton.GetComponent<Button>().interactable = false;
 
 
         //Followed by the move button
@@ -192,16 +230,27 @@ public class UIManager : MonoBehaviour
         moveButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 1 / 2f * (selectedMenu.GetComponent<RectTransform>().rect.height));
 
         moveButton.GetComponentInChildren<Text>().text = "Move";
-        moveButton.GetComponent<Button>().onClick.AddListener(delegate { BoardMan.showMovable(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()); });
+        moveButton.GetComponent<Button>().onClick.AddListener(delegate { BoardMan.showMovable(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()); SoundMan.playUiSelect(); });
 
         //Event Tigger for showing preview
         EventTrigger moveButtonTrigger = moveButton.GetComponent<EventTrigger>();
-        AddEventTrigger(moveButtonTrigger, BoardMan.previewMoveable, EventTriggerType.PointerEnter);
+        AddEventTrigger(moveButtonTrigger, onMoveButtonEneter, EventTriggerType.PointerEnter);
         AddEventTrigger(moveButtonTrigger, MapMan.ClearPreview, EventTriggerType.PointerExit);
         moveButton.tag = "moveButton";
     }
 
+    private void onAttackButtonEnter()
+    {
+        BoardMan.previewAttackable();
+        if(UICanvas.transform.GetChild(0).transform.GetChild(0).GetComponent<Button>().interactable)
+            SoundMan.playUiHover();
+    }
 
+    private void onMoveButtonEneter()
+    {
+        BoardMan.previewMoveable();
+        SoundMan.playUiHover();
+    }
 
     //Make the god button (when out of battle). Similar to above.
     private void makeGodButtons()
@@ -211,13 +260,19 @@ public class UIManager : MonoBehaviour
         abilitiesButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0,
             selectedMenu.GetComponent<RectTransform>().rect.height - abilitiesButton.GetComponent<RectTransform>().rect.height / (2 * selectedMenu.GetComponent<RectTransform>().localScale.y) - uiPadding);
         abilitiesButton.GetComponentInChildren<Text>().text = "Abilites";
-        abilitiesButton.GetComponent<Button>().onClick.AddListener(delegate { showAbilities((MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() as God).getAbilites()); });
+        abilitiesButton.GetComponent<Button>().onClick.AddListener(delegate { showAbilities((MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() as God).getAbilites()); SoundMan.playUiSelect(); });
+
+        EventTrigger abilityButtonTrigger = abilitiesButton.GetComponent<EventTrigger>();
+        AddEventTrigger(abilityButtonTrigger, SoundMan.playUiHover, EventTriggerType.PointerEnter);
 
         GameObject enterBattleButton = Instantiate(unitButton);
         enterBattleButton.transform.SetParent(selectedMenu.transform);
         enterBattleButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 1 / 2f * (selectedMenu.GetComponent<RectTransform>().rect.height));
         enterBattleButton.GetComponentInChildren<Text>().text = "Enter Battle";
-        enterBattleButton.GetComponent<Button>().onClick.AddListener(delegate { (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() as God).enterBattle(); });
+        enterBattleButton.GetComponent<Button>().onClick.AddListener(delegate { (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() as God).enterBattle(); SoundMan.playUiSelect(); });
+
+        EventTrigger enterBattleButtonTrigger = enterBattleButton.GetComponent<EventTrigger>();
+        AddEventTrigger(enterBattleButtonTrigger, SoundMan.playUiHover, EventTriggerType.PointerEnter);
     }
 
     //Make the end turn button. Not specific to god or unit, so it gets it's own function. What a special snowflake.
@@ -229,6 +284,9 @@ public class UIManager : MonoBehaviour
             endTurnButton.GetComponent<RectTransform>().rect.height / (2 * selectedMenu.GetComponent<RectTransform>().localScale.y) + uiPadding);
         endTurnButton.GetComponentInChildren<Text>().text = "End";
         endTurnButton.GetComponent<Button>().onClick.AddListener(delegate { MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().EndTurnButton(); });
+
+        EventTrigger endTurnButtonTrigger = endTurnButton.GetComponent<EventTrigger>();
+        AddEventTrigger(endTurnButtonTrigger, SoundMan.playUiHover, EventTriggerType.PointerEnter);
     }
 
     //World to screen space postitioning from https://answers.unity.com/questions/799616/unity-46-beta-19-how-to-convert-from-world-space-t.html
@@ -250,15 +308,31 @@ public class UIManager : MonoBehaviour
     //Scales a ui element based on the distance between selected and the camera (only z and y, it looks stupid if you do x as well)
     private void scaleOnCameraDistance(GameObject ui)
     {
-        ui.transform.localScale = new Vector3(0.5f, 1, 1) * 1 / Vector3.Distance(new Vector3(0, MapMan.Selected.transform.position.y, MapMan.Selected.transform.position.z),
-                        new Vector3(0, Camera.main.transform.position.y, Camera.main.transform.position.z));
+        if(!abilityPanelInUse)
+            ui.transform.localScale = new Vector3(0.5f, 1, 1) * 1 / Vector3.Distance(new Vector3(0, MapMan.Selected.transform.position.y, MapMan.Selected.transform.position.z),
+                new Vector3(0, Camera.main.transform.position.y, Camera.main.transform.position.z));
+        else
+            ui.transform.localScale = new Vector3(0.75f, 1.5f, 1) * 1 / Vector3.Distance(new Vector3(0, MapMan.Selected.transform.position.y, MapMan.Selected.transform.position.z),
+                            new Vector3(0, Camera.main.transform.position.y, Camera.main.transform.position.z));
     }
 
     //Show menu if a unit can still act, hides it otherwise. Used after an action.
     public void showMenuIfCanAct()
     {
         if (BoardMan.canMove(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()) || BoardMan.canAttack(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
+        {
+            if (BoardMan.canAttack(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
+                UICanvas.transform.GetChild(0).transform.GetChild(0).GetComponent<Button>().interactable = true;
+            else
+                UICanvas.transform.GetChild(0).transform.GetChild(0).GetComponent<Button>().interactable = false;
+
+            if (BoardMan.canMove(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
+                UICanvas.transform.GetChild(0).transform.GetChild(1).GetComponent<Button>().interactable = true;
+            else
+                UICanvas.transform.GetChild(0).transform.GetChild(1).GetComponent<Button>().interactable = false;
+
             showMenu();
+        }
         else
         {
             //AUTO END TURN IF WE CAN ACT WOOOOOOOO WE DID IT BOIS

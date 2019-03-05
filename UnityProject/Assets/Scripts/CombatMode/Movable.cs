@@ -11,6 +11,10 @@ public class Movable : MonoBehaviour {
     private MapManager MapMan;
     private BoardManager BoardMan;
     private UIManager UIMan;
+    private SoundManager SoundMan;
+
+    public Material hoverMaterial;
+    public Material baseMaterial;
 
     private bool autoClick;
 
@@ -21,6 +25,7 @@ public class Movable : MonoBehaviour {
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
         UIMan = GameObject.Find("UIManager").GetComponent<UIManager>();
+        SoundMan = GameObject.FindGameObjectWithTag("SoundManager").GetComponent<SoundManager>();
     }
 	
 	// Update is called once per frame
@@ -58,24 +63,40 @@ public class Movable : MonoBehaviour {
             //Get rid of blue tiles
             MapMan.ClearSelection();
 
-            //Show menu if we can still act, otherwise hide it
+            Camera.main.GetComponent<CombatCam>().lookAt(MapMan.Selected.transform.position);
+
+            //Case where we dont have a god entering battle
             if (!UIMan.godEnteringBattle)
             {
                 if (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().isPlayer)
                     UIMan.showMenuIfCanAct();
             }
+            //Case where we do
             else
             {
+                MapMan.Selected.transform.GetChild(0).gameObject.SetActive(true);
                 UIMan.makePanel(UIMan.unitPanel);
                 UIMan.makeUnitButtons();
                 UIMan.makeEndTurnButton();
                 UIMan.godEnteringBattle = false;
+                SoundMan.playGodEnterBattle();
             }
 
-            
+            SoundMan.playUnitMove();
 
             autoClick = false;
         }
+    }
+
+    private void OnMouseEnter()
+    {
+        SoundMan.playUiHover();
+        gameObject.GetComponent<Renderer>().material = hoverMaterial;
+    }
+
+    private void OnMouseExit()
+    {
+        gameObject.GetComponent<Renderer>().material = baseMaterial;
     }
 
     //For spoofing clicks for testing

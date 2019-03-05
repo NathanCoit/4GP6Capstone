@@ -153,6 +153,7 @@ public class SetupManager : MonoBehaviour
         if (startup)
         {
             tiles = MapMan.tiles;
+
             //Test Setup
             CreatePlayerUnit(new Vector2(4, 3), tiles, playerWorshiperCount / 3, 2, 1, playerMorale); //hello integer division
             CreatePlayerUnit(new Vector2(4, 4), tiles, playerWorshiperCount / 3, 2, 1, playerMorale); //also assumes we have 3 units per team
@@ -163,6 +164,11 @@ public class SetupManager : MonoBehaviour
             CreateEnemyUnit(new Vector2(6, 4), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
             CreateEnemyUnit(new Vector2(6, 5), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
             CreateGod(tiles, false, gameInfo.EnemyFaction.GodName, 3, 2, 50, 300);
+
+            BoardMan.playerTurn = true;
+            BoardMan.numActionsLeft = BoardMan.playerUnits.Count;
+
+            Camera.main.GetComponent<CombatCam>().resetCamera();
 
             startup = false;
         }
@@ -229,6 +235,8 @@ public class SetupManager : MonoBehaviour
             g.setAbilities(gameInfo.PlayerFaction.Abilities);
             g.MoveTo(new Vector2(-1, -1), tiles);
             g.unitGameObject().transform.position = new Vector3(0, MapMan.godFloatHeight, MapMan.tiles.GetLength(1) / 2);
+
+            g.AllowAct();
         }
         else
         {
@@ -257,6 +265,8 @@ public class SetupManager : MonoBehaviour
         u.isPlayer = true;
         u.MoveTo(new Vector2(pos.x, pos.y), tiles);
 
+        u.AllowAct();
+
         BoardMan.playerUnits.Add(u);
     }
 
@@ -277,6 +287,7 @@ public class SetupManager : MonoBehaviour
 
         //Set so the players turn is first
         u.EndAct();
+
         BoardMan.enemyUnits.Add(u);
     }
 

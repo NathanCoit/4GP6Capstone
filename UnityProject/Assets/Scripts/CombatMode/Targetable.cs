@@ -192,13 +192,7 @@ public class Targetable : MonoBehaviour {
                 //Kill target if it died
                 if(target.WorshiperCount <= 0)
                 {
-                    if (BoardMan.enemyUnits.Contains(target))
-                        BoardMan.enemyUnits.Remove(target);
-                    else if (BoardMan.playerUnits.Contains(target))
-                        BoardMan.playerUnits.Remove(target);
-                    Destroy(target.unitGameObject());
-                    BoardMan.CheckEnd();
-                    BoardMan.checkIfGodShouldBeInBattle();
+                    BoardMan.killUnit(target);
                 }
             }
             // Damage all the target within the AOE if it's multi
@@ -211,13 +205,7 @@ public class Targetable : MonoBehaviour {
                     u.setWorshiperCount(u.getWorshiperCount() - aMi.AbilityDamage);
                     if (u.WorshiperCount <= 0)
                     {
-                        if (BoardMan.enemyUnits.Contains(u))
-                            BoardMan.enemyUnits.Remove(u);
-                        else if (BoardMan.playerUnits.Contains(u))
-                            BoardMan.playerUnits.Remove(u);
-                        Destroy(u.unitGameObject());
-                        BoardMan.CheckEnd();
-                        BoardMan.checkIfGodShouldBeInBattle();
+                        BoardMan.killUnit(u);
                     }
                 }
                 GameObject[] AOEShapes = GameObject.FindGameObjectsWithTag("AOEShapes");

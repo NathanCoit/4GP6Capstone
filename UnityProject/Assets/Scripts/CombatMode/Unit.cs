@@ -146,19 +146,20 @@ public class Unit
         //*****TOFIX******
         //Why the heck are we doing this here???
         //check if somebody won
-        if (BoardMan.GetComponent<BoardManager>().playerUnits.Count == 0)
+        if (BoardMan.playerUnits.Count == 0)
         {
-            BoardMan.GetComponent<BoardManager>().Defeat();
+            BoardMan.Defeat();
         }
-        else if (BoardMan.GetComponent<BoardManager>().enemyUnits.Count == 0)
+        else if (BoardMan.enemyUnits.Count == 0)
         {
-            BoardMan.GetComponent<BoardManager>().Victory();
+            BoardMan.Victory();
         }
 
         MapMan.ClearSelection();
         UIMan.removeMenu();
         EndAct();
-        BoardMan.GetComponent<BoardManager>().DecreaseNumActions();
+        BoardMan.DecreaseNumActions();
+        BoardMan.checkIfSwitchTurn();
     }
 
     

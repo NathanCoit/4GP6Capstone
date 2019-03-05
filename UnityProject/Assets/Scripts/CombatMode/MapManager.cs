@@ -61,7 +61,7 @@ public class MapManager : MonoBehaviour
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
 
         //How high gods float above the map
-        godFloatHeight = 3.5f;
+        godFloatHeight = 2.0f;
 
         
 
@@ -118,7 +118,11 @@ public class MapManager : MonoBehaviour
 
         GameObject[] TargetableTiles = GameObject.FindGameObjectsWithTag("TargetableTile");
         for (int i = 0; i < TargetableTiles.GetLength(0); i++)
-            Destroy(TargetableTiles[i]);   
+            Destroy(TargetableTiles[i]);
+
+        GameObject[] AOEShapes = GameObject.FindGameObjectsWithTag("AOEShapes");
+        for (int i = 0; i < AOEShapes.GetLength(0); i++)
+            Destroy(AOEShapes[i]);
     }
 
     public void ClearPreview()

@@ -22,6 +22,8 @@ public class UIManager : MonoBehaviour
 
     public bool godEnteringBattle;
 
+    public bool abilityPanelInUse;
+
     private MapManager MapMan;
     private BoardManager BoardMan;
     private SoundManager SoundMan;
@@ -77,6 +79,8 @@ public class UIManager : MonoBehaviour
             //Hide menu while we make it
             hideMenu();
 
+            Camera.main.GetComponent<CombatCam>().lookAt(MapMan.Selected.transform.position);
+
             makePanel(unitPanel);
 
             if (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() is God && !(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() as God).isInBattle)
@@ -129,6 +133,13 @@ public class UIManager : MonoBehaviour
             MapMan.newSelected = false;
 
         }
+        //Right click cleans up everything
+        else if(Input.GetMouseButtonDown(1))
+        {
+            removeMenu();
+            MapMan.ClearSelection();
+            MapMan.Selected = null;
+        }
     }
 
     //For making the abilities menu
@@ -140,13 +151,15 @@ public class UIManager : MonoBehaviour
         //Replace with the larger panel
         makePanel(abilityPanel);
 
+        abilityPanelInUse = true;
+
         //Make the return button
-        GameObject endTurnButton = Instantiate(abilityButton);
-        endTurnButton.transform.SetParent(selectedMenu.transform);
-        endTurnButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0,
-            endTurnButton.GetComponent<RectTransform>().rect.height / (2 * selectedMenu.GetComponent<RectTransform>().localScale.y) + uiPadding);
-        endTurnButton.GetComponentInChildren<Text>().text = "Return";
-        endTurnButton.GetComponent<Button>().onClick.AddListener(delegate { removeMenu(); makePanel(unitPanel); makeGodButtons(); makeEndTurnButton(); });
+        GameObject returnButton = Instantiate(abilityButton);
+        returnButton.transform.SetParent(selectedMenu.transform);
+        returnButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0,
+            returnButton.GetComponent<RectTransform>().rect.height / (2 * selectedMenu.GetComponent<RectTransform>().localScale.y) + uiPadding);
+        returnButton.GetComponentInChildren<Text>().text = "Return";
+        returnButton.GetComponent<Button>().onClick.AddListener(delegate { removeMenu(); makePanel(unitPanel); makeGodButtons(); makeEndTurnButton(); abilityPanelInUse = false; });
 
         //Make ability buttons
         for (int i = 0; i < Abilities.Length; i++)
@@ -292,8 +305,12 @@ public class UIManager : MonoBehaviour
     //Scales a ui element based on the distance between selected and the camera (only z and y, it looks stupid if you do x as well)
     private void scaleOnCameraDistance(GameObject ui)
     {
-        ui.transform.localScale = new Vector3(0.5f, 1, 1) * 1 / Vector3.Distance(new Vector3(0, MapMan.Selected.transform.position.y, MapMan.Selected.transform.position.z),
-                        new Vector3(0, Camera.main.transform.position.y, Camera.main.transform.position.z));
+        if(!abilityPanelInUse)
+            ui.transform.localScale = new Vector3(0.5f, 1, 1) * 1 / Vector3.Distance(new Vector3(0, MapMan.Selected.transform.position.y, MapMan.Selected.transform.position.z),
+                new Vector3(0, Camera.main.transform.position.y, Camera.main.transform.position.z));
+        else
+            ui.transform.localScale = new Vector3(0.75f, 1.5f, 1) * 1 / Vector3.Distance(new Vector3(0, MapMan.Selected.transform.position.y, MapMan.Selected.transform.position.z),
+                            new Vector3(0, Camera.main.transform.position.y, Camera.main.transform.position.z));
     }
 
     //Show menu if a unit can still act, hides it otherwise. Used after an action.

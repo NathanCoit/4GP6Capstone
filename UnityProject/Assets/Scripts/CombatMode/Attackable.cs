@@ -76,6 +76,8 @@ public class Attackable : MonoBehaviour
 
             SoundMan.playUnitAttack();
 
+            Camera.main.GetComponent<CombatCam>().lookAt(attackedUnit.unitGameObject().transform.position);
+
             //Adjust that team's morale
             if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit())) //check to see who initiated the attack
             {
@@ -90,30 +92,10 @@ public class Attackable : MonoBehaviour
 
             //Did the attacked unit's HP reach 0? If so, remove them from the board AND from the appropriate unit array
             if (attackedUnit.getWorshiperCount() <= 0)
-            {
-                if (BoardMan.playerUnits.Contains(attackedUnit))
-                    BoardMan.playerUnits.Remove(attackedUnit);
-                else
-                    BoardMan.enemyUnits.Remove(attackedUnit);
-                Destroy(attackedUnit.unitGameObject());
-                if (BoardMan.playerUnits.Contains(attackedUnit))
-                {
-                    BoardMan.playerUnits.Remove(attackedUnit);
-                }
-                else
-                {
-                    BoardMan.enemyUnits.Remove(attackedUnit);
-                }
-            }
+                BoardMan.killUnit(attackedUnit);
 
             //End the turn of the unit who initiated the attack
-            MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().EndAct();
-            BoardMan.DecreaseNumActions();
-
-            BoardMan.checkIfGodShouldBeInBattle();
-
-            //Checking if anyone won
-            BoardMan.CheckEnd();
+            MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().EndTurnButton();
 
             //Unslecting
             MapMan.Selected = null;

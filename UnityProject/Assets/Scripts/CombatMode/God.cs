@@ -7,11 +7,13 @@ public class God : Unit
     private string godName;
     public bool isInBattle;
     private string[] Abilites;
+    private SoundManager SoundMan;
 
     public God(string name) : base()
     {
         godName = name;
         isInBattle = false;
+        SoundMan = GameObject.FindGameObjectWithTag("SoundManager").GetComponent<SoundManager>();
     }
 
     public void setAbilities(string[] Abilites)
@@ -42,7 +44,7 @@ public class God : Unit
     {
         isInBattle = true;
         unitGameObject().transform.GetChild(0).gameObject.SetActive(true);
-
+        SoundMan.playGodEnterBattle();
 
         List<Tile> travesableTiles = new List<Tile>();
 

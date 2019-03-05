@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 /*
@@ -22,10 +23,11 @@ public class BoardManager : MonoBehaviour
     private EnemyManager EnemyMan;
     private MapManager MapMan;
     private UIManager UIMan;
+    private SoundManager SoundMan;
 
     public List<Unit> playerUnits; //List of player's units
     public List<Unit> enemyUnits; //List of enemy's worshipper units
-    private int numActionsLeft;
+    public int numActionsLeft;
 
     public bool endBattle = false; //used for testing purposes - to see if the battle has ended even if there are units left
     public float PlayerMorale;
@@ -42,14 +44,22 @@ public class BoardManager : MonoBehaviour
     public GameObject PreviewAttackTile;
     public GameObject TargetableTile;
 
+    public GameObject endAllButton;
+    public GameObject selectNextButton;
+
+    public int selectNextIndex;
+
     public int abilityDirection;
 
     void Start()
     {
         playerUnits = new List<Unit>();
         enemyUnits = new List<Unit>();
+
+        /*
         numActionsLeft = playerUnits.Count; //since player always starts first
         playerTurn = true;
+        */
         
         SetupMan = GameObject.FindGameObjectWithTag("SetupManager").GetComponent<SetupManager>();
 
@@ -61,6 +71,8 @@ public class BoardManager : MonoBehaviour
         //Here to spit some hot ui
         UIMan = GameObject.FindGameObjectWithTag("UIManager").GetComponent<UIManager>();
 
+        SoundMan = GameObject.FindGameObjectWithTag("SoundManager").GetComponent<SoundManager>();
+
         abilityDirection = 0;
     }
     
@@ -71,8 +83,11 @@ public class BoardManager : MonoBehaviour
         PlayerMorale = SetupMan.playerMorale;
         enemyMorale = SetupMan.enemyMorale;
 
-        if (!HasActionsLeft()) //any actions left to take? if not, switch turns
-            SwitchTurns();
+        /*
+        if(playerUnits.Count != 0 && enemyUnits.Count != 0)
+            if (!HasActionsLeft()) //any actions left to take? if not, switch turns
+                SwitchTurns();
+        */
     }
 
     public void CheckEnd()
@@ -337,7 +352,54 @@ public class BoardManager : MonoBehaviour
             targetTile.transform.position = new Vector3(t.getX() + ((1 - targetTile.transform.lossyScale.x) / 2) + targetTile.transform.lossyScale.x / 2, t.getY() + 0.5f, t.getZ() + ((1 - targetTile.transform.lossyScale.z) / 2) + targetTile.transform.lossyScale.x / 2);
         }
 
+        Camera.main.GetComponent<CombatCam>().resetCamera();
 
+        UIMan.removeMenu();
+        UIMan.abilityPanelInUse = false;
+
+
+    }
+
+    public void killUnit(Unit killedUnit)
+    {
+        if (playerUnits.Contains(killedUnit))
+            playerUnits.Remove(killedUnit);
+        else
+            enemyUnits.Remove(killedUnit);
+
+        if (playerUnits.Contains(killedUnit))
+            playerUnits.Remove(killedUnit);
+        else
+            enemyUnits.Remove(killedUnit);
+
+        SoundMan.playUnitDeath();
+        CheckEnd();
+        checkIfGodShouldBeInBattle();
+        Destroy(killedUnit.unitGameObject());
+    }
+
+    public void endAll()
+    {
+        foreach (Unit u in playerUnits)
+            if(u.canAct)
+                u.EndTurnButton();
+    }
+
+    public void selectNext()
+    {
+        for (int i = 0; i < playerUnits.Count; i++)
+        {
+            selectNextIndex++;
+            if (selectNextIndex > playerUnits.Count - 1)
+                selectNextIndex = 0;
+
+            if (playerUnits[selectNextIndex].canAct)
+            {
+                MapMan.Selected = playerUnits[selectNextIndex].unitGameObject();
+                MapMan.newSelected = true;
+                break;
+            }
+        }
     }
 
     public float GetPlayerMorale()
@@ -375,13 +437,24 @@ public class BoardManager : MonoBehaviour
         enemyMorale = m;
     }
 
-    void SwitchTurns()
+    public void checkIfSwitchTurn()
+    {
+        if (numActionsLeft == 0)
+            SwitchTurns();
+    }
+
+    public void SwitchTurns()
     {
         if (playerTurn)
         { //it was player's turn
+            Debug.Log(enemyUnits.Count);
             foreach (Unit u in enemyUnits) //allow each of enemy units to act
                 u.AllowAct();
             numActionsLeft = enemyUnits.Count;
+
+            endAllButton.GetComponent<Button>().interactable = false;
+            selectNextButton.GetComponent<Button>().interactable = false;
+
             StartCoroutine(EnemyMan.EnemyActions(0.5f));
         }
         else
@@ -389,8 +462,14 @@ public class BoardManager : MonoBehaviour
             foreach (Unit u in playerUnits) //allow each of player's units to act
                 u.AllowAct();
             numActionsLeft = playerUnits.Count;
+
+            endAllButton.GetComponent<Button>().interactable = true;
+            selectNextButton.GetComponent<Button>().interactable = true;
+
+            Camera.main.GetComponent<CombatCam>().resetCamera();
         }
         playerTurn = !playerTurn; //switch turn
+        
     }
 
     bool HasActionsLeft()

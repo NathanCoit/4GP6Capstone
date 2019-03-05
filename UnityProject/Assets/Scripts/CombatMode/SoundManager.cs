@@ -7,17 +7,22 @@ public class SoundManager : MonoBehaviour
     public AudioClip backgroundMusic;
 
     public List<AudioClip> unitSelectionSounds;
+    public List<AudioClip> unitDeathSounds;
     public List<AudioClip> godSelectionSounds;
     public List<AudioClip> enemyGodTurnStartSounds;
+    public List<AudioClip> godEnterBattleSounds;
 
     public AudioClip uiHover;
     public AudioClip uiSelect;
 
     public AudioClip unitAttack;
+    public AudioClip unitMove;
 
-    private int previousUnitRandom;
+    private int previousUnitSelectionRandom;
     private int previousGodRandom;
     private int previousEnemyGodRandom;
+    private int previousUnitDeathRandom;
+    private int previousGodEnterBattleRandom;
 
     private AudioSource musicSource;
     private AudioSource soundeffectScource;
@@ -58,6 +63,12 @@ public class SoundManager : MonoBehaviour
         soundeffectScource.Play();
     }
 
+    public void playUnitMove()
+    {
+        soundeffectScource.clip = unitMove;
+        soundeffectScource.Play();
+    }
+
     //Play a radom unit select sound (but not the last one played)
     public void playUnitSelect()
     {
@@ -66,7 +77,7 @@ public class SoundManager : MonoBehaviour
 
         for(int i = 0; i < unitSelectionSounds.Count; i++)
         {
-            if (!(i == previousUnitRandom))
+            if (!(i == previousUnitSelectionRandom))
                 acceptableSounds.Add(i);
         }
 
@@ -76,7 +87,30 @@ public class SoundManager : MonoBehaviour
         vocalSource.clip = unitSelectionSounds[random];
 
         //Prevent playing the last played clip
-        previousUnitRandom = random;
+        previousUnitSelectionRandom = random;
+
+        vocalSource.Play();
+    }
+
+    //Play a radom unit select sound (but not the last one played)
+    public void playUnitDeath()
+    {
+        List<int> acceptableSounds = new List<int>();
+
+
+        for (int i = 0; i < unitSelectionSounds.Count; i++)
+        {
+            if (!(i == previousUnitDeathRandom))
+                acceptableSounds.Add(i);
+        }
+
+        System.Random r = new System.Random();
+
+        int random = acceptableSounds[r.Next(0, acceptableSounds.Count)];
+        vocalSource.clip = unitDeathSounds[random];
+
+        //Prevent playing the last played clip
+        previousUnitDeathRandom = random;
 
         vocalSource.Play();
     }
@@ -89,7 +123,7 @@ public class SoundManager : MonoBehaviour
 
         for (int i = 0; i < unitSelectionSounds.Count; i++)
         {
-            if (!(i == previousUnitRandom))
+            if (!(i == previousGodRandom))
                 acceptableSounds.Add(i);
         }
 
@@ -104,14 +138,14 @@ public class SoundManager : MonoBehaviour
         vocalSource.Play();
     }
 
-    public void playerEnemyGodTurnStart()
+    public void playEnemyGodTurnStart()
     {
         List<int> acceptableSounds = new List<int>();
 
 
         for (int i = 0; i < unitSelectionSounds.Count; i++)
         {
-            if (!(i == previousUnitRandom))
+            if (!(i == previousEnemyGodRandom))
                 acceptableSounds.Add(i);
         }
 
@@ -122,6 +156,28 @@ public class SoundManager : MonoBehaviour
 
         //Prevent playing the last played clip
         previousEnemyGodRandom = random;
+
+        vocalSource.Play();
+    }
+
+    public void playGodEnterBattle()
+    {
+        List<int> acceptableSounds = new List<int>();
+
+
+        for (int i = 0; i < unitSelectionSounds.Count; i++)
+        {
+            if (!(i == previousGodEnterBattleRandom))
+                acceptableSounds.Add(i);
+        }
+
+        System.Random r = new System.Random();
+
+        int random = acceptableSounds[r.Next(0, acceptableSounds.Count)];
+        vocalSource.clip = godEnterBattleSounds[random];
+
+        //Prevent playing the last played clip
+        previousGodEnterBattleRandom = random;
 
         vocalSource.Play();
     }

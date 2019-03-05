@@ -63,12 +63,15 @@ public class Movable : MonoBehaviour {
             //Get rid of blue tiles
             MapMan.ClearSelection();
 
-            //Show menu if we can still act, otherwise hide it
+            Camera.main.GetComponent<CombatCam>().lookAt(MapMan.Selected.transform.position);
+
+            //Case where we dont have a god entering battle
             if (!UIMan.godEnteringBattle)
             {
                 if (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().isPlayer)
                     UIMan.showMenuIfCanAct();
             }
+            //Case where we do
             else
             {
                 MapMan.Selected.transform.GetChild(0).gameObject.SetActive(true);
@@ -76,9 +79,10 @@ public class Movable : MonoBehaviour {
                 UIMan.makeUnitButtons();
                 UIMan.makeEndTurnButton();
                 UIMan.godEnteringBattle = false;
+                SoundMan.playGodEnterBattle();
             }
 
-            SoundMan.playUiSelect();
+            SoundMan.playUnitMove();
 
             autoClick = false;
         }

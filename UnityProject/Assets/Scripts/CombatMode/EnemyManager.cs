@@ -11,6 +11,7 @@ public class EnemyManager : MonoBehaviour {
 
     private MapManager MapMan;
     private BoardManager BoardMan;
+    private SoundManager SoundMan;
     public bool newEnemyTurn;
 
     // Use this for initialization
@@ -18,6 +19,7 @@ public class EnemyManager : MonoBehaviour {
     {
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
+        SoundMan = GameObject.FindGameObjectWithTag("SoundManager").GetComponent<SoundManager>();
         newEnemyTurn = false;
     }
 	
@@ -126,6 +128,7 @@ public class EnemyManager : MonoBehaviour {
     //Fancy cooroutines because we need delays for the AI to work
     public IEnumerator EnemyActions(float delay)
     {
+        SoundMan.playerEnemyGodTurnStart();
         //Updates the order the enemy units move in (no move and attack goes first, followed by move + attack, followed by move no attack) also order by how far away they are
         updatePriorities();
 

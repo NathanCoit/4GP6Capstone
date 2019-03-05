@@ -15,8 +15,11 @@ public class Attackable : MonoBehaviour
     private MapManager MapMan;
     private BoardManager BoardMan;
     private SetupManager SetupMan;
-
     private UIManager UIMan;
+    private SoundManager SoundMan;
+
+    public Material hoverMaterial;
+    public Material baseMaterial;
 
     private bool autoClick;
 
@@ -24,12 +27,10 @@ public class Attackable : MonoBehaviour
     {
         //*******EVERYBODYS'S HERE********//
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
-
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
-
         SetupMan = GameObject.Find("SetupManager").GetComponent<SetupManager>();
-
         UIMan = GameObject.Find("UIManager").GetComponent<UIManager>();
+        SoundMan = GameObject.FindGameObjectWithTag("SoundManager").GetComponent<SoundManager>();
     }
 
 
@@ -72,6 +73,8 @@ public class Attackable : MonoBehaviour
 
             //Set remaining worshippers accordingly
             attackedUnit.setWorshiperCount(attackedUnit.getWorshiperCount() - damage);
+
+            SoundMan.playUnitAttack();
 
             //Adjust that team's morale
             if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit())) //check to see who initiated the attack
@@ -124,7 +127,16 @@ public class Attackable : MonoBehaviour
         }
     }
 
-    
+    private void OnMouseEnter()
+    {
+        SoundMan.playUiHover();
+        gameObject.GetComponent<Renderer>().material = hoverMaterial;
+    }
+
+    private void OnMouseExit()
+    {
+        gameObject.GetComponent<Renderer>().material = baseMaterial;
+    }
 
     //For spoofing clicks for testing
     public void TestClick()

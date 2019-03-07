@@ -72,6 +72,10 @@ public class Movable : MonoBehaviour {
     /// </summary>
     public void OnMouseOver()
     {
+        if (inPlace && scriptEnabled)
+        {
+            gameObject.GetComponent<Renderer>().material = hoverMaterial;
+        }
         if ((Input.GetMouseButtonDown(0) || autoClick) && inPlace && scriptEnabled)
         {
 

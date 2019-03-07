@@ -45,7 +45,7 @@ public class Movable : MonoBehaviour {
         if (!(System.Math.Abs(transform.position.y - target.y) < targetTolerance))
         {
             transform.position = Vector3.SmoothDamp(
-                    transform.position, target, ref SmoothDampV, 0.1f * (depth * Random.Range(0.75f, 1.25f)));
+                    transform.position, target, ref SmoothDampV, 0.1f * (depth * Random.Range(0.9f, 1.1f)));
 
             gameObject.GetComponent<Renderer>().material.color = new Color(GetComponent<Renderer>().material.color.r, GetComponent<Renderer>().material.color.g,
                 GetComponent<Renderer>().material.color.b, Mathf.Abs(target.y / transform.position.y) / 2);

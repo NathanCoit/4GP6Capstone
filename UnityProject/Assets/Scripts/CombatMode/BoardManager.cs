@@ -262,15 +262,24 @@ public class BoardManager : MonoBehaviour
         {
             GameObject temp = Instantiate(MovableTile);
             temp.GetComponent<Movable>().pos = new Vector2((int)t.getX(), (int)t.getZ());
+
             temp.transform.position = new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2,
-                t.getY() + 0.5f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
+                temp.GetComponent<Movable>().getStartYvalue(), t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
+
+            temp.GetComponent<Movable>().setTarget(new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2,
+                t.getY() + 0.5f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2));
         }
 
         foreach (Tile t in inMoveRangeTiles)
         {
             GameObject temp = Instantiate(InMoveRangeTile);
+            temp.GetComponent<Movable>().pos = new Vector2((int)t.getX(), (int)t.getZ());
+
             temp.transform.position = new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2,
-                t.getY() + 0.5f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
+                temp.GetComponent<Movable>().getStartYvalue(), t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
+
+            temp.GetComponent<Movable>().setTarget(new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2,
+                t.getY() + 0.5f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2));
         }
     }
 

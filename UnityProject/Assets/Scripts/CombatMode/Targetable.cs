@@ -214,7 +214,6 @@ public class Targetable : MonoBehaviour {
             else if (ability.AbiltyType == Ability.ABILITYTYPE.MultiTarget)
             {
                 MultiTargetAbility aMi = (MultiTargetAbility)MultiTargetAbility.LoadAbilityFromName(ability.AbilityName);
-                Debug.Log(targets.Count);
                 foreach (Unit u in targets)
                 {
                     u.setWorshiperCount(u.getWorshiperCount() - aMi.AbilityDamage);

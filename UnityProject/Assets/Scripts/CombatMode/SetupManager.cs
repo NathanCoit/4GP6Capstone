@@ -70,7 +70,7 @@ public class SetupManager : MonoBehaviour
 
             //Setup some test values (feel free to change)
             gameInfo.PlayerFaction.GodName = "JIMOTHY THEE GREAT";
-            gameInfo.PlayerFaction.Type = Faction.GodType.Forks;
+            gameInfo.PlayerFaction.Type = Faction.GodType.Ducks;
 
             List<Ability> abilities = Faction.GetGodAbilities(gameInfo.PlayerFaction.Type);
             string[] sAbilites = new string[abilities.Count];
@@ -82,7 +82,7 @@ public class SetupManager : MonoBehaviour
             Debug.Log(gameInfo.PlayerFaction.GodName + " reporting in, boss");
 
             gameInfo.EnemyFaction.GodName = "Nathan";
-            gameInfo.EnemyFaction.Type = Faction.GodType.Hounds;
+            gameInfo.EnemyFaction.Type = Faction.GodType.Forks;
 
             abilities = Faction.GetGodAbilities(gameInfo.PlayerFaction.Type);
             sAbilites = new string[abilities.Count];
@@ -155,9 +155,9 @@ public class SetupManager : MonoBehaviour
             tiles = MapMan.tiles;
 
             //Test Setup
-            CreatePlayerUnit(new Vector2(4, 3), tiles, playerWorshiperCount / 3, 2, 1, playerMorale); //hello integer division
-            CreatePlayerUnit(new Vector2(4, 4), tiles, playerWorshiperCount / 3, 2, 1, playerMorale); //also assumes we have 3 units per team
-            CreatePlayerUnit(new Vector2(4, 5), tiles, playerWorshiperCount / 3, 2, 1, playerMorale);
+            CreatePlayerUnit(new Vector2(4, 3), tiles, playerWorshiperCount / 3, 5, 1, playerMorale); //hello integer division
+            CreatePlayerUnit(new Vector2(4, 4), tiles, playerWorshiperCount / 3, 5, 1, playerMorale); //also assumes we have 3 units per team
+            CreatePlayerUnit(new Vector2(4, 5), tiles, playerWorshiperCount / 3, 5, 1, playerMorale);
             CreateGod(tiles, true, gameInfo.PlayerFaction.GodName, 3, 2, 50, 300);
 
             CreateEnemyUnit(new Vector2(6, 3), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);

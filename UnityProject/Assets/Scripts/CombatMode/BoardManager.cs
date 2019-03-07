@@ -372,7 +372,7 @@ public class BoardManager : MonoBehaviour
         else
             enemyUnits.Remove(killedUnit);
 
-        SoundMan.playUnitDeath();
+        SoundMan.playUnitDeath(killedUnit);
         CheckEnd();
         checkIfGodShouldBeInBattle();
         Destroy(killedUnit.unitGameObject());

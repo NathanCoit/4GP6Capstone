@@ -79,7 +79,7 @@ public class Movable : MonoBehaviour {
                 UIMan.makeUnitButtons();
                 UIMan.makeEndTurnButton();
                 UIMan.godEnteringBattle = false;
-                SoundMan.playGodEnterBattle();
+                SoundMan.playGodEnterBattle(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit());
             }
 
             SoundMan.playUnitMove();

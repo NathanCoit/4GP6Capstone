@@ -81,7 +81,7 @@ public class Targetable : MonoBehaviour {
         }
 
         //If it's multi target, we gotta worry about shapes
-        else if(ability.AbiltyType == Ability.ABILITYTYPE.MultiTarget)
+        else if (ability.AbiltyType == Ability.ABILITYTYPE.MultiTarget)
         {
             MultiTargetAbility aMi = (MultiTargetAbility)MultiTargetAbility.LoadAbilityFromName(ability.AbilityName);
             if (AOEShape == null)
@@ -111,9 +111,9 @@ public class Targetable : MonoBehaviour {
 
             }
 
-           
+
             //Get the line offset and facing the right way
-            if(aMi.AbilityShape == Ability.MultiTargetShape.Line)
+            if (aMi.AbilityShape == Ability.MultiTargetShape.Line)
             {
                 if (BoardMan.abilityDirection == 0)
                 {
@@ -142,15 +142,30 @@ public class Targetable : MonoBehaviour {
             }
 
             //Check what units we should be targeting.
-            if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
+            if (ability.AbiltyType != Ability.ABILITYTYPE.Buff)
             {
-                targets = AOEShape.GetComponent<AOE>().getTargets(true);
+                if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
+                {
+                    targets = AOEShape.GetComponent<AOE>().getTargets(true);
+                }
+                else
+                {
+                    targets = AOEShape.GetComponent<AOE>().getTargets(false);
+                }
             }
             else
             {
-                targets = AOEShape.GetComponent<AOE>().getTargets(false);
+                if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
+                {
+                    targets = AOEShape.GetComponent<AOE>().getTargets(false);
+                }
+                else
+                {
+                    targets = AOEShape.GetComponent<AOE>().getTargets(true);
+                }
             }
-            
+
+
 
             if (targets != new List<Unit>())
                 valid = true;
@@ -219,11 +234,14 @@ public class Targetable : MonoBehaviour {
             else if (ability.AbiltyType == Ability.ABILITYTYPE.Buff)
             {
                 Debug.Log("Using buff ability " + ability.AbilityName + " !!!");
+
+                //Ability.BUFFTYPE.Damage;
             }
             // TODO
             else if (ability.AbiltyType == Ability.ABILITYTYPE.Debuff)
             {
                 Debug.Log("Using debuff ability " + ability.AbilityName + " !!!");
+
             }
 
             //End turn once we used an ability

@@ -44,7 +44,7 @@ public class God : Unit
     {
         isInBattle = true;
         unitGameObject().transform.GetChild(0).gameObject.SetActive(true);
-        SoundMan.playGodEnterBattle();
+        SoundMan.playGodEnterBattle(this);
 
         List<Tile> travesableTiles = new List<Tile>();
 

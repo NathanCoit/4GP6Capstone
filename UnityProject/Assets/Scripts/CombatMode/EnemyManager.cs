@@ -11,6 +11,7 @@ public class EnemyManager : MonoBehaviour {
 
     private MapManager MapMan;
     private BoardManager BoardMan;
+    private SoundManager SoundMan;
     public bool newEnemyTurn;
 
     // Use this for initialization
@@ -18,6 +19,7 @@ public class EnemyManager : MonoBehaviour {
     {
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
+        SoundMan = GameObject.FindGameObjectWithTag("SoundManager").GetComponent<SoundManager>();
         newEnemyTurn = false;
     }
 	
@@ -75,10 +77,14 @@ public class EnemyManager : MonoBehaviour {
         //If we actually found a tile (we may not if the map is huge or I messed up)
         if (validTile != null)
         {
-            GameObject tempTile = Instantiate(BoardMan.MovableTile);
-            tempTile.GetComponent<Movable>().pos = new Vector2((int)validTile.getX(), (int)validTile.getZ());
-            tempTile.transform.position = new Vector3(validTile.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2, 
+            GameObject temp = Instantiate(BoardMan.MovableTile);
+            temp.GetComponent<Movable>().pos = new Vector2((int)validTile.getX(), (int)validTile.getZ());
+
+            temp.transform.position = new Vector3(validTile.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2,
                 validTile.getY() + 0.5f, validTile.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
+
+            temp.GetComponent<Movable>().setTarget(new Vector3(validTile.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2,
+                validTile.getY() + 0.5f, validTile.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2));
         }
 
     }
@@ -126,6 +132,8 @@ public class EnemyManager : MonoBehaviour {
     //Fancy cooroutines because we need delays for the AI to work
     public IEnumerator EnemyActions(float delay)
     {
+        SoundMan.playEnemyGodTurnStart();
+
         //Updates the order the enemy units move in (no move and attack goes first, followed by move + attack, followed by move no attack) also order by how far away they are
         updatePriorities();
 
@@ -134,9 +142,12 @@ public class EnemyManager : MonoBehaviour {
         
         foreach (Unit enemyUnit in BoardMan.enemyUnits)
         {
+            Camera.main.GetComponent<CombatCam>().lookAt(enemyUnit.unitGameObject().transform.position);
             //Logic for units in battle
             if (enemyUnit.getPos().x != -1 && enemyUnit.getPos().y != -1)
             {
+                yield return new WaitForSeconds(delay);
+
                 showClosestTile(enemyUnit);
 
                 yield return new WaitForSeconds(delay);
@@ -150,6 +161,7 @@ public class EnemyManager : MonoBehaviour {
                 if (closestTile != null)
                 {
                     //Woo for using function we made for testing
+                    Camera.main.GetComponent<CombatCam>().lookAt(closestTile.transform.position);
                     closestTile.GetComponent<Movable>().TestClick();
                     closestTile.GetComponent<Movable>().OnMouseOver();
                     yield return new WaitForSeconds(delay);
@@ -158,6 +170,8 @@ public class EnemyManager : MonoBehaviour {
                 MapMan.Selected = enemyUnit.unitGameObject();
 
                 BoardMan.showAttackable(enemyUnit);
+
+                yield return new WaitForSeconds(delay);
 
                 //Wait a frame to see if we can attack
                 yield return null;
@@ -168,9 +182,10 @@ public class EnemyManager : MonoBehaviour {
                 //Attack if we can, then end turn
                 if (AttackableTile != null)
                 {
-                    yield return new WaitForSeconds(delay);
+                    Camera.main.GetComponent<CombatCam>().lookAt(AttackableTile.transform.position);
                     AttackableTile.GetComponent<Attackable>().TestClick();
                     AttackableTile.GetComponent<Attackable>().OnMouseOver();
+                    yield return new WaitForSeconds(delay);
                 }
                 else
                 {

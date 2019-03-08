@@ -194,6 +194,7 @@ GameObject:
   - component: {fileID: 6920530671280737049}
   - component: {fileID: 6960162364863042929}
   - component: {fileID: 6930737769051738135}
+  - component: {fileID: 3064052652878548360}
   m_Layer: 0
   m_Name: InMoveRangeTile
   m_TagString: MoveableTile
@@ -277,6 +278,23 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &3064052652878548360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6951534097669304281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8699476de4bceeb468d337709c8be070, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pos: {x: 0, y: 0}
+  targetTolerance: 0.01
+  scriptEnabled: 0
+  hoverMaterial: {fileID: 2100000, guid: 9c7b4333a4227c946a7cd6694553cd27, type: 2}
+  baseMaterial: {fileID: 2100000, guid: 04ca15815d2834d4483ff50738a527de, type: 2}
 --- !u!1 &6952322613662938687
 GameObject:
   m_ObjectHideFlags: 0

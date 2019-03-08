@@ -81,7 +81,7 @@ public class Targetable : MonoBehaviour {
         }
 
         //If it's multi target, we gotta worry about shapes
-        else if(ability.AbiltyType == Ability.ABILITYTYPE.MultiTarget)
+        else if (ability.AbiltyType == Ability.ABILITYTYPE.MultiTarget)
         {
             MultiTargetAbility aMi = (MultiTargetAbility)MultiTargetAbility.LoadAbilityFromName(ability.AbilityName);
             if (AOEShape == null)
@@ -111,9 +111,9 @@ public class Targetable : MonoBehaviour {
 
             }
 
-           
+
             //Get the line offset and facing the right way
-            if(aMi.AbilityShape == Ability.MultiTargetShape.Line)
+            if (aMi.AbilityShape == Ability.MultiTargetShape.Line)
             {
                 if (BoardMan.abilityDirection == 0)
                 {
@@ -142,15 +142,30 @@ public class Targetable : MonoBehaviour {
             }
 
             //Check what units we should be targeting.
-            if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
+            if (ability.AbiltyType != Ability.ABILITYTYPE.Buff)
             {
-                targets = AOEShape.GetComponent<AOE>().getTargets(true);
+                if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
+                {
+                    targets = AOEShape.GetComponent<AOE>().getTargets(true);
+                }
+                else
+                {
+                    targets = AOEShape.GetComponent<AOE>().getTargets(false);
+                }
             }
             else
             {
-                targets = AOEShape.GetComponent<AOE>().getTargets(false);
+                if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
+                {
+                    targets = AOEShape.GetComponent<AOE>().getTargets(false);
+                }
+                else
+                {
+                    targets = AOEShape.GetComponent<AOE>().getTargets(true);
+                }
             }
-            
+
+
 
             if (targets != new List<Unit>())
                 valid = true;
@@ -192,32 +207,19 @@ public class Targetable : MonoBehaviour {
                 //Kill target if it died
                 if(target.WorshiperCount <= 0)
                 {
-                    if (BoardMan.enemyUnits.Contains(target))
-                        BoardMan.enemyUnits.Remove(target);
-                    else if (BoardMan.playerUnits.Contains(target))
-                        BoardMan.playerUnits.Remove(target);
-                    Destroy(target.unitGameObject());
-                    BoardMan.CheckEnd();
-                    BoardMan.checkIfGodShouldBeInBattle();
+                    BoardMan.killUnit(target);
                 }
             }
             // Damage all the target within the AOE if it's multi
             else if (ability.AbiltyType == Ability.ABILITYTYPE.MultiTarget)
             {
                 MultiTargetAbility aMi = (MultiTargetAbility)MultiTargetAbility.LoadAbilityFromName(ability.AbilityName);
-                Debug.Log(targets.Count);
                 foreach (Unit u in targets)
                 {
                     u.setWorshiperCount(u.getWorshiperCount() - aMi.AbilityDamage);
                     if (u.WorshiperCount <= 0)
                     {
-                        if (BoardMan.enemyUnits.Contains(u))
-                            BoardMan.enemyUnits.Remove(u);
-                        else if (BoardMan.playerUnits.Contains(u))
-                            BoardMan.playerUnits.Remove(u);
-                        Destroy(u.unitGameObject());
-                        BoardMan.CheckEnd();
-                        BoardMan.checkIfGodShouldBeInBattle();
+                        BoardMan.killUnit(u);
                     }
                 }
                 GameObject[] AOEShapes = GameObject.FindGameObjectsWithTag("AOEShapes");
@@ -231,11 +233,14 @@ public class Targetable : MonoBehaviour {
             else if (ability.AbiltyType == Ability.ABILITYTYPE.Buff)
             {
                 Debug.Log("Using buff ability " + ability.AbilityName + " !!!");
+
+                //Ability.BUFFTYPE.Damage;
             }
             // TODO
             else if (ability.AbiltyType == Ability.ABILITYTYPE.Debuff)
             {
                 Debug.Log("Using debuff ability " + ability.AbilityName + " !!!");
+
             }
 
             //End turn once we used an ability

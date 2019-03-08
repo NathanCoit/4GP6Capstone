@@ -65,7 +65,6 @@ public class AOE : MonoBehaviour {
 
     private void OnTriggerEnter(Collider collision)
     {
-        Debug.Log(collision);
         marrAllCollisions.Add(collision.gameObject);
     }
 

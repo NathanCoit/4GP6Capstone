@@ -113,6 +113,8 @@ public class UIManager : MonoBehaviour
             //Scale based on distance to camera
             scaleOnCameraDistance(selectedMenu);
 
+            showMenuIfCanAct();
+
             //Menu is done, now we show
             showMenu();
 
@@ -139,9 +141,9 @@ public class UIManager : MonoBehaviour
         //Right click cleans up everything
         else if(Input.GetMouseButtonDown(1) && GameObject.FindGameObjectsWithTag("TargetableTile").Length == 0)
         {
-            removeMenu();
             MapMan.ClearSelection();
             MapMan.Selected = null;
+            removeMenu();
         }
     }
 
@@ -220,6 +222,8 @@ public class UIManager : MonoBehaviour
 
         if (!BoardMan.canAttack(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
             attackButton.GetComponent<Button>().interactable = false;
+        else
+            attackButton.GetComponent<Button>().interactable = true;
 
 
         //Followed by the move button

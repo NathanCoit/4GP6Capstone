@@ -93,6 +93,7 @@ public class GameManager : MonoBehaviour
         HotKeyManager = new HotKeyManager();
         Building.BuildingRadiusSize = BuildingRadius;
         InitializeGameInfo();
+        // Keep mouse confined to screen, if player tabs out, game is paused.
         Cursor.lockState = CursorLockMode.Confined;
         if (!GameInfo.NewGame)
         {
@@ -423,11 +424,23 @@ public class GameManager : MonoBehaviour
         GameInfo.FromSave = false;
         GameInfo.MaterialMultipliers = marrMaterialMultipliers.ToArray();
         GameInfo.WorshipperMultipliers = marrWorshipperMultipliers.ToArray();
-        SceneManager.LoadScene("CombatMode");
+        //SceneManager.LoadScene("CombatMode");
+        StartCoroutine(LoadCombatSceneAsync());
+    }
+
+    private IEnumerator LoadCombatSceneAsync()
+    {
+        AsyncOperation uniAsyncLoad = SceneManager.LoadSceneAsync("CombatMode");
+
+        // Wait until the asynchronous scene fully loads
+        while (!uniAsyncLoad.isDone)
+        {
+            yield return null;
+        }
     }
 
     /// <summary>
-    /// Method to decide the outocome of a battle between two enemy factions
+    /// Method to decide the outcome of a battle between two enemy factions
     /// </summary>
     /// <param name="pmusFactionOne"></param>
     /// <param name="pmusFactionTwo"></param>
@@ -446,7 +459,7 @@ public class GameManager : MonoBehaviour
             musWinningFaction = pmusFactionTwo;
         }
         musWinningFaction.MaterialCount += musLosingFaction.MaterialCount;
-        musWinningFaction.WorshipperCount +=(int)(0.5 * musLosingFaction.MaterialCount);
+        musWinningFaction.WorshipperCount +=(int)(0.2 * musLosingFaction.WorshipperCount);
         foreach(float[] arrFactionArea in musLosingFaction.FactionArea)
         {
             musWinningFaction.FactionArea.Add(arrFactionArea);
@@ -820,6 +833,7 @@ public class GameManager : MonoBehaviour
         {
             musChallengingFaction = CurrentFactions.Find(MatchingFaction => MatchingFaction != PlayerFaction && MatchingFaction.GodTier == CurrentTier);
             Time.timeScale = 0;
+            CurrentMenuState = MENUSTATE.End_Game_State;
             InformationBoxController.DisplayInformationBox(
                 musChallengingFaction.GodName + " has challenged you! Prepare to battle.",
                 () => EnterCombatMode(musChallengingFaction),

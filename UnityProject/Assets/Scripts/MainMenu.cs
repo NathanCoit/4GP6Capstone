@@ -10,7 +10,7 @@ using UnityEngine.EventSystems;
 using TMPro;
 
 public class MainMenu : MonoBehaviour {
-    
+
     public GameObject GameInfoObjectPrefab;
     public GameObject GodTypeDropDownObject;
     public GameObject GodNameInputFieldObject;
@@ -22,6 +22,7 @@ public class MainMenu : MonoBehaviour {
     public GameObject AudioSliderObject;
     public UnityEngine.Object SaveButtonPrefab;
     public ConfirmationBoxController ConfirmationBoxScript;
+    public InformationBoxDisplay InformationBoxScript;
     public GameObject CloseOptionsMenuButton;
     public ExecuteSound SoundManager;
 
@@ -34,25 +35,26 @@ public class MainMenu : MonoBehaviour {
         // Give a consistent save file path for files
         // Unity provides a default persitent directory
         mstrGameSaveFileDirectory = Application.persistentDataPath + "/SaveFiles";
+        Time.timeScale = 1;
     }
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start() {
         // Disable all but main menu panel. Makes scene starting panel not reliant on scene settings
         DisableAllPanels();
         MainUIPanel.SetActive(true);
         SaveAndSettingsHelper.ApplyGameSettings();
         //gameObject.GetComponent<TooltipDisplayController>().AttachTooltipToObject(gameObject, "Main");
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update() {
         // Maximum menu depth is 1, escape always returns to main menu
-		if(Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             OpenMainUI();
         }
-	}
+    }
 
     /// <summary>
     /// Method run when the start button game is clicked in the main menu
@@ -70,9 +72,13 @@ public class MainMenu : MonoBehaviour {
             musGodType = (Faction.GodType)Enum.Parse(typeof(Faction.GodType), uniGodTypeDropDown.options[uniGodTypeDropDown.value].text, true);
             StartNewGame(strGodName, musGodType);
         }
-        else
+        else if (string.IsNullOrEmpty(strGodName))
         {
-            // TODO Feedback, need a god name or name was too long
+            InformationBoxScript.DisplayInformationBox("A God Name must be specified.");
+        }
+        else if (strGodName.Length >= 15)
+        {
+            InformationBoxScript.DisplayInformationBox("God Name must be 15 characters or less.");
         }
     }
 
@@ -83,6 +89,7 @@ public class MainMenu : MonoBehaviour {
     /// <param name="penumGodType"></param>
     public void StartNewGame(string pstrGodName, Faction.GodType penumGodType)
     {
+        Animator uniAnimation = GetComponent<Animator>();
         // Create an empty game info object, management scene will create starting scene
         GameObject uniNewGameInfoObject = (GameObject)Instantiate(GameInfoObjectPrefab);
         uniNewGameInfoObject.name = "GameInfo";
@@ -91,7 +98,7 @@ public class MainMenu : MonoBehaviour {
         mmusGameInfo.PlayerFaction.Type = penumGodType;
         StartCoroutine(PlayNewGameAnimation());
     }
-    
+
     /// <summary>
     /// Method linked to open new game panel button
     /// </summary>
@@ -167,10 +174,10 @@ public class MainMenu : MonoBehaviour {
         {
             sysSaveDirectoryInfo = new DirectoryInfo(mstrGameSaveFileDirectory);
             arrSavedFileInfo = sysSaveDirectoryInfo.GetFiles().OrderByDescending(file => file.LastWriteTimeUtc).ToArray();
-            foreach(FileInfo sysFileInfo in arrSavedFileInfo)
+            foreach (FileInfo sysFileInfo in arrSavedFileInfo)
             {
                 // Load all "undergods" ugs files from save directory
-                if(sysFileInfo.Extension.Equals(".ugs"))
+                if (sysFileInfo.Extension.Equals(".ugs"))
                 {
                     arrSaveFileInfos.Add(sysFileInfo);
                 }
@@ -178,7 +185,7 @@ public class MainMenu : MonoBehaviour {
         }
 
         // Load information about each save and create a load button
-        foreach(FileInfo sysFileInfo in arrSaveFileInfos)
+        foreach (FileInfo sysFileInfo in arrSaveFileInfos)
         {
             uniButtonGameObject = (GameObject)Instantiate(SaveButtonPrefab);
             uniButtonGameObject.transform.SetParent(LoadMenuScrollPanel.transform);
@@ -192,7 +199,7 @@ public class MainMenu : MonoBehaviour {
             uniDeleteButtonGameObject.GetComponent<Button>().onClick.AddListener(
                 () => SoundManager.PlaySound("MouseClick"));
             uniDeleteButtonGameObject.GetComponent<Button>().onClick.AddListener(
-                () => ConfirmationBoxScript.AttachCallbackToConfirmationBox( 
+                () => ConfirmationBoxScript.AttachCallbackToConfirmationBox(
                     () => DeleteSaveFile(sysFileInfo.FullName),
                     "Are you sure you want do delete this file?",
                     "Delete"));
@@ -219,7 +226,7 @@ public class MainMenu : MonoBehaviour {
     /// </summary>
     public void DestroySaveFileButtons()
     {
-        if(marrButtonObjects != null)
+        if (marrButtonObjects != null)
         {
             foreach (GameObject uniButtonGameObject in marrButtonObjects)
             {
@@ -236,7 +243,7 @@ public class MainMenu : MonoBehaviour {
     /// <param name="pstrFilePath"></param>
     public void DeleteSaveFile(string pstrFilePath)
     {
-        if(SaveAndSettingsHelper.DeleteSaveFile(pstrFilePath))
+        if (SaveAndSettingsHelper.DeleteSaveFile(pstrFilePath))
         {
             // File successfully deleted, recreate save file buttons
             DestroySaveFileButtons();
@@ -283,12 +290,12 @@ public class MainMenu : MonoBehaviour {
     {
         bool blnUnsavedChanges = SaveAndSettingsHelper.CheckForChangesInOptionsMenu();
 
-        if(blnUnsavedChanges)
+        if (blnUnsavedChanges)
         {
             // Unsaved changes, show confirmation
             ConfirmationBoxScript.AttachCallbackToConfirmationBox(
-                OpenMainUI, 
-                "Unsaved changes will be lost. Are you sure you don't want to save?", 
+                OpenMainUI,
+                "Unsaved changes will be lost. Are you sure you don't want to save?",
                 "Don't Save",
                 "Cancel");
         }
@@ -301,38 +308,18 @@ public class MainMenu : MonoBehaviour {
 
     private IEnumerator PlayLoadSaveAnimation(string pstrFilePath, GameInfo pmusGameInfo)
     {
-        Animation uniAnimation = GetComponent<Animation>();
-        yield return uniAnimation.WhilePlaying("FadeToBlack");
+        Animator uniAnimation = GetComponent<Animator>();
+        uniAnimation.SetTrigger("Fade");
+        yield return new WaitForSeconds(uniAnimation.GetCurrentAnimatorStateInfo(0).length*2);
         SaveAndSettingsHelper.LoadSceneFromFile(pstrFilePath, pmusGameInfo);
     }
 
     private IEnumerator PlayNewGameAnimation()
     {
-        Animation uniAnimation = GetComponent<Animation>();
-        yield return uniAnimation.WhilePlaying("FadeToBlack");
+        Animator uniAnimation = GetComponent<Animator>();
+        uniAnimation.SetTrigger("Fade");
+        yield return new WaitForSeconds(uniAnimation.GetCurrentAnimatorStateInfo(0).length*2);
         SceneManager.LoadScene("UnderGodScene");
-    }
-}
-
-/// <summary>
-/// Helper methods for waiting for animations to finish
-/// https://answers.unity.com/questions/37411/how-can-i-wait-for-an-animation-to-complete.html
-/// </summary>
-public static class AnimationExtensions
-{
-    public static IEnumerator WhilePlaying(this Animation animation)
-    {
-        do
-        {
-            yield return null;
-        } while (animation.isPlaying);
-    }
-
-    public static IEnumerator WhilePlaying(this Animation animation,
-                                               string animationName)
-    {
-        animation.PlayQueued(animationName);
-        yield return animation.WhilePlaying();
     }
 }
 

@@ -27,7 +27,7 @@ public class DebuffAbility : Ability{
     protected override bool LoadAbility(string pstrAbilityName)
     {
         bool blnAbilityFound = true;
-        AbiltyType = ABILITYTYPE.Buff;
+        AbiltyType = ABILITYTYPE.Debuff;
         switch (pstrAbilityName.ToLower().Replace(" ", string.Empty))
         {
             case "spreadspores":

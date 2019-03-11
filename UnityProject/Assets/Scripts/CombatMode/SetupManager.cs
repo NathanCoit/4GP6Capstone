@@ -70,7 +70,7 @@ public class SetupManager : MonoBehaviour
 
             //Setup some test values (feel free to change)
             gameInfo.PlayerFaction.GodName = "JIMOTHY THEE GREAT";
-            gameInfo.PlayerFaction.Type = Faction.GodType.Forks;
+            gameInfo.PlayerFaction.Type = Faction.GodType.Mushrooms;
 
             List<Ability> abilities = Faction.GetGodAbilities(gameInfo.PlayerFaction.Type);
             string[] sAbilites = new string[abilities.Count];

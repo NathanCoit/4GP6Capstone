@@ -94,6 +94,8 @@ public class UnitObjectScript : MonoBehaviour
 
         bool direction = true;
 
+        MapMan.resetDepths();
+
         for (int i = 0; i < MapMan.tiles.GetLength(0) / 2; i++)
         {
             for (int j = 0; j < MapMan.tiles.GetLength(1); j++)

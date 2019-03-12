@@ -235,6 +235,11 @@ public class Tile
         return depth;
     }
 
+    public void resetDepth()
+    {
+        depth = 0;
+    }
+
     public HashSet<Tile> getVisited()
     {
         return visited;

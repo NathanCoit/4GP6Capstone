@@ -34,8 +34,8 @@ public class God : Unit
     public void enterBattle()
     {
         isInBattle = true;
+        Camera.main.GetComponent<CombatCam>().resetCamera();
         unitGameObject().GetComponent<UnitObjectScript>().drawEnterBattleTiles();
-        
         UIMan.removeMenu();
         UIMan.godEnteringBattle = true;
     }

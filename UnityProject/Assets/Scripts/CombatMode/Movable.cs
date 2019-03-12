@@ -48,7 +48,7 @@ public class Movable : MonoBehaviour {
                     transform.position, target, ref SmoothDampV, 0.1f * (depth * Random.Range(0.9f, 1.1f)));
 
             gameObject.GetComponent<Renderer>().material.color = new Color(GetComponent<Renderer>().material.color.r, GetComponent<Renderer>().material.color.g,
-                GetComponent<Renderer>().material.color.b, Mathf.Abs(target.y / transform.position.y) / 2);
+                GetComponent<Renderer>().material.color.b, Mathf.Abs(target.y / transform.position.y) * baseMaterial.color.a);
             for(int i = 0; i < gameObject.transform.childCount; i++)
             {
                 gameObject.transform.GetChild(i).GetComponent<Renderer>().material.color = 

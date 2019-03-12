@@ -286,6 +286,7 @@ public class UIManager : MonoBehaviour
     //Make the god button (when out of battle). Similar to above.
     private void makeGodButtons()
     {
+        //Abilites button
         GameObject abilitiesButton = Instantiate(unitButton);
         abilitiesButton.transform.SetParent(selectedMenu.transform);
         abilitiesButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0,
@@ -296,6 +297,7 @@ public class UIManager : MonoBehaviour
         EventTrigger abilityButtonTrigger = abilitiesButton.GetComponent<EventTrigger>();
         AddEventTrigger(abilityButtonTrigger, SoundMan.playUiHover, EventTriggerType.PointerEnter);
 
+        //Enter battle button
         GameObject enterBattleButton = Instantiate(unitButton);
         enterBattleButton.transform.SetParent(selectedMenu.transform);
         enterBattleButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 1 / 2f * (selectedMenu.GetComponent<RectTransform>().rect.height));

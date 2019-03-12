@@ -352,6 +352,53 @@ public class BoardManager : MonoBehaviour
 
         Ability a = Ability.LoadAbilityFromName(name);
 
+        List<Tile> firstHalf = new List<Tile>();
+        List<Tile> secondHalf = new List<Tile>();
+
+        bool direction = true;
+
+        for (int i = 0; i < MapMan.tiles.GetLength(0) / 2; i++)
+        {
+            for (int j = 0; j < MapMan.tiles.GetLength(1); j++)
+            {
+                if (direction)
+                {
+                    firstHalf.Add(MapMan.tiles[i, j]);
+                    secondHalf.Add(MapMan.tiles[MapMan.tiles.GetLength(0) - i - 1, MapMan.tiles.GetLength(1) - j - 1]);
+                }
+                else
+                {
+                    firstHalf.Add(MapMan.tiles[i, MapMan.tiles.GetLength(1) - j - 1]);
+                    secondHalf.Add(MapMan.tiles[MapMan.tiles.GetLength(0) - i - 1, j]);
+                }
+            }
+            direction = !direction;
+        }
+
+        //If we have an odd number of rows
+        if(MapMan.tiles.GetLength(0) % 2 != 0)
+        {
+            for(int j = 0; j < MapMan.tiles.GetLength(1) / 2; j++)
+            {
+                if(direction)
+                {
+                    firstHalf.Add(MapMan.tiles[MapMan.tiles.GetLength(0) / 2, j]);
+                    secondHalf.Add(MapMan.tiles[MapMan.tiles.GetLength(0) / 2, MapMan.tiles.GetLength(1) - j - 1]);
+                }
+                else
+                {
+                    firstHalf.Add(MapMan.tiles[MapMan.tiles.GetLength(0) / 2, MapMan.tiles.GetLength(1) - j - 1]);
+                    secondHalf.Add(MapMan.tiles[MapMan.tiles.GetLength(0) / 2, j]);
+                }
+            }
+        }
+
+        if (MapMan.tiles.GetLength(1) % 2 != 0)
+            firstHalf.Add(MapMan.tiles[MapMan.tiles.GetLength(0) / 2, MapMan.tiles.GetLength(1) / 2]);
+
+        StartCoroutine(drawTargetableTiles(firstHalf, 0.01f, a));
+        StartCoroutine(drawTargetableTiles(secondHalf, 0.01f, a));
+        /*
         //Put targetable tiles everywhere
         foreach (Tile t in MapMan.tiles)
         {
@@ -360,13 +407,33 @@ public class BoardManager : MonoBehaviour
             targetTile.GetComponent<Targetable>().pos = new Vector2((int)t.getX(), (int)t.getZ());
             targetTile.transform.position = new Vector3(t.getX() + ((1 - targetTile.transform.lossyScale.x) / 2) + targetTile.transform.lossyScale.x / 2, t.getY() + 0.5f, t.getZ() + ((1 - targetTile.transform.lossyScale.z) / 2) + targetTile.transform.lossyScale.x / 2);
         }
+        */
 
         Camera.main.GetComponent<CombatCam>().resetCamera();
 
         UIMan.removeMenu();
         UIMan.abilityPanelInUse = false;
+    }
 
+    public IEnumerator drawTargetableTiles(List<Tile> locationsToDraw, float delay, Ability a)
+    {
+        foreach (Tile t in locationsToDraw)
+        {
+            if (MapMan.tiles[(int)t.getX(), (int)t.getZ()].isTraversable())
+            {
+                GameObject targetTile = Instantiate(TargetableTile);
+                targetTile.GetComponent<Targetable>().ability = a;
+                targetTile.GetComponent<Targetable>().pos = new Vector2((int)t.getX(), (int)t.getZ());
 
+                targetTile.transform.position = new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2,
+                    1f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
+
+                targetTile.GetComponent<Targetable>().setTarget(new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2,
+                    t.getY() + 0.5f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2));
+            }
+            yield return new WaitForSeconds(delay);
+        }
+        yield return null;
     }
 
     public void killUnit(Unit killedUnit)

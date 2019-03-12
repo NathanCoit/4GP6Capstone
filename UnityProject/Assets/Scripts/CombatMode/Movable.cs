@@ -118,7 +118,7 @@ public class Movable : MonoBehaviour {
     {
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
         depth = MapMan.tiles[(int)pos.x, (int)pos.y].getDepth();
-        return Random.Range((2 * depth) + 4, (2 * depth) + 6);
+        return Random.Range((2 * depth) + 2, (2 * depth) + 3);
     }
 
     public void setTarget(Vector3 target)

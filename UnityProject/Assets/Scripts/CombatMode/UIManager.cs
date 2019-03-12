@@ -143,12 +143,10 @@ public class UIManager : MonoBehaviour
             MapMan.newSelected = false;
 
         }
-        //Right click cleans up everything
+        //Right click does same thing as cancel button (not when using an ability though, as right click changes direction)
         else if(Input.GetMouseButtonDown(1) && GameObject.FindGameObjectsWithTag("TargetableTile").Length == 0)
         {
-            MapMan.ClearSelection();
-            MapMan.Selected = null;
-            removeMenu();
+            cancelButtonFunction();
         }
     }
 
@@ -401,6 +399,22 @@ public class UIManager : MonoBehaviour
     public void showMenu()
     {
         UICanvas.enabled = true;
+    }
+
+    public void cancelButtonFunction()
+    {
+        if ((MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() is God) && godEnteringBattle)
+            (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() as God).isInBattle = false;
+        MapMan.ClearSelection();
+        godEnteringBattle = false;
+        MapMan.Selected = null;
+        removeMenu();
+    }
+
+    public void playerUiMouseOver(GameObject button)
+    {
+        if (button.GetComponent<Button>().interactable)
+            SoundMan.playUiHover();
     }
 
     //Clear menu without killing the panel. Currently not using, but could be useful later

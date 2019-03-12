@@ -44,8 +44,7 @@ public class BoardManager : MonoBehaviour
     public GameObject PreviewAttackTile;
     public GameObject TargetableTile;
 
-    public GameObject endAllButton;
-    public GameObject selectNextButton;
+    public List<GameObject> playerUiButtons;
 
     public int selectNextIndex;
 
@@ -527,8 +526,8 @@ public class BoardManager : MonoBehaviour
                 u.AllowAct();
             numActionsLeft = enemyUnits.Count;
 
-            endAllButton.GetComponent<Button>().interactable = false;
-            selectNextButton.GetComponent<Button>().interactable = false;
+            foreach(GameObject button in playerUiButtons)
+                button.GetComponent<Button>().interactable = false;
 
             StartCoroutine(EnemyMan.EnemyActions(0.5f));
         }
@@ -538,8 +537,8 @@ public class BoardManager : MonoBehaviour
                 u.AllowAct();
             numActionsLeft = playerUnits.Count;
 
-            endAllButton.GetComponent<Button>().interactable = true;
-            selectNextButton.GetComponent<Button>().interactable = true;
+            foreach (GameObject button in playerUiButtons)
+                button.GetComponent<Button>().interactable = true;
 
             Camera.main.GetComponent<CombatCam>().resetCamera();
         }

@@ -104,6 +104,14 @@ public class MapManager : MonoBehaviour
             }
     }
 
+    public void resetDepths()
+    {
+        foreach(Tile t in tiles)
+        {
+            t.resetDepth();
+        }
+    }
+
     //Cleans all the tiles (the ones that go on top of the actual tiles (the interactable ones))
     public void ClearSelection()
     {

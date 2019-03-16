@@ -44,11 +44,20 @@ public class Movable : MonoBehaviour {
     {
         if (!(System.Math.Abs(transform.position.y - target.y) < targetTolerance))
         {
-            transform.position = Vector3.SmoothDamp(
-                    transform.position, target, ref SmoothDampV, 0.1f * (depth * Random.Range(0.9f, 1.1f)));
+            if (depth != 0)
+            {
+                transform.position = Vector3.SmoothDamp(
+                        transform.position, target, ref SmoothDampV, 0.1f * (depth * Random.Range(0.9f, 1.1f)));
+            }
+            else
+            {
+                Debug.Log("Boop");
+                transform.position = Vector3.SmoothDamp(
+                        transform.position, target, ref SmoothDampV, 0.1f);
+            }
 
             gameObject.GetComponent<Renderer>().material.color = new Color(GetComponent<Renderer>().material.color.r, GetComponent<Renderer>().material.color.g,
-                GetComponent<Renderer>().material.color.b, Mathf.Abs(target.y / transform.position.y) / 2);
+                GetComponent<Renderer>().material.color.b, Mathf.Abs(target.y / transform.position.y) * baseMaterial.color.a);
             for(int i = 0; i < gameObject.transform.childCount; i++)
             {
                 gameObject.transform.GetChild(i).GetComponent<Renderer>().material.color = 
@@ -118,7 +127,7 @@ public class Movable : MonoBehaviour {
     {
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
         depth = MapMan.tiles[(int)pos.x, (int)pos.y].getDepth();
-        return Random.Range((2 * depth) + 4, (2 * depth) + 6);
+        return Random.Range((2 * depth) + 2, (2 * depth) + 3);
     }
 
     public void setTarget(Vector3 target)

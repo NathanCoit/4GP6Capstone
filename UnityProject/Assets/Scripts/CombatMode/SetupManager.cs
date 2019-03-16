@@ -70,7 +70,7 @@ public class SetupManager : MonoBehaviour
 
             //Setup some test values (feel free to change)
             gameInfo.PlayerFaction.GodName = "JIMOTHY THEE GREAT";
-            gameInfo.PlayerFaction.Type = Faction.GodType.Forks;
+            gameInfo.PlayerFaction.Type = Faction.GodType.Mushrooms;
 
             List<Ability> abilities = Faction.GetGodAbilities(gameInfo.PlayerFaction.Type);
             string[] sAbilites = new string[abilities.Count];
@@ -82,7 +82,7 @@ public class SetupManager : MonoBehaviour
             Debug.Log(gameInfo.PlayerFaction.GodName + " reporting in, boss");
 
             gameInfo.EnemyFaction.GodName = "Nathan";
-            gameInfo.EnemyFaction.Type = Faction.GodType.Jazz;
+            gameInfo.EnemyFaction.Type = Faction.GodType.Hounds;
 
             abilities = Faction.GetGodAbilities(gameInfo.PlayerFaction.Type);
             sAbilites = new string[abilities.Count];

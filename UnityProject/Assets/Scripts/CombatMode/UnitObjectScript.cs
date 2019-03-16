@@ -89,16 +89,74 @@ public class UnitObjectScript : MonoBehaviour
 
     public void drawEnterBattleTiles()
     {
-        foreach (Tile t in MapMan.tiles)
+        List<Tile> firstHalf = new List<Tile>();
+        List<Tile> secondHalf = new List<Tile>();
+
+        bool direction = true;
+
+        MapMan.resetDepths();
+
+        for (int i = 0; i < MapMan.tiles.GetLength(0) / 2; i++)
         {
-            if (t.isTraversable())
+            for (int j = 0; j < MapMan.tiles.GetLength(1); j++)
             {
-                GameObject temp = Instantiate(BoardMan.MovableTile);
-                temp.GetComponent<Movable>().pos = new Vector2((int)t.getX(), (int)t.getZ());
-                temp.transform.position = new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2,
-                    t.getY() + 0.5f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
+                if (direction)
+                {
+                    firstHalf.Add(MapMan.tiles[i, j]);
+                    secondHalf.Add(MapMan.tiles[MapMan.tiles.GetLength(0) - i - 1, MapMan.tiles.GetLength(1) - j - 1]);
+                }
+                else
+                {
+                    firstHalf.Add(MapMan.tiles[i, MapMan.tiles.GetLength(1) - j - 1]);
+                    secondHalf.Add(MapMan.tiles[MapMan.tiles.GetLength(0) - i - 1, j]);
+                }
+            }
+            direction = !direction;
+        }
+
+        //If we have an odd number of rows
+        if (MapMan.tiles.GetLength(0) % 2 != 0)
+        {
+            for (int j = 0; j < MapMan.tiles.GetLength(1) / 2; j++)
+            {
+                if (direction)
+                {
+                    firstHalf.Add(MapMan.tiles[MapMan.tiles.GetLength(0) / 2, j]);
+                    secondHalf.Add(MapMan.tiles[MapMan.tiles.GetLength(0) / 2, MapMan.tiles.GetLength(1) - j - 1]);
+                }
+                else
+                {
+                    firstHalf.Add(MapMan.tiles[MapMan.tiles.GetLength(0) / 2, MapMan.tiles.GetLength(1) - j - 1]);
+                    secondHalf.Add(MapMan.tiles[MapMan.tiles.GetLength(0) / 2, j]);
+                }
             }
         }
+
+        if (MapMan.tiles.GetLength(1) % 2 != 0)
+            firstHalf.Add(MapMan.tiles[MapMan.tiles.GetLength(0) / 2, MapMan.tiles.GetLength(1) / 2]);
+
+        StartCoroutine(drawEnterBattleTiles(firstHalf, 0.01f));
+        StartCoroutine(drawEnterBattleTiles(secondHalf, 0.01f));
+    }
+
+    public IEnumerator drawEnterBattleTiles(List<Tile> locationsToDraw, float delay)
+    {
+        foreach (Tile t in locationsToDraw)
+        {
+            if (MapMan.tiles[(int)t.getX(), (int)t.getZ()].isTraversable())
+            {
+                GameObject targetTile = Instantiate(BoardMan.MovableTile);
+                targetTile.GetComponent<Movable>().pos = new Vector2((int)t.getX(), (int)t.getZ());
+
+                targetTile.transform.position = new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2,
+                    1f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
+
+                targetTile.GetComponent<Movable>().setTarget(new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2,
+                    t.getY() + 0.5f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2));
+            }
+            yield return new WaitForSeconds(delay);
+        }
+        yield return null;
     }
 
     //Sets a clicked unit to be selected

@@ -8,12 +8,18 @@ using System.Text;
 /// Base class to define comman attributes and methods shared among all worshipper upgrades
 /// All worshipper rewards will inherit from this
 /// </summary>
-class WorshipperUpgrade
+public class WorshipperUpgrade
 {
+    public enum UPGRADETYPE
+    {
+        Attack,
+        Defense,
+        Movement
+    }
     // Attributes shared among all upgrade types
     public int UpgradeCost = 0;
     public string UpgradeName;
-
+    public UPGRADETYPE UpgradeType;
 
     protected string mstrFlavourText;
 

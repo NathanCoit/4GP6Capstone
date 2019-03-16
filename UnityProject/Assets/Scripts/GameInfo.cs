@@ -72,6 +72,9 @@ public class GameInfo : MonoBehaviour {
     public float[] MaterialMultipliers;
     public float[] WorshipperMultipliers;
     public InformationBoxDisplay.TutorialFlag TutorialFlag;
+    public int[] WorshipperAttackBuffs;
+    public int[] WorshipperDefenseBuffs;
+    public int[] WorshipperMovementBuffs;
 
     // Use this for initialization
     void Start () {

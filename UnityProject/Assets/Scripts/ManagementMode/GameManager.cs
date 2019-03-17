@@ -120,7 +120,9 @@ public class GameManager : MonoBehaviour
         {
             musFaction.SetHidden(true);
         }
-        GameMap.DrawFactionArea(PlayerFaction);
+        //GameMap.DrawFactionArea(PlayerFaction);
+        GameMap.DrawMultipleFactionAreas(CurrentFactions);
+        GameMap.AddGodLandscapes(CurrentFactions);
         UpgradeController.PlayerFaction = PlayerFaction;
     }
 
@@ -640,13 +642,13 @@ public class GameManager : MonoBehaviour
             uniRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(uniRay, out uniHitInfo))
             {
-                BufferedBuilding.BuildingPosition = new Vector3(uniHitInfo.point.x, 0.5f, uniHitInfo.point.z);
+                BufferedBuilding.BuildingPosition = new Vector3(uniHitInfo.point.x, 1.5f, uniHitInfo.point.z);
             }
             // User left clicked
             if (Input.GetMouseButtonDown(0))
             {
                 // Try to place the building
-                if (GameMap.PlaceBuilding(BufferedBuilding, new Vector3(uniHitInfo.point.x, 0.5f, uniHitInfo.point.z)))
+                if (GameMap.PlaceBuilding(BufferedBuilding, new Vector3(uniHitInfo.point.x, 1.5f, uniHitInfo.point.z)))
                 {
                     // Reenable the collider component for selecting
                     BufferedBuilding.BuildingObject.GetComponent<Collider>().enabled = true;

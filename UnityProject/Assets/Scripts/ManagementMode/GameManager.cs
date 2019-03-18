@@ -121,7 +121,9 @@ public class GameManager : MonoBehaviour
             musFaction.SetHidden(true);
         }
         //GameMap.DrawFactionArea(PlayerFaction);
-        GameMap.DrawMultipleFactionAreas(CurrentFactions);
+        //GameMap.DrawMultipleFactionAreas(CurrentFactions);
+        // Hide the map. Keep map object for collision detection, but does not need to be visible as individual god textures cover it
+        GameMap.HideMap();
         GameMap.AddGodLandscapes(CurrentFactions);
         UpgradeController.PlayerFaction = PlayerFaction;
     }

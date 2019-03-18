@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 /*
  * Class responsible for:
@@ -19,12 +20,20 @@ public class SetupManager : MonoBehaviour
 
     public BoardManager BoardMan;
     public MapManager MapMan;
+    
+    private string group1Worshippers;
+    private string group2Worshippers;
+    private string group3Worshippers;
+
+    private GameObject OverlayCanvas;
+    private GameObject BottomPanel;
+    private Text[] arrTexts;
 
     public GameObject Unit;
     public GameObject God;
 
     private Tile[,] tiles;
-    public bool startup = true;
+    public bool startup = false;
     
     public int playerWorshiperCount;
     public float playerMorale;
@@ -42,6 +51,9 @@ public class SetupManager : MonoBehaviour
     {
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
+        OverlayCanvas = GameObject.Find("OverlayCanvas");
+        arrTexts = OverlayCanvas.GetComponentsInChildren<Text>();
+        BottomPanel = GameObject.Find("Panel");
         GameObject GameInfoObject = GameObject.Find("GameInfo");
         if (GameInfoObject != null)
         {
@@ -58,6 +70,9 @@ public class SetupManager : MonoBehaviour
 
             playerMorale = gameInfo.PlayerFaction.Morale;
             enemyMorale = gameInfo.EnemyFaction.Morale;
+
+            // Let players know how many worshippers they can assign to their groups
+            arrTexts[4].text = "The total amount of worshippers at your disposal : " + playerWorshiperCount;
         }
 #if DEBUG
         else
@@ -103,6 +118,13 @@ public class SetupManager : MonoBehaviour
             Awake();
         }
 #endif
+    }
+
+    private void Start()
+    {
+        Camera.main.GetComponent<CombatCam>().CameraMovementEnabled = false;
+        //SplitWorshipers();
+        BottomPanel.SetActive(false);
     }
 
     void Update()
@@ -155,9 +177,9 @@ public class SetupManager : MonoBehaviour
             tiles = MapMan.tiles;
 
             //Test Setup
-            CreatePlayerUnit(new Vector2(4, 3), tiles, playerWorshiperCount / 3, 2, 1, playerMorale); //hello integer division
-            CreatePlayerUnit(new Vector2(4, 4), tiles, playerWorshiperCount / 3, 2, 1, playerMorale); //also assumes we have 3 units per team
-            CreatePlayerUnit(new Vector2(4, 5), tiles, playerWorshiperCount / 3, 2, 1, playerMorale);
+            CreatePlayerUnit(new Vector2(4, 3), tiles, int.Parse(group1Worshippers), 2, 1, playerMorale); 
+            CreatePlayerUnit(new Vector2(4, 4), tiles, int.Parse(group2Worshippers), 2, 1, playerMorale); //assumes we have 3 units per team
+            CreatePlayerUnit(new Vector2(4, 5), tiles, int.Parse(group3Worshippers), 2, 1, playerMorale);
             CreateGod(tiles, true, gameInfo.PlayerFaction.GodName, 3, 2, 50, 300);
 
             CreateEnemyUnit(new Vector2(6, 3), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
@@ -168,20 +190,61 @@ public class SetupManager : MonoBehaviour
             BoardMan.playerTurn = true;
             BoardMan.numActionsLeft = BoardMan.playerUnits.Count;
 
+            Camera.main.GetComponent<CombatCam>().CameraMovementEnabled = true;
             Camera.main.GetComponent<CombatCam>().resetCamera();
 
             startup = false;
         }
     }
 
-    public bool SplitWorshipers()
+    public void SplitWorshipers()
     {
         //haha not implemented
         //will be done in a separate scene maybe?
         //assign worshiper count percentages in that scene to individual units
-        //can have up to ten units per side
+        //can have up to five units per side
 
-        return false;
+        //what should be done here:
+        //enable the startup/division screen.. or at this point maybe just the animation of opening the screen?
+    }
+
+    public void ConfirmSplit()
+    {
+        // function called when startup/division screen's Confirm button is pressed
+        // need to check the sum doesn't exceed the number of worshippers player has access to
+        if ((int.Parse(group1Worshippers) + int.Parse(group2Worshippers) + int.Parse(group3Worshippers)) > playerWorshiperCount)
+        {
+            arrTexts[5].text = "You've tried to assign too many worshippers!";
+        }
+        else if ((int.Parse(group1Worshippers) == 0) || (int.Parse(group2Worshippers) == 0) || (int.Parse(group3Worshippers) == 0))
+        {
+            arrTexts[5].text = "You can't have a group of zero!"; //for now, will work on having variable number of groups
+        }
+        else
+        {
+            //close startup/division canvas and commence battle
+            GameObject StartupPanel = GameObject.Find("StartupPanel");
+            StartupPanel.SetActive(false);
+            
+            BottomPanel.SetActive(true);
+
+            startup = true;
+        }
+    }
+
+    public void Group1Worshippers(string value)
+    {
+        group1Worshippers = value;
+    }
+
+    public void Group2Worshippers(string value)
+    {
+        group2Worshippers = value;
+    }
+
+    public void Group3Worshippers(string value)
+    {
+        group3Worshippers = value;
     }
 
     public void CreateGod(Tile[,] tiles, bool isPlayer, string godName, int MaxMovement, int attackRange, int attackStregnth, int health)

@@ -23,6 +23,12 @@ public class Targetable : MonoBehaviour {
     public GameObject SphereAOEPrefab;
     private GameObject AOEShape;
     private bool buttonSwitch = false;
+
+    private Vector3 target;
+    private bool inPlace;
+    private Vector3 SmoothDampV;
+    public float targetTolerance;
+
     // Use this for initialization
     void Start ()
     {
@@ -38,226 +44,258 @@ public class Targetable : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-		
-	}
+        if (!(System.Math.Abs(transform.position.y - target.y) < targetTolerance))
+        {
+            transform.position = Vector3.SmoothDamp(
+                    transform.position, target, ref SmoothDampV, 0.1f * (Random.Range(0.9f, 1.1f)));
 
-    private Tile[,] getTiles()
-    {
-        return MapMan.tiles;
+            gameObject.GetComponent<Renderer>().material.color = new Color(GetComponent<Renderer>().material.color.r, GetComponent<Renderer>().material.color.g,
+                GetComponent<Renderer>().material.color.b, Mathf.Abs(target.y / transform.position.y) * mousedOverInvalid.color.a);
+        }
+        else
+            inPlace = true;
     }
 
-    
+    public void setTarget(Vector3 target)
+    {
+        this.target = target;
+    }
+
+
     public void OnMouseOver()
     {
-        List<Unit> targets = new List<Unit>();
-        bool valid = false;
-
-        //If it's single target we're just target the one tile
-        if (ability.AbiltyType == Ability.ABILITYTYPE.SingleTarget)
+        if (inPlace)
         {
-            if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
-            {
-                targets = BoardMan.enemyUnits;
-            }
-            else
-            {
-                targets = BoardMan.playerUnits;
-            }
+            List<Unit> targets = new List<Unit>();
+            bool valid = false;
 
-            foreach (Unit u in targets)
-            {
-                if (pos.x == u.getPos().x && pos.y == u.getPos().y)
-                    valid = true;
-            }
-
-            if (valid)
-            {
-                GetComponent<MeshRenderer>().material = mousedOverValid;
-            }
-            else
-            {
-                GetComponent<MeshRenderer>().material = mousedOverInvalid;
-            }
-        }
-
-        //If it's multi target, we gotta worry about shapes
-        else if(ability.AbiltyType == Ability.ABILITYTYPE.MultiTarget)
-        {
-            MultiTargetAbility aMi = (MultiTargetAbility)MultiTargetAbility.LoadAbilityFromName(ability.AbilityName);
-            if (AOEShape == null)
-            {
-                //Cone is actually a sphere (just didn't change the name elsewhere yet)
-                if (aMi.AbilityShape == Ability.MultiTargetShape.Cone)
-                {
-                    AOEShape = Instantiate(SphereAOEPrefab);
-                    AOEShape.transform.localScale *= aMi.Length;
-                    AOEShape.gameObject.layer = 2;
-                    AOEShape.transform.position = transform.position;
-                }
-                else if (aMi.AbilityShape == Ability.MultiTargetShape.Line)
-                {
-                    AOEShape = Instantiate(CubeAOEPrefab);
-                    AOEShape.gameObject.layer = 2;
-                    AOEShape.transform.localScale = new Vector3(AOEShape.transform.localScale.x * aMi.Length, AOEShape.transform.localScale.y, AOEShape.transform.localScale.z);
-                    AOEShape.transform.position = new Vector3(transform.position.x + aMi.Length / 2, transform.position.y, transform.position.z);
-                }
-                else if (aMi.AbilityShape == Ability.MultiTargetShape.Square)
-                {
-                    AOEShape = Instantiate(CubeAOEPrefab);
-                    AOEShape.transform.localScale *= aMi.Length;
-                    AOEShape.gameObject.layer = 2;
-                    AOEShape.transform.position = transform.position;
-                }
-
-            }
-
-           
-            //Get the line offset and facing the right way
-            if(aMi.AbilityShape == Ability.MultiTargetShape.Line)
-            {
-                if (BoardMan.abilityDirection == 0)
-                {
-                    AOEShape.transform.eulerAngles = new Vector3(0, 0, 0);
-                    AOEShape.transform.position = new Vector3(transform.position.x + aMi.Length / 2, transform.position.y, transform.position.z);
-
-                }
-                else if (BoardMan.abilityDirection == 1)
-                {
-                    AOEShape.transform.eulerAngles = new Vector3(0, 270, 0);
-                    AOEShape.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + aMi.Length / 2);
-
-                }
-                else if (BoardMan.abilityDirection == 2)
-                {
-                    AOEShape.transform.eulerAngles = new Vector3(0, 180, 0);
-                    AOEShape.transform.position = new Vector3(transform.position.x - aMi.Length / 2, transform.position.y, transform.position.z);
-
-                }
-                else if (BoardMan.abilityDirection == 3)
-                {
-                    AOEShape.transform.eulerAngles = new Vector3(0, 90, 0);
-                    AOEShape.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - aMi.Length / 2);
-
-                }
-            }
-
-            //Check what units we should be targeting.
-            if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
-            {
-                targets = AOEShape.GetComponent<AOE>().getTargets(true);
-            }
-            else
-            {
-                targets = AOEShape.GetComponent<AOE>().getTargets(false);
-            }
-            
-
-            if (targets != new List<Unit>())
-                valid = true;
-            else
-                valid = false;
-
-            if (valid)
-            {
-                GetComponent<MeshRenderer>().material = mousedOverValid;
-                AOEShape.GetComponent<MeshRenderer>().material = mousedOverValid;
-            }
-            else
-            {
-                GetComponent<MeshRenderer>().material = mousedOverInvalid;
-                AOEShape.GetComponent<MeshRenderer>().material = mousedOverInvalid;
-            }
-            
-            
-        }
-
-        //Actually clicking (using the ability)
-        if ((Input.GetMouseButtonDown(0) || autoClick) && !buttonSwitch)
-        {
-            buttonSwitch = true;
-
-            //Just damage the one unit if single target
+            //If it's single target we're just target the one tile
             if (ability.AbiltyType == Ability.ABILITYTYPE.SingleTarget)
             {
-                SingleTargetAbility aSi = (SingleTargetAbility)SingleTargetAbility.LoadAbilityFromName(ability.AbilityName);
-                Unit target = new Unit();
+                if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
+                {
+                    targets = BoardMan.enemyUnits;
+                }
+                else
+                {
+                    targets = BoardMan.playerUnits;
+                }
+
                 foreach (Unit u in targets)
                 {
                     if (pos.x == u.getPos().x && pos.y == u.getPos().y)
-                        target = u;
+                        valid = true;
                 }
 
-                target.setWorshiperCount(target.getWorshiperCount() - aSi.AbilityDamage);
-
-                //Kill target if it died
-                if(target.WorshiperCount <= 0)
+                if (valid)
                 {
-                    BoardMan.killUnit(target);
+                    GetComponent<MeshRenderer>().material = mousedOverValid;
+                }
+                else
+                {
+                    GetComponent<MeshRenderer>().material = mousedOverInvalid;
                 }
             }
-            // Damage all the target within the AOE if it's multi
+
+            //If it's multi target, we gotta worry about shapes
             else if (ability.AbiltyType == Ability.ABILITYTYPE.MultiTarget)
             {
                 MultiTargetAbility aMi = (MultiTargetAbility)MultiTargetAbility.LoadAbilityFromName(ability.AbilityName);
-                Debug.Log(targets.Count);
-                foreach (Unit u in targets)
+                if (AOEShape == null)
                 {
-                    u.setWorshiperCount(u.getWorshiperCount() - aMi.AbilityDamage);
-                    if (u.WorshiperCount <= 0)
+                    //Cone is actually a sphere (just didn't change the name elsewhere yet)
+                    if (aMi.AbilityShape == Ability.MultiTargetShape.Cone)
                     {
-                        BoardMan.killUnit(u);
+                        AOEShape = Instantiate(SphereAOEPrefab);
+                        AOEShape.transform.localScale *= aMi.Length;
+                        AOEShape.gameObject.layer = 2;
+                        AOEShape.transform.position = transform.position;
+                    }
+                    else if (aMi.AbilityShape == Ability.MultiTargetShape.Line)
+                    {
+                        AOEShape = Instantiate(CubeAOEPrefab);
+                        AOEShape.gameObject.layer = 2;
+                        AOEShape.transform.localScale = new Vector3(AOEShape.transform.localScale.x * aMi.Length, AOEShape.transform.localScale.y, AOEShape.transform.localScale.z);
+                        AOEShape.transform.position = new Vector3(transform.position.x + aMi.Length / 2, transform.position.y, transform.position.z);
+                    }
+                    else if (aMi.AbilityShape == Ability.MultiTargetShape.Square)
+                    {
+                        AOEShape = Instantiate(CubeAOEPrefab);
+                        AOEShape.transform.localScale *= aMi.Length;
+                        AOEShape.gameObject.layer = 2;
+                        AOEShape.transform.position = transform.position;
+                    }
+
+                }
+
+
+                //Get the line offset and facing the right way
+                if (aMi.AbilityShape == Ability.MultiTargetShape.Line)
+                {
+                    if (BoardMan.abilityDirection == 0)
+                    {
+                        AOEShape.transform.eulerAngles = new Vector3(0, 0, 0);
+                        AOEShape.transform.position = new Vector3(transform.position.x + aMi.Length / 2, transform.position.y, transform.position.z);
+
+                    }
+                    else if (BoardMan.abilityDirection == 1)
+                    {
+                        AOEShape.transform.eulerAngles = new Vector3(0, 270, 0);
+                        AOEShape.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + aMi.Length / 2);
+
+                    }
+                    else if (BoardMan.abilityDirection == 2)
+                    {
+                        AOEShape.transform.eulerAngles = new Vector3(0, 180, 0);
+                        AOEShape.transform.position = new Vector3(transform.position.x - aMi.Length / 2, transform.position.y, transform.position.z);
+
+                    }
+                    else if (BoardMan.abilityDirection == 3)
+                    {
+                        AOEShape.transform.eulerAngles = new Vector3(0, 90, 0);
+                        AOEShape.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - aMi.Length / 2);
+
                     }
                 }
-                GameObject[] AOEShapes = GameObject.FindGameObjectsWithTag("AOEShapes");
-                foreach(GameObject g in AOEShapes)
+
+                //Check what units we should be targeting.
+                if (ability.AbiltyType != Ability.ABILITYTYPE.Buff)
                 {
-                    Destroy(g);
+                    if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
+                    {
+                        targets = AOEShape.GetComponent<AOE>().getTargets(true);
+                    }
+                    else
+                    {
+                        targets = AOEShape.GetComponent<AOE>().getTargets(false);
+                    }
+                }
+                else
+                {
+                    if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
+                    {
+                        targets = AOEShape.GetComponent<AOE>().getTargets(false);
+                    }
+                    else
+                    {
+                        targets = AOEShape.GetComponent<AOE>().getTargets(true);
+                    }
                 }
 
+
+
+                if (targets != new List<Unit>())
+                    valid = true;
+                else
+                    valid = false;
+
+                if (valid)
+                {
+                    GetComponent<MeshRenderer>().material = mousedOverValid;
+                    AOEShape.GetComponent<MeshRenderer>().material = mousedOverValid;
+                }
+                else
+                {
+                    GetComponent<MeshRenderer>().material = mousedOverInvalid;
+                    AOEShape.GetComponent<MeshRenderer>().material = mousedOverInvalid;
+                }
+
+
             }
-            // TODO
-            else if (ability.AbiltyType == Ability.ABILITYTYPE.Buff)
+
+            //Actually clicking (using the ability)
+            if ((Input.GetMouseButtonDown(0) || autoClick) && !buttonSwitch)
             {
-                Debug.Log("Using buff ability " + ability.AbilityName + " !!!");
+                buttonSwitch = true;
+
+                //Just damage the one unit if single target
+                if (ability.AbiltyType == Ability.ABILITYTYPE.SingleTarget)
+                {
+                    SingleTargetAbility aSi = (SingleTargetAbility)SingleTargetAbility.LoadAbilityFromName(ability.AbilityName);
+                    Unit target = new Unit();
+                    foreach (Unit u in targets)
+                    {
+                        if (pos.x == u.getPos().x && pos.y == u.getPos().y)
+                            target = u;
+                    }
+
+                    target.setWorshiperCount(target.getWorshiperCount() - aSi.AbilityDamage);
+
+                    //Kill target if it died
+                    if (target.WorshiperCount <= 0)
+                    {
+                        BoardMan.killUnit(target);
+                    }
+                }
+                // Damage all the target within the AOE if it's multi
+                else if (ability.AbiltyType == Ability.ABILITYTYPE.MultiTarget)
+                {
+                    MultiTargetAbility aMi = (MultiTargetAbility)MultiTargetAbility.LoadAbilityFromName(ability.AbilityName);
+                    foreach (Unit u in targets)
+                    {
+                        u.setWorshiperCount(u.getWorshiperCount() - aMi.AbilityDamage);
+                        if (u.WorshiperCount <= 0)
+                        {
+                            BoardMan.killUnit(u);
+                        }
+                    }
+                    GameObject[] AOEShapes = GameObject.FindGameObjectsWithTag("AOEShapes");
+                    foreach (GameObject g in AOEShapes)
+                    {
+                        Destroy(g);
+                    }
+
+                }
+                // TODO
+                else if (ability.AbiltyType == Ability.ABILITYTYPE.Buff)
+                {
+                    Debug.Log("Using buff ability " + ability.AbilityName + " !!!");
+
+                    //Ability.BUFFTYPE.Damage;
+                }
+                // TODO
+                else if (ability.AbiltyType == Ability.ABILITYTYPE.Debuff)
+                {
+                    Debug.Log("Using debuff ability " + ability.AbilityName + " !!!");
+
+                }
+
+                //End turn once we used an ability
+                MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().EndTurnButton();
+
+                //Unslecting
+                MapMan.Selected = null;
+
+                //Clean up Tiles
+                MapMan.ClearSelection();
             }
-            // TODO
-            else if (ability.AbiltyType == Ability.ABILITYTYPE.Debuff)
+
+
+            if (Input.GetMouseButtonUp(0) && buttonSwitch)
             {
-                Debug.Log("Using debuff ability " + ability.AbilityName + " !!!");
+                buttonSwitch = false;
+                Debug.Log("Fail");
             }
 
-            //End turn once we used an ability
-            MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().EndTurnButton();
+            //Udating direction for the line AOE
+            if (Input.GetMouseButtonDown(1))
+                if (BoardMan.abilityDirection < 3)
+                    BoardMan.abilityDirection++;
+                else
+                    BoardMan.abilityDirection = 0;
 
-            //Unslecting
-            MapMan.Selected = null;
-
-            //Clean up Tiles
-            MapMan.ClearSelection();
         }
-
-        if (Input.GetMouseButtonUp(0) && buttonSwitch)
-        {
-            buttonSwitch = false;
-            Debug.Log("Fail");
-        }
-
-        //Udating direction for the line AOE
-        if (Input.GetMouseButtonDown(1))
-            if (BoardMan.abilityDirection < 3)
-                BoardMan.abilityDirection++;
-            else
-                BoardMan.abilityDirection = 0;
-        
-
     }
     
 
     //Unhighlight a tile we mouse out
     public void OnMouseExit()
     {
-        GetComponent<MeshRenderer>().material = air;
-        Destroy(AOEShape);
+        if (inPlace)
+        {
+            GetComponent<MeshRenderer>().material = mousedOverInvalid;
+            Destroy(AOEShape);
+        }
     }
 
     //For spoofing clicks for testing (and AI)

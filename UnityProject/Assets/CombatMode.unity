@@ -279,6 +279,85 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &117506983
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 117506984}
+  - component: {fileID: 117506986}
+  - component: {fileID: 117506985}
+  m_Layer: 5
+  m_Name: Text
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &117506984
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 117506983}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 801238961}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &117506985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 117506983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: 92387230771b6e74da26f8d5dc5b82b6, type: 3}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: Cancel
+--- !u!222 &117506986
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 117506983}
+  m_CullTransparentMesh: 0
 --- !u!1 &128641583
 GameObject:
   m_ObjectHideFlags: 0
@@ -579,6 +658,7 @@ RectTransform:
   m_Children:
   - {fileID: 1569492920}
   - {fileID: 7041383894785590736}
+  - {fileID: 801238961}
   m_Father: {fileID: 602377151}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -673,8 +753,10 @@ MonoBehaviour:
     type: 3}
   TargetableTile: {fileID: 1109967228810790, guid: 1b019e41b3c177d48b3564edf0a0cf0e,
     type: 3}
-  endAllButton: {fileID: 7107323663916371050}
-  selectNextButton: {fileID: 1569492919}
+  playerUiButtons:
+  - {fileID: 1569492919}
+  - {fileID: 7107323663916371050}
+  - {fileID: 801238960}
   selectNextIndex: 0
   abilityDirection: 0
 --- !u!4 &734046508
@@ -742,6 +824,178 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &801238960
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 801238961}
+  - component: {fileID: 801238965}
+  - component: {fileID: 801238964}
+  - component: {fileID: 801238963}
+  - component: {fileID: 801238962}
+  m_Layer: 5
+  m_Name: Cancel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &801238961
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 801238960}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 117506984}
+  m_Father: {fileID: 611729020}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: -420, y: 35}
+  m_SizeDelta: {x: 89, y: 30}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &801238962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 801238960}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1793198890}
+          m_MethodName: playerUiMouseOver
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 801238960}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
+        Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  delegates: []
+--- !u!114 &801238963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 801238960}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 801238964}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1793198890}
+        m_MethodName: cancelButtonFunction
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1757513417}
+        m_MethodName: playUiSelect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+--- !u!114 &801238964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 801238960}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_Sprite: {fileID: 21300000, guid: 2be7b70e984b51444aca9c12ae4723a7, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+--- !u!222 &801238965
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 801238960}
+  m_CullTransparentMesh: 0
 --- !u!1 &878365383
 GameObject:
   m_ObjectHideFlags: 0
@@ -1035,12 +1289,12 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 1757513417}
-          m_MethodName: playUiHover
-          m_Mode: 1
+        - m_Target: {fileID: 1793198890}
+          m_MethodName: playerUiMouseOver
+          m_Mode: 2
           m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_ObjectArgument: {fileID: 1569492919}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
             m_StringArgument: 
@@ -1106,6 +1360,7 @@ GameObject:
   - component: {fileID: 1757513415}
   - component: {fileID: 1757513414}
   - component: {fileID: 1757513418}
+  - component: {fileID: 1757513419}
   m_Layer: 0
   m_Name: SoundManager
   m_TagString: SoundManager
@@ -1124,8 +1379,8 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 1
+  m_PlayOnAwake: 0
+  m_Volume: 0.147
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -1139,7 +1394,7 @@ AudioSource:
   rolloffMode: 0
   BypassEffects: 0
   BypassListenerEffects: 0
-  BypassReverbZones: 0
+  BypassReverbZones: 1
   rolloffCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -1221,9 +1476,9 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.1
+  m_Volume: 0.03
   m_Pitch: 1
-  Loop: 1
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -1331,27 +1586,188 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7eedb34ffd6d8c14e829e1f003b00bf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  backgroundMusic: {fileID: 8300000, guid: 984f2ddb82bf2394dadd28a2223e90c1, type: 3}
-  unitSelectionSounds:
-  - {fileID: 8300000, guid: 35c85993a156ce04ab9d7d089654802b, type: 3}
-  - {fileID: 8300000, guid: 67ddc49087ea1b74fb8ff4e597b07532, type: 3}
-  - {fileID: 8300000, guid: ca87ee752ee89d54586550636b26ac48, type: 3}
-  unitDeathSounds:
-  - {fileID: 8300000, guid: 5b5aa9d98536d334a9d6ace91e6f3006, type: 3}
-  - {fileID: 8300000, guid: 122930f06ec92a447b0230a339f2f644, type: 3}
-  - {fileID: 8300000, guid: 3fe22c2e4bda5904d93e6d3126ab1320, type: 3}
-  godSelectionSounds:
-  - {fileID: 8300000, guid: c77428f527f95bb4f9bab008948c5bcd, type: 3}
-  - {fileID: 8300000, guid: f599f7d59482ede45897690828fe28ba, type: 3}
-  - {fileID: 8300000, guid: 1809f97bf91b4434598aa451aad3e4ba, type: 3}
-  enemyGodTurnStartSounds:
-  - {fileID: 8300000, guid: 6fe7db718e70108479c524c756c0bfbd, type: 3}
-  - {fileID: 8300000, guid: 34eb4fc259d314d459dc72e25cad9e74, type: 3}
-  - {fileID: 8300000, guid: f8f2ada517cdda84da1dd58db3722d62, type: 3}
-  godEnterBattleSounds:
-  - {fileID: 8300000, guid: 518a6f9b3bad0d6418b9210eec2cb80d, type: 3}
-  - {fileID: 8300000, guid: fc0d5eb23edd5784abcea65544af6966, type: 3}
-  - {fileID: 8300000, guid: af4b43ff9a71a1b41bc997c35cf5065c, type: 3}
+  mushroomUnitSelectionSounds:
+  - {fileID: 8300000, guid: d51739ba56de7784a90c03b25ace12fc, type: 3}
+  - {fileID: 8300000, guid: fd4d205018bd38641b3fba8a16c3ba09, type: 3}
+  - {fileID: 8300000, guid: 85afe629c5011aa40b485c7828db9d23, type: 3}
+  forkUnitSelectionSounds:
+  - {fileID: 8300000, guid: 7cf52ed82da57c2458bbd31baaeab4d8, type: 3}
+  - {fileID: 8300000, guid: e279d4f01d692bc4685abc54f5f9f36f, type: 3}
+  - {fileID: 8300000, guid: 48631b1ed64d86e47981a3273d43858f, type: 3}
+  shoeUnitSelectionSounds:
+  - {fileID: 8300000, guid: 1a581e2a79c680542b24da6bcfbdd828, type: 3}
+  - {fileID: 8300000, guid: 8446a77956530054a9ab27199ef48df9, type: 3}
+  - {fileID: 8300000, guid: 527836567b5bb5f4aaf338a6dd101766, type: 3}
+  duckUnitSelectionSounds:
+  - {fileID: 8300000, guid: bed9fb91d838f7a41b945c503aeaccc5, type: 3}
+  - {fileID: 8300000, guid: a991c0717cb20864a9b25621eb42ef14, type: 3}
+  - {fileID: 8300000, guid: 61fe07971353b4445b034a9634fc08f5, type: 3}
+  mushroomUnitDeathSounds:
+  - {fileID: 8300000, guid: c77dc9be8d33c61449953b80ba72f543, type: 3}
+  - {fileID: 8300000, guid: 97c8805e02cebe245a57a2813045fd41, type: 3}
+  forkUnitDeathSounds:
+  - {fileID: 8300000, guid: 66188442abe89aa48bf0211d84132be4, type: 3}
+  - {fileID: 8300000, guid: 3d25e50ea3fc93d43b987f87e2bd5721, type: 3}
+  shoeUnitDeathSounds:
+  - {fileID: 8300000, guid: 774c4d0abf2a77e43a4c63fd6589a195, type: 3}
+  - {fileID: 8300000, guid: e026f25bee0283b4bb6ff4d2430b9c12, type: 3}
+  duckUnitDeathSounds:
+  - {fileID: 8300000, guid: 8388cbfa786eaff4ba6ea740e9e7bc1a, type: 3}
+  - {fileID: 8300000, guid: f528ff8f7d60ae14d959ca93f327f1a9, type: 3}
+  houndsUnitDeathSounds:
+  - {fileID: 8300000, guid: d7081ee53b5e2aa42bdd6e529dfab352, type: 3}
+  - {fileID: 8300000, guid: 4bcb9c1ee68da2a4ab60cb213dfc743f, type: 3}
+  jazzUnitDeathSounds:
+  - {fileID: 8300000, guid: d7081ee53b5e2aa42bdd6e529dfab352, type: 3}
+  - {fileID: 8300000, guid: 4bcb9c1ee68da2a4ab60cb213dfc743f, type: 3}
+  loveUnitDeathSounds:
+  - {fileID: 8300000, guid: d7081ee53b5e2aa42bdd6e529dfab352, type: 3}
+  - {fileID: 8300000, guid: 4bcb9c1ee68da2a4ab60cb213dfc743f, type: 3}
+  fireUnitDeathSounds:
+  - {fileID: 8300000, guid: d7081ee53b5e2aa42bdd6e529dfab352, type: 3}
+  - {fileID: 8300000, guid: 4bcb9c1ee68da2a4ab60cb213dfc743f, type: 3}
+  waterUnitDeathSounds:
+  - {fileID: 8300000, guid: d7081ee53b5e2aa42bdd6e529dfab352, type: 3}
+  - {fileID: 8300000, guid: 4bcb9c1ee68da2a4ab60cb213dfc743f, type: 3}
+  earthUnitDeathSounds:
+  - {fileID: 8300000, guid: d7081ee53b5e2aa42bdd6e529dfab352, type: 3}
+  - {fileID: 8300000, guid: 4bcb9c1ee68da2a4ab60cb213dfc743f, type: 3}
+  mushroomGodSelectionSounds:
+  - {fileID: 8300000, guid: 3c7b4d4efd6452d47978902662398e2a, type: 3}
+  - {fileID: 8300000, guid: ed812612a4703834089bc6d243f395d2, type: 3}
+  - {fileID: 8300000, guid: 6ba088d10c3fb4a4f84c244b07f55973, type: 3}
+  forkGodSelectionSounds:
+  - {fileID: 8300000, guid: 1298af59af1afc442815fcdf0f86b5c4, type: 3}
+  - {fileID: 8300000, guid: eb90cdff64e47ea41b2a1fa786a29324, type: 3}
+  - {fileID: 8300000, guid: 1b1426f628127e34e85bf04d298c5667, type: 3}
+  shoeGodSelectionSounds:
+  - {fileID: 8300000, guid: 1ea90749fc03bc54595ec40b717373c4, type: 3}
+  - {fileID: 8300000, guid: 9b9c217091710ed4cb8e027028984c98, type: 3}
+  - {fileID: 8300000, guid: 8167f6a7ccbd766459018ee7e7b16a9b, type: 3}
+  duckGodSelectionSounds:
+  - {fileID: 8300000, guid: 5b1255f42b7c8c34284aa5bb40d2d870, type: 3}
+  - {fileID: 8300000, guid: 3a22a9f86459bd24b80a2268987c2617, type: 3}
+  - {fileID: 8300000, guid: 65852f2d15721094795fd9e24b701af5, type: 3}
+  mushroomGodTurnStartSounds:
+  - {fileID: 8300000, guid: d85f6b3dc167fcd488a23206e7132e51, type: 3}
+  - {fileID: 8300000, guid: bc4b82c8dd42a784f8673ee9f05846da, type: 3}
+  - {fileID: 8300000, guid: f9e0954ef2f336941aedcbbce40574df, type: 3}
+  forkGodTurnStartSounds:
+  - {fileID: 8300000, guid: 98e22b833f246e948858fd0499527989, type: 3}
+  - {fileID: 8300000, guid: 5e3aedabaadeac548b91a7647ed0da0a, type: 3}
+  - {fileID: 8300000, guid: 8e32137efa9e47d46a3c0ed63346f939, type: 3}
+  shoeGodTurnStartSounds:
+  - {fileID: 8300000, guid: 3573b94a52bdc3a418950fb8f3461076, type: 3}
+  - {fileID: 8300000, guid: a104d2e9c992b1e4a80da0317a6eb5f3, type: 3}
+  - {fileID: 8300000, guid: a860e5215404d7849b72653cf3a0cd09, type: 3}
+  duckGodTurnStartSounds:
+  - {fileID: 8300000, guid: d62c7eaa1963e4742bf68df29e72f784, type: 3}
+  - {fileID: 8300000, guid: 3c9874c1d12728a4395104f74650def6, type: 3}
+  - {fileID: 8300000, guid: 01042df792a78474ab90dfb0ba419da1, type: 3}
+  houndsGodTurnStartSounds:
+  - {fileID: 8300000, guid: 5257db188f4669d43adb43e4986393d1, type: 3}
+  - {fileID: 8300000, guid: ff957c7f7b461894f96c730c02835303, type: 3}
+  - {fileID: 8300000, guid: 41089a1441b7caa4e8ba957099f09419, type: 3}
+  jazzGodTurnStartSounds:
+  - {fileID: 8300000, guid: 2647cc9e9c07af346aa24b97f1603592, type: 3}
+  - {fileID: 8300000, guid: e278485f65054d344ac6be8adc462db3, type: 3}
+  - {fileID: 8300000, guid: 2d592a4a87858a24d93f1b05c65cc221, type: 3}
+  loveGodTurnStartSounds:
+  - {fileID: 8300000, guid: 6e588a8611c471c41b725f7231ed8233, type: 3}
+  - {fileID: 8300000, guid: 2d18ca65097c02a44912be1e821f0b8d, type: 3}
+  - {fileID: 8300000, guid: 077106c27c8b7c94bbe1609621ec3e05, type: 3}
+  fireGodTurnStartSounds:
+  - {fileID: 8300000, guid: eb6ffe0cd8923b54abd0821b7d3ac4e0, type: 3}
+  - {fileID: 8300000, guid: 9f208f7603602af45a3c0e7b84b5dbac, type: 3}
+  - {fileID: 8300000, guid: a185448d653a1ff49b1e4ba496f34499, type: 3}
+  waterGodTurnStartSounds:
+  - {fileID: 8300000, guid: 10e1ee17572c320419083877c3b6677a, type: 3}
+  - {fileID: 8300000, guid: b84d7dfd05c6e5749b28f75502e9b686, type: 3}
+  - {fileID: 8300000, guid: e6397b022ef366646ac448f1459b1a84, type: 3}
+  earthGodTurnStartSounds:
+  - {fileID: 8300000, guid: 3cae149a16d15004cbf793a359400581, type: 3}
+  - {fileID: 8300000, guid: 99b80a4665249384b915e46b7ba80346, type: 3}
+  - {fileID: 8300000, guid: ba29529a46330144c912abadf2c051bf, type: 3}
+  mushroomGodEnterBattleSounds:
+  - {fileID: 8300000, guid: b48026b57eea52a4a937f42aedbd74f9, type: 3}
+  - {fileID: 8300000, guid: 7be24f7ab24a78248818c1e74117bdd7, type: 3}
+  - {fileID: 8300000, guid: 620a3ed19cb81cd4b8428deca21e3cb0, type: 3}
+  forkGodEnterBattleSounds:
+  - {fileID: 8300000, guid: 22ecb449901a3244f98ee1c13a1c19aa, type: 3}
+  - {fileID: 8300000, guid: f65e7542ecb510040bd589379b08aa5f, type: 3}
+  - {fileID: 8300000, guid: 7dfb14f5ca8641c4485c970e4332bc83, type: 3}
+  shoeGodEnterBattleSounds:
+  - {fileID: 8300000, guid: dfb4789ae807ba74e90f62f1c30fa3c8, type: 3}
+  - {fileID: 8300000, guid: 44b33c3bd1d6693408f0b915c902d3d7, type: 3}
+  - {fileID: 8300000, guid: eae6406836ca39c44af91069ee9540b1, type: 3}
+  duckGodEnterBattleSounds:
+  - {fileID: 8300000, guid: 7d677cccde4a7de4ea1bb0acc3239985, type: 3}
+  - {fileID: 8300000, guid: 7a917e7fc93352a458478d31d99ad72d, type: 3}
+  - {fileID: 8300000, guid: 0194a57a73f994e4885bc15976e57b4f, type: 3}
+  houndsGodEnterBattleSounds:
+  - {fileID: 8300000, guid: 39adf0c373cabe44c811d57aac1b3ff2, type: 3}
+  - {fileID: 8300000, guid: 4544436ec99770e40af050eae6c335b1, type: 3}
+  - {fileID: 8300000, guid: 721de5bb1f57de3449b6f420d31c5e52, type: 3}
+  jazzGodEnterBattleSounds:
+  - {fileID: 8300000, guid: c280574fa87a5674893a042e0ad572a8, type: 3}
+  - {fileID: 8300000, guid: 78c436c6e7592fd47b664bd650ab05cf, type: 3}
+  - {fileID: 8300000, guid: e228d3f6770c10145a0d860372a60230, type: 3}
+  loveGodEnterBattleSounds:
+  - {fileID: 8300000, guid: c155ba39023709b4496fbbd6630ab42c, type: 3}
+  - {fileID: 8300000, guid: 7a81074b212566c47b5c3c2c386782cf, type: 3}
+  - {fileID: 8300000, guid: 44a1c05437e81a64ca55adc9ac450586, type: 3}
+  fireGodEnterBattleSounds:
+  - {fileID: 8300000, guid: a0d959e0d18963f41a9813db5769db18, type: 3}
+  - {fileID: 8300000, guid: bc212f0e5665369479689c42e2c2ffd7, type: 3}
+  - {fileID: 8300000, guid: 4e2555bebdd42344184f08723cb8fa71, type: 3}
+  waterGodEnterBattleSounds:
+  - {fileID: 8300000, guid: 8015814077120134aaad29aebc100eaf, type: 3}
+  - {fileID: 8300000, guid: b0e8592964e824d43ba47d9b88ff42ae, type: 3}
+  - {fileID: 8300000, guid: 902931e2036b9be44997da10d5432182, type: 3}
+  earthGodEnterBattleSounds:
+  - {fileID: 8300000, guid: 52cc42782ca0fb341924d71e57b66d0b, type: 3}
+  - {fileID: 8300000, guid: 1a38d56a47f46d441b3b1bed02636b27, type: 3}
+  - {fileID: 8300000, guid: d426ca2cf94e0c74e84044e3ba2eaa98, type: 3}
+  mushroomGodBGMs:
+  - {fileID: 8300000, guid: 654af1c286cb2d947815f31038656815, type: 3}
+  - {fileID: 8300000, guid: 906fefe793c04114eacd3239b60c0445, type: 3}
+  - {fileID: 8300000, guid: 7400e174856e69b43a9d7929eda856e4, type: 3}
+  forkGodBGMs:
+  - {fileID: 8300000, guid: 2a5e286a79bf6eb408c7754be971f15f, type: 3}
+  - {fileID: 8300000, guid: dff98cad32262e34299898273c40acfe, type: 3}
+  - {fileID: 8300000, guid: aeccf92003cb3364fb031c9419c71a5d, type: 3}
+  shoeGodBGMs:
+  - {fileID: 8300000, guid: 1a32d84c8bcf95c4bb887d545745a226, type: 3}
+  - {fileID: 8300000, guid: 6103d364f53ceb04b9839c36e5811718, type: 3}
+  - {fileID: 8300000, guid: 13b9e810eba4f6248b9deacca2a2d2e0, type: 3}
+  duckGodBGMs:
+  - {fileID: 8300000, guid: afd02e4e774b68940b41c9a3414eec25, type: 3}
+  - {fileID: 8300000, guid: edf537266fb3ebe45b9bdf49000c1c78, type: 3}
+  - {fileID: 8300000, guid: ed13002a87d25664e9014ab5b3a77069, type: 3}
+  houndGodBGMs:
+  - {fileID: 8300000, guid: 8e202d2c8f204de4e978adf0c60fe4b9, type: 3}
+  - {fileID: 8300000, guid: 13538a0b82608c8409bbc87502d18daa, type: 3}
+  - {fileID: 8300000, guid: 7e9fc127f5f9715438a0cb609869dd2c, type: 3}
+  jazzGodBGMs:
+  - {fileID: 8300000, guid: 0a804896245404e469fa4e503abadd97, type: 3}
+  - {fileID: 8300000, guid: 9ebd193fc279154499f2aa2f07c96f1c, type: 3}
+  - {fileID: 8300000, guid: ff5572f80e55fe34480b7d778f90439d, type: 3}
+  loveGodBGMs:
+  - {fileID: 8300000, guid: c8c08eaa3fb64d74181eb4b7a971a6c9, type: 3}
+  - {fileID: 8300000, guid: 52cd544cf06f1784a8e7d23df06fba45, type: 3}
+  - {fileID: 8300000, guid: a9fcabc4242ec8a4593a6b28ca7e1b87, type: 3}
+  fireGodBGMs:
+  - {fileID: 8300000, guid: 4eda9ee50bddae0468f446a2679acf86, type: 3}
+  - {fileID: 8300000, guid: 6f5f8f7a24adaa241b0cb4befb835c46, type: 3}
+  - {fileID: 8300000, guid: 29aed52cacf3fd74eab7e4a627003f31, type: 3}
+  waterGodBGMs:
+  - {fileID: 8300000, guid: 78af172d2e48fb14cab0df55bfdc76b6, type: 3}
+  - {fileID: 8300000, guid: 87c8e70d21485c946abeebe4e3d1f54d, type: 3}
+  - {fileID: 8300000, guid: 95d54b749ec5d064ba593ad5504bcb27, type: 3}
+  earthGodBGMs:
+  - {fileID: 8300000, guid: 928563e91f98ab642861f7d12e3a8594, type: 3}
+  - {fileID: 8300000, guid: b6f26adf2bf16da4f9d7c28410fa61d9, type: 3}
+  - {fileID: 8300000, guid: 33355d0a65f21f449af59a7924b503d7, type: 3}
   uiHover: {fileID: 8300000, guid: 6e31b442af5812840bc5ba6193166b83, type: 3}
   uiSelect: {fileID: 8300000, guid: 0adb87b605a30ca4682ec269fbdb94ac, type: 3}
   unitAttack: {fileID: 8300000, guid: 3bb3a6fdfe0dc6d44a9c836dd5304558, type: 3}
@@ -1367,7 +1783,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -1382,7 +1798,103 @@ AudioSource:
   rolloffMode: 0
   BypassEffects: 0
   BypassListenerEffects: 0
-  BypassReverbZones: 0
+  BypassReverbZones: 1
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!82 &1757513419
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1757513413}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 1
   rolloffCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -1502,6 +2014,14 @@ MonoBehaviour:
     type: 3}
   abilityButton: {fileID: 544674801737561436, guid: 023d06c1b2eeed443b838e4ca7bf1546,
     type: 3}
+  singleTargetIcon: {fileID: 6285493180575503168, guid: 7a01cf58161b1774ba22e0417b879fff,
+    type: 3}
+  multiTargetIcon: {fileID: 1749236587122841157, guid: 77be8ea66709c9e4b8f12aa19b283978,
+    type: 3}
+  buffIcon: {fileID: 2483359451511034581, guid: 4156f5c191c235d4983f6a7e5aa8f2ba,
+    type: 3}
+  debuffIcon: {fileID: 462836810915289439, guid: 157bace0c112c504cba2703b3f87a3e4,
+    type: 3}
   mainCamera: {fileID: 128641586}
   selectedMenu: {fileID: 0}
   UICanvas: {fileID: 65526521}
@@ -1599,12 +2119,12 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 1757513417}
-          m_MethodName: playUiHover
-          m_Mode: 1
+        - m_Target: {fileID: 1793198890}
+          m_MethodName: playerUiMouseOver
+          m_Mode: 2
           m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_ObjectArgument: {fileID: 7107323663916371050}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
             m_StringArgument: 

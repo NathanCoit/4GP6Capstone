@@ -50,7 +50,7 @@ public class Faction
     public float Morale = 1.0f;
     public int TierRewardPoints = 1;
     public List<Ability> CurrentAbilites;
-    // public List<Upgrade> CurrentUpgrades;
+    public List<WorshipperUpgrade> CurrentUpgrades;
     public List<Building> OwnedBuildings = new List<Building>();
     public List<float[]> FactionArea; //Starting Radius, ending Radius, starting angle, ending angle
     public int FactionDifficulty = 0;
@@ -60,6 +60,7 @@ public class Faction
     {
         GodName = pstrGodName;
         CurrentAbilites = new List<Ability>();
+        CurrentUpgrades = new List<WorshipperUpgrade>();
         Type = penumGodType;
         GodTier = pintTier;
     }
@@ -85,6 +86,7 @@ public class Faction
                 });
         }
         CurrentAbilites = new List<Ability>();
+        CurrentUpgrades = new List<WorshipperUpgrade>();
         foreach (string AbilityName in savedFaction.Abilities)
         {
             CurrentAbilites.Add(Ability.LoadAbilityFromName(AbilityName));

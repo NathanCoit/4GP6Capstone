@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-class MovementWorshipperUpgrade : WorshipperUpgrade
+public class MovementWorshipperUpgrade : WorshipperUpgrade
 {
     public int MovementBuff;
 
@@ -15,6 +15,7 @@ class MovementWorshipperUpgrade : WorshipperUpgrade
         : base(pstrUpgradeName, pstrFlavourText, pintCost)
     {
         MovementBuff = pintMovementBuff;
+        UpgradeType = UPGRADETYPE.Movement;
     }
 
     public override string UpgradeDescription()

@@ -24,6 +24,9 @@ public class SaveData
     public bool NewGame = true;
     public bool FromSave = false;
     public string[] PlayerRewards;
+    public int[] WorshipperAttackBuffs;
+    public int[] WorshipperDefenseBuffs;
+    public int[] WorshipperMovementBuffs;
     public int EnemyChallengeTimer;
     public float[] MaterialMultipliers;
     public float[] WorshipperMultipliers;

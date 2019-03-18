@@ -4,45 +4,258 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
-    public AudioClip backgroundMusic;
+    private AudioClip backgroundMusic;
 
-    public List<AudioClip> unitSelectionSounds;
-    public List<AudioClip> unitDeathSounds;
-    public List<AudioClip> godSelectionSounds;
-    public List<AudioClip> enemyGodTurnStartSounds;
-    public List<AudioClip> godEnterBattleSounds;
+    //Unit selection sound lists (player)
+    public List<AudioClip> mushroomUnitSelectionSounds;
+    public List<AudioClip> forkUnitSelectionSounds;
+    public List<AudioClip> shoeUnitSelectionSounds;
+    public List<AudioClip> duckUnitSelectionSounds;
 
+    private List<AudioClip> unitSelectionSounds;
+
+
+    //Unit death sounds (both)
+    public List<AudioClip> mushroomUnitDeathSounds;
+    public List<AudioClip> forkUnitDeathSounds;
+    public List<AudioClip> shoeUnitDeathSounds;
+    public List<AudioClip> duckUnitDeathSounds;
+    public List<AudioClip> houndsUnitDeathSounds;
+    public List<AudioClip> jazzUnitDeathSounds;
+    public List<AudioClip> loveUnitDeathSounds;
+    public List<AudioClip> fireUnitDeathSounds;
+    public List<AudioClip> waterUnitDeathSounds;
+    public List<AudioClip> earthUnitDeathSounds;
+
+    private List<AudioClip> playerUnitDeathSounds;
+    private List<AudioClip> enemyUnitDeathSounds;
+
+    //God selection sound lists (player)
+    public List<AudioClip> mushroomGodSelectionSounds;
+    public List<AudioClip> forkGodSelectionSounds;
+    public List<AudioClip> shoeGodSelectionSounds;
+    public List<AudioClip> duckGodSelectionSounds;
+
+    private List<AudioClip> godSelectionSounds;
+
+
+    //Enemy turn start sounds (enemy)
+    public List<AudioClip> mushroomGodTurnStartSounds;
+    public List<AudioClip> forkGodTurnStartSounds;
+    public List<AudioClip> shoeGodTurnStartSounds;
+    public List<AudioClip> duckGodTurnStartSounds;
+    public List<AudioClip> houndsGodTurnStartSounds;
+    public List<AudioClip> jazzGodTurnStartSounds;
+    public List<AudioClip> loveGodTurnStartSounds;
+    public List<AudioClip> fireGodTurnStartSounds;
+    public List<AudioClip> waterGodTurnStartSounds;
+    public List<AudioClip> earthGodTurnStartSounds;
+
+    private List<AudioClip> enemyGodTurnStartSounds;
+
+    //God enter battle sounds (both)
+    public List<AudioClip> mushroomGodEnterBattleSounds;
+    public List<AudioClip> forkGodEnterBattleSounds;
+    public List<AudioClip> shoeGodEnterBattleSounds;
+    public List<AudioClip> duckGodEnterBattleSounds;
+    public List<AudioClip> houndsGodEnterBattleSounds;
+    public List<AudioClip> jazzGodEnterBattleSounds;
+    public List<AudioClip> loveGodEnterBattleSounds;
+    public List<AudioClip> fireGodEnterBattleSounds;
+    public List<AudioClip> waterGodEnterBattleSounds;
+    public List<AudioClip> earthGodEnterBattleSounds;
+
+    private List<AudioClip> playerGodEnterBattleSounds;
+    private List<AudioClip> enemyGodEnterBattleSounds;
+
+
+    //Background music (based on enemy god)
+    public List<AudioClip> mushroomGodBGMs;
+    public List<AudioClip> forkGodBGMs;
+    public List<AudioClip> shoeGodBGMs;
+    public List<AudioClip> duckGodBGMs;
+    public List<AudioClip> houndGodBGMs;
+    public List<AudioClip> jazzGodBGMs;
+    public List<AudioClip> loveGodBGMs;
+    public List<AudioClip> fireGodBGMs;
+    public List<AudioClip> waterGodBGMs;
+    public List<AudioClip> earthGodBGMs;
+
+    private List<AudioClip> activeBGMList;
+
+
+    //Ui sounds
     public AudioClip uiHover;
     public AudioClip uiSelect;
 
+    //Unit move and attack sounds
     public AudioClip unitAttack;
     public AudioClip unitMove;
 
+    private int BGMIndex;
+
+    //Previous randoms (to make sure we don't play the same thing in a row)
     private int previousUnitSelectionRandom;
     private int previousGodRandom;
     private int previousEnemyGodRandom;
     private int previousUnitDeathRandom;
     private int previousGodEnterBattleRandom;
 
+    //Audio Sources
     private AudioSource musicSource;
     private AudioSource soundeffectScource;
-    private AudioSource vocalSource;
+    private AudioSource playerVocalSource;
+    private AudioSource enemyVocalSource;
+
+    private bool startup;
 
     // Start is called before the first frame update
     void Start()
     {
+        
+
         musicSource = GetComponents<AudioSource>()[0];
         soundeffectScource = GetComponents<AudioSource>()[1];
-        vocalSource = GetComponents<AudioSource>()[2];
+        playerVocalSource = GetComponents<AudioSource>()[2];
+        enemyVocalSource = GetComponents<AudioSource>()[3];
 
-        musicSource.clip = backgroundMusic;
-        musicSource.Play();
+        startup = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (startup && GameObject.Find("GameInfo") != null)
+        {
+            GameObject GameInfoObject = GameObject.Find("GameInfo");
+            System.Random r = new System.Random();
+
+            //Assign appropriate sounds based on enemy god
+            switch (GameInfoObject.GetComponent<GameInfo>().EnemyFaction.Type)
+            {
+                //Tier 1
+                case Faction.GodType.Mushrooms:
+                    activeBGMList = mushroomGodBGMs;
+                    enemyGodTurnStartSounds = mushroomGodTurnStartSounds;
+                    enemyUnitDeathSounds = mushroomUnitDeathSounds;
+                    enemyGodEnterBattleSounds = mushroomGodEnterBattleSounds;
+                    break;
+                case Faction.GodType.Forks:
+                    activeBGMList = forkGodBGMs;
+                    enemyGodTurnStartSounds = forkGodTurnStartSounds;
+                    enemyUnitDeathSounds = forkUnitDeathSounds;
+                    enemyGodEnterBattleSounds = forkGodEnterBattleSounds;
+                    break;
+                case Faction.GodType.Shoes:
+                    activeBGMList = shoeGodBGMs;
+                    enemyGodTurnStartSounds = shoeGodTurnStartSounds;
+                    enemyUnitDeathSounds = shoeUnitDeathSounds;
+                    enemyGodEnterBattleSounds = shoeGodEnterBattleSounds;
+                    break;
+                case Faction.GodType.Ducks:
+                    activeBGMList = duckGodBGMs;
+                    enemyGodTurnStartSounds = duckGodTurnStartSounds;
+                    enemyUnitDeathSounds = duckUnitDeathSounds;
+                    enemyGodEnterBattleSounds = duckGodEnterBattleSounds;
+                    break;
+
+
+                //Tier 2
+                case Faction.GodType.Hounds:
+                    activeBGMList = houndGodBGMs;
+                    enemyGodTurnStartSounds = houndsGodTurnStartSounds;
+                    enemyUnitDeathSounds = houndsUnitDeathSounds;
+                    enemyGodEnterBattleSounds = houndsGodEnterBattleSounds;
+                    break;
+                case Faction.GodType.Jazz:
+                    activeBGMList = jazzGodBGMs;
+                    enemyGodTurnStartSounds = jazzGodTurnStartSounds;
+                    enemyUnitDeathSounds = jazzUnitDeathSounds;
+                    enemyGodEnterBattleSounds = jazzGodEnterBattleSounds;
+                    break;
+                case Faction.GodType.Love:
+                    activeBGMList = loveGodBGMs;
+                    enemyGodTurnStartSounds = loveGodTurnStartSounds;
+                    enemyUnitDeathSounds = loveUnitDeathSounds;
+                    enemyGodEnterBattleSounds = loveGodEnterBattleSounds;
+                    break;
+
+
+                //Tier 3
+                case Faction.GodType.Fire:
+                    activeBGMList = fireGodBGMs;
+                    enemyGodTurnStartSounds = fireGodTurnStartSounds;
+                    enemyUnitDeathSounds = fireUnitDeathSounds;
+                    enemyGodEnterBattleSounds = fireGodEnterBattleSounds;
+                    break;
+                case Faction.GodType.Water:
+                    activeBGMList = waterGodBGMs;
+                    enemyGodTurnStartSounds = waterGodTurnStartSounds;
+                    enemyUnitDeathSounds = waterUnitDeathSounds;
+                    enemyGodEnterBattleSounds = waterGodEnterBattleSounds;
+                    break;
+                case Faction.GodType.Earth:
+                    activeBGMList = earthGodBGMs;
+                    enemyGodTurnStartSounds = earthGodTurnStartSounds;
+                    enemyUnitDeathSounds = earthUnitDeathSounds;
+                    enemyGodEnterBattleSounds = earthGodEnterBattleSounds;
+                    break;
+            }
+
+
+
+            //Assign appropriate sounds based on player god
+            switch (GameInfoObject.GetComponent<GameInfo>().PlayerFaction.Type)
+            {
+                //Player gods (only tier 1)
+                case Faction.GodType.Mushrooms:
+                    unitSelectionSounds = mushroomUnitSelectionSounds;
+                    godSelectionSounds = mushroomGodSelectionSounds;
+                    playerUnitDeathSounds = mushroomUnitDeathSounds;
+                    playerGodEnterBattleSounds = mushroomGodEnterBattleSounds;
+                    break;
+                case Faction.GodType.Forks:
+                    unitSelectionSounds = forkUnitSelectionSounds;
+                    godSelectionSounds = forkGodSelectionSounds;
+                    playerUnitDeathSounds = forkUnitDeathSounds;
+                    playerGodEnterBattleSounds = forkGodEnterBattleSounds;
+                    break;
+                case Faction.GodType.Shoes:
+                    unitSelectionSounds = shoeUnitSelectionSounds;
+                    godSelectionSounds = shoeGodSelectionSounds;
+                    playerUnitDeathSounds = shoeUnitDeathSounds;
+                    playerGodEnterBattleSounds = shoeGodEnterBattleSounds;
+                    break;
+                case Faction.GodType.Ducks:
+                    unitSelectionSounds = duckUnitSelectionSounds;
+                    godSelectionSounds = duckGodSelectionSounds;
+                    playerUnitDeathSounds = duckUnitDeathSounds;
+                    playerGodEnterBattleSounds = duckGodEnterBattleSounds;
+                    break;
+
+            }
+
+            //Start BGM at random index
+            BGMIndex = r.Next(0, activeBGMList.Count);
+
+            musicSource.clip = activeBGMList[BGMIndex];
+
+            startup = false;
+
+            musicSource.Play();
+        }
+        //If we're at the end of the current song
+        else if(!startup && !musicSource.isPlaying)
+        {
+            //Wraparound
+            BGMIndex++;
+            if (BGMIndex > activeBGMList.Count - 1)
+                BGMIndex = 0;
+
+            //Start next song
+            musicSource.clip = activeBGMList[BGMIndex];
+            musicSource.Play();
+        }
     }
 
     public void playUiHover()
@@ -74,45 +287,26 @@ public class SoundManager : MonoBehaviour
     {
         List<int> acceptableSounds = new List<int>();
 
-
-        for(int i = 0; i < unitSelectionSounds.Count; i++)
+        if (unitSelectionSounds.Count > 1)
         {
-            if (!(i == previousUnitSelectionRandom))
-                acceptableSounds.Add(i);
+            for (int i = 0; i < unitSelectionSounds.Count; i++)
+            {
+                if (!(i == previousUnitSelectionRandom))
+                    acceptableSounds.Add(i);
+            }
+
+            System.Random r = new System.Random();
+
+            int random = acceptableSounds[r.Next(0, acceptableSounds.Count)];
+            playerVocalSource.clip = unitSelectionSounds[random];
+
+            //Prevent playing the last played clip
+            previousUnitSelectionRandom = random;
         }
+        else
+            playerVocalSource.clip = unitSelectionSounds[0];
 
-        System.Random r = new System.Random();
-
-        int random = acceptableSounds[r.Next(0, acceptableSounds.Count)];
-        vocalSource.clip = unitSelectionSounds[random];
-
-        //Prevent playing the last played clip
-        previousUnitSelectionRandom = random;
-
-        vocalSource.Play();
-    }
-
-    //Play a radom unit select sound (but not the last one played)
-    public void playUnitDeath()
-    {
-        List<int> acceptableSounds = new List<int>();
-
-
-        for (int i = 0; i < unitSelectionSounds.Count; i++)
-        {
-            if (!(i == previousUnitDeathRandom))
-                acceptableSounds.Add(i);
-        }
-
-        System.Random r = new System.Random();
-
-        int random = acceptableSounds[r.Next(0, acceptableSounds.Count)];
-        vocalSource.clip = unitDeathSounds[random];
-
-        //Prevent playing the last played clip
-        previousUnitDeathRandom = random;
-
-        vocalSource.Play();
+        playerVocalSource.Play();
     }
 
     //Same as above, but with god sounds
@@ -120,65 +314,165 @@ public class SoundManager : MonoBehaviour
     {
         List<int> acceptableSounds = new List<int>();
 
-
-        for (int i = 0; i < unitSelectionSounds.Count; i++)
+        if (godSelectionSounds.Count > 1)
         {
-            if (!(i == previousGodRandom))
-                acceptableSounds.Add(i);
+            for (int i = 0; i < godSelectionSounds.Count; i++)
+            {
+                if (!(i == previousGodRandom))
+                    acceptableSounds.Add(i);
+            }
+
+            System.Random r = new System.Random();
+
+            int random = acceptableSounds[r.Next(0, acceptableSounds.Count)];
+
+            playerVocalSource.clip = godSelectionSounds[random];
+
+
+            previousGodRandom = random;
         }
+        else
+            playerVocalSource.clip = godSelectionSounds[0];
 
-        System.Random r = new System.Random();
-
-        int random = acceptableSounds[r.Next(0, acceptableSounds.Count)];
-        vocalSource.clip = godSelectionSounds[random];
-
-        //Prevent playing the last played clip
-        previousGodRandom = random;
-
-        vocalSource.Play();
+        playerVocalSource.Play();
     }
 
     public void playEnemyGodTurnStart()
     {
         List<int> acceptableSounds = new List<int>();
 
-
-        for (int i = 0; i < unitSelectionSounds.Count; i++)
+        if (enemyGodTurnStartSounds.Count > 1)
         {
-            if (!(i == previousEnemyGodRandom))
-                acceptableSounds.Add(i);
+            for (int i = 0; i < enemyGodTurnStartSounds.Count; i++)
+            {
+                if (!(i == previousEnemyGodRandom))
+                    acceptableSounds.Add(i);
+            }
+
+            System.Random r = new System.Random();
+
+            int random = acceptableSounds[r.Next(0, acceptableSounds.Count)];
+            enemyVocalSource.clip = enemyGodTurnStartSounds[random];
+
+            //Prevent playing the last played clip
+            previousEnemyGodRandom = random;
         }
+        else
+            enemyVocalSource.clip = enemyGodTurnStartSounds[0];
 
-        System.Random r = new System.Random();
-
-        int random = acceptableSounds[r.Next(0, acceptableSounds.Count)];
-        vocalSource.clip = enemyGodTurnStartSounds[random];
-
-        //Prevent playing the last played clip
-        previousEnemyGodRandom = random;
-
-        vocalSource.Play();
+        enemyVocalSource.Play();
     }
 
-    public void playGodEnterBattle()
+    //Play a radom unit select sound (but not the last one played)
+    public void playUnitDeath(Unit currentUnit)
+    {
+        List<int> acceptableSounds = new List<int>();
+
+        if (currentUnit.isPlayer)
+        {
+            if (playerUnitDeathSounds.Count > 1)
+            {
+                for (int i = 0; i < playerUnitDeathSounds.Count; i++)
+                {
+                    if (!(i == previousUnitDeathRandom))
+                        acceptableSounds.Add(i);
+                }
+
+                System.Random r = new System.Random();
+
+                int random = acceptableSounds[r.Next(0, acceptableSounds.Count)];
+
+                //Prevent playing the last played clip
+                previousUnitDeathRandom = random;
+
+                playerVocalSource.clip = playerUnitDeathSounds[random];
+            }
+            else
+                playerVocalSource.clip = playerUnitDeathSounds[0];
+
+            playerVocalSource.Play();
+        }
+        else
+        {
+            if (enemyUnitDeathSounds.Count > 1)
+            {
+                for (int i = 0; i < enemyUnitDeathSounds.Count; i++)
+                {
+                    if (!(i == previousUnitDeathRandom))
+                        acceptableSounds.Add(i);
+                }
+
+                System.Random r = new System.Random();
+
+                int random = acceptableSounds[r.Next(0, acceptableSounds.Count)];
+
+                //Prevent playing the last played clip
+                previousUnitDeathRandom = random;
+
+                enemyVocalSource.clip = enemyUnitDeathSounds[random];
+            }
+            else
+                enemyVocalSource.clip = enemyUnitDeathSounds[0];
+
+
+            enemyVocalSource.Play();
+        }  
+    }
+
+    public void playGodEnterBattle(Unit currentUnit)
     {
         List<int> acceptableSounds = new List<int>();
 
 
-        for (int i = 0; i < unitSelectionSounds.Count; i++)
+        if (currentUnit.isPlayer)
         {
-            if (!(i == previousGodEnterBattleRandom))
-                acceptableSounds.Add(i);
+            if (playerGodEnterBattleSounds.Count > 1)
+            {
+                for (int i = 0; i < playerGodEnterBattleSounds.Count; i++)
+                {
+                    if (!(i == previousGodEnterBattleRandom))
+                        acceptableSounds.Add(i);
+                }
+
+                System.Random r = new System.Random();
+
+                int random = acceptableSounds[r.Next(0, acceptableSounds.Count)];
+
+                //Prevent playing the last played clip
+                previousGodEnterBattleRandom = random;
+
+                playerVocalSource.clip = playerGodEnterBattleSounds[random];
+            }
+            else
+                playerVocalSource.clip = playerGodEnterBattleSounds[0];
+
+            playerVocalSource.Play();
+        }
+        else
+        {
+            if (enemyGodEnterBattleSounds.Count > 1)
+            {
+                for (int i = 0; i < enemyGodEnterBattleSounds.Count; i++)
+                {
+                    if (!(i == previousGodEnterBattleRandom))
+                        acceptableSounds.Add(i);
+                }
+
+                System.Random r = new System.Random();
+
+                int random = acceptableSounds[r.Next(0, acceptableSounds.Count)];
+
+                //Prevent playing the last played clip
+                previousGodEnterBattleRandom = random;
+
+                enemyVocalSource.clip = enemyGodEnterBattleSounds[random];
+            }
+            else
+                enemyVocalSource.clip = enemyGodEnterBattleSounds[0];
+
+
+            enemyVocalSource.Play();
         }
 
-        System.Random r = new System.Random();
-
-        int random = acceptableSounds[r.Next(0, acceptableSounds.Count)];
-        vocalSource.clip = godEnterBattleSounds[random];
-
-        //Prevent playing the last played clip
-        previousGodEnterBattleRandom = random;
-
-        vocalSource.Play();
     }
 }

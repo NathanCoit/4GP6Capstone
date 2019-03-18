@@ -31,8 +31,6 @@ public class TerrainMap
         gobjMap.AddComponent<LineRenderer>().positionCount = 0;
         gobjMap.GetComponent<Renderer>().material.mainTexture = mapTexture;
         gobjMap.GetComponent<Renderer>().material.SetTextureScale("_MainTex", new Vector2(40, 40));
-
-
         return gobjMap;
     }
     public void PlaceSavedFactionBuildings(GameInfo.SavedBuilding[] BuildingsToPlace, Faction OwningFaction)
@@ -118,20 +116,96 @@ public class TerrainMap
 
     public void DivideMap(List<Faction> parrCurrentFactions, float pfStartingRad, float pfEndingRad)
     {
+        //GameObject uniLandObject;
         float fFullCircleRad = 2 * Mathf.PI;
         float fAreaAngle = fFullCircleRad / parrCurrentFactions.Count;
         float fAngle = 0;
+        //int intPosx = 1;
+        //int intPosy = 1;
         foreach (Faction FactionToPlace in parrCurrentFactions)
         {
             FactionToPlace.FactionArea = new List<float[]>();
             FactionToPlace.FactionArea.Add(new float[] { pfStartingRad, pfEndingRad, fAngle, fAngle + fAreaAngle });
+
+            //if(FactionToPlace.GodTier == 0)
+            //{
+            //    intPosx = (pfStartingRad + pfEndingRad)/2 * Mathf.Sin((2 * fAngle + fAreaAngle) / 2) > 0 ? 1 : -1;
+            //    intPosy = (pfStartingRad + pfEndingRad) / 2 * Mathf.Cos((2 * fAngle + fAreaAngle) / 2) > 0 ? 1 : -1;
+            //    // pie shaped area, place pie area
+            //    uniLandObject = (GameObject)GameObject.Instantiate(Resources.Load("GodLands/" + FactionToPlace.Type.ToString() + "Pie"));
+            //    uniLandObject.transform.position = new Vector3(intPosx * 29, 0.001f, intPosy * 29);
+            //    uniLandObject.transform.Rotate(new Vector3(0, ((2 * fAngle + fAreaAngle)/2 * 180/Mathf.PI) + 90, 0));
+            //    uniLandObject.transform.localScale = new Vector3(82.5f, 82.5f, 82.5f);
+            //}
+            //else if(FactionToPlace.GodTier == 1)
+            //{
+            //    // Rounded rectangle
+            //    uniLandObject = (GameObject)GameObject.Instantiate(Resources.Load("GodLands/RoundedRect"));// + FactionToPlace.Type.ToString() + "RoundedRect"));
+            //    uniLandObject.transform.position = new Vector3(-0.2f, 0.15f, -0.05f);
+            //    uniLandObject.transform.Rotate(new Vector3(0, ((2 * fAngle + fAreaAngle) / 2 * 180 / Mathf.PI) + 30, 0));
+            //    uniLandObject.transform.localScale = new Vector3(82.5f, 82.5f, 82.5f);
+            //}
+            //else
+            //{
+            //    // Rounded rect3
+            //    uniLandObject = (GameObject)GameObject.Instantiate(Resources.Load("GodLands/RoundedRect3"));// + FactionToPlace.Type.ToString() + "RoundedRect"));
+            //    uniLandObject.transform.position = new Vector3(0.005f, 0.15f, 0.013f);
+            //    uniLandObject.transform.Rotate(new Vector3(0, ((2 * fAngle + fAreaAngle) / 2 * 180 / Mathf.PI) + 30, 0));
+            //    uniLandObject.transform.localScale = new Vector3(82.5f, 82.5f, 82.5f);
+            //}
+
             fAngle += fAreaAngle;
+        }
+    }
+
+    public void AddGodLandscapes(List<Faction> parrCurrentFactions)
+    {
+        GameObject uniLandObject;
+        int intPosx = 1;
+        int intPosy = 1;
+        foreach (Faction FactionToPlace in parrCurrentFactions)
+        {
+            foreach(float[] farrFactionArea in FactionToPlace.FactionArea)
+            {
+                if (farrFactionArea[0] == 0)
+                {
+                    intPosx = (farrFactionArea[0] + farrFactionArea[1]) / 2 * Mathf.Cos((farrFactionArea[2] + farrFactionArea[3]) / 2) > 0 ? 1 : -1;
+                    intPosy = (farrFactionArea[0] + farrFactionArea[1]) / 2 * Mathf.Sin((farrFactionArea[2] + farrFactionArea[3]) / 2) > 0 ? 1 : -1;
+                    // pie shaped area, place pie area
+                    uniLandObject = (GameObject)GameObject.Instantiate(Resources.Load("GodLands/" + FactionToPlace.Type.ToString() + "Pie"));
+                    uniLandObject.transform.position = new Vector3(0, 0.15f, 0);
+                    uniLandObject.transform.Rotate(new Vector3(0, ((farrFactionArea[2] + farrFactionArea[3]) / 2 * -180 / Mathf.PI) - 45, 0));
+                    uniLandObject.transform.localScale = new Vector3(82.5f, 82.5f, 82.5f);
+                }
+                else if (farrFactionArea[0] > 80 && farrFactionArea[0] < 85)
+                {
+                    // Rounded rectangle
+                    uniLandObject = (GameObject)GameObject.Instantiate(Resources.Load("GodLands/" + FactionToPlace.Type.ToString() + "RoundedRect"));
+                    uniLandObject.transform.position = new Vector3(0, 0.15f, 0);
+                    uniLandObject.transform.Rotate(new Vector3(0, -((farrFactionArea[2] + farrFactionArea[3]) / 2 * 180 / Mathf.PI) - 30, 0));
+                    uniLandObject.transform.localScale = new Vector3(82.5f, 82.5f, 82.5f);
+                }
+                else
+                {
+                    // Rounded rect3
+                    uniLandObject = (GameObject)GameObject.Instantiate(Resources.Load("GodLands/" + FactionToPlace.Type.ToString() + "RoundedRect3"));
+                    uniLandObject.transform.position = new Vector3(0, 0.15f, 0);
+                    uniLandObject.transform.Rotate(new Vector3(0, -((farrFactionArea[2] + farrFactionArea[3]) / 2 * 180 / Mathf.PI) - 30, 0));
+                    uniLandObject.transform.localScale = new Vector3(82.5f, 82.5f, 82.5f);
+                }
+            }
         }
     }
 
     public void DrawFactionArea(Faction faction)
     {
         OutlineFaction(faction);
+    }
+
+    public void HideMap()
+    {
+        Renderer uniMapRenderer = mgobjTerrainMap.GetComponent<Renderer>();
+        uniMapRenderer.enabled = false;
     }
 
     public void DrawMultipleFactionAreas(List<Faction> factions)
@@ -151,7 +225,7 @@ public class TerrainMap
         float fAngle = Random.Range(FactionArea[2] + (Building.BuildingRadiusSize / 100f), FactionArea[3] - (Building.BuildingRadiusSize / 100f));
         float fRad = Random.Range(FactionArea[0] + Building.BuildingRadiusSize, FactionArea[1] - Building.BuildingRadiusSize);
 
-        vec3StartingPosition = new Vector3(fRad * Mathf.Cos(fAngle), 0.5f, fRad * Mathf.Sin(fAngle));
+        vec3StartingPosition = new Vector3(fRad * Mathf.Cos(fAngle), 1.5f, fRad * Mathf.Sin(fAngle));
         return vec3StartingPosition;
     }
 

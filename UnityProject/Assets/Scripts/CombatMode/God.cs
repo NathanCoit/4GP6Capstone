@@ -34,8 +34,8 @@ public class God : Unit
     public void enterBattle()
     {
         isInBattle = true;
+        Camera.main.GetComponent<CombatCam>().resetCamera();
         unitGameObject().GetComponent<UnitObjectScript>().drawEnterBattleTiles();
-        
         UIMan.removeMenu();
         UIMan.godEnteringBattle = true;
     }
@@ -44,7 +44,7 @@ public class God : Unit
     {
         isInBattle = true;
         unitGameObject().transform.GetChild(0).gameObject.SetActive(true);
-        SoundMan.playGodEnterBattle();
+        SoundMan.playGodEnterBattle(this);
 
         List<Tile> travesableTiles = new List<Tile>();
 

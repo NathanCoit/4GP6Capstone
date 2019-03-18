@@ -38,7 +38,7 @@ public class SetupManager : MonoBehaviour
 
     //NOTE THIS CLASS IS WHERE WE WILL GET INFO FROM MANAGEMENT MODE
 
-    void Start()
+    void Awake()
     {
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
@@ -82,7 +82,7 @@ public class SetupManager : MonoBehaviour
             Debug.Log(gameInfo.PlayerFaction.GodName + " reporting in, boss");
 
             gameInfo.EnemyFaction.GodName = "Nathan";
-            gameInfo.EnemyFaction.Type = Faction.GodType.Ducks;
+            gameInfo.EnemyFaction.Type = Faction.GodType.Hounds;
 
             abilities = Faction.GetGodAbilities(gameInfo.PlayerFaction.Type);
             sAbilites = new string[abilities.Count];
@@ -100,7 +100,7 @@ public class SetupManager : MonoBehaviour
             gameInfo.EnemyFaction.Morale = 1;
 
             //Call start setup stuff
-            Start();
+            Awake();
         }
 #endif
     }

@@ -12,6 +12,10 @@ public class UIManager : MonoBehaviour
     public GameObject unitButton;
     public GameObject abilityPanel;
     public GameObject abilityButton;
+    public GameObject singleTargetIcon;
+    public GameObject multiTargetIcon;
+    public GameObject buffIcon;
+    public GameObject debuffIcon;
     public Camera mainCamera;
 
     private int uiPadding;
@@ -97,8 +101,11 @@ public class UIManager : MonoBehaviour
                 //Add all the buttons
                 makeUnitButtons();
 
+                //Make sure the right things are disabled/enabled
+                showMenuIfCanAct();
+
                 //If the unit is a god in battle, we play the god select sound, otherwise its the unit select sound
-                if(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() is God)
+                if (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() is God)
                     SoundMan.playGodSelect();
                 else
                     SoundMan.playUnitSelect();
@@ -136,12 +143,10 @@ public class UIManager : MonoBehaviour
             MapMan.newSelected = false;
 
         }
-        //Right click cleans up everything
+        //Right click does same thing as cancel button (not when using an ability though, as right click changes direction)
         else if(Input.GetMouseButtonDown(1) && GameObject.FindGameObjectsWithTag("TargetableTile").Length == 0)
         {
-            removeMenu();
-            MapMan.ClearSelection();
-            MapMan.Selected = null;
+            cancelButtonFunction();
         }
     }
 
@@ -170,6 +175,28 @@ public class UIManager : MonoBehaviour
             //Instantiate new button and make it the child of our panel
             GameObject newAbilityButton = Instantiate(abilityButton);
             newAbilityButton.transform.SetParent(selectedMenu.transform);
+
+            GameObject icon = new GameObject();
+
+            switch(Ability.LoadAbilityFromName(Abilities[i]).AbiltyType)
+            {
+                case Ability.ABILITYTYPE.SingleTarget:
+                    icon = Instantiate(singleTargetIcon);
+                    break;
+                case Ability.ABILITYTYPE.MultiTarget:
+                    icon = Instantiate(multiTargetIcon);
+                    break;
+                case Ability.ABILITYTYPE.Buff:
+                    icon = Instantiate(buffIcon);
+                    break;
+                case Ability.ABILITYTYPE.Debuff:
+                    icon = Instantiate(debuffIcon);
+                    icon.transform.eulerAngles = new Vector3(0, 0, 180);
+                    break;
+            }
+
+            icon.transform.SetParent(newAbilityButton.transform);
+            icon.transform.position = new Vector3(-(1/2f)*newAbilityButton.GetComponent<RectTransform>().rect.width + 10, 0, 0);
 
             //Screw unity ui scaling. This is very strange and long but it works
             newAbilityButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0,
@@ -220,6 +247,8 @@ public class UIManager : MonoBehaviour
 
         if (!BoardMan.canAttack(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
             attackButton.GetComponent<Button>().interactable = false;
+        else
+            attackButton.GetComponent<Button>().interactable = true;
 
 
         //Followed by the move button
@@ -255,6 +284,7 @@ public class UIManager : MonoBehaviour
     //Make the god button (when out of battle). Similar to above.
     private void makeGodButtons()
     {
+        //Abilites button
         GameObject abilitiesButton = Instantiate(unitButton);
         abilitiesButton.transform.SetParent(selectedMenu.transform);
         abilitiesButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0,
@@ -265,6 +295,7 @@ public class UIManager : MonoBehaviour
         EventTrigger abilityButtonTrigger = abilitiesButton.GetComponent<EventTrigger>();
         AddEventTrigger(abilityButtonTrigger, SoundMan.playUiHover, EventTriggerType.PointerEnter);
 
+        //Enter battle button
         GameObject enterBattleButton = Instantiate(unitButton);
         enterBattleButton.transform.SetParent(selectedMenu.transform);
         enterBattleButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 1 / 2f * (selectedMenu.GetComponent<RectTransform>().rect.height));
@@ -368,6 +399,22 @@ public class UIManager : MonoBehaviour
     public void showMenu()
     {
         UICanvas.enabled = true;
+    }
+
+    public void cancelButtonFunction()
+    {
+        if ((MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() is God) && godEnteringBattle)
+            (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() as God).isInBattle = false;
+        MapMan.ClearSelection();
+        godEnteringBattle = false;
+        MapMan.Selected = null;
+        removeMenu();
+    }
+
+    public void playerUiMouseOver(GameObject button)
+    {
+        if (button.GetComponent<Button>().interactable)
+            SoundMan.playUiHover();
     }
 
     //Clear menu without killing the panel. Currently not using, but could be useful later

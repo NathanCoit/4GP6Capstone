@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-class AttackWorshipperUpgrade : WorshipperUpgrade
+public class AttackWorshipperUpgrade : WorshipperUpgrade
 {
     public int DamageBuff;
 
@@ -15,6 +15,7 @@ class AttackWorshipperUpgrade : WorshipperUpgrade
         : base(pstrUpgradeName, pstrFlavourText, pintCost)
     {
         DamageBuff = pintDamageBuff;
+        UpgradeType = UPGRADETYPE.Attack;
     }
 
     public override string UpgradeDescription()

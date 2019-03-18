@@ -64,7 +64,7 @@ public class OnClickFunctions : MonoBehaviour
 
     public void SaveGame()
     {
-        ConfirmationBoxScript.AttachCallbackToConfirmationBox(GameManagerScript.SaveGame, "Do you want to save?");
+        ConfirmationBoxScript.AttachCallbackToConfirmationBox(() => GameManagerScript.SaveGame(true), "Do you want to save?");
     }
 
     public void BuyMiners()

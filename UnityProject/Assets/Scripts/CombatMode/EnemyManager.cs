@@ -77,10 +77,14 @@ public class EnemyManager : MonoBehaviour {
         //If we actually found a tile (we may not if the map is huge or I messed up)
         if (validTile != null)
         {
-            GameObject tempTile = Instantiate(BoardMan.MovableTile);
-            tempTile.GetComponent<Movable>().pos = new Vector2((int)validTile.getX(), (int)validTile.getZ());
-            tempTile.transform.position = new Vector3(validTile.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2, 
+            GameObject temp = Instantiate(BoardMan.MovableTile);
+            temp.GetComponent<Movable>().pos = new Vector2((int)validTile.getX(), (int)validTile.getZ());
+
+            temp.transform.position = new Vector3(validTile.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2,
                 validTile.getY() + 0.5f, validTile.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
+
+            temp.GetComponent<Movable>().setTarget(new Vector3(validTile.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2,
+                validTile.getY() + 0.5f, validTile.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2));
         }
 
     }

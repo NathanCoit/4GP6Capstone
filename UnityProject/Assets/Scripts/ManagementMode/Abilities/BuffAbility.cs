@@ -75,8 +75,8 @@ public class BuffAbility : Ability
                 Range = 3;
                 FaithCost = 10;
                 break;
-            case "poodle":
-                AbilityDescription = "Buff your dogs.";
+            case "betterprogramming":
+                AbilityDescription = "Buff your programs.";
                 BuffType = BUFFTYPE.Damage;
                 BuffAmount = 50;
                 BuffScalingAmount = 0.5f;

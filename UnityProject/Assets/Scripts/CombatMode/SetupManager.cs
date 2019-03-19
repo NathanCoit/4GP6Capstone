@@ -20,14 +20,16 @@ public class SetupManager : MonoBehaviour
 
     public BoardManager BoardMan;
     public MapManager MapMan;
-    
-    private string group1Worshippers;
-    private string group2Worshippers;
-    private string group3Worshippers;
+
+    private int numGroupsWorshippers;
+    private GameObject[] arrGroupLabels;
+    private GameObject[] arrGroupInputs;
+    private int[] arrGroupWorshippers;
 
     private GameObject OverlayCanvas;
     private GameObject BottomPanel;
     private Text[] arrTexts;
+
 
     public GameObject Unit;
     public GameObject God;
@@ -51,9 +53,20 @@ public class SetupManager : MonoBehaviour
     {
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
+
+        // required for startup stuff
+        arrGroupLabels = new GameObject[5];
+        arrGroupInputs = new GameObject[5];
+        arrGroupWorshippers = new int[5];
+        for (int i = 0; i < 5; i++) {
+            arrGroupLabels[i] = GameObject.Find("Group" + (i + 1) + "Label");
+            arrGroupInputs[i] = GameObject.Find("G" + (i + 1) + "Input");
+        }
         OverlayCanvas = GameObject.Find("OverlayCanvas");
         arrTexts = OverlayCanvas.GetComponentsInChildren<Text>();
         BottomPanel = GameObject.Find("Panel");
+
+
         GameObject GameInfoObject = GameObject.Find("GameInfo");
         if (GameInfoObject != null)
         {
@@ -72,7 +85,7 @@ public class SetupManager : MonoBehaviour
             enemyMorale = gameInfo.EnemyFaction.Morale;
 
             // Let players know how many worshippers they can assign to their groups
-            arrTexts[4].text = "The total amount of worshippers at your disposal : " + playerWorshiperCount;
+            arrTexts[6].text = "The total amount of worshippers at your disposal : " + playerWorshiperCount;
         }
 #if DEBUG
         else
@@ -97,7 +110,7 @@ public class SetupManager : MonoBehaviour
             Debug.Log(gameInfo.PlayerFaction.GodName + " reporting in, boss");
 
             gameInfo.EnemyFaction.GodName = "Nathan";
-            gameInfo.EnemyFaction.Type = Faction.GodType.Hounds;
+            gameInfo.EnemyFaction.Type = Faction.GodType.Robots;
 
             abilities = Faction.GetGodAbilities(gameInfo.PlayerFaction.Type);
             sAbilites = new string[abilities.Count];
@@ -125,6 +138,10 @@ public class SetupManager : MonoBehaviour
         Camera.main.GetComponent<CombatCam>().CameraMovementEnabled = false;
         //SplitWorshipers();
         BottomPanel.SetActive(false);
+        arrGroupLabels[3].SetActive(false);
+        arrGroupInputs[3].SetActive(false);
+        arrGroupLabels[4].SetActive(false);
+        arrGroupInputs[4].SetActive(false);
     }
 
     void Update()
@@ -176,10 +193,13 @@ public class SetupManager : MonoBehaviour
         {
             tiles = MapMan.tiles;
 
-            //Test Setup
-            CreatePlayerUnit(new Vector2(4, 3), tiles, int.Parse(group1Worshippers), 2, 1, playerMorale); 
-            CreatePlayerUnit(new Vector2(4, 4), tiles, int.Parse(group2Worshippers), 2, 1, playerMorale); //assumes we have 3 units per team
-            CreatePlayerUnit(new Vector2(4, 5), tiles, int.Parse(group3Worshippers), 2, 1, playerMorale);
+            // Create and place units onto map
+            numGroupsWorshippers = int.Parse(arrTexts[8].text); // need to get it again in case they never changed the # of groups
+            for (int i = 0; i < numGroupsWorshippers; i++)
+            {
+                // TODO: get start tiles from map information to actually load units in a formation rather than just a line
+                CreatePlayerUnit(new Vector2(4, (3+i)), tiles, arrGroupWorshippers[i], 2, 1, playerMorale);
+            }
             CreateGod(tiles, true, gameInfo.PlayerFaction.GodName, 3, 2, 50, 300);
 
             CreateEnemyUnit(new Vector2(6, 3), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
@@ -208,19 +228,99 @@ public class SetupManager : MonoBehaviour
         //enable the startup/division screen.. or at this point maybe just the animation of opening the screen?
     }
 
+    private void UpdateStartup(int old)
+    {
+        switch(old)
+        {
+            case 1:
+                arrGroupLabels[1].SetActive(true);
+                arrGroupInputs[1].SetActive(true);
+                break;
+            case 2:
+                if ((old > numGroupsWorshippers))
+                { // delete 2
+                    arrGroupLabels[1].SetActive(false);
+                    arrGroupInputs[1].SetActive(false);
+                } else
+                { // bring up 3
+                    arrGroupLabels[2].SetActive(true);
+                    arrGroupInputs[2].SetActive(true);
+                }
+                break;
+            case 3: 
+                if ((old > numGroupsWorshippers))
+                { // delete 3
+                    arrGroupLabels[2].SetActive(false);
+                    arrGroupInputs[2].SetActive(false);
+                } else
+                { // bring up 4
+                    arrGroupLabels[3].SetActive(true);
+                    arrGroupInputs[3].SetActive(true);
+                }
+                break;
+            case 4:
+                if ((old > numGroupsWorshippers))
+                { // delete 4
+                    arrGroupLabels[3].SetActive(false);
+                    arrGroupInputs[3].SetActive(false);
+                }
+                else
+                { // bring up 5
+                    arrGroupLabels[4].SetActive(true);
+                    arrGroupInputs[4].SetActive(true);
+                }
+                break;
+            case 5:
+                arrGroupLabels[4].SetActive(false);
+                arrGroupInputs[4].SetActive(false);
+                break;
+        }
+    }
+
+    public void IncreaseNumGroups()
+    {
+        numGroupsWorshippers = int.Parse(arrTexts[8].text);
+        if (numGroupsWorshippers < 5)
+        {
+            numGroupsWorshippers++;
+            arrTexts[8].text = numGroupsWorshippers.ToString();
+            UpdateStartup(numGroupsWorshippers - 1);
+        }
+    }
+
+    public void DecreaseNumGroups()
+    {
+        numGroupsWorshippers = int.Parse(arrTexts[8].text);
+        if (numGroupsWorshippers > 1)
+        {
+            numGroupsWorshippers--;
+            arrTexts[8].text = numGroupsWorshippers.ToString();
+            UpdateStartup(numGroupsWorshippers + 1);
+        }
+    }
+
     public void ConfirmSplit()
     {
         // function called when startup/division screen's Confirm button is pressed
         // need to check the sum doesn't exceed the number of worshippers player has access to
-        if ((int.Parse(group1Worshippers) + int.Parse(group2Worshippers) + int.Parse(group3Worshippers)) > playerWorshiperCount)
+        int worshipperSum = 0;
+        bool success = true;
+        numGroupsWorshippers = int.Parse(arrTexts[8].text);
+        for (int i = 0; i < numGroupsWorshippers; i++)
         {
-            arrTexts[5].text = "You've tried to assign too many worshippers!";
+            worshipperSum += arrGroupWorshippers[i];
+            if (arrGroupWorshippers[i] == 0)
+            {
+                arrTexts[7].text = "You can't have a group of zero!";
+                success = false;
+            } else if (worshipperSum > playerWorshiperCount)
+            {
+                arrTexts[7].text = "You've tried to assign too many worshippers!";
+                success = false;
+            }
         }
-        else if ((int.Parse(group1Worshippers) == 0) || (int.Parse(group2Worshippers) == 0) || (int.Parse(group3Worshippers) == 0))
-        {
-            arrTexts[5].text = "You can't have a group of zero!"; //for now, will work on having variable number of groups
-        }
-        else
+
+        if (success)
         {
             //close startup/division canvas and commence battle
             GameObject StartupPanel = GameObject.Find("StartupPanel");
@@ -234,17 +334,27 @@ public class SetupManager : MonoBehaviour
 
     public void Group1Worshippers(string value)
     {
-        group1Worshippers = value;
+        arrGroupWorshippers[0] = int.Parse(value);
     }
 
     public void Group2Worshippers(string value)
     {
-        group2Worshippers = value;
+        arrGroupWorshippers[1] = int.Parse(value);
     }
 
     public void Group3Worshippers(string value)
     {
-        group3Worshippers = value;
+        arrGroupWorshippers[2] = int.Parse(value);
+    }
+
+    public void Group4Worshippers(string value)
+    {
+        arrGroupWorshippers[3] = int.Parse(value);
+    }
+
+    public void Group5Worshippers(string value)
+    {
+        arrGroupWorshippers[4] = int.Parse(value);
     }
 
     public void CreateGod(Tile[,] tiles, bool isPlayer, string godName, int MaxMovement, int attackRange, int attackStregnth, int health)

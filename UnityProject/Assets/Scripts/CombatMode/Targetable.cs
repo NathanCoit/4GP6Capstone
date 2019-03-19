@@ -69,6 +69,8 @@ public class Targetable : MonoBehaviour {
             List<Unit> targets = new List<Unit>();
             bool valid = false;
 
+           // Debug.Log(ability.AbiltyType);
+
             //If it's single target we're just target the one tile
             if (ability.AbiltyType == Ability.ABILITYTYPE.SingleTarget)
             {
@@ -96,7 +98,6 @@ public class Targetable : MonoBehaviour {
                     GetComponent<MeshRenderer>().material = mousedOverInvalid;
                 }
             }
-
             //If it's multi target, we gotta worry about shapes
             else if (ability.AbiltyType == Ability.ABILITYTYPE.MultiTarget)
             {
@@ -127,8 +128,7 @@ public class Targetable : MonoBehaviour {
                     }
 
                 }
-
-
+                
                 //Get the line offset and facing the right way
                 if (aMi.AbilityShape == Ability.MultiTargetShape.Line)
                 {
@@ -202,6 +202,59 @@ public class Targetable : MonoBehaviour {
 
 
             }
+            else if (ability.AbiltyType == Ability.ABILITYTYPE.Buff)
+            {
+                if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
+                {
+                    targets = BoardMan.playerUnits;
+                }
+                else
+                {
+                    targets = BoardMan.enemyUnits;
+                }
+
+                foreach (Unit u in targets)
+                {
+                    if (pos.x == u.getPos().x && pos.y == u.getPos().y)
+                        valid = true;
+                }
+
+                if (valid)
+                {
+                    GetComponent<MeshRenderer>().material = mousedOverValid;
+                }
+                else
+                {
+                    GetComponent<MeshRenderer>().material = mousedOverInvalid;
+                }
+            }
+            else if (ability.AbiltyType == Ability.ABILITYTYPE.Debuff)
+            {
+                Debug.Log("This is a buff");
+                if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
+                {
+                    targets = BoardMan.enemyUnits;
+                }
+                else
+                {
+                    targets = BoardMan.playerUnits;
+                }
+
+                foreach (Unit u in targets)
+                {
+                    if (pos.x == u.getPos().x && pos.y == u.getPos().y)
+                        valid = true;
+                }
+
+                if (valid)
+                {
+                    GetComponent<MeshRenderer>().material = mousedOverValid;
+                }
+                else
+                {
+                    GetComponent<MeshRenderer>().material = mousedOverInvalid;
+                }
+            }
 
             //Actually clicking (using the ability)
             if ((Input.GetMouseButtonDown(0) || autoClick) && !buttonSwitch)
@@ -219,7 +272,7 @@ public class Targetable : MonoBehaviour {
                             target = u;
                     }
 
-                    target.setWorshiperCount(target.getWorshiperCount() - aSi.AbilityDamage);
+                    target.dealDamage(aSi.AbilityDamage);
 
                     //Kill target if it died
                     if (target.WorshiperCount <= 0)
@@ -233,7 +286,7 @@ public class Targetable : MonoBehaviour {
                     MultiTargetAbility aMi = (MultiTargetAbility)MultiTargetAbility.LoadAbilityFromName(ability.AbilityName);
                     foreach (Unit u in targets)
                     {
-                        u.setWorshiperCount(u.getWorshiperCount() - aMi.AbilityDamage);
+                        u.dealDamage(aMi.AbilityDamage);
                         if (u.WorshiperCount <= 0)
                         {
                             BoardMan.killUnit(u);
@@ -246,17 +299,27 @@ public class Targetable : MonoBehaviour {
                     }
 
                 }
-                // TODO
                 else if (ability.AbiltyType == Ability.ABILITYTYPE.Buff)
                 {
-                    Debug.Log("Using buff ability " + ability.AbilityName + " !!!");
+                    Unit target = new Unit();
+                    foreach (Unit u in targets)
+                    {
+                        if (pos.x == u.getPos().x && pos.y == u.getPos().y)
+                            target = u;
+                    }
 
-                    //Ability.BUFFTYPE.Damage;
+                    target.addNewStatusEffect(ability, true);
                 }
-                // TODO
                 else if (ability.AbiltyType == Ability.ABILITYTYPE.Debuff)
                 {
-                    Debug.Log("Using debuff ability " + ability.AbilityName + " !!!");
+                    Unit target = new Unit();
+                    foreach (Unit u in targets)
+                    {
+                        if (pos.x == u.getPos().x && pos.y == u.getPos().y)
+                            target = u;
+                    }
+
+                    target.addNewStatusEffect(ability, false);
 
                 }
 

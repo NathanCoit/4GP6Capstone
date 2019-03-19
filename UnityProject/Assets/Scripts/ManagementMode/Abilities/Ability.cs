@@ -48,7 +48,6 @@ public class Ability{
         Burn,
         Poison,
         Slow,
-        Charm,
         Blind
     }
 

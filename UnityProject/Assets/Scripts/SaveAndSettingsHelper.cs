@@ -84,6 +84,9 @@ public class SaveAndSettingsHelper
             pmusGameInfo.WorshipperMultipliers = musLoadedSaveData.WorshipperMultipliers;
             pmusGameInfo.MaterialMultipliers = musLoadedSaveData.MaterialMultipliers;
             pmusGameInfo.TutorialFlag = musLoadedSaveData.TutorialFlag;
+            pmusGameInfo.WorshipperAttackBuffs = musLoadedSaveData.WorshipperAttackBuffs;
+            pmusGameInfo.WorshipperDefenseBuffs = musLoadedSaveData.WorshipperDefenseBuffs;
+            pmusGameInfo.WorshipperMovementBuffs = musLoadedSaveData.WorshipperMovementBuffs;
             pmusGameInfo.FromSave = true;
             pmusGameInfo.NewGame = false;
             SceneManager.LoadScene("UnderGodScene");

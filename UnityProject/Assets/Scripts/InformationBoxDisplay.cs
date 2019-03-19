@@ -54,14 +54,12 @@ public class InformationBoxDisplay : MonoBehaviour
     {
         InformationBoxTextObject.text = pstrInformation;
         InformationOkButton.onClick.RemoveAllListeners();
-        if(puniCallback == null)
+        if(puniCallback != null)
         {
-            InformationOkButton.onClick.AddListener(DefaultOkCallback);
-        }
-        else
-        {
+            
             InformationOkButton.onClick.AddListener(puniCallback);
         }
+        InformationOkButton.onClick.AddListener(DefaultOkCallback);
         InformationOkButton.onClick.AddListener(() => SoundManager.PlaySound("MouseClick"));
         InformationOkButton.GetComponentInChildren<Text>().text = pstrOkButtonText;
         muniAnimator.SetBool("Open", true);
@@ -73,11 +71,11 @@ public class InformationBoxDisplay : MonoBehaviour
     /// chance of showing the same text box again and tracking progress for next tutorial box
     /// </summary>
     /// <param name="penumTutorialFlag"></param>
-    public void DisplayTutorialBox(TutorialFlag penumTutorialFlag)
+    public void DisplayTutorialBox(TutorialFlag penumTutorialFlag, UnityAction puniCallback = null)
     {
         if((int)penumTutorialFlag <= TutorialInformationText.Count)
         {
-            DisplayInformationBox(TutorialInformationText[(int)penumTutorialFlag]);
+            DisplayInformationBox(TutorialInformationText[(int)penumTutorialFlag], puniCallback);
         }
     }
 

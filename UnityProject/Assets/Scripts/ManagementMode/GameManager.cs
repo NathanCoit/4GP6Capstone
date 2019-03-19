@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     public GameObject GameInfoObjectPrefab;
     public GameObject RewardUI;
     public GameObject AudioObject;
+    public GameObject UpgradeUI;
     public float MapRadius;
     public int BuildingCostModifier;
     public float MinimumMorale;
@@ -53,6 +54,7 @@ public class GameManager : MonoBehaviour
     public GameObject VictoryPanel;
     public float PlayerMoraleCap;
     public InformationBoxDisplay InformationBoxController;
+    public WorshipperUpgradeController UpgradeController;
 
     // Public accessor variables, only to be accessed by other scripts, not modified
     // Mainly for testing purposes
@@ -93,6 +95,7 @@ public class GameManager : MonoBehaviour
         HotKeyManager = new HotKeyManager();
         Building.BuildingRadiusSize = BuildingRadius;
         InitializeGameInfo();
+        // Keep mouse confined to screen, if player tabs out, game is paused.
         Cursor.lockState = CursorLockMode.Confined;
         if (!GameInfo.NewGame)
         {
@@ -117,8 +120,12 @@ public class GameManager : MonoBehaviour
         {
             musFaction.SetHidden(true);
         }
-        GameMap.DrawFactionArea(PlayerFaction);
-        
+        //GameMap.DrawFactionArea(PlayerFaction);
+        //GameMap.DrawMultipleFactionAreas(CurrentFactions);
+        // Hide the map. Keep map object for collision detection, but does not need to be visible as individual god textures cover it
+        GameMap.HideMap();
+        GameMap.AddGodLandscapes(CurrentFactions);
+        UpgradeController.PlayerFaction = PlayerFaction;
     }
 
     /// <summary>
@@ -316,6 +323,18 @@ public class GameManager : MonoBehaviour
         PlayerFaction = new Faction(GameInfo.PlayerFaction);
         GameMap.PlaceSavedFactionBuildings(GameInfo.PlayerFaction.OwnedBuildings, PlayerFaction);
         PlayerVillage = PlayerFaction.OwnedBuildings.Find(villageBuilding => villageBuilding.BuildingType == Building.BUILDING_TYPE.VILLAGE);
+        foreach(int intAttackUpgrade in GameInfo.WorshipperAttackBuffs)
+        {
+            PlayerFaction.CurrentUpgrades.Add(new AttackWorshipperUpgrade("", "", 0, intAttackUpgrade));
+        }
+        foreach(int intDefenseUpgrade in GameInfo.WorshipperDefenseBuffs)
+        {
+            PlayerFaction.CurrentUpgrades.Add(new DefenseWorshipperUpgrade("", "", 0, intDefenseUpgrade));
+        }
+        foreach(int intMovementUpgrade in GameInfo.WorshipperMovementBuffs)
+        {
+            PlayerFaction.CurrentUpgrades.Add(new MovementWorshipperUpgrade("", "", 0, intMovementUpgrade));
+        }
         CurrentFactions.Add(PlayerFaction);
     }
 
@@ -423,11 +442,44 @@ public class GameManager : MonoBehaviour
         GameInfo.FromSave = false;
         GameInfo.MaterialMultipliers = marrMaterialMultipliers.ToArray();
         GameInfo.WorshipperMultipliers = marrWorshipperMultipliers.ToArray();
-        SceneManager.LoadScene("CombatMode");
+        List<int> arrAttackUpgrades = new List<int>();
+        List<int> arrDefenseUpgrades = new List<int>();
+        List<int> arrMovementUpgrades = new List<int>();
+        foreach (WorshipperUpgrade musUpgrade in PlayerFaction.CurrentUpgrades)
+        {
+            if (musUpgrade.UpgradeType == WorshipperUpgrade.UPGRADETYPE.Attack)
+            {
+                arrAttackUpgrades.Add(((AttackWorshipperUpgrade)musUpgrade).DamageBuff);
+            }
+            else if (musUpgrade.UpgradeType == WorshipperUpgrade.UPGRADETYPE.Defense)
+            {
+                arrDefenseUpgrades.Add(((DefenseWorshipperUpgrade)musUpgrade).DefenseBuff);
+            }
+            else if (musUpgrade.UpgradeType == WorshipperUpgrade.UPGRADETYPE.Movement)
+            {
+                arrMovementUpgrades.Add(((MovementWorshipperUpgrade)musUpgrade).MovementBuff);
+            }
+        }
+        GameInfo.WorshipperAttackBuffs = arrAttackUpgrades.ToArray();
+        GameInfo.WorshipperDefenseBuffs = arrDefenseUpgrades.ToArray();
+        GameInfo.WorshipperMovementBuffs = arrMovementUpgrades.ToArray();
+        //SceneManager.LoadScene("CombatMode");
+        StartCoroutine(LoadCombatSceneAsync());
+    }
+
+    private IEnumerator LoadCombatSceneAsync()
+    {
+        AsyncOperation uniAsyncLoad = SceneManager.LoadSceneAsync("CombatMode");
+
+        // Wait until the asynchronous scene fully loads
+        while (!uniAsyncLoad.isDone)
+        {
+            yield return null;
+        }
     }
 
     /// <summary>
-    /// Method to decide the outocome of a battle between two enemy factions
+    /// Method to decide the outcome of a battle between two enemy factions
     /// </summary>
     /// <param name="pmusFactionOne"></param>
     /// <param name="pmusFactionTwo"></param>
@@ -446,7 +498,7 @@ public class GameManager : MonoBehaviour
             musWinningFaction = pmusFactionTwo;
         }
         musWinningFaction.MaterialCount += musLosingFaction.MaterialCount;
-        musWinningFaction.WorshipperCount +=(int)(0.5 * musLosingFaction.MaterialCount);
+        musWinningFaction.WorshipperCount +=(int)(0.2 * musLosingFaction.WorshipperCount);
         foreach(float[] arrFactionArea in musLosingFaction.FactionArea)
         {
             musWinningFaction.FactionArea.Add(arrFactionArea);
@@ -592,13 +644,13 @@ public class GameManager : MonoBehaviour
             uniRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(uniRay, out uniHitInfo))
             {
-                BufferedBuilding.BuildingPosition = new Vector3(uniHitInfo.point.x, 0.5f, uniHitInfo.point.z);
+                BufferedBuilding.BuildingPosition = new Vector3(uniHitInfo.point.x, 1.5f, uniHitInfo.point.z);
             }
             // User left clicked
             if (Input.GetMouseButtonDown(0))
             {
                 // Try to place the building
-                if (GameMap.PlaceBuilding(BufferedBuilding, new Vector3(uniHitInfo.point.x, 0.5f, uniHitInfo.point.z)))
+                if (GameMap.PlaceBuilding(BufferedBuilding, new Vector3(uniHitInfo.point.x, 1.5f, uniHitInfo.point.z)))
                 {
                     // Reenable the collider component for selecting
                     BufferedBuilding.BuildingObject.GetComponent<Collider>().enabled = true;
@@ -653,7 +705,6 @@ public class GameManager : MonoBehaviour
         int intWorshippersToAdd = 0;
         float fWorPerSec = 0;
         float fMatPerSec = 0;
-        
         // Don't run in paused state.
         if (CurrentFactions != null 
             && (CurrentMenuState != MENUSTATE.Paused_State
@@ -820,6 +871,7 @@ public class GameManager : MonoBehaviour
         {
             musChallengingFaction = CurrentFactions.Find(MatchingFaction => MatchingFaction != PlayerFaction && MatchingFaction.GodTier == CurrentTier);
             Time.timeScale = 0;
+            CurrentMenuState = MENUSTATE.End_Game_State;
             InformationBoxController.DisplayInformationBox(
                 musChallengingFaction.GodName + " has challenged you! Prepare to battle.",
                 () => EnterCombatMode(musChallengingFaction),
@@ -922,6 +974,7 @@ public class GameManager : MonoBehaviour
         {
             CurrentMenuState = MENUSTATE.Building_Selected_State;
         }
+        UpgradeUI.SetActive(blnActive);
         Camera.main.GetComponent<Cam>().CameraMovementEnabled = !blnActive;
     }
 
@@ -1002,14 +1055,20 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Method to pause the game when pause menu is open.
     /// </summary>
-    public void PauseGame()
+    public void PauseGame(bool blnDisplayOptionsMenu = true)
     {
         // Set timescale to 0 and disable camera movement.
         Time.timeScale = 0;
         Camera.main.GetComponent<Cam>().CameraMovementEnabled = false;
-        menumLastMenuState = CurrentMenuState;
+        if(CurrentMenuState != MENUSTATE.Paused_State)
+        {
+            menumLastMenuState = CurrentMenuState;
+        }
         CurrentMenuState = MENUSTATE.Paused_State;
-        PausedMenuPanel.SetActive(true);
+        if(blnDisplayOptionsMenu)
+        {
+            PausedMenuPanel.SetActive(true);
+        }   
     }
 
     /// <summary>
@@ -1197,7 +1256,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Save the current game state to a file.
     /// </summary>
-    public void SaveGame()
+    public void SaveGame(bool pblnNotifyUser = false)
     {
         // Set data to save
         GameInfo.PlayerFaction = GameInfo.CreateSavedFaction(PlayerFaction);
@@ -1217,13 +1276,43 @@ public class GameManager : MonoBehaviour
         GameInfo.EnemyChallengeTimer = EnemyChallengeTimer;
         GameInfo.EnemyFaction = new GameInfo.SavedFaction();
         GameInfo.TutorialFlag = menumTutorialFlag;
-        if(SaveAndSettingsHelper.SaveGame(Application.persistentDataPath + "/SaveFiles", GameInfo))
+        List<int> arrAttackUpgrades = new List<int>();
+        List<int> arrDefenseUpgrades = new List<int>();
+        List<int> arrMovementUpgrades = new List<int>();
+        foreach (WorshipperUpgrade musUpgrade in PlayerFaction.CurrentUpgrades)
         {
-            InformationBoxController.DisplayInformationBox("Saved Successfully!");
+            if(musUpgrade.UpgradeType == WorshipperUpgrade.UPGRADETYPE.Attack)
+            {
+                arrAttackUpgrades.Add(((AttackWorshipperUpgrade)musUpgrade).DamageBuff);
+            }
+            else if(musUpgrade.UpgradeType == WorshipperUpgrade.UPGRADETYPE.Defense)
+            {
+                arrDefenseUpgrades.Add(((DefenseWorshipperUpgrade)musUpgrade).DefenseBuff);
+            }
+            else if (musUpgrade.UpgradeType == WorshipperUpgrade.UPGRADETYPE.Movement)
+            {
+                arrMovementUpgrades.Add(((MovementWorshipperUpgrade)musUpgrade).MovementBuff);
+            }
+        }
+        GameInfo.WorshipperAttackBuffs = arrAttackUpgrades.ToArray();
+        GameInfo.WorshipperDefenseBuffs = arrDefenseUpgrades.ToArray();
+        GameInfo.WorshipperMovementBuffs = arrMovementUpgrades.ToArray();
+
+        if (SaveAndSettingsHelper.SaveGame(Application.persistentDataPath + "/SaveFiles", GameInfo))
+        {
+            if(pblnNotifyUser)
+            {
+                PauseGame(false);
+                InformationBoxController.DisplayInformationBox("Saved Successfully!", () => UnPauseGame());
+            }
         }
         else
         {
-            InformationBoxController.DisplayInformationBox("Something went wrong while saving!");
+            if(pblnNotifyUser)
+            {
+                PauseGame(false);
+                InformationBoxController.DisplayInformationBox("Something went wrong while saving!", () => UnPauseGame());
+            }
         }
     }
 
@@ -1251,7 +1340,8 @@ public class GameManager : MonoBehaviour
     {
         if(menumTutorialFlag == penumFlagToCheckFor)
         {
-            InformationBoxController.DisplayTutorialBox(menumTutorialFlag++);
+            PauseGame(false);
+            InformationBoxController.DisplayTutorialBox(menumTutorialFlag++, () => UnPauseGame());
         }
     }
 

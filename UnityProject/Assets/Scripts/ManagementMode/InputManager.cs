@@ -275,11 +275,14 @@ public class InputManager : MonoBehaviour
     /// </summary>
     private void CheckUpgradeStateInput()
     {
-        if (Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"]))
+        if (Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"]) || Input.GetKeyDown(hotKeyManager.HotKeys["BlackSmithUIKeyCode"]))
         {
             GameManagerScript.EnterBuildingSelectedMenuState();
             GameManagerScript.SetUpgradeUIActive(false);
-            CurrentKeyDown = hotKeyManager.HotKeys["EscapeKeyCode"];
+            CurrentKeyDown 
+                = Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"]) 
+                ? hotKeyManager.HotKeys["EscapeKeyCode"] 
+                : hotKeyManager.HotKeys["BlackSmithUIKeyCode"];
         }
     }
 

@@ -72,8 +72,8 @@ public class Attackable : MonoBehaviour
             int damage = (int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getAttackStrength();
 
             //Set remaining worshippers accordingly
-            attackedUnit.setWorshiperCount(attackedUnit.getWorshiperCount() - damage);
-
+            attackedUnit.setWorshiperCount(attackedUnit.getWorshiperCount() - Mathf.Clamp((damage - attackedUnit.getDefenseBuff()), 0, 10000000));
+            
             SoundMan.playUnitAttack();
 
             Camera.main.GetComponent<CombatCam>().lookAt(attackedUnit.unitGameObject().transform.position);

@@ -19,12 +19,14 @@ public class Unit
     private List<int> depths = new List<int>();
     private HashSet<Tile> visited = new HashSet<Tile>();
 
-    public int Movement = 2;
+    public int Movement;
     public int MaxMovement;
     public int attackRange;
     public float morale;
     public bool isPlayer;
     public int MovePriority;
+
+    private List<StatusEffect> activeStatusEffects;
 
     //For use without models, can be removed later
     public int WorshiperCount;
@@ -49,6 +51,7 @@ public class Unit
             parentObject.GetComponent<MeshRenderer>().material = parentObject.GetComponent<UnitObjectScript>().enemyNotAvailable;
         */
 
+        activeStatusEffects = new List<StatusEffect>();
 
         AttackStrength = WorshiperCount * 0.25f * morale;
 
@@ -162,7 +165,107 @@ public class Unit
         BoardMan.checkIfSwitchTurn();
     }
 
-    
+    public void addNewStatusEffect(Ability a, bool isBuff)
+    {
+        if(isBuff)
+        {
+            activeStatusEffects.Add(new StatusEffect(a as BuffAbility, 2));
+        }
+        else
+        {
+            activeStatusEffects.Add(new StatusEffect(a as DebuffAbility, 2));
+        }
+
+        Debug.Log(a.AbilityName);
+    }
+
+    public void updateStatusEffects()
+    {
+        foreach(StatusEffect effect in activeStatusEffects)
+        {
+            effect.decreaseDuration();
+            if (effect.checkTurnsLeft() == 0)
+            {
+                activeStatusEffects.Remove(effect);
+            }
+
+        }
+        //appyStatusEffects();
+    }
+
+    public void dealDamage(int damage)
+    {
+
+    }
+
+    private int damageBuff;
+    private int defenseBuff;
+    private int speedBuff;
+    private bool shieldBuff;
+
+    public int getSpeedBuff()
+    {
+        return speedBuff;
+    }
+
+    public int getDefenseBuff()
+    {
+        return defenseBuff;
+    }
+
+    public void appyStatusEffects()
+    {
+        foreach (StatusEffect effect in activeStatusEffects)
+        {
+            damageBuff = 0;
+            defenseBuff = 0;
+            speedBuff = 0;
+
+            switch(effect.getType())
+            {
+                //Buffs
+                case "Healing":
+                    WorshiperCount += (int)(Ability.LoadAbilityFromName(effect.getAbility()) as BuffAbility).BuffAmount;
+                    break;
+                case "Damage":
+                    damageBuff += (int)(Ability.LoadAbilityFromName(effect.getAbility()) as BuffAbility).BuffAmount;
+                    break;
+                case "Defense":
+                    defenseBuff += (int)(Ability.LoadAbilityFromName(effect.getAbility()) as BuffAbility).BuffAmount;
+                    break;
+                case "Shield":
+                    shieldBuff = true;
+                    break;
+                case "Speed":
+                    speedBuff += (int)(Ability.LoadAbilityFromName(effect.getAbility()) as BuffAbility).BuffAmount;
+                    break;
+
+                //Debuffs
+                case "DamageReduction":
+                    break;
+                case "DefenseReduction":
+                    break;
+                case "Stun":
+                    break;
+                case "Paralyze":
+                    break;
+                case "Burn":
+                    break;
+                case "Poison":
+                    break;
+                case "Slow":
+                    break;
+                case "Blind":
+                    break;
+            }
+        }
+    }
+
+    public void beginTurn()
+    {
+        AllowAct();
+        appyStatusEffects();
+    }
 
     //For spoofing clicks for testing
     public void TestClick()
@@ -211,7 +314,7 @@ public class Unit
 
     public float getAttackStrength()
     {
-        return AttackStrength;
+        return AttackStrength + damageBuff;
     }
 
     //For using skill, will be done later (if units ever have skills)

@@ -23,7 +23,7 @@ public class HotKeyManager
         { "BuildingMoveKeyCode", KeyCode.M },
         { "BlackSmithUIKeyCode", KeyCode.X },
         { "BuyMinersKeyCode", KeyCode.K },
-        { "StartBattleKeyCode", KeyCode.B }
+        { "StartBattleKeyCode", KeyCode.C }
     };
 
     /// <summary>

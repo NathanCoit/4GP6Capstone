@@ -15,13 +15,21 @@ public class InformationBoxDisplay : MonoBehaviour
     public enum TutorialFlag
     {
         NewGame,
-        FirstMine
+        FirstMine,
+        FirstMiners,
+        FirstAltar,
+        FirstAbility
     };
+    private HotKeyManager musHotkeyManager;
 
     public static List<string> TutorialInformationText = new List<string>
     {
         "Welcome to UnderGods! Start by opening the build menu with 'B' and building a Mine with the 'S' key.",
-        "You've built your first mine! Select the mine by clicking it. Spend worshippers to buy miners with the 'K' key to start mining resources!"
+        "You've built your first mine! Select the mine by clicking it. Spend worshippers to buy miners with the 'K' key to start mining resources!",
+        "Now that you have some miners, materials will be mined! Use these materials to build an Altar from the build menu.",
+        "Altars will generate worshippers over time. Worshippers will help you in combat and can be used as miners at mines. " +
+        "Worshippers will also generate God Bucks which can be spend at the God Shop. Open the God Shop with the 'V' key.",
+        "Now that you have an ability, it's time to challenge an enemy god. Find the village of an enemy god and click 'C' to challenge."
     };
 
     public GameObject InformationBoxGameObject;
@@ -38,6 +46,8 @@ public class InformationBoxDisplay : MonoBehaviour
 
     private void Start()
     {
+        musHotkeyManager = new HotKeyManager();
+        musHotkeyManager.LoadHotkeyProfile();
         muniAnimator = InformationBoxGameObject.GetComponent<Animator>();
         SoundManager.AttachOnHoverSoundToObject("MouseHover", InformationOkButton.gameObject);
     }

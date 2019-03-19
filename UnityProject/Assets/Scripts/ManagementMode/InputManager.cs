@@ -298,4 +298,9 @@ public class InputManager : MonoBehaviour
             GameManagerScript.PauseGame();
         }
     }
+
+    public void RefreshHotkeyProfile()
+    {
+        hotKeyManager.LoadHotkeyProfile();
+    }
 }

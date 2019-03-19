@@ -8,12 +8,14 @@ public class God : Unit
     public bool isInBattle;
     private string[] Abilites;
     private SoundManager SoundMan;
+    private BoardManager BoardMan;
 
     public God(string name) : base()
     {
         godName = name;
         isInBattle = false;
         SoundMan = GameObject.FindGameObjectWithTag("SoundManager").GetComponent<SoundManager>();
+        BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
     }
 
     public void setAbilities(string[] Abilites)
@@ -50,7 +52,7 @@ public class God : Unit
 
         foreach (Tile t in MapMan.tiles)
         {
-            if (t.isTraversable())
+            if (t.isTraversable() && !BoardMan.findTeamTiles(BoardMan.playerUnits).Contains(t) && !BoardMan.findTeamTiles(BoardMan.enemyUnits).Contains(t))
             {
                 travesableTiles.Add(t);
             }
@@ -66,7 +68,7 @@ public class God : Unit
     {
         if(isInBattle)
             parentObject.transform.position = new Vector3(tiles[(int)pos.x, (int)pos.y].getX() + ((1 - parentObject.transform.lossyScale.x) / 2) + parentObject.transform.lossyScale.x / 2,
-                tiles[(int)pos.x, (int)pos.y].getY() + parentObject.transform.lossyScale.y - 1.5f, 
+                tiles[(int)pos.x, (int)pos.y].getY() + parentObject.transform.lossyScale.y - 1.0f, 
                 tiles[(int)pos.x, (int)pos.y].getZ() + ((1 - parentObject.transform.lossyScale.z) / 2) + parentObject.transform.lossyScale.x / 2);
     }
 

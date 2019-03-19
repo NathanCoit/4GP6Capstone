@@ -12,6 +12,7 @@ public class OnClickFunctions : MonoBehaviour
 {
     public GameObject GameManagerObject;
     private GameManager GameManagerScript;
+    public InputManager InputScript;
 
     public GameObject MenuPanelObject;
     private MenuPanelControls MenuPanelController;
@@ -42,6 +43,7 @@ public class OnClickFunctions : MonoBehaviour
     {
         SaveAndSettingsHelper.SaveSettingsFromOptionsMenu();
         GameManagerScript.HotKeyManager.LoadHotkeyProfile();
+        InputScript.RefreshHotkeyProfile();
         MenuPanelController.SetButtonText();
         SaveAndSettingsHelper.ApplyGameSettings();
         GameManagerScript.ReturnToPauseMenu();

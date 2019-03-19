@@ -75,8 +75,8 @@ public class MultiTargetAbility : Ability
                 Range = 3;
                 FaithCost = 10;
                 break;
-            case "corgi":
-                AbilityDescription = "Shoot a godly dog laser to erase your foes.";
+            case "eyelaser":
+                AbilityDescription = "Shoot a godly eye laser to erase your foes.";
                 AbilityDamage = 100;
                 AbilityScalingDamage = 0.8f;
                 AbilityShape = MultiTargetShape.Line;

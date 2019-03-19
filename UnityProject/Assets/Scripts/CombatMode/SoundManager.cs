@@ -161,13 +161,13 @@ public class SoundManager : MonoBehaviour
 
 
                 //Tier 2
-                case Faction.GodType.Hounds:
+                case Faction.GodType.Robots:
                     activeBGMList = houndGodBGMs;
                     enemyGodTurnStartSounds = houndsGodTurnStartSounds;
                     enemyUnitDeathSounds = houndsUnitDeathSounds;
                     enemyGodEnterBattleSounds = houndsGodEnterBattleSounds;
                     break;
-                case Faction.GodType.Jazz:
+                case Faction.GodType.Smiths:
                     activeBGMList = jazzGodBGMs;
                     enemyGodTurnStartSounds = jazzGodTurnStartSounds;
                     enemyUnitDeathSounds = jazzUnitDeathSounds;
@@ -194,7 +194,7 @@ public class SoundManager : MonoBehaviour
                     enemyUnitDeathSounds = waterUnitDeathSounds;
                     enemyGodEnterBattleSounds = waterGodEnterBattleSounds;
                     break;
-                case Faction.GodType.Earth:
+                case Faction.GodType.Lightning:
                     activeBGMList = earthGodBGMs;
                     enemyGodTurnStartSounds = earthGodTurnStartSounds;
                     enemyUnitDeathSounds = earthUnitDeathSounds;

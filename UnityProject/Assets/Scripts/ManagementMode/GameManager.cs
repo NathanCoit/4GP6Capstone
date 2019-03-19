@@ -249,7 +249,7 @@ public class GameManager : MonoBehaviour
             // Enemy gods starting buildings are fully upgraded up to their tier level.
             for (int i = 0; i < enemyFaction.GodTier; i++)
             {
-                musEnemyBuilding.UpgradeBuilding();
+                musEnemyBuilding.UpgradeBuilding(false, true);
             }
             intAttempts = 0;
             // Generate starting buildings based on enemy difficulty
@@ -1250,6 +1250,7 @@ public class GameManager : MonoBehaviour
         {
             mmusSoundManager.PlaySound("NotMaterials");
         }
+        CheckForAndDisplayTutorialBox(InformationBoxDisplay.TutorialFlag.FirstMiners);
         EnterBuildingSelectedMenuState();
     }
 

@@ -14,12 +14,12 @@ public class Faction
         Shoes,
         Forks,
         Ducks,
-        Jazz,
-        Hounds,
+        Smiths,
+        Robots,
         Love,
         Fire,
         Water,
-        Earth //etc.
+        Lightning //etc.
     }
     public static List<GodType> TierOneGods = new List<GodType>
     {
@@ -31,8 +31,8 @@ public class Faction
 
     public static List<GodType> TierTwoGods = new List<GodType>
     {
-        GodType.Jazz,
-        GodType.Hounds,
+        GodType.Smiths,
+        GodType.Robots,
         GodType.Love
     };
 
@@ -40,7 +40,7 @@ public class Faction
     {
         GodType.Fire,
         GodType.Water,
-        GodType.Earth
+        GodType.Lightning
     };
 
     public string GodName { get; private set; }
@@ -174,10 +174,10 @@ public class Faction
                 GodAbilities.Add(Ability.LoadAbilityFromName("Quack?"));
                 GodAbilities.Add(Ability.LoadAbilityFromName("Quack¿"));
                 break;
-            case GodType.Earth:
-                GodAbilities.Add(Ability.LoadAbilityFromName("Tornado"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Earthquake"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Root"));
+            case GodType.Lightning:
+                GodAbilities.Add(Ability.LoadAbilityFromName("Smite"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Electric Field"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Stun"));
                 break;
             case GodType.Fire:
                 GodAbilities.Add(Ability.LoadAbilityFromName("FireBall"));
@@ -191,17 +191,17 @@ public class Faction
                 GodAbilities.Add(Ability.LoadAbilityFromName("Eat Spaghett"));
                 GodAbilities.Add(Ability.LoadAbilityFromName("Fork Flash"));
                 break;
-            case GodType.Hounds:
-                GodAbilities.Add(Ability.LoadAbilityFromName("Chihuahua"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Poodle"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Corgi"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Cat"));
+            case GodType.Robots:
+                GodAbilities.Add(Ability.LoadAbilityFromName("Electrocute"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Eye Laser"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Analyze"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Better Programming"));
                 break;
-            case GodType.Jazz:
-                GodAbilities.Add(Ability.LoadAbilityFromName("Baton Slap"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Jazz Hands"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Sax Solo"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Out of Tune Solo"));
+            case GodType.Smiths:
+                GodAbilities.Add(Ability.LoadAbilityFromName("Hammer Slap"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Drop Anvil"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Sharpen Arms"));
+                GodAbilities.Add(Ability.LoadAbilityFromName("Armor Break"));
                 break;
             case GodType.Love:
                 GodAbilities.Add(Ability.LoadAbilityFromName("Blow A Kiss"));

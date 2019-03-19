@@ -272,7 +272,7 @@ public class Targetable : MonoBehaviour {
                             target = u;
                     }
 
-                    target.setWorshiperCount(target.getWorshiperCount() - aSi.AbilityDamage);
+                    target.dealDamage(aSi.AbilityDamage);
 
                     //Kill target if it died
                     if (target.WorshiperCount <= 0)
@@ -286,7 +286,7 @@ public class Targetable : MonoBehaviour {
                     MultiTargetAbility aMi = (MultiTargetAbility)MultiTargetAbility.LoadAbilityFromName(ability.AbilityName);
                     foreach (Unit u in targets)
                     {
-                        u.setWorshiperCount(u.getWorshiperCount() - aMi.AbilityDamage);
+                        u.dealDamage(aMi.AbilityDamage);
                         if (u.WorshiperCount <= 0)
                         {
                             BoardMan.killUnit(u);

@@ -72,7 +72,15 @@ public class Attackable : MonoBehaviour
             int damage = (int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getAttackStrength();
 
             //Set remaining worshippers accordingly
-            attackedUnit.setWorshiperCount(attackedUnit.getWorshiperCount() - Mathf.Clamp((damage - attackedUnit.getDefenseBuff()), 0, 10000000));
+
+            if(!attackedUnit.getBlindDebuff())
+                attackedUnit.dealDamage(damage);
+            else
+            {
+                //If we're blinded, we have a 50% chance of missing
+                if(Random.Range(0,100) > 50)
+                    attackedUnit.dealDamage(damage);
+            }
             
             SoundMan.playUnitAttack();
 

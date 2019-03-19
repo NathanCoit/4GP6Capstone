@@ -112,7 +112,11 @@ public class Unit
     public void AllowAct() //this Unit has not yet acted in this round
     {
         canAct = true;
-        Movement = MaxMovement;
+
+        if (!paralyzeDebuff)
+            Movement = MaxMovement;
+        else
+            Movement = 0;
 
         //Render stuff for use without proper models, can be removed later
         if (isPlayer)
@@ -195,13 +199,40 @@ public class Unit
 
     public void dealDamage(int damage)
     {
-
+        //If there's no shield, damage as usual
+        if (!shieldBuff)
+            setWorshiperCount(getWorshiperCount() - Mathf.Clamp((damage - getDefenseBuff()), 0, 10000000));
+        //Otherwise, take no damage and remove one shield buff
+        else
+        {
+            foreach (StatusEffect effect in activeStatusEffects)
+            {
+                if ((Ability.LoadAbilityFromName(effect.getAbility()) as BuffAbility).BuffType == Ability.BUFFTYPE.Shield)
+                {
+                    activeStatusEffects.Remove(effect);
+                    break;
+                }
+            }
+        }
     }
 
+    //Done
     private int damageBuff;
+    //Done
     private int defenseBuff;
+    //Done
     private int speedBuff;
+    //Done
     private bool shieldBuff;
+
+    //done
+    private bool stunDebuff;
+
+    //done
+    private bool paralyzeDebuff;
+
+    //done
+    private bool blindDebuff;
 
     public int getSpeedBuff()
     {
@@ -213,14 +244,22 @@ public class Unit
         return defenseBuff;
     }
 
+    public bool getBlindDebuff()
+    {
+        return blindDebuff;
+    }
+
     public void appyStatusEffects()
     {
+        damageBuff = 0;
+        defenseBuff = 0;
+        speedBuff = 0;
+        shieldBuff = false;
+        stunDebuff = false;
+        paralyzeDebuff = false;
+
         foreach (StatusEffect effect in activeStatusEffects)
         {
-            damageBuff = 0;
-            defenseBuff = 0;
-            speedBuff = 0;
-
             switch(effect.getType())
             {
                 //Buffs
@@ -242,20 +281,30 @@ public class Unit
 
                 //Debuffs
                 case "DamageReduction":
+                    damageBuff -= (Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount;
                     break;
                 case "DefenseReduction":
+                    damageBuff -= (Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount;
                     break;
                 case "Stun":
+                    stunDebuff = true;
                     break;
                 case "Paralyze":
+                    paralyzeDebuff = true;
                     break;
                 case "Burn":
+                    //Does fixed damage
+                    WorshiperCount -= (Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount;
                     break;
                 case "Poison":
+                    //Does proportional damage
+                    WorshiperCount -= WorshiperCount * ((Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount / 10);
                     break;
                 case "Slow":
+                    damageBuff -= (Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount;
                     break;
                 case "Blind":
+                    blindDebuff = true;
                     break;
             }
         }
@@ -263,8 +312,16 @@ public class Unit
 
     public void beginTurn()
     {
-        AllowAct();
         appyStatusEffects();
+        if (!stunDebuff)
+        {
+            AllowAct();
+        }
+        else
+        {
+            BoardMan.DecreaseNumActions();
+        }
+        
     }
 
     //For spoofing clicks for testing

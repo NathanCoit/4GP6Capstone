@@ -89,6 +89,72 @@ public class Unit
         parentObject.transform.position = new Vector3(tiles[(int)pos.x, (int)pos.y].getX() + ((1 - parentObject.transform.lossyScale.x) / 2) + parentObject.transform.lossyScale.x / 2, tiles[(int)pos.x, (int)pos.y].getY() + parentObject.transform.lossyScale.y + 0.5f, tiles[(int)pos.x, (int)pos.y].getZ() + ((1 - parentObject.transform.lossyScale.z) / 2) + parentObject.transform.lossyScale.x / 2);
     }
 
+    public void turnToFace(int direction)
+    {
+        switch(direction)
+        {
+            case 0:
+                unitGameObject().transform.eulerAngles = new Vector3(0, 0, 0);
+                unitGameObject().transform.GetChild(0).transform.eulerAngles = new Vector3(0, 0, 0);
+                break;
+            case 1:
+                unitGameObject().transform.eulerAngles = new Vector3(0, 90, 0);
+                unitGameObject().transform.GetChild(0).transform.eulerAngles = new Vector3(0, 0, 0);
+                break;
+            case 2:
+                unitGameObject().transform.eulerAngles = new Vector3(0, 180, 0);
+                unitGameObject().transform.GetChild(0).transform.eulerAngles = new Vector3(0, 0, 0);
+                break;
+            case 3:
+                unitGameObject().transform.eulerAngles = new Vector3(0, 270, 0);
+                unitGameObject().transform.GetChild(0).transform.eulerAngles = new Vector3(0, 0, 0);
+                break;
+        }
+    }
+
+    public void updateDirection()
+    {
+        Vector2 average = new Vector2();
+        if(isPlayer)
+        {
+            foreach(Unit u in BoardMan.enemyUnits)
+            {
+                average.x += u.getPos().x - getPos().x;
+                average.y += u.getPos().y - getPos().y;
+            }
+            average.x /= BoardMan.enemyUnits.Count;
+            average.y /= BoardMan.enemyUnits.Count;
+        }
+        else
+        {
+            foreach (Unit u in BoardMan.playerUnits)
+            {
+                average.x += u.getPos().x - getPos().x;
+                average.y += u.getPos().y - getPos().y;
+            }
+            average.x /= BoardMan.playerUnits.Count;
+            average.y /= BoardMan.playerUnits.Count;
+        }
+
+        Debug.Log(average);
+
+        if(Mathf.Abs(average.y) > Mathf.Abs(average.x))
+        {
+            if (average.y > 0)
+                turnToFace(2);
+            else
+                turnToFace(0);
+        }
+        else
+        {
+            if (average.x > 0)
+                turnToFace(3);
+            else
+                turnToFace(1);
+        }
+
+    }
+
     //This is what we actually use to move (who knows what the above is for) (god i wish past me knew how dumb he sounds sometimes)
     public void MoveTo(Vector2 pos, Tile[,] tiles)
     {

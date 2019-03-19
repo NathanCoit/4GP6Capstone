@@ -81,6 +81,24 @@ public class Attackable : MonoBehaviour
                 if(Random.Range(0,100) > 50)
                     attackedUnit.dealDamage(damage);
             }
+
+            //Adjust rotation
+            if(Mathf.Abs(attackedUnit.getPos().y - MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getPos().y) 
+                > Mathf.Abs(attackedUnit.getPos().x - MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getPos().x))
+            {
+                if (attackedUnit.getPos().y - MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getPos().y > 0)
+                    MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().turnToFace(2);
+                else
+                    MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().turnToFace(0);
+
+            }
+            else
+            {
+                if (attackedUnit.getPos().x - MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getPos().x > 0)
+                    MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().turnToFace(3);
+                else
+                    MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().turnToFace(1);
+            }
             
             SoundMan.playUnitAttack();
 

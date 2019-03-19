@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -110,9 +111,9 @@ public class SetupManager : MonoBehaviour
             Debug.Log(gameInfo.PlayerFaction.GodName + " reporting in, boss");
 
             gameInfo.EnemyFaction.GodName = "Nathan";
-            gameInfo.EnemyFaction.Type = Faction.GodType.Robots;
+            gameInfo.EnemyFaction.Type = Faction.GodType.Water;
 
-            abilities = Faction.GetGodAbilities(gameInfo.PlayerFaction.Type);
+            abilities = Faction.GetGodAbilities(gameInfo.EnemyFaction.Type);
             sAbilites = new string[abilities.Count];
             for (int i = 0; i < abilities.Count; i++)
                 sAbilites[i] = abilities[i].AbilityName;
@@ -200,6 +201,7 @@ public class SetupManager : MonoBehaviour
                 // TODO: get start tiles from map information to actually load units in a formation rather than just a line
                 CreatePlayerUnit(new Vector2(4, (3+i)), tiles, arrGroupWorshippers[i], 2, 1, playerMorale);
             }
+
             CreateGod(tiles, true, gameInfo.PlayerFaction.GodName, 3, 2, 50, 300);
 
             CreateEnemyUnit(new Vector2(6, 3), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
@@ -219,6 +221,8 @@ public class SetupManager : MonoBehaviour
 
     public void SplitWorshipers()
     {
+        //LIES ITS HAS BEEN IMPLEMENTED, but who knows where
+
         //haha not implemented
         //will be done in a separate scene maybe?
         //assign worshiper count percentages in that scene to individual units
@@ -409,6 +413,28 @@ public class SetupManager : MonoBehaviour
             g.MoveTo(new Vector2(-1, -1), tiles);
             g.unitGameObject().transform.position = new Vector3(0, MapMan.godFloatHeight, MapMan.tiles.GetLength(1) / 2);
 
+            GameObject godModel;
+
+            try
+            {
+                godModel = Instantiate(Resources.Load("Gods/" + gameInfo.PlayerFaction.Type.ToString(), typeof(GameObject))) as GameObject;
+            }
+            catch (Exception e)
+            {
+                godModel = Instantiate(Resources.Load("Gods/Mushrooms", typeof(GameObject))) as GameObject;
+            }
+
+            godModel.transform.SetParent(g.unitGameObject().transform);
+            godModel.transform.position = new Vector3(GodGo.transform.position.x, GodGo.transform.position.y + godModel.GetComponent<GroundOffset>().groundOffset,
+                GodGo.transform.position.z + godModel.GetComponent<GroundOffset>().zOffset);
+
+            GodGo.GetComponent<CapsuleCollider>().center = new Vector3(0, godModel.GetComponent<GroundOffset>().colliderCenter, 0);
+
+            GodGo.GetComponent<CapsuleCollider>().height = godModel.GetComponent<GroundOffset>().colliderHeight;
+
+            //Face east
+            g.turnToFace(3);
+
             g.AllowAct();
         }
         else
@@ -419,6 +445,28 @@ public class SetupManager : MonoBehaviour
             g.setAbilities(gameInfo.PlayerFaction.Abilities);
             g.MoveTo(new Vector2(-1, -1), tiles);
             g.unitGameObject().transform.position = new Vector3(MapMan.tiles.GetLength(0), MapMan.godFloatHeight, MapMan.tiles.GetLength(1) / 2);
+
+            GameObject godModel;
+
+            try
+            {
+                godModel = Instantiate(Resources.Load("Gods/" + gameInfo.EnemyFaction.Type.ToString(), typeof(GameObject))) as GameObject;
+            }
+            catch (Exception e)
+            {
+                godModel = Instantiate(Resources.Load("Gods/Mushrooms", typeof(GameObject))) as GameObject;
+            }
+
+            godModel.transform.SetParent(g.unitGameObject().transform);
+            godModel.transform.position = new Vector3(GodGo.transform.position.x, GodGo.transform.position.y + godModel.GetComponent<GroundOffset>().groundOffset,
+                GodGo.transform.position.z + godModel.GetComponent<GroundOffset>().zOffset);
+
+            GodGo.GetComponent<CapsuleCollider>().center = new Vector3(0, godModel.GetComponent<GroundOffset>().colliderCenter, 0);
+
+            GodGo.GetComponent<CapsuleCollider>().height = godModel.GetComponent<GroundOffset>().colliderHeight;
+
+            //Face west
+            g.turnToFace(1);
         }
     }
 
@@ -437,6 +485,26 @@ public class SetupManager : MonoBehaviour
         u.updateAttackStrength();
         u.isPlayer = true;
         u.MoveTo(new Vector2(pos.x, pos.y), tiles);
+
+        GameObject unitModel;
+
+        try
+        {
+            unitModel = Instantiate(Resources.Load("Units/" + gameInfo.PlayerFaction.Type.ToString(), typeof(GameObject))) as GameObject;
+        }
+        catch (Exception e)
+        {
+            unitModel = Instantiate(Resources.Load("Units/Mushrooms", typeof(GameObject))) as GameObject;
+        }
+        unitModel.transform.SetParent(u.unitGameObject().transform);
+        unitModel.transform.position = new Vector3(unitGo.transform.position.x, unitGo.transform.position.y + unitModel.GetComponent<GroundOffset>().groundOffset, 
+            unitGo.transform.position.z + unitModel.GetComponent<GroundOffset>().zOffset);
+
+        unitGo.GetComponent<CapsuleCollider>().center = new Vector3(0, unitModel.GetComponent<GroundOffset>().colliderCenter, 0);
+
+        unitGo.GetComponent<CapsuleCollider>().height = unitModel.GetComponent<GroundOffset>().colliderHeight;
+
+        u.turnToFace(3);
 
         u.AllowAct();
 
@@ -457,6 +525,29 @@ public class SetupManager : MonoBehaviour
         u.updateAttackStrength();
         u.isPlayer = false;
         u.MoveTo(new Vector2(pos.x, pos.y), tiles);
+
+        Debug.Log(gameInfo.EnemyFaction.Type.ToString());
+
+        GameObject unitModel;
+
+        try
+        {
+            unitModel = Instantiate(Resources.Load("Units/" + gameInfo.EnemyFaction.Type.ToString(), typeof(GameObject))) as GameObject;
+        }
+        catch (Exception e)
+        {
+            unitModel = Instantiate(Resources.Load("Units/Mushrooms", typeof(GameObject))) as GameObject;
+        }
+
+        unitModel.transform.SetParent(u.unitGameObject().transform);
+        unitModel.transform.position = new Vector3(unitGo.transform.position.x, unitGo.transform.position.y + unitModel.GetComponent<GroundOffset>().groundOffset,
+            unitGo.transform.position.z + unitModel.GetComponent<GroundOffset>().zOffset);
+
+        unitGo.GetComponent<CapsuleCollider>().center = new Vector3(0, unitModel.GetComponent<GroundOffset>().colliderCenter, 0);
+
+        unitGo.GetComponent<CapsuleCollider>().height = unitModel.GetComponent<GroundOffset>().colliderHeight;
+
+        u.turnToFace(1);
 
         //Set so the players turn is first
         u.EndAct();

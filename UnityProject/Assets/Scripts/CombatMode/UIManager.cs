@@ -51,9 +51,7 @@ public class UIManager : MonoBehaviour
         //Unselecting unit by clicking off
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() && !MapMan.newSelected && !MapMan.tilesPresent())
         {
-            MapMan.ClearSelection();
-            MapMan.Selected = null;
-            removeMenu();
+            cancelButtonFunction();
         }
 
         //Position menu if one is made (runs every frame if a menu is visible)
@@ -76,6 +74,9 @@ public class UIManager : MonoBehaviour
         {
             //Clean up Previous selection (the tiles)
             MapMan.ClearSelection();
+
+            //To fix scaling
+            abilityPanelInUse = false;
 
             //Clear previous menus
             removeMenu();
@@ -403,10 +404,14 @@ public class UIManager : MonoBehaviour
 
     public void cancelButtonFunction()
     {
-        if ((MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() is God) && godEnteringBattle)
-            (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() as God).isInBattle = false;
+        if (MapMan.Selected != null)
+        {
+            if ((MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() is God) && godEnteringBattle)
+                (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() as God).isInBattle = false;
+        }
         MapMan.ClearSelection();
         godEnteringBattle = false;
+        abilityPanelInUse = false;
         MapMan.Selected = null;
         removeMenu();
     }

@@ -80,8 +80,8 @@ public class DebuffAbility : Ability{
                 EffectDuration = 2;
                 FaithCost = 10;
                 break;
-            case "cat":
-                AbilityDescription = "Spread the great word of the hound god, through deadly cats.";
+            case "analyze":
+                AbilityDescription = "Spread the great word of the robot god, through deadly analyzing.";
                 DebuffType = DEBUFFTYPE.DefenseReduction;
                 DebuffAmount = 50;
                 DebuffScalingAmount = 0.5f;
@@ -99,8 +99,8 @@ public class DebuffAbility : Ability{
                 Range = 3;
                 break;
             case "charm":
-                AbilityDescription = "Spread the great word of the love god, through deadly love.";
-                DebuffType = DEBUFFTYPE.Charm;
+                AbilityDescription = "Spread the great word of the love god, through deadly love. Makes enemy attacks weaker.";
+                DebuffType = DEBUFFTYPE.DamageReduction;
                 DebuffAmount = 50;
                 DebuffScalingAmount = 0.5f;
                 SingleTarget = false;

@@ -19,12 +19,14 @@ public class Unit
     private List<int> depths = new List<int>();
     private HashSet<Tile> visited = new HashSet<Tile>();
 
-    public int Movement = 2;
+    public int Movement;
     public int MaxMovement;
     public int attackRange;
     public float morale;
     public bool isPlayer;
     public int MovePriority;
+
+    private List<StatusEffect> activeStatusEffects;
 
     //For use without models, can be removed later
     public int WorshiperCount;
@@ -49,6 +51,7 @@ public class Unit
             parentObject.GetComponent<MeshRenderer>().material = parentObject.GetComponent<UnitObjectScript>().enemyNotAvailable;
         */
 
+        activeStatusEffects = new List<StatusEffect>();
 
         AttackStrength = WorshiperCount * 0.25f * morale;
 
@@ -86,6 +89,72 @@ public class Unit
         parentObject.transform.position = new Vector3(tiles[(int)pos.x, (int)pos.y].getX() + ((1 - parentObject.transform.lossyScale.x) / 2) + parentObject.transform.lossyScale.x / 2, tiles[(int)pos.x, (int)pos.y].getY() + parentObject.transform.lossyScale.y + 0.5f, tiles[(int)pos.x, (int)pos.y].getZ() + ((1 - parentObject.transform.lossyScale.z) / 2) + parentObject.transform.lossyScale.x / 2);
     }
 
+    public void turnToFace(int direction)
+    {
+        switch(direction)
+        {
+            case 0:
+                unitGameObject().transform.eulerAngles = new Vector3(0, 0, 0);
+                unitGameObject().transform.GetChild(0).transform.eulerAngles = new Vector3(0, 0, 0);
+                break;
+            case 1:
+                unitGameObject().transform.eulerAngles = new Vector3(0, 90, 0);
+                unitGameObject().transform.GetChild(0).transform.eulerAngles = new Vector3(0, 0, 0);
+                break;
+            case 2:
+                unitGameObject().transform.eulerAngles = new Vector3(0, 180, 0);
+                unitGameObject().transform.GetChild(0).transform.eulerAngles = new Vector3(0, 0, 0);
+                break;
+            case 3:
+                unitGameObject().transform.eulerAngles = new Vector3(0, 270, 0);
+                unitGameObject().transform.GetChild(0).transform.eulerAngles = new Vector3(0, 0, 0);
+                break;
+        }
+    }
+
+    public void updateDirection()
+    {
+        Vector2 average = new Vector2();
+        if(isPlayer)
+        {
+            foreach(Unit u in BoardMan.enemyUnits)
+            {
+                average.x += u.getPos().x - getPos().x;
+                average.y += u.getPos().y - getPos().y;
+            }
+            average.x /= BoardMan.enemyUnits.Count;
+            average.y /= BoardMan.enemyUnits.Count;
+        }
+        else
+        {
+            foreach (Unit u in BoardMan.playerUnits)
+            {
+                average.x += u.getPos().x - getPos().x;
+                average.y += u.getPos().y - getPos().y;
+            }
+            average.x /= BoardMan.playerUnits.Count;
+            average.y /= BoardMan.playerUnits.Count;
+        }
+
+        Debug.Log(average);
+
+        if(Mathf.Abs(average.y) > Mathf.Abs(average.x))
+        {
+            if (average.y > 0)
+                turnToFace(2);
+            else
+                turnToFace(0);
+        }
+        else
+        {
+            if (average.x > 0)
+                turnToFace(3);
+            else
+                turnToFace(1);
+        }
+
+    }
+
     //This is what we actually use to move (who knows what the above is for) (god i wish past me knew how dumb he sounds sometimes)
     public void MoveTo(Vector2 pos, Tile[,] tiles)
     {
@@ -109,7 +178,11 @@ public class Unit
     public void AllowAct() //this Unit has not yet acted in this round
     {
         canAct = true;
-        Movement = MaxMovement;
+
+        if (!paralyzeDebuff)
+            Movement = MaxMovement;
+        else
+            Movement = 0;
 
         //Render stuff for use without proper models, can be removed later
         if (isPlayer)
@@ -162,7 +235,160 @@ public class Unit
         BoardMan.checkIfSwitchTurn();
     }
 
-    
+    public void addNewStatusEffect(Ability a, bool isBuff)
+    {
+        if(isBuff)
+        {
+            activeStatusEffects.Add(new StatusEffect(a as BuffAbility, 2));
+        }
+        else
+        {
+            activeStatusEffects.Add(new StatusEffect(a as DebuffAbility, 2));
+        }
+
+        Debug.Log(a.AbilityName);
+    }
+
+    public void updateStatusEffects()
+    {
+        foreach(StatusEffect effect in activeStatusEffects)
+        {
+            effect.decreaseDuration();
+            if (effect.checkTurnsLeft() == 0)
+            {
+                activeStatusEffects.Remove(effect);
+            }
+
+        }
+        //appyStatusEffects();
+    }
+
+    public void dealDamage(int damage)
+    {
+        //If there's no shield, damage as usual
+        if (!shieldBuff)
+            setWorshiperCount(getWorshiperCount() - Mathf.Clamp((damage - getDefenseBuff()), 0, 10000000));
+        //Otherwise, take no damage and remove one shield buff
+        else
+        {
+            foreach (StatusEffect effect in activeStatusEffects)
+            {
+                if ((Ability.LoadAbilityFromName(effect.getAbility()) as BuffAbility).BuffType == Ability.BUFFTYPE.Shield)
+                {
+                    activeStatusEffects.Remove(effect);
+                    break;
+                }
+            }
+        }
+    }
+
+    //Done
+    private int damageBuff;
+    //Done
+    private int defenseBuff;
+    //Done
+    private int speedBuff;
+    //Done
+    private bool shieldBuff;
+
+    //done
+    private bool stunDebuff;
+
+    //done
+    private bool paralyzeDebuff;
+
+    //done
+    private bool blindDebuff;
+
+    public int getSpeedBuff()
+    {
+        return speedBuff;
+    }
+
+    public int getDefenseBuff()
+    {
+        return defenseBuff;
+    }
+
+    public bool getBlindDebuff()
+    {
+        return blindDebuff;
+    }
+
+    public void appyStatusEffects()
+    {
+        damageBuff = 0;
+        defenseBuff = 0;
+        speedBuff = 0;
+        shieldBuff = false;
+        stunDebuff = false;
+        paralyzeDebuff = false;
+
+        foreach (StatusEffect effect in activeStatusEffects)
+        {
+            switch(effect.getType())
+            {
+                //Buffs
+                case "Healing":
+                    WorshiperCount += (int)(Ability.LoadAbilityFromName(effect.getAbility()) as BuffAbility).BuffAmount;
+                    break;
+                case "Damage":
+                    damageBuff += (int)(Ability.LoadAbilityFromName(effect.getAbility()) as BuffAbility).BuffAmount;
+                    break;
+                case "Defense":
+                    defenseBuff += (int)(Ability.LoadAbilityFromName(effect.getAbility()) as BuffAbility).BuffAmount;
+                    break;
+                case "Shield":
+                    shieldBuff = true;
+                    break;
+                case "Speed":
+                    speedBuff += (int)(Ability.LoadAbilityFromName(effect.getAbility()) as BuffAbility).BuffAmount;
+                    break;
+
+                //Debuffs
+                case "DamageReduction":
+                    damageBuff -= (Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount;
+                    break;
+                case "DefenseReduction":
+                    damageBuff -= (Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount;
+                    break;
+                case "Stun":
+                    stunDebuff = true;
+                    break;
+                case "Paralyze":
+                    paralyzeDebuff = true;
+                    break;
+                case "Burn":
+                    //Does fixed damage
+                    WorshiperCount -= (Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount;
+                    break;
+                case "Poison":
+                    //Does proportional damage
+                    WorshiperCount -= WorshiperCount * ((Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount / 10);
+                    break;
+                case "Slow":
+                    damageBuff -= (Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount;
+                    break;
+                case "Blind":
+                    blindDebuff = true;
+                    break;
+            }
+        }
+    }
+
+    public void beginTurn()
+    {
+        appyStatusEffects();
+        if (!stunDebuff)
+        {
+            AllowAct();
+        }
+        else
+        {
+            BoardMan.DecreaseNumActions();
+        }
+        
+    }
 
     //For spoofing clicks for testing
     public void TestClick()
@@ -211,7 +437,7 @@ public class Unit
 
     public float getAttackStrength()
     {
-        return AttackStrength;
+        return AttackStrength + damageBuff;
     }
 
     //For using skill, will be done later (if units ever have skills)

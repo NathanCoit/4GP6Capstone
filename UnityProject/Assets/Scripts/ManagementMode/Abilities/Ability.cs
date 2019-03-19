@@ -48,7 +48,6 @@ public class Ability{
         Burn,
         Poison,
         Slow,
-        Charm,
         Blind
     }
 
@@ -60,7 +59,7 @@ public class Ability{
         "throwfork",
         "kick",
         "quack",
-        "chihuahua",
+        "electrocute",
         "batonslap",
         "blowakiss",
         "hammerslap",
@@ -76,7 +75,7 @@ public class Ability{
         "forksweep",
         "legsweep",
         "quack!!",
-        "corgi",
+        "eyelaser",
         "jazzhands",
         "giantheartslap",
         "dropanvil",
@@ -92,7 +91,7 @@ public class Ability{
         "eatspaghett",
         "yeezys",
         "quack?",
-        "poodle",
+        "betterprogramming",
         "saxsolo",
         "slapass",
         "sharpenarms",
@@ -106,7 +105,7 @@ public class Ability{
         "coloursplash",
         "brokenankles",
         "quack¿",
-        "cat",
+        "analyze",
         "outoftunesolo",
         "charm",
         "armorbreak",

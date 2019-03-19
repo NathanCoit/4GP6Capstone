@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 /*
  * Class responsible for:
@@ -20,11 +22,21 @@ public class SetupManager : MonoBehaviour
     public BoardManager BoardMan;
     public MapManager MapMan;
 
+    private int numGroupsWorshippers;
+    private GameObject[] arrGroupLabels;
+    private GameObject[] arrGroupInputs;
+    private int[] arrGroupWorshippers;
+
+    private GameObject OverlayCanvas;
+    private GameObject BottomPanel;
+    private Text[] arrTexts;
+
+
     public GameObject Unit;
     public GameObject God;
 
     private Tile[,] tiles;
-    public bool startup = true;
+    public bool startup = false;
     
     public int playerWorshiperCount;
     public float playerMorale;
@@ -42,6 +54,20 @@ public class SetupManager : MonoBehaviour
     {
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
+
+        // required for startup stuff
+        arrGroupLabels = new GameObject[5];
+        arrGroupInputs = new GameObject[5];
+        arrGroupWorshippers = new int[5];
+        for (int i = 0; i < 5; i++) {
+            arrGroupLabels[i] = GameObject.Find("Group" + (i + 1) + "Label");
+            arrGroupInputs[i] = GameObject.Find("G" + (i + 1) + "Input");
+        }
+        OverlayCanvas = GameObject.Find("OverlayCanvas");
+        arrTexts = OverlayCanvas.GetComponentsInChildren<Text>();
+        BottomPanel = GameObject.Find("Panel");
+
+
         GameObject GameInfoObject = GameObject.Find("GameInfo");
         if (GameInfoObject != null)
         {
@@ -58,6 +84,9 @@ public class SetupManager : MonoBehaviour
 
             playerMorale = gameInfo.PlayerFaction.Morale;
             enemyMorale = gameInfo.EnemyFaction.Morale;
+
+            // Let players know how many worshippers they can assign to their groups
+            arrTexts[6].text = "The total amount of worshippers at your disposal : " + playerWorshiperCount;
         }
 #if DEBUG
         else
@@ -82,9 +111,9 @@ public class SetupManager : MonoBehaviour
             Debug.Log(gameInfo.PlayerFaction.GodName + " reporting in, boss");
 
             gameInfo.EnemyFaction.GodName = "Nathan";
-            gameInfo.EnemyFaction.Type = Faction.GodType.Hounds;
+            gameInfo.EnemyFaction.Type = Faction.GodType.Water;
 
-            abilities = Faction.GetGodAbilities(gameInfo.PlayerFaction.Type);
+            abilities = Faction.GetGodAbilities(gameInfo.EnemyFaction.Type);
             sAbilites = new string[abilities.Count];
             for (int i = 0; i < abilities.Count; i++)
                 sAbilites[i] = abilities[i].AbilityName;
@@ -103,6 +132,17 @@ public class SetupManager : MonoBehaviour
             Awake();
         }
 #endif
+    }
+
+    private void Start()
+    {
+        Camera.main.GetComponent<CombatCam>().CameraMovementEnabled = false;
+        //SplitWorshipers();
+        BottomPanel.SetActive(false);
+        arrGroupLabels[3].SetActive(false);
+        arrGroupInputs[3].SetActive(false);
+        arrGroupLabels[4].SetActive(false);
+        arrGroupInputs[4].SetActive(false);
     }
 
     void Update()
@@ -154,10 +194,14 @@ public class SetupManager : MonoBehaviour
         {
             tiles = MapMan.tiles;
 
-            //Test Setup
-            CreatePlayerUnit(new Vector2(4, 3), tiles, playerWorshiperCount / 3, 2, 1, playerMorale); //hello integer division
-            CreatePlayerUnit(new Vector2(4, 4), tiles, playerWorshiperCount / 3, 2, 1, playerMorale); //also assumes we have 3 units per team
-            CreatePlayerUnit(new Vector2(4, 5), tiles, playerWorshiperCount / 3, 2, 1, playerMorale);
+            // Create and place units onto map
+            numGroupsWorshippers = int.Parse(arrTexts[8].text); // need to get it again in case they never changed the # of groups
+            for (int i = 0; i < numGroupsWorshippers; i++)
+            {
+                // TODO: get start tiles from map information to actually load units in a formation rather than just a line
+                CreatePlayerUnit(new Vector2(4, (3+i)), tiles, arrGroupWorshippers[i], 2, 1, playerMorale);
+            }
+
             CreateGod(tiles, true, gameInfo.PlayerFaction.GodName, 3, 2, 50, 300);
 
             CreateEnemyUnit(new Vector2(6, 3), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
@@ -168,20 +212,153 @@ public class SetupManager : MonoBehaviour
             BoardMan.playerTurn = true;
             BoardMan.numActionsLeft = BoardMan.playerUnits.Count;
 
+            Camera.main.GetComponent<CombatCam>().CameraMovementEnabled = true;
             Camera.main.GetComponent<CombatCam>().resetCamera();
 
             startup = false;
         }
     }
 
-    public bool SplitWorshipers()
+    public void SplitWorshipers()
     {
+        //LIES ITS HAS BEEN IMPLEMENTED, but who knows where
+
         //haha not implemented
         //will be done in a separate scene maybe?
         //assign worshiper count percentages in that scene to individual units
-        //can have up to ten units per side
+        //can have up to five units per side
 
-        return false;
+        //what should be done here:
+        //enable the startup/division screen.. or at this point maybe just the animation of opening the screen?
+    }
+
+    private void UpdateStartup(int old)
+    {
+        switch(old)
+        {
+            case 1:
+                arrGroupLabels[1].SetActive(true);
+                arrGroupInputs[1].SetActive(true);
+                break;
+            case 2:
+                if ((old > numGroupsWorshippers))
+                { // delete 2
+                    arrGroupLabels[1].SetActive(false);
+                    arrGroupInputs[1].SetActive(false);
+                } else
+                { // bring up 3
+                    arrGroupLabels[2].SetActive(true);
+                    arrGroupInputs[2].SetActive(true);
+                }
+                break;
+            case 3: 
+                if ((old > numGroupsWorshippers))
+                { // delete 3
+                    arrGroupLabels[2].SetActive(false);
+                    arrGroupInputs[2].SetActive(false);
+                } else
+                { // bring up 4
+                    arrGroupLabels[3].SetActive(true);
+                    arrGroupInputs[3].SetActive(true);
+                }
+                break;
+            case 4:
+                if ((old > numGroupsWorshippers))
+                { // delete 4
+                    arrGroupLabels[3].SetActive(false);
+                    arrGroupInputs[3].SetActive(false);
+                }
+                else
+                { // bring up 5
+                    arrGroupLabels[4].SetActive(true);
+                    arrGroupInputs[4].SetActive(true);
+                }
+                break;
+            case 5:
+                arrGroupLabels[4].SetActive(false);
+                arrGroupInputs[4].SetActive(false);
+                break;
+        }
+    }
+
+    public void IncreaseNumGroups()
+    {
+        numGroupsWorshippers = int.Parse(arrTexts[8].text);
+        if (numGroupsWorshippers < 5)
+        {
+            numGroupsWorshippers++;
+            arrTexts[8].text = numGroupsWorshippers.ToString();
+            UpdateStartup(numGroupsWorshippers - 1);
+        }
+    }
+
+    public void DecreaseNumGroups()
+    {
+        numGroupsWorshippers = int.Parse(arrTexts[8].text);
+        if (numGroupsWorshippers > 1)
+        {
+            numGroupsWorshippers--;
+            arrTexts[8].text = numGroupsWorshippers.ToString();
+            UpdateStartup(numGroupsWorshippers + 1);
+        }
+    }
+
+    public void ConfirmSplit()
+    {
+        // function called when startup/division screen's Confirm button is pressed
+        // need to check the sum doesn't exceed the number of worshippers player has access to
+        int worshipperSum = 0;
+        bool success = true;
+        numGroupsWorshippers = int.Parse(arrTexts[8].text);
+        for (int i = 0; i < numGroupsWorshippers; i++)
+        {
+            worshipperSum += arrGroupWorshippers[i];
+            if (arrGroupWorshippers[i] == 0)
+            {
+                arrTexts[7].text = "You can't have a group of zero!";
+                success = false;
+            } else if (worshipperSum > playerWorshiperCount)
+            {
+                arrTexts[7].text = "You've tried to assign too many worshippers!";
+                success = false;
+            }
+        }
+
+        if (success)
+        {
+            //close startup/division canvas and commence battle
+            GameObject StartupPanel = GameObject.Find("StartupPanel");
+            StartupPanel.SetActive(false);
+            
+            BottomPanel.SetActive(true);
+
+            startup = true;
+        }
+    }
+
+    public void Group1Worshippers(string value)
+    {
+        arrGroupWorshippers[0] = int.Parse(value);
+    }
+
+    public void Group2Worshippers(string value)
+    {
+        arrGroupWorshippers[1] = int.Parse(value);
+    }
+
+    public void Group3Worshippers(string value)
+    {
+        arrGroupWorshippers[2] = int.Parse(value);
+    }
+
+    public void Group4Worshippers(string value)
+    {
+        arrGroupWorshippers[3] = int.Parse(value);
+    }
+
+    public void Group5Worshippers(string value)
+    {
+        arrGroupWorshippers[4] = int.Parse(value);
     }
 
     public void CreateGod(Tile[,] tiles, bool isPlayer, string godName, int MaxMovement, int attackRange, int attackStregnth, int health)
@@ -236,6 +413,28 @@ public class SetupManager : MonoBehaviour
             g.MoveTo(new Vector2(-1, -1), tiles);
             g.unitGameObject().transform.position = new Vector3(0, MapMan.godFloatHeight, MapMan.tiles.GetLength(1) / 2);
 
+            GameObject godModel;
+
+            try
+            {
+                godModel = Instantiate(Resources.Load("Gods/" + gameInfo.PlayerFaction.Type.ToString(), typeof(GameObject))) as GameObject;
+            }
+            catch (Exception e)
+            {
+                godModel = Instantiate(Resources.Load("Gods/Mushrooms", typeof(GameObject))) as GameObject;
+            }
+
+            godModel.transform.SetParent(g.unitGameObject().transform);
+            godModel.transform.position = new Vector3(GodGo.transform.position.x, GodGo.transform.position.y + godModel.GetComponent<GroundOffset>().groundOffset,
+                GodGo.transform.position.z + godModel.GetComponent<GroundOffset>().zOffset);
+
+            GodGo.GetComponent<CapsuleCollider>().center = new Vector3(0, godModel.GetComponent<GroundOffset>().colliderCenter, 0);
+
+            GodGo.GetComponent<CapsuleCollider>().height = godModel.GetComponent<GroundOffset>().colliderHeight;
+
+            //Face east
+            g.turnToFace(3);
+
             g.AllowAct();
         }
         else
@@ -246,6 +445,28 @@ public class SetupManager : MonoBehaviour
             g.setAbilities(gameInfo.PlayerFaction.Abilities);
             g.MoveTo(new Vector2(-1, -1), tiles);
             g.unitGameObject().transform.position = new Vector3(MapMan.tiles.GetLength(0), MapMan.godFloatHeight, MapMan.tiles.GetLength(1) / 2);
+
+            GameObject godModel;
+
+            try
+            {
+                godModel = Instantiate(Resources.Load("Gods/" + gameInfo.EnemyFaction.Type.ToString(), typeof(GameObject))) as GameObject;
+            }
+            catch (Exception e)
+            {
+                godModel = Instantiate(Resources.Load("Gods/Mushrooms", typeof(GameObject))) as GameObject;
+            }
+
+            godModel.transform.SetParent(g.unitGameObject().transform);
+            godModel.transform.position = new Vector3(GodGo.transform.position.x, GodGo.transform.position.y + godModel.GetComponent<GroundOffset>().groundOffset,
+                GodGo.transform.position.z + godModel.GetComponent<GroundOffset>().zOffset);
+
+            GodGo.GetComponent<CapsuleCollider>().center = new Vector3(0, godModel.GetComponent<GroundOffset>().colliderCenter, 0);
+
+            GodGo.GetComponent<CapsuleCollider>().height = godModel.GetComponent<GroundOffset>().colliderHeight;
+
+            //Face west
+            g.turnToFace(1);
         }
     }
 
@@ -264,6 +485,26 @@ public class SetupManager : MonoBehaviour
         u.updateAttackStrength();
         u.isPlayer = true;
         u.MoveTo(new Vector2(pos.x, pos.y), tiles);
+
+        GameObject unitModel;
+
+        try
+        {
+            unitModel = Instantiate(Resources.Load("Units/" + gameInfo.PlayerFaction.Type.ToString(), typeof(GameObject))) as GameObject;
+        }
+        catch (Exception e)
+        {
+            unitModel = Instantiate(Resources.Load("Units/Mushrooms", typeof(GameObject))) as GameObject;
+        }
+        unitModel.transform.SetParent(u.unitGameObject().transform);
+        unitModel.transform.position = new Vector3(unitGo.transform.position.x, unitGo.transform.position.y + unitModel.GetComponent<GroundOffset>().groundOffset, 
+            unitGo.transform.position.z + unitModel.GetComponent<GroundOffset>().zOffset);
+
+        unitGo.GetComponent<CapsuleCollider>().center = new Vector3(0, unitModel.GetComponent<GroundOffset>().colliderCenter, 0);
+
+        unitGo.GetComponent<CapsuleCollider>().height = unitModel.GetComponent<GroundOffset>().colliderHeight;
+
+        u.turnToFace(3);
 
         u.AllowAct();
 
@@ -284,6 +525,29 @@ public class SetupManager : MonoBehaviour
         u.updateAttackStrength();
         u.isPlayer = false;
         u.MoveTo(new Vector2(pos.x, pos.y), tiles);
+
+        Debug.Log(gameInfo.EnemyFaction.Type.ToString());
+
+        GameObject unitModel;
+
+        try
+        {
+            unitModel = Instantiate(Resources.Load("Units/" + gameInfo.EnemyFaction.Type.ToString(), typeof(GameObject))) as GameObject;
+        }
+        catch (Exception e)
+        {
+            unitModel = Instantiate(Resources.Load("Units/Mushrooms", typeof(GameObject))) as GameObject;
+        }
+
+        unitModel.transform.SetParent(u.unitGameObject().transform);
+        unitModel.transform.position = new Vector3(unitGo.transform.position.x, unitGo.transform.position.y + unitModel.GetComponent<GroundOffset>().groundOffset,
+            unitGo.transform.position.z + unitModel.GetComponent<GroundOffset>().zOffset);
+
+        unitGo.GetComponent<CapsuleCollider>().center = new Vector3(0, unitModel.GetComponent<GroundOffset>().colliderCenter, 0);
+
+        unitGo.GetComponent<CapsuleCollider>().height = unitModel.GetComponent<GroundOffset>().colliderHeight;
+
+        u.turnToFace(1);
 
         //Set so the players turn is first
         u.EndAct();

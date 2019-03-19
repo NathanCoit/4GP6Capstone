@@ -64,8 +64,8 @@ public class SingleTargetAbility : Ability
                 Range = 3;
                 FaithCost = 10;
                 break;
-            case "chihuahua":
-                AbilityDescription = "Smite your enemy with a dog";
+            case "electrocute":
+                AbilityDescription = "Smite your enemy a shock";
                 AbilityDamage = 10;
                 AbilityScalingDamage = 0.5f;
                 Range = 3;

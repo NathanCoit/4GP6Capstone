@@ -26,7 +26,6 @@ public class Cam : MonoBehaviour {
 
 	void Start() 
 	{
-        maxFov = maxFov + maxFov * 0.1f * gameManagerScript.PlayerFaction.GodTier;
         fov = Camera.main.fieldOfView;
         theScreenWidth = Screen.width;
 		theScreenHeight = Screen.height;

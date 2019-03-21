@@ -99,8 +99,8 @@ public class DebuffAbility : Ability{
                 Range = 3;
                 break;
             case "charm":
-                AbilityDescription = "Spread the great word of the love god, through deadly love. Makes enemy attacks weaker.";
-                DebuffType = DEBUFFTYPE.DamageReduction;
+                AbilityDescription = "Spread the great word of the love god, through deadly love.";
+                DebuffType = DEBUFFTYPE.Charm;
                 DebuffAmount = 50;
                 DebuffScalingAmount = 0.5f;
                 SingleTarget = false;

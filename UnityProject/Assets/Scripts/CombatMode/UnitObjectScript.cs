@@ -143,7 +143,7 @@ public class UnitObjectScript : MonoBehaviour
     {
         foreach (Tile t in locationsToDraw)
         {
-            if (MapMan.tiles[(int)t.getX(), (int)t.getZ()].isTraversable() && !BoardMan.findTeamTiles(BoardMan.playerUnits).Contains(t) && !BoardMan.findTeamTiles(BoardMan.enemyUnits).Contains(t))
+            if (MapMan.tiles[(int)t.getX(), (int)t.getZ()].isTraversable())
             {
                 GameObject targetTile = Instantiate(BoardMan.MovableTile);
                 targetTile.GetComponent<Movable>().pos = new Vector2((int)t.getX(), (int)t.getZ());

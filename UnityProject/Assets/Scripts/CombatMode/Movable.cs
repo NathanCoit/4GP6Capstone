@@ -95,9 +95,6 @@ public class Movable : MonoBehaviour {
             //Move the selected unit
             MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().MoveTo(pos, MapMan.tiles);
 
-            //Update dirction that they're facing
-            MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().updateDirection();
-
             //Get rid of blue tiles
             MapMan.ClearSelection();
 

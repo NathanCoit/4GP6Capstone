@@ -2760,7 +2760,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   InitialPlayerMaterials: 1000000
-  InitialPlayerWorshippers: 1000
+  InitialPlayerWorshippers: 1000000
   MapTexture: {fileID: 2800000, guid: 8436acd77d5b60948bfc146c5031540d, type: 3}
   GameInfoObjectPrefab: {fileID: 1318629568701984, guid: 2c6d0661dcadf034f9fccf79768afba7,
     type: 3}
@@ -2769,14 +2769,14 @@ MonoBehaviour:
   UpgradeUI: {fileID: 286750823}
   MapRadius: 500
   BuildingCostModifier: 1
-  MinimumMorale: 0.2
+  MinimumMorale: 0.8
   TierUnlockPoint: 100
   TierUnlockPointMultiplier: 2
   MapTierCount: 3
   EnemiesPerTier: 3
   CurrentTier: 0
   TierDifficultyIncrease: 10
-  EnemyChallengeTimer: 300
+  EnemyChallengeTimer: 3000
   BuildingRadius: 4
   PausedMenuPanel: {fileID: 1860688481}
   MenuControlObject: {fileID: 424929391}

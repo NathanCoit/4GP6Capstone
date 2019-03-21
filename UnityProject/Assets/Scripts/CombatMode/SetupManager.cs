@@ -147,7 +147,7 @@ public class SetupManager : MonoBehaviour
 
     void Update()
     {
-#if DEBUG
+//#if DEBUG
         // Debug Precompile Directive to allow ending a battle immediatly.
         if(Input.GetKeyDown(KeyCode.J))
         {
@@ -159,7 +159,7 @@ public class SetupManager : MonoBehaviour
             finishedBattle = true;
             battleResult = GameInfo.BATTLESTATUS.Victory;
         }
-#endif
+//#endif
         //Battle has ended, send stats to GameInfo object (the object used to communicate between management mode and combat mode)
         if (finishedBattle)
         {

@@ -9,6 +9,7 @@ public class PlayerGodController : MonoBehaviour
     public TerrainMap GameMap;
 
     private Vector3 muniDestinationVector = Vector3.zero;
+    private Quaternion muniDestinationRotation = Quaternion.identity;
 
     public float MovementSpeed;
     private float mfRadius = 0;
@@ -24,6 +25,10 @@ public class PlayerGodController : MonoBehaviour
         if(muniDestinationVector != Vector3.zero)
         {
             PlayerGod.transform.position = Vector3.Lerp(PlayerGod.transform.position, muniDestinationVector, MovementSpeed);
+        }
+        if(muniDestinationRotation != Quaternion.identity)
+        {
+            PlayerGod.transform.localRotation = Quaternion.Lerp(PlayerGod.transform.localRotation, muniDestinationRotation, 0.3f);
         }
     }
 
@@ -46,13 +51,32 @@ public class PlayerGodController : MonoBehaviour
         {
             muniDestinationVector = puniDestination;
         }
-        
+        Quaternion uniOriginalRotation = PlayerGod.transform.localRotation;
+        PlayerGod.transform.LookAt(muniDestinationVector);
+        muniDestinationRotation = PlayerGod.transform.localRotation;
+        PlayerGod.transform.localRotation = uniOriginalRotation;
     }
 
     public void CreatePlayerGod()
     {
         // Load player god and place near village
-        PlayerGod = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        Object uniGodObject = Resources.Load("Gods/" + GameManagerScript.PlayerFaction.Type);
+        if(uniGodObject != null)
+        {
+            PlayerGod = (GameObject)GameObject.Instantiate(uniGodObject);
+            if(PlayerGod.GetComponent<Collider>() == null)
+            {
+                PlayerGod.AddComponent<CapsuleCollider>().radius = 5;
+                PlayerGod.GetComponent<CapsuleCollider>().height = 1;
+                PlayerGod.GetComponent<CapsuleCollider>().center = new Vector3(0, 3, 0);
+            }
+            PlayerGod.transform.localScale = new Vector3(1, 1, 1);
+        }
+        else
+        {
+            PlayerGod = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            PlayerGod.transform.localScale.Scale(new Vector3(5,5,5));
+        }
         PlayerGod.AddComponent<LineRenderer>().positionCount = 0;
         PlayerGod.transform.position = GameManagerScript.PlayerVillage.BuildingObject.transform.position + new Vector3(10, 0, 0);
 
@@ -69,7 +93,7 @@ public class PlayerGodController : MonoBehaviour
         {
             int vertexCount = 40; // 4 vertices == square
             float lineWidth = 0.2f;
-            float radius = 1.0f;
+            float radius = 5;
 
             lineRenderer.useWorldSpace = false;
             lineRenderer.widthMultiplier = lineWidth;

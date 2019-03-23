@@ -499,6 +499,7 @@ public class GameManager : MonoBehaviour
     {
         Faction musWinningFaction = null;
         Faction musLosingFaction = null;
+        Building musVillage;
         if (pmusFactionOne.WorshipperCount >= pmusFactionTwo.WorshipperCount)
         {
             musWinningFaction = pmusFactionOne;
@@ -515,6 +516,9 @@ public class GameManager : MonoBehaviour
         {
             musWinningFaction.FactionArea.Add(arrFactionArea);
         }
+        musVillage = musLosingFaction.OwnedBuildings.Find(musBuilding => musBuilding.BuildingType == Building.BUILDING_TYPE.VILLAGE);
+        GameMap.RemoveBuilding(musVillage);
+        musVillage.Destroy();
         foreach (Building musLoserBuilding in musLosingFaction.OwnedBuildings)
         {
             musLoserBuilding.OwningFaction = musWinningFaction;

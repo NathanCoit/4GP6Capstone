@@ -179,7 +179,7 @@ public class BoardManager : MonoBehaviour
         {
             //Use our lovely tile function <3
             MovableTiles = MapMan.tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y].findAtDistance(
-                MapMan.tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y], currentUnit.Movement, findTeamTiles(playerUnits), findTeamTiles(enemyUnits), MapMan.tiles);
+                MapMan.tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y], currentUnit.Movement + currentUnit.getSpeedBuff(), findTeamTiles(playerUnits), findTeamTiles(enemyUnits), MapMan.tiles);
         }
         else
         {
@@ -523,7 +523,9 @@ public class BoardManager : MonoBehaviour
         if (playerTurn)
         { //it was player's turn
             foreach (Unit u in enemyUnits) //allow each of enemy units to act
-                u.AllowAct();
+            {
+                u.beginTurn();
+            }
             numActionsLeft = enemyUnits.Count;
 
             foreach(GameObject button in playerUiButtons)
@@ -534,7 +536,9 @@ public class BoardManager : MonoBehaviour
         else
         { //it was the enemy's turn
             foreach (Unit u in playerUnits) //allow each of player's units to act
-                u.AllowAct();
+            {
+                u.beginTurn();
+            }
             numActionsLeft = playerUnits.Count;
 
             foreach (GameObject button in playerUiButtons)

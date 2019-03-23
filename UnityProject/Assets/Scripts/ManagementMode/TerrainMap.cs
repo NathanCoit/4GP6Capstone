@@ -114,6 +114,14 @@ public class TerrainMap
         return mgobjTerrainMap;
     }
 
+    public void RemoveBuilding(Building pmusBuildingToRemove)
+    {
+        if(pmusBuildingToRemove != null)
+        {
+            marrBuildingsOnMap.Remove(pmusBuildingToRemove);
+        }
+    }
+
     public void DivideMap(List<Faction> parrCurrentFactions, float pfStartingRad, float pfEndingRad)
     {
         //GameObject uniLandObject;
@@ -126,33 +134,6 @@ public class TerrainMap
         {
             FactionToPlace.FactionArea = new List<float[]>();
             FactionToPlace.FactionArea.Add(new float[] { pfStartingRad, pfEndingRad, fAngle, fAngle + fAreaAngle });
-
-            //if(FactionToPlace.GodTier == 0)
-            //{
-            //    intPosx = (pfStartingRad + pfEndingRad)/2 * Mathf.Sin((2 * fAngle + fAreaAngle) / 2) > 0 ? 1 : -1;
-            //    intPosy = (pfStartingRad + pfEndingRad) / 2 * Mathf.Cos((2 * fAngle + fAreaAngle) / 2) > 0 ? 1 : -1;
-            //    // pie shaped area, place pie area
-            //    uniLandObject = (GameObject)GameObject.Instantiate(Resources.Load("GodLands/" + FactionToPlace.Type.ToString() + "Pie"));
-            //    uniLandObject.transform.position = new Vector3(intPosx * 29, 0.001f, intPosy * 29);
-            //    uniLandObject.transform.Rotate(new Vector3(0, ((2 * fAngle + fAreaAngle)/2 * 180/Mathf.PI) + 90, 0));
-            //    uniLandObject.transform.localScale = new Vector3(82.5f, 82.5f, 82.5f);
-            //}
-            //else if(FactionToPlace.GodTier == 1)
-            //{
-            //    // Rounded rectangle
-            //    uniLandObject = (GameObject)GameObject.Instantiate(Resources.Load("GodLands/RoundedRect"));// + FactionToPlace.Type.ToString() + "RoundedRect"));
-            //    uniLandObject.transform.position = new Vector3(-0.2f, 0.15f, -0.05f);
-            //    uniLandObject.transform.Rotate(new Vector3(0, ((2 * fAngle + fAreaAngle) / 2 * 180 / Mathf.PI) + 30, 0));
-            //    uniLandObject.transform.localScale = new Vector3(82.5f, 82.5f, 82.5f);
-            //}
-            //else
-            //{
-            //    // Rounded rect3
-            //    uniLandObject = (GameObject)GameObject.Instantiate(Resources.Load("GodLands/RoundedRect3"));// + FactionToPlace.Type.ToString() + "RoundedRect"));
-            //    uniLandObject.transform.position = new Vector3(0.005f, 0.15f, 0.013f);
-            //    uniLandObject.transform.Rotate(new Vector3(0, ((2 * fAngle + fAreaAngle) / 2 * 180 / Mathf.PI) + 30, 0));
-            //    uniLandObject.transform.localScale = new Vector3(82.5f, 82.5f, 82.5f);
-            //}
 
             fAngle += fAreaAngle;
         }

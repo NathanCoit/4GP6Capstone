@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -50,12 +51,26 @@ public class InputManager : MonoBehaviour
             case GameManager.MENUSTATE.Settings_Menu_State:
                 CheckSettingsMenuStateInputs();
                 break;
+            case GameManager.MENUSTATE.God_Selected_State:
+                CheckGodSelectedMenuState();
+                break;
         }
 
         // Check to ensure a single keystroke does not count as two menu inputs.
         if (CurrentKeyDown != KeyCode.None && Input.GetKeyUp(CurrentKeyDown))
         {
             CurrentKeyDown = KeyCode.None;
+        }
+    }
+
+    private void CheckGodSelectedMenuState()
+    {
+        if (Input.GetKeyDown(hotKeyManager.HotKeys["EscapeKeyCode"])
+            && CurrentKeyDown != hotKeyManager.HotKeys["EscapeKeyCode"])
+        {
+            CurrentKeyDown = hotKeyManager.HotKeys["EscapeKeyCode"];
+            GameManagerScript.GoToDefaultMenuState();
+            GameManagerScript.PlayerGod.TogglePlayerOutlines(false);
         }
     }
 

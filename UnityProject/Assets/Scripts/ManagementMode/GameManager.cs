@@ -24,14 +24,15 @@ public class GameManager : MonoBehaviour
         Upgrade_State,
         Paused_State,
         Settings_Menu_State,
-        End_Game_State
+        End_Game_State,
+        God_Selected_State
     }
 
     // Public variables used and unity properties of the Game Manger object.
     // Defined in by Unity on the Game Object
     public int InitialPlayerMaterials;
     public int InitialPlayerWorshippers;
-	public Texture MapTexture;
+    public Texture MapTexture;
     public GameObject GameInfoObjectPrefab;
     public GameObject RewardUI;
     public GameObject AudioObject;
@@ -55,6 +56,7 @@ public class GameManager : MonoBehaviour
     public float PlayerMoraleCap;
     public InformationBoxDisplay InformationBoxController;
     public WorshipperUpgradeController UpgradeController;
+    public PlayerGodController PlayerGod;
 
     // Public accessor variables, only to be accessed by other scripts, not modified
     // Mainly for testing purposes
@@ -101,7 +103,7 @@ public class GameManager : MonoBehaviour
         {
             // Not a new game, either returning from combat mode or loading a save
             StartFromSaveState();
-            if(!GameInfo.FromSave)
+            if (!GameInfo.FromSave)
             {
                 LoadBattleResults();
             }
@@ -125,6 +127,8 @@ public class GameManager : MonoBehaviour
         // Hide the map. Keep map object for collision detection, but does not need to be visible as individual god textures cover it
         GameMap.HideMap();
         GameMap.AddGodLandscapes(CurrentFactions);
+        PlayerGod.GameMap = GameMap;
+        PlayerGod.CreatePlayerGod();
         UpgradeController.PlayerFaction = PlayerFaction;
     }
 
@@ -134,13 +138,13 @@ public class GameManager : MonoBehaviour
     private void InitializeGameInfo()
     {
         GameObject uniGameInfoObject = GameObject.Find("GameInfo");
-        if(uniGameInfoObject != null)
+        if (uniGameInfoObject != null)
         {
             GameInfo = uniGameInfoObject.GetComponent<GameInfo>();
         }
         else
         {
-// DEBUG directive to create a default god for testing when loading the management mode directly
+            // DEBUG directive to create a default god for testing when loading the management mode directly
 #if DEBUG
             Debug.Log("Loaded directly into management mode, creating a default god.");
             GameObject NewGameInfoObject = (GameObject)Instantiate(GameInfoObjectPrefab);
@@ -154,7 +158,7 @@ public class GameManager : MonoBehaviour
             throw new Exception("Something went wrong :(");
 #endif
         }
-        
+
     }
     /// <summary>
     /// Function run at the beginning of a new game to generate starting map, buildings, player and enemies.
@@ -323,15 +327,15 @@ public class GameManager : MonoBehaviour
         PlayerFaction = new Faction(GameInfo.PlayerFaction);
         GameMap.PlaceSavedFactionBuildings(GameInfo.PlayerFaction.OwnedBuildings, PlayerFaction);
         PlayerVillage = PlayerFaction.OwnedBuildings.Find(villageBuilding => villageBuilding.BuildingType == Building.BUILDING_TYPE.VILLAGE);
-        foreach(int intAttackUpgrade in GameInfo.WorshipperAttackBuffs)
+        foreach (int intAttackUpgrade in GameInfo.WorshipperAttackBuffs)
         {
             PlayerFaction.CurrentUpgrades.Add(new AttackWorshipperUpgrade("", "", 0, intAttackUpgrade));
         }
-        foreach(int intDefenseUpgrade in GameInfo.WorshipperDefenseBuffs)
+        foreach (int intDefenseUpgrade in GameInfo.WorshipperDefenseBuffs)
         {
             PlayerFaction.CurrentUpgrades.Add(new DefenseWorshipperUpgrade("", "", 0, intDefenseUpgrade));
         }
-        foreach(int intMovementUpgrade in GameInfo.WorshipperMovementBuffs)
+        foreach (int intMovementUpgrade in GameInfo.WorshipperMovementBuffs)
         {
             PlayerFaction.CurrentUpgrades.Add(new MovementWorshipperUpgrade("", "", 0, intMovementUpgrade));
         }
@@ -345,6 +349,7 @@ public class GameManager : MonoBehaviour
     {
         Faction musEnemyFaction = null;
         List<Faction> arrFactionsLeft = null;
+        Building musBuildingToRemove = null;
         musEnemyFaction = new Faction(GameInfo.EnemyFaction);
         GameMap.PlaceSavedFactionBuildings(GameInfo.EnemyFaction.OwnedBuildings, musEnemyFaction);
 
@@ -355,9 +360,16 @@ public class GameManager : MonoBehaviour
             {
                 PlayerFaction.FactionArea.Add(arrEnemyArea);
             }
+            musBuildingToRemove = musEnemyFaction.OwnedBuildings.Find(musBuilding => musBuilding.BuildingType == Building.BUILDING_TYPE.VILLAGE);
+            if(musBuildingToRemove != null)
+            {
+                GameMap.RemoveBuilding(musBuildingToRemove);
+                musBuildingToRemove.Destroy();
+            }
             PlayerFaction.MaterialCount += musEnemyFaction.MaterialCount;
             foreach (Building musBuilding in musEnemyFaction.OwnedBuildings)
             {
+
                 musBuilding.OwningFaction = PlayerFaction;
                 musBuilding.ReloadBuildingObject();
                 PlayerFaction.OwnedBuildings.Add(musBuilding);
@@ -426,15 +438,15 @@ public class GameManager : MonoBehaviour
         // Save the rest of the factions
         GameInfo.SavedFactions = new GameInfo.SavedFaction[EnemyFactions.Count - 1];
         int intFactionIndex = 0;
-        foreach(Faction musFaction in EnemyFactions)
+        foreach (Faction musFaction in EnemyFactions)
         {
-            if(musFaction != EnemyFaction)
+            if (musFaction != EnemyFaction)
             {
                 GameInfo.SavedFactions[intFactionIndex] = GameInfo.CreateSavedFaction(musFaction);
                 intFactionIndex++;
             }
         }
-        
+
         GameInfo.MapRadius = MapRadius;
         GameInfo.CurrentTier = CurrentTier;
         GameInfo.PlayerRewards = TierReward.SaveRewardTree(marrPlayerRewardTree).ToArray();
@@ -487,7 +499,7 @@ public class GameManager : MonoBehaviour
     {
         Faction musWinningFaction = null;
         Faction musLosingFaction = null;
-        if(pmusFactionOne.WorshipperCount >= pmusFactionTwo.WorshipperCount)
+        if (pmusFactionOne.WorshipperCount >= pmusFactionTwo.WorshipperCount)
         {
             musWinningFaction = pmusFactionOne;
             musLosingFaction = pmusFactionTwo;
@@ -498,12 +510,12 @@ public class GameManager : MonoBehaviour
             musWinningFaction = pmusFactionTwo;
         }
         musWinningFaction.MaterialCount += musLosingFaction.MaterialCount;
-        musWinningFaction.WorshipperCount +=(int)(0.2 * musLosingFaction.WorshipperCount);
-        foreach(float[] arrFactionArea in musLosingFaction.FactionArea)
+        musWinningFaction.WorshipperCount += (int)(0.2 * musLosingFaction.WorshipperCount);
+        foreach (float[] arrFactionArea in musLosingFaction.FactionArea)
         {
             musWinningFaction.FactionArea.Add(arrFactionArea);
         }
-        foreach(Building musLoserBuilding in musLosingFaction.OwnedBuildings)
+        foreach (Building musLoserBuilding in musLosingFaction.OwnedBuildings)
         {
             musLoserBuilding.OwningFaction = musWinningFaction;
             musLoserBuilding.ReloadBuildingObject();
@@ -532,13 +544,13 @@ public class GameManager : MonoBehaviour
         VictoryPanel.SetActive(mblnVictory);
         CreateRewardTree();
         ResourceTicks = 0;
-        if(mblnNewGame)
+        if (mblnNewGame)
         {
             SaveGame();
             mblnNewGame = false;
             CheckForAndDisplayTutorialBox(InformationBoxDisplay.TutorialFlag.NewGame);
         }
-        if(mblnVictory || mblnGameOver)
+        if (mblnVictory || mblnGameOver)
         {
             PauseGame();
             PausedMenuPanel.SetActive(false);
@@ -554,7 +566,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if(CurrentMenuState != MENUSTATE.Paused_State && CurrentMenuState != MENUSTATE.Tier_Reward_State)
+        if (CurrentMenuState != MENUSTATE.Paused_State && CurrentMenuState != MENUSTATE.Tier_Reward_State)
         {
             if (BufferedBuilding != null)
             {
@@ -565,7 +577,7 @@ public class GameManager : MonoBehaviour
                 CheckForSelectedBuilding();
             }
         }
-		mmusResourceUIController.UpdateResourceUIElements (PlayerFaction.MaterialCount, PlayerFaction.WorshipperCount, PlayerFaction.Morale, PlayerFaction.TierRewardPoints);
+        mmusResourceUIController.UpdateResourceUIElements(PlayerFaction.MaterialCount, PlayerFaction.WorshipperCount, PlayerFaction.Morale, PlayerFaction.TierRewardPoints);
     }
 
     /// <summary>
@@ -578,8 +590,8 @@ public class GameManager : MonoBehaviour
         // If mouse is not over a UI object
         if (!EventSystem.current.IsPointerOverGameObject())
         {
-            
-             uniRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            uniRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             // User left clicked, check if they clicked a building object
             if (Input.GetMouseButtonDown(0))
             {
@@ -590,20 +602,35 @@ public class GameManager : MonoBehaviour
                     // If the user clicked the map, do nothing
                     if (muniSelectedGameObject == GameMap.GetMapObject())
                     {
-                        muniSelectedGameObject = null;
-                        if (SelectedBuilding != null)
+                        if (CurrentMenuState == MENUSTATE.God_Selected_State)
                         {
-                            SelectedBuilding.ToggleBuildingOutlines(false);
-                            SelectedBuilding = null;
-                            if (CurrentMenuState == MENUSTATE.Building_Selected_State)
+                            PlayerGod.SetPointToMoveTowards(new Vector3(uniHitInfo.point.x, 1.5f, uniHitInfo.point.z));
+                        }
+                        else
+                        {
+                            muniSelectedGameObject = null;
+                            if (SelectedBuilding != null)
                             {
-                                GoToDefaultMenuState();
+                                SelectedBuilding.ToggleBuildingOutlines(false);
+                                SelectedBuilding = null;
+                                if (CurrentMenuState == MENUSTATE.Building_Selected_State)
+                                {
+                                    GoToDefaultMenuState();
+                                }
                             }
                         }
                     }
                     else
                     {
-                        SetSelectedBuilding(GameMap.GetBuildings().Find(ClickedBuilding => ClickedBuilding.BuildingObject == muniSelectedGameObject));
+                        if (PlayerGod.PlayerGod == muniSelectedGameObject)
+                        {
+                            CurrentMenuState = MENUSTATE.God_Selected_State;
+                            PlayerGod.TogglePlayerOutlines(true);
+                        }
+                        else if (CurrentMenuState != MENUSTATE.God_Selected_State)
+                        {
+                            SetSelectedBuilding(GameMap.GetBuildings().Find(ClickedBuilding => ClickedBuilding.BuildingObject == muniSelectedGameObject));
+                        }
                     }
                 }
             }
@@ -671,7 +698,7 @@ public class GameManager : MonoBehaviour
                         PlayerFaction.MaterialCount -= BufferedBuilding.BuildingCost;
                         EnterBuildMenuState();
                         // Tutorial for first mine, how to buy miners
-                        if(BufferedBuilding.BuildingType == Building.BUILDING_TYPE.MATERIAL)
+                        if (BufferedBuilding.BuildingType == Building.BUILDING_TYPE.MATERIAL)
                         {
                             CheckForAndDisplayTutorialBox(InformationBoxDisplay.TutorialFlag.FirstMine);
                         }
@@ -706,7 +733,7 @@ public class GameManager : MonoBehaviour
         float fWorPerSec = 0;
         float fMatPerSec = 0;
         // Don't run in paused state.
-        if (CurrentFactions != null 
+        if (CurrentFactions != null
             && (CurrentMenuState != MENUSTATE.Paused_State
             || CurrentMenuState != MENUSTATE.Settings_Menu_State
             || CurrentMenuState != MENUSTATE.End_Game_State))
@@ -755,7 +782,7 @@ public class GameManager : MonoBehaviour
 
                     if (musCurrentFaction == PlayerFaction)
                     {
-                        foreach(float fMatMultiplier in marrMaterialMultipliers)
+                        foreach (float fMatMultiplier in marrMaterialMultipliers)
                         {
                             intMaterialsToAdd += (int)((fMatMultiplier - 1) * intMaterialsToAdd);
                         }
@@ -771,19 +798,19 @@ public class GameManager : MonoBehaviour
                         // Check if enemy has enough resources to upgrade a building, if so upgrade a random building
                         // Everything costs double for bots to allow player to eventually catch up
                         // Check if buildings exist that can be upgraded
-                        if(musCurrentFaction.OwnedBuildings.FindAll(
-                            upgradeableBuilding => upgradeableBuilding.UpgradeLevel < musCurrentFaction.GodTier + 1 
+                        if (musCurrentFaction.OwnedBuildings.FindAll(
+                            upgradeableBuilding => upgradeableBuilding.UpgradeLevel < musCurrentFaction.GodTier + 1
                             && upgradeableBuilding.BuildingType != Building.BUILDING_TYPE.VILLAGE).Count > 0)
                         {
                             // A building exists that can be upgraded
                             musTempBuilding = musCurrentFaction.OwnedBuildings.Find(
                                 upgradeableBuilding => upgradeableBuilding.UpgradeLevel < musCurrentFaction.GodTier + 1
                                 && upgradeableBuilding.BuildingType != Building.BUILDING_TYPE.VILLAGE);
-                            if(musCurrentFaction.MaterialCount > musTempBuilding.CalculateBuildingUpgradeCost() * 2)
+                            if (musCurrentFaction.MaterialCount > musTempBuilding.CalculateBuildingUpgradeCost() * 2)
                             {
                                 musCurrentFaction.MaterialCount -= musTempBuilding.CalculateBuildingUpgradeCost();
                                 musTempBuilding.UpgradeBuilding(false);
-                                if(musCurrentFaction.GodTier > CurrentTier)
+                                if (musCurrentFaction.GodTier > CurrentTier)
                                 {
                                     musTempBuilding.BuildingObject.SetActive(false);
                                 }
@@ -795,10 +822,10 @@ public class GameManager : MonoBehaviour
                             musTempBuilding = Building.CreateRandomBuilding(musCurrentFaction);
                             if (musCurrentFaction.MaterialCount > musTempBuilding.BuildingCost * 2)
                             {
-                                if(GameMap.PlaceBuilding(musTempBuilding, GameMap.CalculateRandomPosition(musCurrentFaction)))
+                                if (GameMap.PlaceBuilding(musTempBuilding, GameMap.CalculateRandomPosition(musCurrentFaction)))
                                 {
                                     musCurrentFaction.MaterialCount -= 2 * musTempBuilding.BuildingCost;
-                                    if(musCurrentFaction.GodTier > CurrentTier)
+                                    if (musCurrentFaction.GodTier > CurrentTier)
                                     {
                                         musTempBuilding.BuildingObject.SetActive(false);
                                     }
@@ -857,7 +884,7 @@ public class GameManager : MonoBehaviour
             }
 
             // Check if player has unlocked a new tier point
-            if(PlayerFaction.WorshipperCount > TierUnlockPoint)
+            if (PlayerFaction.WorshipperCount > TierUnlockPoint)
             {
                 // Player has unlocked a new reward tier point
                 PlayerFaction.TierRewardPoints++;
@@ -867,7 +894,7 @@ public class GameManager : MonoBehaviour
         ResourceTicks++;
         mintCurrentTimer += 2;
         // If set time has elapsed, enemy god will challenge the player
-        if(mintCurrentTimer > EnemyChallengeTimer)
+        if (mintCurrentTimer > EnemyChallengeTimer)
         {
             musChallengingFaction = CurrentFactions.Find(MatchingFaction => MatchingFaction != PlayerFaction && MatchingFaction.GodTier == CurrentTier);
             Time.timeScale = 0;
@@ -877,7 +904,7 @@ public class GameManager : MonoBehaviour
                 () => EnterCombatMode(musChallengingFaction),
                 "Fight");
         }
-        
+
     }
 
     /// <summary>
@@ -895,7 +922,7 @@ public class GameManager : MonoBehaviour
         }
         // Part 1: Evaluates to true if not an upgrade building, or is an upgrade building and player does not currently have an upgrade building
         // Ensures only one upgrade building exists at a time for the player
-        if((penumBuildingType != Building.BUILDING_TYPE.UPGRADE 
+        if ((penumBuildingType != Building.BUILDING_TYPE.UPGRADE
             || PlayerFaction.OwnedBuildings.Find(upgradeBuilding => upgradeBuilding.BuildingType == Building.BUILDING_TYPE.UPGRADE) == null)
         // Part 2: Evaluates to true if not a material builidng, or is a material building and the player owns less than mines than territories
         // Ensures player only has one mine per territory
@@ -906,7 +933,7 @@ public class GameManager : MonoBehaviour
             intBuildingCost = Building.CalculateBuildingCost(penumBuildingType);
             if (PlayerFaction.MaterialCount >= intBuildingCost)
             {
-                if(penumBuildingType == Building.BUILDING_TYPE.MATERIAL)
+                if (penumBuildingType == Building.BUILDING_TYPE.MATERIAL)
                 {
                     BufferedBuilding = new MineBuilding(penumBuildingType, PlayerFaction);
                 }
@@ -940,7 +967,7 @@ public class GameManager : MonoBehaviour
     {
         // Create a reward tree for the player
         marrPlayerRewardTree = TierReward.CreateTierRewardTree(PlayerFaction.Type);
-        if (GameInfo.PlayerRewards.Length > 0 )
+        if (GameInfo.PlayerRewards.Length > 0)
         {
             LoadRewardTree(new List<string>(GameInfo.PlayerRewards));
         }
@@ -966,7 +993,7 @@ public class GameManager : MonoBehaviour
     public void SetUpgradeUIActive(bool blnActive = true)
     {
         // Enable/ disable upgrade UI
-        if(blnActive)
+        if (blnActive)
         {
             CurrentMenuState = MENUSTATE.Upgrade_State;
         }
@@ -987,22 +1014,22 @@ public class GameManager : MonoBehaviour
         CurrentTier++;
         PlayerFaction.GodTier++;
         List<Faction> arrNextTierFactions = CurrentFactions.FindAll(MatchingFaction => MatchingFaction.GodTier == CurrentTier);
-        foreach(Building musTempPlayerVillage in PlayerFaction.OwnedBuildings.FindAll(villageBuilding => villageBuilding.BuildingType == Building.BUILDING_TYPE.VILLAGE))
+        foreach (Building musTempPlayerVillage in PlayerFaction.OwnedBuildings.FindAll(villageBuilding => villageBuilding.BuildingType == Building.BUILDING_TYPE.VILLAGE))
         {
-            if(musTempPlayerVillage.UpgradeLevel <= CurrentTier)
+            if (musTempPlayerVillage.UpgradeLevel <= CurrentTier)
             {
                 musTempPlayerVillage.UpgradeBuilding(false);
             }
         }
         if (arrNextTierFactions.Count > 0)
         {
-            foreach(Faction musFactionToShow in arrNextTierFactions)
+            foreach (Faction musFactionToShow in arrNextTierFactions)
             {
                 musFactionToShow.SetHidden(false);
             }
         }
     }
-    
+
     /// <summary>
     /// Attempt to unlock a tier reward for the player
     /// </summary>
@@ -1013,17 +1040,17 @@ public class GameManager : MonoBehaviour
         bool blnAbleToUnlock = false;
         //check if this reward can be unlocked
         blnAbleToUnlock = (pmusReward.PreviousRequiredReward == null || pmusReward.PreviousRequiredReward.Unlocked) && PlayerFaction.TierRewardPoints > 0 && !pmusReward.Unlocked;
-        if(blnAbleToUnlock)
+        if (blnAbleToUnlock)
         {
             PlayerFaction.TierRewardPoints--;
             pmusReward.Unlocked = true;
-            switch(pmusReward.RewardType)
+            switch (pmusReward.RewardType)
             {
                 case TierReward.REWARDTYPE.Ability:
                     PlayerFaction.CurrentAbilites.Add(((AbilityTierReward)pmusReward).TierAbility);
                     break;
                 case TierReward.REWARDTYPE.Resource:
-                    switch(pmusReward.ResourceType)
+                    switch (pmusReward.ResourceType)
                     {
                         case TierReward.RESOURCETYPE.Material:
                             PlayerFaction.MaterialCount += ((ResourceTierReward)pmusReward).Amount;
@@ -1034,7 +1061,7 @@ public class GameManager : MonoBehaviour
                     }
                     break;
                 case TierReward.REWARDTYPE.ResourceMultiplier:
-                    switch(pmusReward.ResourceType)
+                    switch (pmusReward.ResourceType)
                     {
                         case TierReward.RESOURCETYPE.Material:
                             marrMaterialMultipliers.Add(((ResourceMultiplierTierReward)pmusReward).Multiplier);
@@ -1060,15 +1087,15 @@ public class GameManager : MonoBehaviour
         // Set timescale to 0 and disable camera movement.
         Time.timeScale = 0;
         Camera.main.GetComponent<Cam>().CameraMovementEnabled = false;
-        if(CurrentMenuState != MENUSTATE.Paused_State)
+        if (CurrentMenuState != MENUSTATE.Paused_State)
         {
             menumLastMenuState = CurrentMenuState;
         }
         CurrentMenuState = MENUSTATE.Paused_State;
-        if(blnDisplayOptionsMenu)
+        if (blnDisplayOptionsMenu)
         {
             PausedMenuPanel.SetActive(true);
-        }   
+        }
     }
 
     /// <summary>
@@ -1089,12 +1116,12 @@ public class GameManager : MonoBehaviour
     /// <param name="parrSavedRewards">The list of rewards already owned by the player</param>
     public void LoadRewardTree(List<string> parrSavedRewards)
     {
-        TierReward musReward; 
-        foreach(string strSavedReward in parrSavedRewards)
+        TierReward musReward;
+        foreach (string strSavedReward in parrSavedRewards)
         {
             musReward = TierReward.FindRewardByName(strSavedReward, marrPlayerRewardTree);
             // If the reward is found, unlock it.
-            if(musReward != null)
+            if (musReward != null)
             {
                 musReward.Unlocked = true;
             }
@@ -1125,8 +1152,8 @@ public class GameManager : MonoBehaviour
     public void EnterBuildMenuState()
     {
         // Enable Mine/Upgrade building button depending on if player has hit building cap or not.
-        bool blnAllowedToBuildMine = 
-            PlayerFaction.OwnedBuildings.FindAll(materialBuilding => materialBuilding.BuildingType == Building.BUILDING_TYPE.MATERIAL).Count 
+        bool blnAllowedToBuildMine =
+            PlayerFaction.OwnedBuildings.FindAll(materialBuilding => materialBuilding.BuildingType == Building.BUILDING_TYPE.MATERIAL).Count
             < PlayerFaction.FactionArea.Count;
         bool blnAllowedToBuildUpgradeBuilding =
             PlayerFaction.OwnedBuildings.Find(upgradeBuilding => upgradeBuilding.BuildingType == Building.BUILDING_TYPE.UPGRADE) == null;
@@ -1179,7 +1206,7 @@ public class GameManager : MonoBehaviour
                 musBuildingOnMap.ToggleBuildingOutlines(false);
             }
         }
-        if(SelectedBuilding != null)
+        if (SelectedBuilding != null)
         {
             SelectedBuilding.ToggleBuildingOutlines(false);
             SelectedBuilding = null;
@@ -1193,7 +1220,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void EnterMovingBuildingState()
     {
-        if(SelectedBuilding != null)
+        if (SelectedBuilding != null)
         {
             BufferedBuilding = SelectedBuilding;
             SelectedBuilding = null;
@@ -1282,11 +1309,11 @@ public class GameManager : MonoBehaviour
         List<int> arrMovementUpgrades = new List<int>();
         foreach (WorshipperUpgrade musUpgrade in PlayerFaction.CurrentUpgrades)
         {
-            if(musUpgrade.UpgradeType == WorshipperUpgrade.UPGRADETYPE.Attack)
+            if (musUpgrade.UpgradeType == WorshipperUpgrade.UPGRADETYPE.Attack)
             {
                 arrAttackUpgrades.Add(((AttackWorshipperUpgrade)musUpgrade).DamageBuff);
             }
-            else if(musUpgrade.UpgradeType == WorshipperUpgrade.UPGRADETYPE.Defense)
+            else if (musUpgrade.UpgradeType == WorshipperUpgrade.UPGRADETYPE.Defense)
             {
                 arrDefenseUpgrades.Add(((DefenseWorshipperUpgrade)musUpgrade).DefenseBuff);
             }
@@ -1301,7 +1328,7 @@ public class GameManager : MonoBehaviour
 
         if (SaveAndSettingsHelper.SaveGame(Application.persistentDataPath + "/SaveFiles", GameInfo))
         {
-            if(pblnNotifyUser)
+            if (pblnNotifyUser)
             {
                 PauseGame(false);
                 InformationBoxController.DisplayInformationBox("Saved Successfully!", () => UnPauseGame());
@@ -1309,7 +1336,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            if(pblnNotifyUser)
+            if (pblnNotifyUser)
             {
                 PauseGame(false);
                 InformationBoxController.DisplayInformationBox("Something went wrong while saving!", () => UnPauseGame());
@@ -1339,7 +1366,7 @@ public class GameManager : MonoBehaviour
 
     private void CheckForAndDisplayTutorialBox(InformationBoxDisplay.TutorialFlag penumFlagToCheckFor)
     {
-        if(menumTutorialFlag == penumFlagToCheckFor)
+        if (menumTutorialFlag == penumFlagToCheckFor)
         {
             PauseGame(false);
             InformationBoxController.DisplayTutorialBox(menumTutorialFlag++, () => UnPauseGame());

@@ -219,6 +219,25 @@ public class MenuPanelControls : MonoBehaviour {
         }
     }
 
+    public void EnterGodSelectedState(Faction pmusFaction, GameInfo pmusGameInfo)
+    {
+        DisableAllMenus();
+        SelectedBuildingPanel.SetActive(true);
+        SelectedBuildingMinersTextObject.SetActive(false);
+        SelectedBuildingImage.sprite = AltarBuildingSprite;
+        SelectedBuildingTypeText.text = "God";
+        SelectedBuildingUpgradeLevelText.text = string.Format("Level: {0}", pmusFaction.GodTier + 1);
+        SelectedBuildingOwnerText.text 
+            = string.Format(
+@"{0} god of {1}
+Health: {2}, Attack: {3}, Defense: {4}", 
+            pmusFaction.GodName, 
+            pmusFaction.Type, 
+            pmusGameInfo.GodHealthMultiplier, 
+            pmusGameInfo.GodAttackMultiplier, 
+            pmusGameInfo.GodDefenseMultiplier);
+    }
+
     private void DisableAllMenus()
     {
         DefaultMenuPanel.SetActive(false);

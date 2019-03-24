@@ -630,6 +630,7 @@ public class GameManager : MonoBehaviour
                         {
                             CurrentMenuState = MENUSTATE.God_Selected_State;
                             PlayerGod.TogglePlayerOutlines(true);
+                            MenuPanelController.EnterGodSelectedState(PlayerFaction, GameInfo);
                         }
                         else if (CurrentMenuState != MENUSTATE.God_Selected_State)
                         {

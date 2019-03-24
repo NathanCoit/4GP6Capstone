@@ -87,6 +87,9 @@ public class SaveAndSettingsHelper
             pmusGameInfo.WorshipperAttackBuffs = musLoadedSaveData.WorshipperAttackBuffs;
             pmusGameInfo.WorshipperDefenseBuffs = musLoadedSaveData.WorshipperDefenseBuffs;
             pmusGameInfo.WorshipperMovementBuffs = musLoadedSaveData.WorshipperMovementBuffs;
+            pmusGameInfo.GodAttackMultiplier = musLoadedSaveData.GodAttackMultiplier;
+            pmusGameInfo.GodDefenseMultiplier = musLoadedSaveData.GodDefenseMultiplier;
+            pmusGameInfo.GodHealthMultiplier = musLoadedSaveData.GodHealthMultiplier;
             pmusGameInfo.FromSave = true;
             pmusGameInfo.NewGame = false;
             SceneManager.LoadScene("UnderGodScene");

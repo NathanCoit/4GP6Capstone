@@ -53,55 +53,63 @@ public class TerrainMap
     public bool PlaceBuilding(Building pBuildingToPlace, Vector3 pvec3PointToPlace, bool IgnoreOtherBuildings = false)
     {
         bool blnCanPlace = true;
-        bool blnInAnArea = false;
-        float DistanceBetweenBuildings = 0f;
-        float AngleOfPlacement = 0f;
-        float RadiusOfPlacement = 0f;
         //Attempt to place building and return result
         // Check if trying to place too close to another building
         if(!IgnoreOtherBuildings)
         {
-            foreach (Building BuildingOnMap in marrBuildingsOnMap)
-            {
-                DistanceBetweenBuildings = Vector3.Distance(pvec3PointToPlace, BuildingOnMap.BuildingPosition);
-                if (DistanceBetweenBuildings < Building.BuildingRadiusSize * 2)
-                {
-                    blnCanPlace = false;
-                }
-            }
-
-            RadiusOfPlacement = Vector3.Distance(new Vector3(0, 0.5f, 0), pvec3PointToPlace);
-
-            AngleOfPlacement = Vector3.Angle(new Vector3(100f, 0.5f, 0), pvec3PointToPlace) * Mathf.PI / 180;
-            // In third or fourth quadrant, add Pi as .angle will always return smallest vector
-            if (pvec3PointToPlace.z < 0)
-            {
-                AngleOfPlacement = 2 * Mathf.PI - AngleOfPlacement;
-            }
-
-            foreach (float[] playerArea in pBuildingToPlace.OwningFaction.FactionArea)
-            {
-                // Check if you are placing in your own area.
-                if ((AngleOfPlacement > playerArea[2] && AngleOfPlacement < playerArea[3])
-                    && RadiusOfPlacement > playerArea[0] && RadiusOfPlacement < playerArea[1])
-                {
-                    blnInAnArea = true;
-                }
-            }
+            blnCanPlace = CheckForValidPlacementPoint(pvec3PointToPlace, pBuildingToPlace.OwningFaction.FactionArea);
         }
         else
         {
             blnCanPlace = true;
-            blnInAnArea = true;
         }
 
-        if (blnCanPlace && blnInAnArea)
+        if (blnCanPlace)
         {
             marrBuildingsOnMap.Add(pBuildingToPlace);
             pBuildingToPlace.BuildingPosition = pvec3PointToPlace;
             pBuildingToPlace.OwningFaction.OwnedBuildings.Add(pBuildingToPlace);
         }
-        return blnCanPlace && blnInAnArea;
+        return blnCanPlace;
+    }
+
+    public bool CheckForValidPlacementPoint(Vector3 pvec3PointToPlace, List<float[]> parrFactionAreas)
+    {
+        bool blnCanPlace = true;
+        bool blnInAnArea = false;
+        float DistanceBetweenBuildings = 0f;
+        float AngleOfPlacement = 0f;
+        float RadiusOfPlacement = 0f;
+
+        foreach (Building BuildingOnMap in marrBuildingsOnMap)
+        {
+            DistanceBetweenBuildings = Vector3.Distance(pvec3PointToPlace, BuildingOnMap.BuildingPosition);
+            if (DistanceBetweenBuildings < Building.BuildingRadiusSize * 2)
+            {
+                blnCanPlace = false;
+            }
+        }
+
+        RadiusOfPlacement = Vector3.Distance(new Vector3(0, 0.5f, 0), pvec3PointToPlace);
+
+        AngleOfPlacement = Vector3.Angle(new Vector3(100f, 0.5f, 0), pvec3PointToPlace) * Mathf.PI / 180;
+        // In third or fourth quadrant, add Pi as .angle will always return smallest vector
+        if (pvec3PointToPlace.z < 0)
+        {
+            AngleOfPlacement = 2 * Mathf.PI - AngleOfPlacement;
+        }
+
+        foreach (float[] playerArea in parrFactionAreas)
+        {
+            // Check if you are placing in your own area.
+            if ((AngleOfPlacement > playerArea[2] && AngleOfPlacement < playerArea[3])
+                && RadiusOfPlacement > playerArea[0] && RadiusOfPlacement < playerArea[1])
+            {
+                blnInAnArea = true;
+            }
+        }
+
+        return blnInAnArea && blnCanPlace;
     }
 
     public List<Building> GetBuildings()

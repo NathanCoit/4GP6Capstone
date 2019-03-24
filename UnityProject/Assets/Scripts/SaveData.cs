@@ -31,4 +31,7 @@ public class SaveData
     public float[] MaterialMultipliers;
     public float[] WorshipperMultipliers;
     public InformationBoxDisplay.TutorialFlag TutorialFlag;
+    public float GodHealthMultiplier = 1f;
+    public float GodAttackMultiplier = 1f;
+    public float GodDefenseMultiplier = 1f;
 }

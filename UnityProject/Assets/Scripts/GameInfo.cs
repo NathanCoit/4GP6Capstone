@@ -56,6 +56,9 @@ public class GameInfo : MonoBehaviour {
     public bool FinishedBattle = false;
     public SavedFaction EnemyFaction;
     public SavedFaction PlayerFaction;
+    public float GodHealthMultiplier = 1f;
+    public float GodAttackMultiplier = 1f;
+    public float GodDefenseMultiplier = 1f;
 
     // Combat mode variables
     public BATTLESTATUS LastBattleStatus = BATTLESTATUS.Victory;

@@ -222,14 +222,9 @@ public class SetupManager : MonoBehaviour
     public void SplitWorshipers()
     {
         //LIES ITS HAS BEEN IMPLEMENTED, but who knows where
-
-        //haha not implemented
-        //will be done in a separate scene maybe?
-        //assign worshiper count percentages in that scene to individual units
-        //can have up to five units per side
-
-        //what should be done here:
-        //enable the startup/division screen.. or at this point maybe just the animation of opening the screen?
+        
+        // Update: so I would delete this function but I don't remember if another class calls it.
+        // TODO clean up code in all classes again (oof)
     }
 
     private void UpdateStartup(int old)
@@ -309,18 +304,33 @@ public class SetupManager : MonoBehaviour
         // need to check the sum doesn't exceed the number of worshippers player has access to
         int worshipperSum = 0;
         bool success = true;
+        bool divideEvenly = false;
+        List<int> emptyGroupNumber = new List<int>();
         numGroupsWorshippers = int.Parse(arrTexts[8].text);
+
+        // parse through the groups to see if we have any errors or need to fill in any groups
         for (int i = 0; i < numGroupsWorshippers; i++)
         {
             worshipperSum += arrGroupWorshippers[i];
             if (arrGroupWorshippers[i] == 0)
             {
-                arrTexts[7].text = "You can't have a group of zero!";
-                success = false;
+                //arrTexts[7].text = "You can't have a group of zero!";
+                emptyGroupNumber.Add(i);
+                divideEvenly = true;
             } else if (worshipperSum > playerWorshiperCount)
             {
                 arrTexts[7].text = "You've tried to assign too many worshippers!";
                 success = false;
+            }
+        }
+        
+        // if we have some empty groups, divide the remaining worshippers to be allocated by the number of empty groups
+        if (divideEvenly)
+        {
+            int dividedWorshippers = (int)((playerWorshiperCount - worshipperSum) / emptyGroupNumber.Count);
+            for (int i = 0; i < emptyGroupNumber.Count; i++)
+            {
+                arrGroupWorshippers[emptyGroupNumber[i]] = dividedWorshippers;
             }
         }
 

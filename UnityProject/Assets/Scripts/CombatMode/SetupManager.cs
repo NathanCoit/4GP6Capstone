@@ -29,6 +29,7 @@ public class SetupManager : MonoBehaviour
 
     private GameObject OverlayCanvas;
     private GameObject BottomPanel;
+    private GameObject SurrenderConfirmationPanel;
     private Text[] arrTexts;
 
 
@@ -43,7 +44,7 @@ public class SetupManager : MonoBehaviour
     public int enemyWorshiperCount;
     public float enemyMorale;
     public bool finishedBattle = false;
-    public GameInfo.BATTLESTATUS battleResult; //0 for victory, 1 for defeat, 2 for retreat
+    public GameInfo.BATTLESTATUS battleResult;
 
     private readonly double worshipperPercentage = 0.80;
 
@@ -66,7 +67,7 @@ public class SetupManager : MonoBehaviour
         OverlayCanvas = GameObject.Find("OverlayCanvas");
         arrTexts = OverlayCanvas.GetComponentsInChildren<Text>();
         BottomPanel = GameObject.Find("Panel");
-
+        SurrenderConfirmationPanel = GameObject.Find("AREYOUSUREPanel");
 
         GameObject GameInfoObject = GameObject.Find("GameInfo");
         if (GameInfoObject != null)
@@ -137,8 +138,8 @@ public class SetupManager : MonoBehaviour
     private void Start()
     {
         Camera.main.GetComponent<CombatCam>().CameraMovementEnabled = false;
-        //SplitWorshipers();
         BottomPanel.SetActive(false);
+        SurrenderConfirmationPanel.SetActive(false);
         arrGroupLabels[3].SetActive(false);
         arrGroupInputs[3].SetActive(false);
         arrGroupLabels[4].SetActive(false);
@@ -201,13 +202,13 @@ public class SetupManager : MonoBehaviour
                 // TODO: get start tiles from map information to actually load units in a formation rather than just a line
                 CreatePlayerUnit(new Vector2(4, (3+i)), tiles, arrGroupWorshippers[i], 2, 1, playerMorale);
             }
-
-            CreateGod(tiles, true, gameInfo.PlayerFaction.GodName, 3, 2, 50, 300);
+            // TODO: find appropriate health for the god
+            CreateGod(tiles, true, gameInfo.PlayerFaction.GodName, 3, 2, 50, Convert.ToInt32(playerWorshiperCount*1.5));
 
             CreateEnemyUnit(new Vector2(6, 3), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
             CreateEnemyUnit(new Vector2(6, 4), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
             CreateEnemyUnit(new Vector2(6, 5), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
-            CreateGod(tiles, false, gameInfo.EnemyFaction.GodName, 3, 2, 50, 300);
+            CreateGod(tiles, false, gameInfo.EnemyFaction.GodName, 3, 2, 50, Convert.ToInt32(enemyWorshiperCount*1.5));
 
             BoardMan.playerTurn = true;
             BoardMan.numActionsLeft = BoardMan.playerUnits.Count;
@@ -217,14 +218,6 @@ public class SetupManager : MonoBehaviour
 
             startup = false;
         }
-    }
-
-    public void SplitWorshipers()
-    {
-        //LIES ITS HAS BEEN IMPLEMENTED, but who knows where
-        
-        // Update: so I would delete this function but I don't remember if another class calls it.
-        // TODO clean up code in all classes again (oof)
     }
 
     private void UpdateStartup(int old)
@@ -369,6 +362,16 @@ public class SetupManager : MonoBehaviour
     public void Group5Worshippers(string value)
     {
         arrGroupWorshippers[4] = int.Parse(value);
+    }
+
+    public void CheckSurrender()
+    {
+        SurrenderConfirmationPanel.SetActive(true);
+    }
+
+    public void CancelSurrender()
+    {
+        SurrenderConfirmationPanel.SetActive(false);
     }
 
     public void CreateGod(Tile[,] tiles, bool isPlayer, string godName, int MaxMovement, int attackRange, int attackStregnth, int health)

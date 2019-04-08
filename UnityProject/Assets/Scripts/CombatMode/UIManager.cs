@@ -32,6 +32,14 @@ public class UIManager : MonoBehaviour
     private BoardManager BoardMan;
     private SoundManager SoundMan;
 
+    private GameObject OptionsPanel;
+    private bool OptionsPanelActive;
+
+    private void Awake()
+    {
+        OptionsPanel = GameObject.Find("OptionsPanel");
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -43,11 +51,20 @@ public class UIManager : MonoBehaviour
 
         //Padding for ui
         uiPadding = 10;
+
+        OptionsPanelActive = false;
+        OptionsPanel.SetActive(OptionsPanelActive);
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            OptionsPanelActive = !OptionsPanelActive;
+            OptionsPanel.SetActive(OptionsPanelActive);
+        }
+
         //Unselecting unit by clicking off
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() && !MapMan.newSelected && !MapMan.tilesPresent())
         {

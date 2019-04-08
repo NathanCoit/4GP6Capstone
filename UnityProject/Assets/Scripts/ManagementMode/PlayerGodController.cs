@@ -78,7 +78,7 @@ public class PlayerGodController : MonoBehaviour
             PlayerGod.transform.localScale.Scale(new Vector3(5,5,5));
         }
         PlayerGod.AddComponent<LineRenderer>().positionCount = 0;
-        PlayerGod.transform.position = GameManagerScript.PlayerVillage.BuildingObject.transform.position + new Vector3(10, 0, 0);
+        PlayerGod.transform.position = GameManagerScript.PlayerVillage.MapGameObject.transform.position + new Vector3(10, 0, 0);
 
         // Get the constraint radius
         mfRadius = (GameManagerScript.PlayerFaction.FactionArea[0][1] - GameManagerScript.PlayerFaction.FactionArea[0][0]) * (GameManagerScript.PlayerFaction.GodTier + 1);

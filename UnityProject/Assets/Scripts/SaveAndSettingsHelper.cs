@@ -90,6 +90,7 @@ public class SaveAndSettingsHelper
             pmusGameInfo.GodAttackMultiplier = musLoadedSaveData.GodAttackMultiplier;
             pmusGameInfo.GodDefenseMultiplier = musLoadedSaveData.GodDefenseMultiplier;
             pmusGameInfo.GodHealthMultiplier = musLoadedSaveData.GodHealthMultiplier;
+            pmusGameInfo.SavedTreasures = musLoadedSaveData.SavedTreasures;
             pmusGameInfo.FromSave = true;
             pmusGameInfo.NewGame = false;
             SceneManager.LoadScene("UnderGodScene");

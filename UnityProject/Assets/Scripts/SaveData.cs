@@ -18,6 +18,7 @@ public class SaveData
 
     // Management mode variables for loading scene
     public GameInfo.SavedFaction[] SavedFactions;
+    public GameInfo.SavedTreasure[] SavedTreasures;
     public int CurrentTier = 0;
     public float MapRadius = 100f;
     public float PlayerMoraleCap = 1.0f;

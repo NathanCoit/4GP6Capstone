@@ -25,7 +25,8 @@ public class GameManager : MonoBehaviour
         Paused_State,
         Settings_Menu_State,
         End_Game_State,
-        God_Selected_State
+        God_Selected_State,
+        Treasure_Selected_State
     }
 
     // Public variables used and unity properties of the Game Manger object.
@@ -57,6 +58,7 @@ public class GameManager : MonoBehaviour
     public InformationBoxDisplay InformationBoxController;
     public WorshipperUpgradeController UpgradeController;
     public PlayerGodController PlayerGod;
+    public TreasureManager TreasureController;
 
     // Public accessor variables, only to be accessed by other scripts, not modified
     // Mainly for testing purposes
@@ -95,7 +97,7 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         HotKeyManager = new HotKeyManager();
-        Building.BuildingRadiusSize = BuildingRadius;
+        Building.ObjectRadius = BuildingRadius;
         InitializeGameInfo();
         // Keep mouse confined to screen, if player tabs out, game is paused.
         Cursor.lockState = CursorLockMode.Confined;
@@ -184,6 +186,7 @@ public class GameManager : MonoBehaviour
         EnemyFactions = new List<Faction>();
         //Create map terrain
         GameMap = new TerrainMap(MapRadius, MapTexture);
+        TreasureController.GameMap = GameMap;
 
         // Create the player Faction
         PlayerFaction = new Faction(GameInfo.PlayerFaction.GodName, GameInfo.PlayerFaction.Type, 0)
@@ -193,7 +196,7 @@ public class GameManager : MonoBehaviour
         };
         CurrentFactions.Add(PlayerFaction);
         // Create factions for each tier. Higher tier increased number of starting buildings and resources.
-
+        TreasureController.CreateNewTreasures(5, MapTierCount);
         for (int intTierIndex = 0; intTierIndex < MapTierCount; intTierIndex++)
         {
             if (intTierIndex == 0)
@@ -236,18 +239,18 @@ public class GameManager : MonoBehaviour
         Building.LoadBuildingResources(arrGodTypes);
         //Create and place player village
         PlayerVillage = new Building(Building.BUILDING_TYPE.VILLAGE, PlayerFaction);
-        uniBuildngPosition = GameMap.CalculateRandomPosition(PlayerFaction);
+        uniBuildngPosition = GameMap.CalculateRandomPositionForFaction(PlayerFaction);
         GameMap.PlaceBuilding(PlayerVillage, uniBuildngPosition);
 
         //Create and place enemy villages
         foreach (Faction enemyFaction in EnemyFactions)
         {
             musEnemyBuilding = new Building(Building.BUILDING_TYPE.VILLAGE, enemyFaction);
-            uniBuildngPosition = GameMap.CalculateRandomPosition(enemyFaction);
+            uniBuildngPosition = GameMap.CalculateRandomPositionForFaction(enemyFaction);
             // Attempt to place the village building 100 times as placing could fail with one attempt.
             while (!GameMap.PlaceBuilding(musEnemyBuilding, uniBuildngPosition) && intAttempts < 100)
             {
-                uniBuildngPosition = GameMap.CalculateRandomPosition(enemyFaction);
+                uniBuildngPosition = GameMap.CalculateRandomPositionForFaction(enemyFaction);
                 intAttempts++;
             }
             // Enemy gods starting buildings are fully upgraded up to their tier level.
@@ -266,10 +269,10 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < enemyFaction.GodTier + 1; i++)
             {
                 musEnemyBuilding = new MineBuilding(Building.BUILDING_TYPE.MATERIAL, enemyFaction);
-                uniBuildngPosition = GameMap.CalculateRandomPosition(enemyFaction);
+                uniBuildngPosition = GameMap.CalculateRandomPositionForFaction(enemyFaction);
                 while (!GameMap.PlaceBuilding(musEnemyBuilding, uniBuildngPosition) && intAttempts < 100)
                 {
-                    uniBuildngPosition = GameMap.CalculateRandomPosition(enemyFaction);
+                    uniBuildngPosition = GameMap.CalculateRandomPositionForFaction(enemyFaction);
                     intAttempts++;
                 }
                 intAttempts = 0;
@@ -316,6 +319,7 @@ public class GameManager : MonoBehaviour
         // Create scene with values from gameInfo
         // Load Game Map
         GameMap = new TerrainMap(GameInfo.MapRadius, MapTexture);
+        TreasureController.GameMap = GameMap;
         // Load factions
         foreach (GameInfo.SavedFaction savedFaction in GameInfo.SavedFactions)
         {
@@ -340,6 +344,7 @@ public class GameManager : MonoBehaviour
             PlayerFaction.CurrentUpgrades.Add(new MovementWorshipperUpgrade("", "", 0, intMovementUpgrade));
         }
         CurrentFactions.Add(PlayerFaction);
+        TreasureController.LoadSavedTreasures(GameInfo.SavedTreasures);
     }
 
     /// <summary>
@@ -550,7 +555,7 @@ public class GameManager : MonoBehaviour
         ResourceTicks = 0;
         if (mblnNewGame)
         {
-            SaveGame();
+            //SaveGame();
             mblnNewGame = false;
             CheckForAndDisplayTutorialBox(InformationBoxDisplay.TutorialFlag.NewGame);
         }
@@ -615,7 +620,7 @@ public class GameManager : MonoBehaviour
                             muniSelectedGameObject = null;
                             if (SelectedBuilding != null)
                             {
-                                SelectedBuilding.ToggleBuildingOutlines(false);
+                                SelectedBuilding.ToggleObjectOutlines(false);
                                 SelectedBuilding = null;
                                 if (CurrentMenuState == MENUSTATE.Building_Selected_State)
                                 {
@@ -634,7 +639,7 @@ public class GameManager : MonoBehaviour
                         }
                         else if (CurrentMenuState != MENUSTATE.God_Selected_State)
                         {
-                            SetSelectedBuilding(GameMap.GetBuildings().Find(ClickedBuilding => ClickedBuilding.BuildingObject == muniSelectedGameObject));
+                            SetSelectedBuilding(GameMap.GetBuildings().Find(ClickedBuilding => ClickedBuilding.MapGameObject == muniSelectedGameObject));
                         }
                     }
                 }
@@ -651,14 +656,14 @@ public class GameManager : MonoBehaviour
         // Disable outline of currently selected building if it exists
         if (SelectedBuilding != null)
         {
-            SelectedBuilding.ToggleBuildingOutlines(false);
+            SelectedBuilding.ToggleObjectOutlines(false);
         }
         // Enable outline for new selcted building
         SelectedBuilding = pmusBuilding;
         if (SelectedBuilding != null)
         {
             EnterBuildingSelectedMenuState();
-            SelectedBuilding.ToggleBuildingOutlines(true);
+            SelectedBuilding.ToggleObjectOutlines(true);
         }
     }
 
@@ -676,7 +681,7 @@ public class GameManager : MonoBehaviour
             uniRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(uniRay, out uniHitInfo))
             {
-                BufferedBuilding.BuildingPosition = new Vector3(uniHitInfo.point.x, 1.5f, uniHitInfo.point.z);
+                BufferedBuilding.ObjectPosition = new Vector3(uniHitInfo.point.x, 1.5f, uniHitInfo.point.z);
             }
             // User left clicked
             if (Input.GetMouseButtonDown(0))
@@ -685,17 +690,17 @@ public class GameManager : MonoBehaviour
                 if (GameMap.PlaceBuilding(BufferedBuilding, new Vector3(uniHitInfo.point.x, 1.5f, uniHitInfo.point.z)))
                 {
                     // Reenable the collider component for selecting
-                    BufferedBuilding.BuildingObject.GetComponent<Collider>().enabled = true;
+                    BufferedBuilding.MapGameObject.GetComponent<Collider>().enabled = true;
                     mmusSoundManager.PlaySound("PlaceBuilding");
                     // If the building did place, go back to building menu
                     foreach (Building musBuildingOnMap in GameMap.GetBuildings())
                     {
-                        musBuildingOnMap.ToggleBuildingOutlines(false);
+                        musBuildingOnMap.ToggleObjectOutlines(false);
                     }
                     if (CurrentMenuState == MENUSTATE.Moving_Building_State)
                     {
                         SelectedBuilding = BufferedBuilding;
-                        SelectedBuilding.ToggleBuildingOutlines(true);
+                        SelectedBuilding.ToggleObjectOutlines(true);
                         EnterBuildingSelectedMenuState();
                     }
                     else
@@ -817,7 +822,7 @@ public class GameManager : MonoBehaviour
                                 musTempBuilding.UpgradeBuilding(false);
                                 if (musCurrentFaction.GodTier > CurrentTier)
                                 {
-                                    musTempBuilding.BuildingObject.SetActive(false);
+                                    musTempBuilding.MapGameObject.SetActive(false);
                                 }
                             }
                         }
@@ -827,12 +832,12 @@ public class GameManager : MonoBehaviour
                             musTempBuilding = Building.CreateRandomBuilding(musCurrentFaction);
                             if (musCurrentFaction.MaterialCount > musTempBuilding.BuildingCost * 2)
                             {
-                                if (GameMap.PlaceBuilding(musTempBuilding, GameMap.CalculateRandomPosition(musCurrentFaction)))
+                                if (GameMap.PlaceBuilding(musTempBuilding, GameMap.CalculateRandomPositionForFaction(musCurrentFaction)))
                                 {
                                     musCurrentFaction.MaterialCount -= 2 * musTempBuilding.BuildingCost;
                                     if (musCurrentFaction.GodTier > CurrentTier)
                                     {
-                                        musTempBuilding.BuildingObject.SetActive(false);
+                                        musTempBuilding.MapGameObject.SetActive(false);
                                     }
                                 }
                                 else
@@ -948,11 +953,11 @@ public class GameManager : MonoBehaviour
                 }
                 foreach (Building BuildingOnMap in GameMap.GetBuildings())
                 {
-                    BuildingOnMap.ToggleBuildingOutlines(true);
+                    BuildingOnMap.ToggleObjectOutlines(true);
                 }
-                BufferedBuilding.ToggleBuildingOutlines(true);
+                BufferedBuilding.ToggleObjectOutlines(true);
                 // Disable the collider to have the raycasting ignore the held building for placement purposes
-                BufferedBuilding.BuildingObject.GetComponent<Collider>().enabled = false;
+                BufferedBuilding.MapGameObject.GetComponent<Collider>().enabled = false;
             }
             else
             {
@@ -1143,7 +1148,7 @@ public class GameManager : MonoBehaviour
         Building musRandomBuilding = null;
         // Place a random building for that faction
         musRandomBuilding = Building.CreateRandomBuilding(pmusPlacingFaction);
-        if (!GameMap.PlaceBuilding(musRandomBuilding, GameMap.CalculateRandomPosition(pmusPlacingFaction)))
+        if (!GameMap.PlaceBuilding(musRandomBuilding, GameMap.CalculateRandomPositionForFaction(pmusPlacingFaction)))
         {
             musRandomBuilding.Destroy();
             return null;
@@ -1208,12 +1213,12 @@ public class GameManager : MonoBehaviour
             BufferedBuilding = null;
             foreach (Building musBuildingOnMap in GameMap.GetBuildings())
             {
-                musBuildingOnMap.ToggleBuildingOutlines(false);
+                musBuildingOnMap.ToggleObjectOutlines(false);
             }
         }
         if (SelectedBuilding != null)
         {
-            SelectedBuilding.ToggleBuildingOutlines(false);
+            SelectedBuilding.ToggleObjectOutlines(false);
             SelectedBuilding = null;
         }
     }
@@ -1231,15 +1236,15 @@ public class GameManager : MonoBehaviour
             SelectedBuilding = null;
             CurrentMenuState = MENUSTATE.Moving_Building_State;
             // Save the building position in case player cancels move.
-            OriginalBuildingPosition = BufferedBuilding.BuildingPosition;
+            OriginalBuildingPosition = BufferedBuilding.ObjectPosition;
             GameMap.GetBuildings().Remove(BufferedBuilding);
             foreach (Building musBuildingOnMap in GameMap.GetBuildings())
             {
-                musBuildingOnMap.ToggleBuildingOutlines(true);
+                musBuildingOnMap.ToggleObjectOutlines(true);
             }
-            BufferedBuilding.ToggleBuildingOutlines(true);
+            BufferedBuilding.ToggleObjectOutlines(true);
             // Disable the collider to have the raycasting ignore the held building for placement purposes
-            BufferedBuilding.BuildingObject.GetComponent<Collider>().enabled = false;
+            BufferedBuilding.MapGameObject.GetComponent<Collider>().enabled = false;
         }
     }
 
@@ -1331,6 +1336,20 @@ public class GameManager : MonoBehaviour
         GameInfo.WorshipperDefenseBuffs = arrDefenseUpgrades.ToArray();
         GameInfo.WorshipperMovementBuffs = arrMovementUpgrades.ToArray();
 
+        List<GameInfo.SavedTreasure> arrSavedTreasures = new List<GameInfo.SavedTreasure>();
+        foreach(Treasure musTreasure in GameMap.GetTreasures())
+        {
+            arrSavedTreasures.Add(
+                new GameInfo.SavedTreasure()
+                {
+                    Type = musTreasure.Type,
+                    x = musTreasure.ObjectPosition.x,
+                    y = musTreasure.ObjectPosition.y,
+                    z = musTreasure.ObjectPosition.z
+                });
+        }
+        GameInfo.SavedTreasures = arrSavedTreasures.ToArray();
+
         if (SaveAndSettingsHelper.SaveGame(Application.persistentDataPath + "/SaveFiles", GameInfo))
         {
             if (pblnNotifyUser)
@@ -1383,7 +1402,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void UnselectBuilding()
     {
-        SelectedBuilding.ToggleBuildingOutlines(false);
+        SelectedBuilding.ToggleObjectOutlines(false);
         SelectedBuilding = null;
     }
 

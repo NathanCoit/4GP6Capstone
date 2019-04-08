@@ -255,14 +255,14 @@ public class InputManager : MonoBehaviour
             CurrentKeyDown = hotKeyManager.HotKeys["EscapeKeyCode"];
             foreach (Building BuildingOnMap in GameManagerScript.GameMap.GetBuildings())
             {
-                BuildingOnMap.ToggleBuildingOutlines(false);
+                BuildingOnMap.ToggleObjectOutlines(false);
             }
             if (GameManagerScript.BufferedBuilding != null)
             {
                 // Ignore building placements checks as user should never be unable to cancel a move
                 GameManagerScript.GameMap.PlaceBuilding(GameManagerScript.BufferedBuilding, GameManagerScript.OriginalBuildingPosition, true);
-                GameManagerScript.BufferedBuilding.ToggleBuildingOutlines(true);
-                GameManagerScript.BufferedBuilding.BuildingObject.GetComponent<Collider>().enabled = true;
+                GameManagerScript.BufferedBuilding.ToggleObjectOutlines(true);
+                GameManagerScript.BufferedBuilding.MapGameObject.GetComponent<Collider>().enabled = true;
             }
             // Move back to the selected building state.
             GameManagerScript.SetSelectedBuilding(GameManagerScript.BufferedBuilding);

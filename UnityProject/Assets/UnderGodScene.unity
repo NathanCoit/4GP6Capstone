@@ -2741,6 +2741,7 @@ GameObject:
   - component: {fileID: 435552162}
   - component: {fileID: 435552163}
   - component: {fileID: 435552164}
+  - component: {fileID: 435552165}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -2788,6 +2789,7 @@ MonoBehaviour:
   InformationBoxController: {fileID: 412790388}
   UpgradeController: {fileID: 286750827}
   PlayerGod: {fileID: 435552164}
+  TreasureController: {fileID: 435552165}
 --- !u!4 &435552161
 Transform:
   m_ObjectHideFlags: 0
@@ -2849,6 +2851,19 @@ MonoBehaviour:
   PlayerGod: {fileID: 0}
   GameManagerScript: {fileID: 435552160}
   MovementSpeed: 0.01
+--- !u!114 &435552165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 435552159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60ee8569c62f0a44daac053908d863b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GameManagerScript: {fileID: 435552160}
 --- !u!1 &447269306
 GameObject:
   m_ObjectHideFlags: 0

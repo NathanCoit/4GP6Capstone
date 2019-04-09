@@ -10,12 +10,16 @@ public class God : Unit
     private SoundManager SoundMan;
     private BoardManager BoardMan;
 
+    public int faith;
+
     public God(string name) : base()
     {
         godName = name;
         isInBattle = false;
         SoundMan = GameObject.FindGameObjectWithTag("SoundManager").GetComponent<SoundManager>();
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
+
+        faith = 10;
     }
 
     public void setAbilities(string[] Abilites)

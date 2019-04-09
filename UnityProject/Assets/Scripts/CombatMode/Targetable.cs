@@ -260,6 +260,8 @@ public class Targetable : MonoBehaviour {
             if ((Input.GetMouseButtonDown(0) || autoClick) && !buttonSwitch)
             {
                 buttonSwitch = true;
+                
+                (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() as God).faith -= ability.FaithCost;
 
                 //Just damage the one unit if single target
                 if (ability.AbiltyType == Ability.ABILITYTYPE.SingleTarget)

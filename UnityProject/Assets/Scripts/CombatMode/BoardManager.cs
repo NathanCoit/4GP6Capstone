@@ -32,10 +32,6 @@ public class BoardManager : MonoBehaviour
     public bool endBattle = false; //used for testing purposes - to see if the battle has ended even if there are units left
     public float PlayerMorale;
     public float enemyMorale;
-    public float playerFaith;
-    public float enemyFaith;
-
-    public float faithCap;
 
     public GameObject MovableTile;
     public GameObject InMoveRangeTile;
@@ -77,7 +73,7 @@ public class BoardManager : MonoBehaviour
     
     void Update()
     {
-        //Updates Morale frequently. Involved with attack strength calculation so we need to update it frequently. Maybe. We're not really sure. But this works!
+        //Updates Morale frequently. Involved with attack strength calculation so we need to update it frequently.
         // TODO fix
         PlayerMorale = SetupMan.playerMorale;
         enemyMorale = SetupMan.enemyMorale;
@@ -132,7 +128,8 @@ public class BoardManager : MonoBehaviour
     {
         SetupMan.battleResult = GameInfo.BATTLESTATUS.Retreat;
         //TODO: does managementmode check for any changes to morale made from combat mode?
-        SetupMan.playerMorale = SetupMan.playerMorale / 2; //arbitrarily (for now) halves the morale
+        //PlayerMorale = PlayerMorale / 2; //arbitrarily (for now) halves the morale
+        SetupMan.playerMorale = SetupMan.playerMorale / 2;
         SetupMan.finishedBattle = true;
     }
 
@@ -345,8 +342,6 @@ public class BoardManager : MonoBehaviour
     //Called on the button press. Starts the target selection.
     public void useAbility(string name)
     {
-        //TODO ui things here (like hiding menu)
-
         Ability a = Ability.LoadAbilityFromName(name);
 
         List<Tile> firstHalf = new List<Tile>();
@@ -485,21 +480,6 @@ public class BoardManager : MonoBehaviour
         return enemyMorale;
     }
 
-    public float GetPlayerFaith()
-    {
-        return playerFaith;
-    }
-
-    public float GetEnemyFaith()
-    {
-        return enemyFaith;
-    }
-
-    public float GetFaithCap()
-    {
-        return faithCap;
-    }
-
     public void setPlayerMorale(float m)
     {
         PlayerMorale = m;
@@ -536,6 +516,10 @@ public class BoardManager : MonoBehaviour
             foreach (Unit u in playerUnits) //allow each of player's units to act
             {
                 u.beginTurn();
+                if (u is God)
+                {
+                    (u as God).faith += 10;
+                }
             }
             numActionsLeft = playerUnits.Count;
 

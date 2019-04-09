@@ -46,6 +46,9 @@ public class SetupManager : MonoBehaviour
     public bool finishedBattle = false;
     public GameInfo.BATTLESTATUS battleResult;
 
+    public int playerGodAttackStrength = 50;
+    public int enemyGodAttackStrength = 50;
+
     private readonly double worshipperPercentage = 0.80;
 
 
@@ -203,12 +206,12 @@ public class SetupManager : MonoBehaviour
                 CreatePlayerUnit(new Vector2(4, (3+i)), tiles, arrGroupWorshippers[i], 2, 1, playerMorale);
             }
             // TODO: find appropriate health for the god
-            CreateGod(tiles, true, gameInfo.PlayerFaction.GodName, 3, 2, 50, Convert.ToInt32(playerWorshiperCount*1.5));
+            CreateGod(tiles, true, gameInfo.PlayerFaction.GodName, 3, 2, Convert.ToInt32(playerGodAttackStrength*gameInfo.GodAttackMultiplier), Convert.ToInt32(playerWorshiperCount*gameInfo.GodHealthMultiplier));
 
             CreateEnemyUnit(new Vector2(6, 3), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
             CreateEnemyUnit(new Vector2(6, 4), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
             CreateEnemyUnit(new Vector2(6, 5), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
-            CreateGod(tiles, false, gameInfo.EnemyFaction.GodName, 3, 2, 50, Convert.ToInt32(enemyWorshiperCount*1.5));
+            CreateGod(tiles, false, gameInfo.EnemyFaction.GodName, 3, 2, Convert.ToInt32(enemyGodAttackStrength*0.5*(gameInfo.EnemyFaction.GodTier+1)), Convert.ToInt32(enemyWorshiperCount*(gameInfo.EnemyFaction.GodTier+1)));
 
             BoardMan.playerTurn = true;
             BoardMan.numActionsLeft = BoardMan.playerUnits.Count;

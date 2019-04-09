@@ -226,6 +226,12 @@ public class UIManager : MonoBehaviour
 
             //Add listener to acutally use stuff
             newAbilityButton.GetComponent<Button>().onClick.AddListener(delegate { BoardMan.useAbility(newAbilityButton.GetComponentInChildren<Text>().text); });
+
+            Ability ability = Ability.LoadAbilityFromName(Abilities[i]);
+            if (ability.FaithCost > (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() as God).faith)
+            {
+                newAbilityButton.GetComponent<Button>().interactable = false;
+            }
         }
     }
 
@@ -370,6 +376,7 @@ public class UIManager : MonoBehaviour
     {
         if (BoardMan.canMove(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()) || BoardMan.canAttack(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
         {
+            
             if (BoardMan.canAttack(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
                 UICanvas.transform.GetChild(0).transform.GetChild(0).GetComponent<Button>().interactable = true;
             else

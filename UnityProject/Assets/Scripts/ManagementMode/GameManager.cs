@@ -59,6 +59,8 @@ public class GameManager : MonoBehaviour
     public WorshipperUpgradeController UpgradeController;
     public PlayerGodController PlayerGod;
     public TreasureManager TreasureController;
+    public LayerMask GameLayer;
+    public FogOfWarScript FogOfWarController;
 
     // Public accessor variables, only to be accessed by other scripts, not modified
     // Mainly for testing purposes
@@ -129,9 +131,11 @@ public class GameManager : MonoBehaviour
         // Hide the map. Keep map object for collision detection, but does not need to be visible as individual god textures cover it
         GameMap.HideMap();
         GameMap.AddGodLandscapes(CurrentFactions);
+        TreasureController.GameInfoObject = GameInfo;
         PlayerGod.GameMap = GameMap;
         PlayerGod.CreatePlayerGod();
         UpgradeController.PlayerFaction = PlayerFaction;
+        FogOfWarController.PlayerFaction = PlayerFaction;
     }
 
     /// <summary>
@@ -187,7 +191,6 @@ public class GameManager : MonoBehaviour
         //Create map terrain
         GameMap = new TerrainMap(MapRadius, MapTexture);
         TreasureController.GameMap = GameMap;
-
         // Create the player Faction
         PlayerFaction = new Faction(GameInfo.PlayerFaction.GodName, GameInfo.PlayerFaction.Type, 0)
         {
@@ -366,7 +369,7 @@ public class GameManager : MonoBehaviour
                 PlayerFaction.FactionArea.Add(arrEnemyArea);
             }
             musBuildingToRemove = musEnemyFaction.OwnedBuildings.Find(musBuilding => musBuilding.BuildingType == Building.BUILDING_TYPE.VILLAGE);
-            if(musBuildingToRemove != null)
+            if (musBuildingToRemove != null)
             {
                 GameMap.RemoveBuilding(musBuildingToRemove);
                 musBuildingToRemove.Destroy();
@@ -555,7 +558,7 @@ public class GameManager : MonoBehaviour
         ResourceTicks = 0;
         if (mblnNewGame)
         {
-            //SaveGame();
+            SaveGame();
             mblnNewGame = false;
             CheckForAndDisplayTutorialBox(InformationBoxDisplay.TutorialFlag.NewGame);
         }
@@ -605,7 +608,7 @@ public class GameManager : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 // Code for selecting a building
-                if (Physics.Raycast(uniRay, out uniHitInfo))
+                if (Physics.Raycast(uniRay, out uniHitInfo, 1000, GameLayer, QueryTriggerInteraction.Collide))
                 {
                     muniSelectedGameObject = uniHitInfo.collider.gameObject;
                     // If the user clicked the map, do nothing
@@ -633,13 +636,28 @@ public class GameManager : MonoBehaviour
                     {
                         if (PlayerGod.PlayerGod == muniSelectedGameObject)
                         {
+                            if (SelectedBuilding != null)
+                            {
+                                SelectedBuilding.ToggleObjectOutlines(false);
+                                SelectedBuilding = null;
+                            }
+
                             CurrentMenuState = MENUSTATE.God_Selected_State;
                             PlayerGod.TogglePlayerOutlines(true);
                             MenuPanelController.EnterGodSelectedState(PlayerFaction, GameInfo);
+
                         }
                         else if (CurrentMenuState != MENUSTATE.God_Selected_State)
                         {
-                            SetSelectedBuilding(GameMap.GetBuildings().Find(ClickedBuilding => ClickedBuilding.MapGameObject == muniSelectedGameObject));
+                            Building musTempBuilding = GameMap.GetBuildings().Find(ClickedBuilding => ClickedBuilding.MapGameObject == muniSelectedGameObject);
+                            if (musTempBuilding != null)
+                            {
+                                SetSelectedBuilding(musTempBuilding);
+                            }
+                        }
+                        else if (CurrentMenuState == MENUSTATE.God_Selected_State)
+                        {
+                            PlayerGod.SetPointToMoveTowards(new Vector3(uniHitInfo.point.x, 1.5f, uniHitInfo.point.z));
                         }
                     }
                 }
@@ -679,7 +697,7 @@ public class GameManager : MonoBehaviour
         if (!EventSystem.current.IsPointerOverGameObject())
         {
             uniRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(uniRay, out uniHitInfo))
+            if (Physics.Raycast(uniRay, out uniHitInfo, 1000, GameLayer, QueryTriggerInteraction.Collide))
             {
                 BufferedBuilding.ObjectPosition = new Vector3(uniHitInfo.point.x, 1.5f, uniHitInfo.point.z);
             }
@@ -1337,7 +1355,7 @@ public class GameManager : MonoBehaviour
         GameInfo.WorshipperMovementBuffs = arrMovementUpgrades.ToArray();
 
         List<GameInfo.SavedTreasure> arrSavedTreasures = new List<GameInfo.SavedTreasure>();
-        foreach(Treasure musTreasure in GameMap.GetTreasures())
+        foreach (Treasure musTreasure in GameMap.GetTreasures())
         {
             arrSavedTreasures.Add(
                 new GameInfo.SavedTreasure()

@@ -7,6 +7,7 @@ public class PlayerGodController : MonoBehaviour
     public GameObject PlayerGod;
     public GameManager GameManagerScript;
     public TerrainMap GameMap;
+    public FogOfWarScript FogOfWarController;
 
     private Vector3 muniDestinationVector = Vector3.zero;
     private Quaternion muniDestinationRotation = Quaternion.identity;
@@ -82,6 +83,7 @@ public class PlayerGodController : MonoBehaviour
 
         // Get the constraint radius
         mfRadius = (GameManagerScript.PlayerFaction.FactionArea[0][1] - GameManagerScript.PlayerFaction.FactionArea[0][0]) * (GameManagerScript.PlayerFaction.GodTier + 1);
+        FogOfWarController.m_player = PlayerGod.transform;
     }
 
     public void TogglePlayerOutlines(bool pblnTurnOn)

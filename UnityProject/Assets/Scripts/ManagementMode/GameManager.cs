@@ -483,6 +483,19 @@ public class GameManager : MonoBehaviour
         GameInfo.WorshipperAttackBuffs = arrAttackUpgrades.ToArray();
         GameInfo.WorshipperDefenseBuffs = arrDefenseUpgrades.ToArray();
         GameInfo.WorshipperMovementBuffs = arrMovementUpgrades.ToArray();
+        List<GameInfo.SavedTreasure> arrSavedTreasures = new List<GameInfo.SavedTreasure>();
+        foreach (Treasure musTreasure in GameMap.GetTreasures())
+        {
+            arrSavedTreasures.Add(
+                new GameInfo.SavedTreasure()
+                {
+                    Type = musTreasure.Type,
+                    x = musTreasure.ObjectPosition.x,
+                    y = musTreasure.ObjectPosition.y,
+                    z = musTreasure.ObjectPosition.z
+                });
+        }
+        GameInfo.SavedTreasures = arrSavedTreasures.ToArray();
         //SceneManager.LoadScene("CombatMode");
         StartCoroutine(LoadCombatSceneAsync());
     }

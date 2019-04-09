@@ -136,6 +136,7 @@ public class GameManager : MonoBehaviour
         PlayerGod.CreatePlayerGod();
         UpgradeController.PlayerFaction = PlayerFaction;
         FogOfWarController.PlayerFaction = PlayerFaction;
+        TreasureController.LoadSavedTreasures(GameInfo.SavedTreasures);
     }
 
     /// <summary>
@@ -347,7 +348,6 @@ public class GameManager : MonoBehaviour
             PlayerFaction.CurrentUpgrades.Add(new MovementWorshipperUpgrade("", "", 0, intMovementUpgrade));
         }
         CurrentFactions.Add(PlayerFaction);
-        TreasureController.LoadSavedTreasures(GameInfo.SavedTreasures);
     }
 
     /// <summary>

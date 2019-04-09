@@ -36,7 +36,7 @@ public class BuffAbility : Ability
                 BuffScalingAmount = 0.5f;
                 MaxTargets = 0;
                 Range = 0;
-                FaithCost = 10;
+                FaithCost = 20;
                 break;
             case "warpaint":
                 AbilityDescription = "Buff yourself.";
@@ -45,7 +45,7 @@ public class BuffAbility : Ability
                 BuffScalingAmount = 0.5f;
                 MaxTargets = 0;
                 Range = 0;
-                FaithCost = 10;
+                FaithCost = 20;
                 break;
             case "eatspaghett":
                 AbilityDescription = "Buff yourself.";
@@ -54,7 +54,7 @@ public class BuffAbility : Ability
                 BuffScalingAmount = 0.5f;
                 MaxTargets = 0;
                 Range = 0;
-                FaithCost = 10;
+                FaithCost = 20;
                 break;
             case "yeezys":
                 AbilityDescription = "Buff your feet.";
@@ -63,7 +63,7 @@ public class BuffAbility : Ability
                 BuffScalingAmount = 0.5f;
                 MaxTargets = 2;
                 Range = 3;
-                FaithCost = 10;
+                FaithCost = 20;
                 break;
             case "quack?":
                 AbilityDescription = "Buff your ducks.";
@@ -73,7 +73,7 @@ public class BuffAbility : Ability
 
                 MaxTargets = 3;
                 Range = 3;
-                FaithCost = 10;
+                FaithCost = 20;
                 break;
             case "betterprogramming":
                 AbilityDescription = "Buff your programs.";
@@ -82,7 +82,7 @@ public class BuffAbility : Ability
                 BuffScalingAmount = 0.5f;
                 MaxTargets = 2;
                 Range = 3;
-                FaithCost = 10;
+                FaithCost = 20;
                 break;
             case "saxsolo":
                 AbilityDescription = "Buff your ears.";
@@ -91,7 +91,7 @@ public class BuffAbility : Ability
                 BuffScalingAmount = 0.5f;
                 MaxTargets = 2;
                 Range = 3;
-                FaithCost = 10;
+                FaithCost = 20;
                 break;
             case "slapass":
                 AbilityDescription = "Buff your bois.";
@@ -100,7 +100,7 @@ public class BuffAbility : Ability
                 BuffScalingAmount = 0.5f;
                 MaxTargets = 2;
                 Range = 3;
-                FaithCost = 10;
+                FaithCost = 20;
                 break;
             case "sharpenarms":
                 AbilityDescription = "Buff your weapons.";
@@ -109,7 +109,7 @@ public class BuffAbility : Ability
                 BuffScalingAmount = 0.5f;
                 MaxTargets = 2;
                 Range = 3;
-                FaithCost = 10;
+                FaithCost = 20;
                 break;
             case "igniteweapons":
                 AbilityDescription = "Buff your weapons.";
@@ -118,7 +118,7 @@ public class BuffAbility : Ability
                 BuffScalingAmount = 0.5f;
                 MaxTargets = 3;
                 Range = 3;
-                FaithCost = 10;
+                FaithCost = 20;
                 break;
             case "stayhydrated":
                 AbilityDescription = "Buff your life.";
@@ -127,7 +127,7 @@ public class BuffAbility : Ability
                 BuffScalingAmount = 0.5f;
                 MaxTargets = 4;
                 Range = 3;
-                FaithCost = 10;
+                FaithCost = 20;
                 break;
             default:
                 blnAbilityFound = false;

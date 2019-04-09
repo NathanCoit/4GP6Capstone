@@ -2771,7 +2771,7 @@ MonoBehaviour:
   UpgradeUI: {fileID: 286750823}
   MapRadius: 500
   BuildingCostModifier: 1
-  MinimumMorale: 0.8
+  MinimumMorale: 0.2
   TierUnlockPoint: 100
   TierUnlockPointMultiplier: 2
   MapTierCount: 3
@@ -2793,6 +2793,7 @@ MonoBehaviour:
   GameLayer:
     serializedVersion: 2
     m_Bits: 1
+  FogOfWarController: {fileID: 442684842}
 --- !u!4 &435552161
 Transform:
   m_ObjectHideFlags: 0

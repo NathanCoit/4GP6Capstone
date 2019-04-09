@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6285493180575503168
+--- !u!1 &4281349634830399203
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,23 +8,23 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6138990519890896132}
-  - component: {fileID: 2475379966825683502}
-  - component: {fileID: 3723966098379559515}
+  - component: {fileID: 2303609133169540287}
+  - component: {fileID: 6570265998751290613}
+  - component: {fileID: 2936584643902653967}
   m_Layer: 5
-  m_Name: singleTargetIcon
-  m_TagString: Untagged
+  m_Name: defenseReductionDebuffIcon
+  m_TagString: statusEffectIcon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &6138990519890896132
+--- !u!224 &2303609133169540287
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6285493180575503168}
+  m_GameObject: {fileID: 4281349634830399203}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
@@ -37,35 +37,35 @@ RectTransform:
   m_AnchoredPosition: {x: 382.5, y: 215.25}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &2475379966825683502
+--- !u!222 &6570265998751290613
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6285493180575503168}
+  m_GameObject: {fileID: 4281349634830399203}
   m_CullTransparentMesh: 0
---- !u!114 &3723966098379559515
+--- !u!114 &2936584643902653967
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6285493180575503168}
+  m_GameObject: {fileID: 4281349634830399203}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.764151, g: 0.16220188, b: 0.16220188, a: 1}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 13dbe3e19f5da6849a01f0f4678e8f01, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d57c24f0ed4846b44a0690251ece4536, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

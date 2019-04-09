@@ -12,10 +12,26 @@ public class UIManager : MonoBehaviour
     public GameObject unitButton;
     public GameObject abilityPanel;
     public GameObject abilityButton;
+
+    //UI Icon Prefabs
     public GameObject singleTargetIcon;
     public GameObject multiTargetIcon;
-    public GameObject buffIcon;
-    public GameObject debuffIcon;
+
+    public GameObject damageBuffIcon;
+    public GameObject healingBuffIcon;
+    public GameObject defenseBuffIcon;
+    public GameObject shieldBuffIcon;
+    public GameObject speedBuffIcon;
+
+    public GameObject damageReductionDebuffIcon;
+    public GameObject defenseReductionDebuffIcon;
+    public GameObject stunDebuffIcon;
+    public GameObject paralyzeDebuffIcon;
+    public GameObject burnDebuffIcon;
+    public GameObject slowDebuffIcon;
+    public GameObject blindDebuffIcon;
+    public GameObject poisonDebuffIcon;
+
     public Camera mainCamera;
 
     private int uiPadding;
@@ -196,7 +212,8 @@ public class UIManager : MonoBehaviour
 
             GameObject icon = new GameObject();
 
-            switch(Ability.LoadAbilityFromName(Abilities[i]).AbiltyType)
+            //Load the correct ability icon
+            switch (Ability.LoadAbilityFromName(Abilities[i]).AbiltyType)
             {
                 case Ability.ABILITYTYPE.SingleTarget:
                     icon = Instantiate(singleTargetIcon);
@@ -205,11 +222,53 @@ public class UIManager : MonoBehaviour
                     icon = Instantiate(multiTargetIcon);
                     break;
                 case Ability.ABILITYTYPE.Buff:
-                    icon = Instantiate(buffIcon);
+                    switch ((Ability.LoadAbilityFromName(Abilities[i]) as BuffAbility).BuffType)
+                    {
+                        case Ability.BUFFTYPE.Damage:
+                            icon = Instantiate(damageBuffIcon);
+                            break;
+                        case Ability.BUFFTYPE.Defense:
+                            icon = Instantiate(defenseBuffIcon);
+                            break;
+                        case Ability.BUFFTYPE.Healing:
+                            icon = Instantiate(healingBuffIcon);
+                            break;
+                        case Ability.BUFFTYPE.Shield:
+                            icon = Instantiate(shieldBuffIcon);
+                            break;
+                        case Ability.BUFFTYPE.Speed:
+                            icon = Instantiate(speedBuffIcon);
+                            break;
+                    }
                     break;
                 case Ability.ABILITYTYPE.Debuff:
-                    icon = Instantiate(debuffIcon);
-                    icon.transform.eulerAngles = new Vector3(0, 0, 180);
+                    switch ((Ability.LoadAbilityFromName(Abilities[i]) as DebuffAbility).DebuffType)
+                    {
+                        case Ability.DEBUFFTYPE.Blind:
+                            icon = Instantiate(blindDebuffIcon);
+                            break;
+                        case Ability.DEBUFFTYPE.Burn:
+                            icon = Instantiate(burnDebuffIcon);
+                            break;
+                        case Ability.DEBUFFTYPE.DamageReduction:
+                            icon = Instantiate(damageReductionDebuffIcon);
+                            break;
+                        case Ability.DEBUFFTYPE.DefenseReduction:
+                            icon = Instantiate(defenseReductionDebuffIcon);
+                            break;
+                        case Ability.DEBUFFTYPE.Paralyze:
+                            icon = Instantiate(paralyzeDebuffIcon);
+                            break;
+                        case Ability.DEBUFFTYPE.Poison:
+                            icon = Instantiate(poisonDebuffIcon);
+                            break;
+                        case Ability.DEBUFFTYPE.Slow:
+                            icon = Instantiate(slowDebuffIcon);
+                            break;
+                        case Ability.DEBUFFTYPE.Stun:
+                            icon = Instantiate(stunDebuffIcon);
+                            break;
+                    }
                     break;
             }
 
@@ -234,6 +293,81 @@ public class UIManager : MonoBehaviour
             }
         }
     }
+
+    public void updateStatusEffectDisplay(Unit u)
+    {
+        //Remove everything first
+        GameObject infoPanel = u.unitGameObject().transform.GetChild(0).transform.GetChild(0).gameObject;
+        for(int i = 0; i < infoPanel.transform.childCount; i++)
+        {
+            if (infoPanel.transform.GetChild(i).gameObject.tag == "statusEffectIcon")
+                Destroy(infoPanel.transform.GetChild(i).gameObject);
+        }
+
+        //Draw all the current status effects
+        int numOfAppliedEffects = 0;
+
+        foreach(StatusEffect effect in u.getActiveEffects())
+        {
+
+            GameObject icon = new GameObject();
+
+            switch (effect.getType())
+            {
+               
+                //Buffs
+                case "Healing":
+                    icon = Instantiate(healingBuffIcon);
+                break;
+                case "Damage":
+                    icon = Instantiate(damageBuffIcon);
+                    break;
+                case "Defense":
+                    icon = Instantiate(defenseBuffIcon);
+                    break;
+                case "Shield":
+                    icon = Instantiate(shieldBuffIcon);
+                    break;
+                case "Speed":
+                    icon = Instantiate(speedBuffIcon);
+                    break;
+
+                //Debuffs
+                case "DamageReduction":
+                    icon = Instantiate(damageReductionDebuffIcon);
+                    break;
+                case "DefenseReduction":
+                    icon = Instantiate(defenseReductionDebuffIcon);
+                    break;
+                case "Stun":
+                    icon = Instantiate(stunDebuffIcon);
+                    break;
+                case "Paralyze":
+                    icon = Instantiate(paralyzeDebuffIcon);
+                    break;
+                case "Burn":
+                    icon = Instantiate(burnDebuffIcon);
+                    break;
+                case "Poison":
+                    icon = Instantiate(poisonDebuffIcon);
+                    break;
+                case "Slow":
+                    icon = Instantiate(slowDebuffIcon);
+                    break;
+                case "Blind":
+                    icon = Instantiate(blindDebuffIcon);
+                    break;
+            }
+
+            icon.transform.SetParent(infoPanel.transform);
+            icon.GetComponent<RectTransform>().localRotation = new Quaternion(0,0,0,0);
+            icon.GetComponent<RectTransform>().localScale = new Vector3(3, 3, 3);
+            icon.GetComponent<RectTransform>().localPosition = new Vector3(-400 + (250 * numOfAppliedEffects), 450, 0);
+
+            numOfAppliedEffects++;
+        }
+    }
+
 
     //Makes the regular sized unit panel
     public void makePanel(GameObject panel)
@@ -414,6 +548,29 @@ public class UIManager : MonoBehaviour
 
         // Add the EventTrigger.Entry to delegates list on the EventTrigger
         eventTrigger.triggers.Add(entry);
+    }
+
+    public void updateFaithLabels()
+    {
+        GameObject playerFaithLabel = GameObject.FindGameObjectWithTag("playerFaithLabel");
+        GameObject enemyFaithLabel = GameObject.FindGameObjectWithTag("enemyFaithLabel");
+        int playerFaith = 0;
+        int enemyFaith = 0;
+
+        foreach(Unit u in BoardMan.playerUnits)
+        {
+            if (u is God)
+                playerFaith = (u as God).faith;
+        }
+
+        foreach (Unit u in BoardMan.enemyUnits)
+        {
+            if (u is God)
+                enemyFaith = (u as God).faith;
+        }
+
+        playerFaithLabel.GetComponent<Text>().text = "Player Faith: " + playerFaith.ToString() + "/100";
+        enemyFaithLabel.GetComponent<Text>().text = "Enemy Faith: " + enemyFaith.ToString() + "/100";
     }
 
     public void hideMenu()

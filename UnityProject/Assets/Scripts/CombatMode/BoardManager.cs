@@ -503,7 +503,23 @@ public class BoardManager : MonoBehaviour
             foreach (Unit u in enemyUnits) //allow each of enemy units to act
             {
                 u.beginTurn();
+                if (u is God)
+                {
+                    (u as God).faith += 10;
+                }
             }
+
+            //Status effects done in seperate loop (in case stuff dies)
+            for (int i = 0; i < enemyUnits.Count; i++)
+            {
+                if (i <= enemyUnits.Count)
+                {
+                    enemyUnits[i].updateStatusEffects();
+                    enemyUnits[i].appyStatusEffects();
+                }
+            
+            }
+
             numActionsLeft = enemyUnits.Count;
 
             foreach(GameObject button in playerUiButtons)
@@ -521,6 +537,17 @@ public class BoardManager : MonoBehaviour
                     (u as God).faith += 10;
                 }
             }
+
+            //Status effects done in seperate loop (in case stuff dies)
+            for (int i = 0; i < playerUnits.Count; i++)
+            {
+                if (i <= playerUnits.Count)
+                {
+                    playerUnits[i].updateStatusEffects();
+                    playerUnits[i].appyStatusEffects();
+                }
+            }
+
             numActionsLeft = playerUnits.Count;
 
             foreach (GameObject button in playerUiButtons)
@@ -528,7 +555,12 @@ public class BoardManager : MonoBehaviour
 
             Camera.main.GetComponent<CombatCam>().resetCamera();
         }
-        playerTurn = !playerTurn; //switch turn
+
+        //Update faith labels
+        UIMan.updateFaithLabels();
+
+        //switch turn
+        playerTurn = !playerTurn; 
         
     }
 

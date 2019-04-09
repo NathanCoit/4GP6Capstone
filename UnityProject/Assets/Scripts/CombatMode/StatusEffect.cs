@@ -46,7 +46,7 @@ public class StatusEffect
 
     public void decreaseDuration()
     {
-        turnsInEffect = 0;
+        turnsInEffect--;
     }
 
     public int checkTurnsLeft()

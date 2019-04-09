@@ -2580,9 +2580,6 @@ MonoBehaviour:
   endBattle: 0
   PlayerMorale: 0
   enemyMorale: 0
-  playerFaith: 0
-  enemyFaith: 0
-  faithCap: 0
   MovableTile: {fileID: 1671741471656716, guid: 5ea76647790eee4489bf8024aee91866,
     type: 3}
   InMoveRangeTile: {fileID: 6951534097669304281, guid: 38b41711fcf0b4b4899f7efd763aa326,
@@ -3081,6 +3078,8 @@ MonoBehaviour:
   enemyMorale: 0
   finishedBattle: 0
   battleResult: 0
+  playerGodAttackStrength: 50
+  enemyGodAttackStrength: 50
 --- !u!4 &878365385
 Transform:
   m_ObjectHideFlags: 0
@@ -6020,9 +6019,31 @@ MonoBehaviour:
     type: 3}
   multiTargetIcon: {fileID: 1749236587122841157, guid: 77be8ea66709c9e4b8f12aa19b283978,
     type: 3}
-  buffIcon: {fileID: 2483359451511034581, guid: 4156f5c191c235d4983f6a7e5aa8f2ba,
+  damageBuffIcon: {fileID: 4137847422555948792, guid: b6f61a15d35560b4cafc55acb4937298,
     type: 3}
-  debuffIcon: {fileID: 462836810915289439, guid: 157bace0c112c504cba2703b3f87a3e4,
+  healingBuffIcon: {fileID: 9040528091989303140, guid: 89a8189ae7105f249b31035f73150b35,
+    type: 3}
+  defenseBuffIcon: {fileID: 4162495507327413112, guid: 95dfe0472567a8f40ab322ce63dec058,
+    type: 3}
+  shieldBuffIcon: {fileID: 1133258262040735331, guid: 1ee4a38e19c80a444a5d7675f946b9e8,
+    type: 3}
+  speedBuffIcon: {fileID: 8827006780183611215, guid: b192dee68e407944385808278eb89026,
+    type: 3}
+  damageReductionDebuffIcon: {fileID: 6164157836064949698, guid: c1a01e8b5bde4914e8c90e39524e42f2,
+    type: 3}
+  defenseReductionDebuffIcon: {fileID: 4281349634830399203, guid: 6febc7b281e80ef4d8f7f3159c80602c,
+    type: 3}
+  stunDebuffIcon: {fileID: 1773909696726906358, guid: 0ecf86e30bdba6241afb8fad048526c5,
+    type: 3}
+  paralyzeDebuffIcon: {fileID: 3737910750208774974, guid: e0746e78e303ccc429f4dd509c497b9d,
+    type: 3}
+  burnDebuffIcon: {fileID: 6489449020043464781, guid: 1055a7f901048d742891c77ccfe69f0a,
+    type: 3}
+  slowDebuffIcon: {fileID: 8692385864863195178, guid: 58fe04615bdd30440943ae79f683df67,
+    type: 3}
+  blindDebuffIcon: {fileID: 7343715626048340056, guid: 3c5ef2703c7f5814a879b395353f91f3,
+    type: 3}
+  poisonDebuffIcon: {fileID: 491416422058707075, guid: 8eaa80af3853a354c9fdf9103da47f1e,
     type: 3}
   mainCamera: {fileID: 128641586}
   selectedMenu: {fileID: 0}

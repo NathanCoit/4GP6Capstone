@@ -14,6 +14,7 @@ public class Targetable : MonoBehaviour {
     private MapManager MapMan;
     private BoardManager BoardMan;
     private SetupManager SetupMan;
+    private UIManager UIMan;
 
     public Ability ability;
     public Material mousedOverValid;
@@ -39,6 +40,8 @@ public class Targetable : MonoBehaviour {
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
 
         SetupMan = GameObject.Find("SetupManager").GetComponent<SetupManager>();
+
+        UIMan = GameObject.FindGameObjectWithTag("UIManager").GetComponent<UIManager>();
     }
 	
 	// Update is called once per frame
@@ -261,7 +264,9 @@ public class Targetable : MonoBehaviour {
             {
                 buttonSwitch = true;
                 
+                //Subtract faith cost and then update the ui
                 (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() as God).faith -= ability.FaithCost;
+                UIMan.updateFaithLabels();
 
                 //Just damage the one unit if single target
                 if (ability.AbiltyType == Ability.ABILITYTYPE.SingleTarget)

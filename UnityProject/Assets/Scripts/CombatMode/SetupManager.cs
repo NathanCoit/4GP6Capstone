@@ -21,6 +21,7 @@ public class SetupManager : MonoBehaviour
 
     public BoardManager BoardMan;
     public MapManager MapMan;
+    private UIManager UIMan;
 
     private int numGroupsWorshippers;
     private GameObject[] arrGroupLabels;
@@ -58,6 +59,7 @@ public class SetupManager : MonoBehaviour
     {
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
+        UIMan = GameObject.FindGameObjectWithTag("UIManager").GetComponent<UIManager>();
 
         // required for startup stuff
         arrGroupLabels = new GameObject[5];
@@ -69,7 +71,7 @@ public class SetupManager : MonoBehaviour
         }
         OverlayCanvas = GameObject.Find("OverlayCanvas");
         arrTexts = OverlayCanvas.GetComponentsInChildren<Text>();
-        BottomPanel = GameObject.Find("Panel");
+        BottomPanel = GameObject.Find("BottomPanel");
         SurrenderConfirmationPanel = GameObject.Find("AREYOUSUREPanel");
 
         GameObject GameInfoObject = GameObject.Find("GameInfo");
@@ -218,6 +220,8 @@ public class SetupManager : MonoBehaviour
 
             Camera.main.GetComponent<CombatCam>().CameraMovementEnabled = true;
             Camera.main.GetComponent<CombatCam>().resetCamera();
+
+            UIMan.updateFaithLabels();
 
             startup = false;
         }

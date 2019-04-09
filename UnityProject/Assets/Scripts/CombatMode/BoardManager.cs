@@ -91,7 +91,7 @@ public class BoardManager : MonoBehaviour
 
     public void CheckEnd()
     {
-        //check if someone won the game (note we're checking if its 1 since we dont have killing gods in yet)
+        //check if someone won the game
         if (playerUnits.Count == 0)
         {
             Defeat();
@@ -128,14 +128,12 @@ public class BoardManager : MonoBehaviour
         SetupMan.finishedBattle = true;
     }
 
-    public void Retreat()
+    public void Surrender()
     {
         SetupMan.battleResult = GameInfo.BATTLESTATUS.Retreat;
+        //TODO: does managementmode check for any changes to morale made from combat mode?
+        SetupMan.playerMorale = SetupMan.playerMorale / 2; //arbitrarily (for now) halves the morale
         SetupMan.finishedBattle = true;
-
-        int worshipersLeft = GetRemainingWorshippers(true);
-        SetupMan.playerWorshiperCount = worshipersLeft; //incorrect value atm
-
     }
 
     public int GetRemainingWorshippers(bool player)
@@ -564,14 +562,5 @@ public class BoardManager : MonoBehaviour
     public bool isPlayerTurn()
     {
         return playerTurn;
-    }
-
-
-    //Used for testing purposes
-    public bool surrender()
-    {
-        //not implemented yet so it's returning a bool
-        Retreat();
-        return false;
     }
 }

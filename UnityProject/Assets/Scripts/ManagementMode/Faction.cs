@@ -99,14 +99,14 @@ public class Faction
         {
             foreach(Building buildingToHide in OwnedBuildings)
             {
-                buildingToHide.BuildingObject.SetActive(false);
+                buildingToHide.MapGameObject.SetActive(false);
             }
         }
         else
         {
             foreach(Building buildingToShow in OwnedBuildings)
             {
-                buildingToShow.BuildingObject.SetActive(true);
+                buildingToShow.MapGameObject.SetActive(true);
             }
         }
     }

@@ -32,7 +32,7 @@ public class Cam : MonoBehaviour {
 		theScreenHeight = Screen.height;
         // Move starting camera position to viewing player village
         // -30 on the z coordinate points camera at starting village with current camera angle
-        transform.position = new Vector3(gameManagerScript.PlayerVillage.BuildingPosition.x, 50, gameManagerScript.PlayerVillage.BuildingPosition.z - 30f);
+        transform.position = new Vector3(gameManagerScript.PlayerVillage.ObjectPosition.x, 50, gameManagerScript.PlayerVillage.ObjectPosition.z - 30f);
 	}
 
     private void Awake()

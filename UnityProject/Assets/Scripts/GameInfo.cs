@@ -50,18 +50,31 @@ public class GameInfo : MonoBehaviour {
         public int RewardPoints;
         public string[] Abilities;
     }
+
+    [System.Serializable]
+    public struct SavedTreasure
+    {
+        public float x;
+        public float y;
+        public float z;
+        public Treasure.TreasureType Type;
+    }
     
     // Initialize any variables that need to be stored here, give each a default value.
     // Variables shared by combat and management mode
     public bool FinishedBattle = false;
     public SavedFaction EnemyFaction;
     public SavedFaction PlayerFaction;
+    public float GodHealthMultiplier = 1f;
+    public float GodAttackMultiplier = 1f;
+    public float GodDefenseMultiplier = 1f;
 
     // Combat mode variables
     public BATTLESTATUS LastBattleStatus = BATTLESTATUS.Victory;
 
     // Management mode variables for loading scene
     public SavedFaction[] SavedFactions;
+    public SavedTreasure[] SavedTreasures;
     public int CurrentTier = 0;
     public float MapRadius = 100f;
     public float PlayerMoraleCap = 1.0f;
@@ -86,9 +99,9 @@ public class GameInfo : MonoBehaviour {
     {
         SavedBuilding musSavedBuilding = new SavedBuilding
         {
-            x = pmusBuildingToSave.BuildingPosition.x,
-            y = pmusBuildingToSave.BuildingPosition.y,
-            z = pmusBuildingToSave.BuildingPosition.z,
+            x = pmusBuildingToSave.ObjectPosition.x,
+            y = pmusBuildingToSave.ObjectPosition.y,
+            z = pmusBuildingToSave.ObjectPosition.z,
             BuildingType = pmusBuildingToSave.BuildingType,
             UpgradeLevel = pmusBuildingToSave.UpgradeLevel,
             Miners = pmusBuildingToSave.BuildingType == Building.BUILDING_TYPE.MATERIAL ? ((MineBuilding)pmusBuildingToSave).Miners : 0

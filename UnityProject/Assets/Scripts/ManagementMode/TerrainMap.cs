@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -8,7 +9,7 @@ using UnityEngine;
 public class TerrainMap
 {
     private GameObject mgobjTerrainMap;
-    private List<Building> marrBuildingsOnMap;
+    private List<MapObject> marrObjectsOnMap;
     private List<GameObject> LineDrawers;
     private System.Random randomNumGenerator = new System.Random();
 
@@ -17,7 +18,7 @@ public class TerrainMap
     public TerrainMap(float pfMapRadius, Texture mapTexture)
     {
         mgobjTerrainMap = CreateTerrainObject(pfMapRadius, mapTexture);
-        marrBuildingsOnMap = new List<Building>();
+        marrObjectsOnMap = new List<MapObject>();
         LineDrawers = new List<GameObject>();
     }
 
@@ -36,7 +37,7 @@ public class TerrainMap
     public void PlaceSavedFactionBuildings(GameInfo.SavedBuilding[] BuildingsToPlace, Faction OwningFaction)
     {
         Building loadedBuilding = null;
-        foreach(GameInfo.SavedBuilding buildingToPlace in BuildingsToPlace)
+        foreach (GameInfo.SavedBuilding buildingToPlace in BuildingsToPlace)
         {
             switch (buildingToPlace.BuildingType)
             {
@@ -53,60 +54,113 @@ public class TerrainMap
     public bool PlaceBuilding(Building pBuildingToPlace, Vector3 pvec3PointToPlace, bool IgnoreOtherBuildings = false)
     {
         bool blnCanPlace = true;
-        bool blnInAnArea = false;
-        float DistanceBetweenBuildings = 0f;
-        float AngleOfPlacement = 0f;
-        float RadiusOfPlacement = 0f;
         //Attempt to place building and return result
         // Check if trying to place too close to another building
-        if(!IgnoreOtherBuildings)
+        if (!IgnoreOtherBuildings)
         {
-            foreach (Building BuildingOnMap in marrBuildingsOnMap)
-            {
-                DistanceBetweenBuildings = Vector3.Distance(pvec3PointToPlace, BuildingOnMap.BuildingPosition);
-                if (DistanceBetweenBuildings < Building.BuildingRadiusSize * 2)
-                {
-                    blnCanPlace = false;
-                }
-            }
-
-            RadiusOfPlacement = Vector3.Distance(new Vector3(0, 0.5f, 0), pvec3PointToPlace);
-
-            AngleOfPlacement = Vector3.Angle(new Vector3(100f, 0.5f, 0), pvec3PointToPlace) * Mathf.PI / 180;
-            // In third or fourth quadrant, add Pi as .angle will always return smallest vector
-            if (pvec3PointToPlace.z < 0)
-            {
-                AngleOfPlacement = 2 * Mathf.PI - AngleOfPlacement;
-            }
-
-            foreach (float[] playerArea in pBuildingToPlace.OwningFaction.FactionArea)
-            {
-                // Check if you are placing in your own area.
-                if ((AngleOfPlacement > playerArea[2] && AngleOfPlacement < playerArea[3])
-                    && RadiusOfPlacement > playerArea[0] && RadiusOfPlacement < playerArea[1])
-                {
-                    blnInAnArea = true;
-                }
-            }
+            blnCanPlace = CheckForValidPlacementPointInFactionArea(pvec3PointToPlace, pBuildingToPlace.OwningFaction.FactionArea);
         }
         else
         {
             blnCanPlace = true;
-            blnInAnArea = true;
         }
 
-        if (blnCanPlace && blnInAnArea)
+        if (blnCanPlace)
         {
-            marrBuildingsOnMap.Add(pBuildingToPlace);
-            pBuildingToPlace.BuildingPosition = pvec3PointToPlace;
+            marrObjectsOnMap.Add(pBuildingToPlace);
+            pBuildingToPlace.ObjectPosition = pvec3PointToPlace;
             pBuildingToPlace.OwningFaction.OwnedBuildings.Add(pBuildingToPlace);
         }
-        return blnCanPlace && blnInAnArea;
+        return blnCanPlace;
+    }
+
+    public bool PlaceTreasure(Treasure pmusTreasureToPlace, Vector3 pvecPointToPlace, bool IgnorePlacementCheck = false)
+    {
+        bool blnCanPlace = true;
+        if (!IgnorePlacementCheck)
+        {
+            blnCanPlace = CheckForValidTreasurePlacement(pvecPointToPlace);
+        }
+        if (blnCanPlace)
+        {
+            marrObjectsOnMap.Add(pmusTreasureToPlace);
+            pmusTreasureToPlace.ObjectPosition = pvecPointToPlace;
+        }
+        return blnCanPlace;
+    }
+
+    public bool CheckForValidPlacementPointInFactionArea(Vector3 pvec3PointToPlace, List<float[]> parrFactionAreas)
+    {
+        bool blnCanPlace = true;
+        bool blnInAnArea = false;
+        float DistanceBetweenBuildings = 0f;
+        float AngleOfPlacement = 0f;
+        float RadiusOfPlacement = 0f;
+
+        foreach (MapObject BuildingOnMap in marrObjectsOnMap)
+        {
+            DistanceBetweenBuildings = Vector3.Distance(pvec3PointToPlace, BuildingOnMap.ObjectPosition);
+            if (DistanceBetweenBuildings < MapObject.ObjectRadius * 2)
+            {
+                blnCanPlace = false;
+            }
+        }
+
+        RadiusOfPlacement = Vector3.Distance(new Vector3(0, 0.5f, 0), pvec3PointToPlace);
+
+        AngleOfPlacement = Vector3.Angle(new Vector3(100f, 0.5f, 0), pvec3PointToPlace) * Mathf.PI / 180;
+        // In third or fourth quadrant, add Pi as .angle will always return smallest vector
+        if (pvec3PointToPlace.z < 0)
+        {
+            AngleOfPlacement = 2 * Mathf.PI - AngleOfPlacement;
+        }
+
+        foreach (float[] playerArea in parrFactionAreas)
+        {
+            // Check if you are placing in your own area.
+            if ((AngleOfPlacement > playerArea[2] && AngleOfPlacement < playerArea[3])
+                && RadiusOfPlacement > playerArea[0] && RadiusOfPlacement < playerArea[1])
+            {
+                blnInAnArea = true;
+            }
+        }
+
+        return blnInAnArea && blnCanPlace;
+    }
+
+    /// <summary>
+    /// Check to see if a point is within a game tier.
+    /// Allows for random point generation and checking for placing treasures.
+    /// </summary>
+    /// <param name="pvec3PointToPlace"></param>
+    /// <param name="pfStartingRadius"></param>
+    /// <param name="pfEndingRadius"></param>
+    /// <returns></returns>
+    public bool CheckForValidTreasurePlacement(Vector3 pvec3PointToPlace)
+    {
+        bool blnValid = true;
+        float fDistanceBetweenObjects = 0f;
+
+        // check if point is too close to an object
+        foreach (MapObject musMapObject in marrObjectsOnMap)
+        {
+            fDistanceBetweenObjects = Vector3.Distance(pvec3PointToPlace, musMapObject.ObjectPosition);
+            if (fDistanceBetweenObjects < MapObject.ObjectRadius * 2)
+            {
+                blnValid = false;
+            }
+        }
+        return blnValid;
     }
 
     public List<Building> GetBuildings()
     {
-        return marrBuildingsOnMap;
+        return marrObjectsOnMap.FindAll(musMapObject => musMapObject.ObjectType == MapObject.MapObjectType.Building).Cast<Building>().ToList();
+    }
+
+    public List<Treasure> GetTreasures()
+    {
+        return marrObjectsOnMap.FindAll(musMapObject => musMapObject.ObjectType == MapObject.MapObjectType.Treasure).Cast<Treasure>().ToList();
     }
 
     public GameObject GetMapObject()
@@ -116,10 +170,19 @@ public class TerrainMap
 
     public void RemoveBuilding(Building pmusBuildingToRemove)
     {
-        if(pmusBuildingToRemove != null)
+        if (pmusBuildingToRemove != null)
         {
-            marrBuildingsOnMap.Remove(pmusBuildingToRemove);
+            marrObjectsOnMap.Remove(pmusBuildingToRemove);
         }
+    }
+
+    public void RemoveTreasure(Treasure pmusTreasureToRemove)
+    {
+        if (pmusTreasureToRemove != null)
+        {
+            marrObjectsOnMap.Remove(pmusTreasureToRemove);
+        }
+
     }
 
     public void DivideMap(List<Faction> parrCurrentFactions, float pfStartingRad, float pfEndingRad)
@@ -146,7 +209,7 @@ public class TerrainMap
         int intPosy = 1;
         foreach (Faction FactionToPlace in parrCurrentFactions)
         {
-            foreach(float[] farrFactionArea in FactionToPlace.FactionArea)
+            foreach (float[] farrFactionArea in FactionToPlace.FactionArea)
             {
                 if (farrFactionArea[0] == 0)
                 {
@@ -197,17 +260,27 @@ public class TerrainMap
         }
     }
 
-    public Vector3 CalculateRandomPosition(Faction pobjFactionToPlace)
+    public Vector3 CalculateRandomPositionForFaction(Faction pobjFactionToPlace)
     {
         Vector3 vec3StartingPosition = new Vector3(0, 0, 0);
         int areaIndex = randomNumGenerator.Next(pobjFactionToPlace.FactionArea.Count);
         float[] FactionArea = pobjFactionToPlace.FactionArea[areaIndex];
 
-        float fAngle = Random.Range(FactionArea[2] + (Building.BuildingRadiusSize / 100f), FactionArea[3] - (Building.BuildingRadiusSize / 100f));
-        float fRad = Random.Range(FactionArea[0] + Building.BuildingRadiusSize, FactionArea[1] - Building.BuildingRadiusSize);
+        float fAngle = Random.Range(FactionArea[2] + (Building.ObjectRadius / 100f), FactionArea[3] - (Building.ObjectRadius / 100f));
+        float fRad = Random.Range(FactionArea[0] + Building.ObjectRadius, FactionArea[1] - Building.ObjectRadius);
 
         vec3StartingPosition = new Vector3(fRad * Mathf.Cos(fAngle), 1.5f, fRad * Mathf.Sin(fAngle));
         return vec3StartingPosition;
+    }
+
+    public Vector3 CalculateRandomPositionInTier(int pintGameTier)
+    {
+        Vector3 uniVec3;
+        float fAngle = Random.Range(0, 360);
+        float fRad = Random.Range((pintGameTier) * (250/3), (pintGameTier+1) * (250 / 3));
+
+        uniVec3 = new Vector3(fRad * Mathf.Cos(fAngle), 1.5f, fRad * Mathf.Sin(fAngle));
+        return uniVec3;
     }
 
     private void OutlineFaction(Faction faction)
@@ -290,4 +363,3 @@ public class TerrainMap
         }
     }
 }
- 

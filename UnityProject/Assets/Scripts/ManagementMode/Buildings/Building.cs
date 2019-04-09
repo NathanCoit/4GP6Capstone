@@ -5,23 +5,12 @@ using UnityEngine;
 /// <summary>
 /// Class containing methods for creating, interacting with,and deleting building objects
 /// </summary>
-public class Building{
-    public GameObject BuildingObject;
-    static public float BuildingRadiusSize = 10f; // Radius around a building that can not be built on, overriden by gamemanager
+public class Building : MapObject{
+    
     static public float BuildingCostModifier = 1;
     private static Dictionary<string, UnityEngine.Object> mdictBuildingResources = new Dictionary<string, UnityEngine.Object>();
 
-    public Vector3 BuildingPosition
-    {
-        get
-        {
-            return BuildingObject.transform.position;
-        }
-        set
-        {
-            BuildingObject.transform.position = value;
-        }
-    }
+    
 
     public enum BUILDING_TYPE
     {
@@ -46,10 +35,11 @@ public class Building{
     /// <param name="pmusFactionOwner">The owning faction of the building.</param>
 	public Building(BUILDING_TYPE penumBuildingType, Faction pmusFactionOwner)
     {
-        BuildingObject = CreateBuildingObject(penumBuildingType, pmusFactionOwner.Type);
+        MapGameObject = CreateBuildingObject(penumBuildingType, pmusFactionOwner.Type);
         BuildingType = penumBuildingType;
         OwningFaction = pmusFactionOwner;
         BuildingCost = CalculateBuildingCost(penumBuildingType);
+        ObjectType = MapObjectType.Building;
     }
 
     /// <summary>
@@ -60,10 +50,11 @@ public class Building{
     public Building(GameInfo.SavedBuilding pmusSavedBuilding, Faction pmusFactionOwner)
     {
         UpgradeLevel = pmusSavedBuilding.UpgradeLevel;
-        BuildingObject = CreateBuildingObject(pmusSavedBuilding.BuildingType, pmusFactionOwner.Type);
+        MapGameObject = CreateBuildingObject(pmusSavedBuilding.BuildingType, pmusFactionOwner.Type);
         BuildingType = pmusSavedBuilding.BuildingType;
         OwningFaction = pmusFactionOwner;
         BuildingCost = CalculateBuildingCost(pmusSavedBuilding.BuildingType);
+        ObjectType = MapObjectType.Building;
     }
 
     /// <summary>
@@ -99,7 +90,7 @@ public class Building{
         {
             // Add a linerenderer for outlining, scale based on scene parmeters
             uniBuildingGameObject.AddComponent<LineRenderer>().positionCount = 0;
-            uniBuildingGameObject.transform.localScale = new Vector3(BuildingRadiusSize, BuildingRadiusSize, BuildingRadiusSize);
+            uniBuildingGameObject.transform.localScale = new Vector3(ObjectRadius, ObjectRadius, ObjectRadius);
         }
         return uniBuildingGameObject;
     }
@@ -241,21 +232,21 @@ public class Building{
             string strResourceKey = "Buildings/" + OwningFaction.Type.ToString() + BuildingType.ToString() + UpgradeLevel.ToString();
             if (mdictBuildingResources.ContainsKey(strResourceKey) && mdictBuildingResources[strResourceKey] != null)
             {
-                OriginalPos = BuildingPosition;
-                GameObject.Destroy(BuildingObject);
-                BuildingObject = (GameObject)GameObject.Instantiate(
+                OriginalPos = ObjectPosition;
+                GameObject.Destroy(MapGameObject);
+                MapGameObject = (GameObject)GameObject.Instantiate(
                     mdictBuildingResources[strResourceKey]);
-                BuildingObject.transform.localScale = new Vector3(BuildingRadiusSize, BuildingRadiusSize, BuildingRadiusSize);
-                BuildingPosition = OriginalPos;
-                BuildingObject.AddComponent<LineRenderer>();
+                MapGameObject.transform.localScale = new Vector3(ObjectRadius, ObjectRadius, ObjectRadius);
+                ObjectPosition = OriginalPos;
+                MapGameObject.AddComponent<LineRenderer>();
                 if (outline)
                 {
-                    ToggleBuildingOutlines(true);
+                    ToggleObjectOutlines(true);
                 }
             }
             else
             {
-                BuildingObject.transform.localScale += new Vector3(1, 1, 1); // In case no model exists yet
+                MapGameObject.transform.localScale += new Vector3(1, 1, 1); // In case no model exists yet
             }
         }
         return Upgraded;
@@ -263,41 +254,8 @@ public class Building{
 
     public void Destroy()
     {
-        GameObject.Destroy(BuildingObject);
+        GameObject.Destroy(MapGameObject);
         OwningFaction.OwnedBuildings.Remove(this);
-    }
-
-    public void ToggleBuildingOutlines(bool pblnTurnOn)
-    {
-        LineRenderer lineRenderer = BuildingObject.GetComponent<LineRenderer>();
-        Vector3 pos;
-        // Turn on building outlines
-        if (pblnTurnOn)
-        {
-            int vertexCount = 40; // 4 vertices == square
-            float lineWidth = 0.2f;
-            float radius = 1.0f;
-            
-            lineRenderer.useWorldSpace = false;
-            lineRenderer.widthMultiplier = lineWidth;
-
-            float deltaTheta = (2f * Mathf.PI) / vertexCount;
-            float theta = 0f;
-
-            lineRenderer.positionCount = vertexCount + 2;
-            for (int i = 0; i < lineRenderer.positionCount; i++)
-            {
-                pos = new Vector3(radius * Mathf.Cos(theta), 0f, radius * Mathf.Sin(theta));
-                lineRenderer.SetPosition(i, pos);
-                theta += deltaTheta;
-            }
-        }
-
-        // Turn off building outlines
-        else
-        {
-            lineRenderer.positionCount = 0;
-        }
     }
 
     public static int CalculateBuildingCost(Building.BUILDING_TYPE penumBuildingType)
@@ -453,14 +411,14 @@ public class Building{
     public void ReloadBuildingObject()
     {
         Vector3 OriginalPos;
-        OriginalPos = BuildingPosition;
-        GameObject.Destroy(BuildingObject);
-        BuildingObject = CreateBuildingObject(BuildingType, OwningFaction.Type);
-        BuildingObject.transform.localScale = new Vector3(BuildingRadiusSize, BuildingRadiusSize, BuildingRadiusSize);
-        BuildingPosition = OriginalPos;
-        if(BuildingObject.GetComponent<LineRenderer>() == null)
+        OriginalPos = ObjectPosition;
+        GameObject.Destroy(MapGameObject);
+        MapGameObject = CreateBuildingObject(BuildingType, OwningFaction.Type);
+        MapGameObject.transform.localScale = new Vector3(ObjectRadius, ObjectRadius, ObjectRadius);
+        ObjectPosition = OriginalPos;
+        if(MapGameObject.GetComponent<LineRenderer>() == null)
         {
-            BuildingObject.AddComponent<LineRenderer>();
+            MapGameObject.AddComponent<LineRenderer>();
         }
     }
 

@@ -377,7 +377,7 @@ public class ManagementPlayModeTest {
         yield return null;
 
         // Check that building is highlighted, line renderer will have points when highlighted
-        PositionCount = playerBuilding.BuildingObject.GetComponent<LineRenderer>().positionCount;
+        PositionCount = playerBuilding.MapGameObject.GetComponent<LineRenderer>().positionCount;
         Assert.True(PositionCount > 0);
     }
 
@@ -403,11 +403,11 @@ public class ManagementPlayModeTest {
                 foreach (float[] playerArea in faction.FactionArea)
                 {
                     // Calculation to check if a village is in its own territory
-                    RadiusOfPlacement = Vector3.Distance(new Vector3(0, 0.5f, 0), villageBuilding.BuildingPosition);
+                    RadiusOfPlacement = Vector3.Distance(new Vector3(0, 0.5f, 0), villageBuilding.ObjectPosition);
 
-                    AngleOfPlacement = Vector3.Angle(new Vector3(100f, 0.5f, 0), villageBuilding.BuildingPosition) * Mathf.PI / 180;
+                    AngleOfPlacement = Vector3.Angle(new Vector3(100f, 0.5f, 0), villageBuilding.ObjectPosition) * Mathf.PI / 180;
                     // In third or fourth quadrant, add Pi as .angle will always return smallest vector
-                    if (villageBuilding.BuildingPosition.z < 0)
+                    if (villageBuilding.ObjectPosition.z < 0)
                     {
                         AngleOfPlacement = 2 * Mathf.PI - AngleOfPlacement;
                     }
@@ -433,7 +433,7 @@ public class ManagementPlayModeTest {
         yield return null;
 
         gameManager = GetGameManager();
-        buildingPosition = gameManager.PlayerVillage.BuildingPosition;
+        buildingPosition = gameManager.PlayerVillage.ObjectPosition;
         // Check 5 times for different village starting positions
         for(int i = 0; i < 5; i++)
         {
@@ -442,7 +442,7 @@ public class ManagementPlayModeTest {
             yield return null;
 
             gameManager = GetGameManager();
-            Assert.True(!buildingPosition.Equals(gameManager.PlayerVillage.BuildingPosition));
+            Assert.True(!buildingPosition.Equals(gameManager.PlayerVillage.ObjectPosition));
         }
     }
 
@@ -519,7 +519,7 @@ public class ManagementPlayModeTest {
 
         gameManager.SetSelectedBuilding(enemyBuilding);
         // Check building is highlighted
-        Assert.True(enemyBuilding.BuildingObject.GetComponent<LineRenderer>().positionCount > 0);
+        Assert.True(enemyBuilding.MapGameObject.GetComponent<LineRenderer>().positionCount > 0);
         // Check that selected building is enemy village
         Assert.True(gameManager.SelectedBuilding == enemyBuilding);
     }
@@ -613,7 +613,7 @@ public class ManagementPlayModeTest {
         {
             foreach(Building building in faction.OwnedBuildings)
             {
-                Assert.False(building.BuildingObject.activeInHierarchy);
+                Assert.False(building.MapGameObject.activeInHierarchy);
             }
         }
         yield return null;
@@ -623,7 +623,7 @@ public class ManagementPlayModeTest {
         {
             foreach (Building building in faction.OwnedBuildings)
             {
-                Assert.False(building.BuildingObject.activeInHierarchy);
+                Assert.False(building.MapGameObject.activeInHierarchy);
             }
         }
         yield return null;
@@ -633,7 +633,7 @@ public class ManagementPlayModeTest {
         {
             foreach (Building building in faction.OwnedBuildings)
             {
-                Assert.False(building.BuildingObject.activeInHierarchy);
+                Assert.False(building.MapGameObject.activeInHierarchy);
             }
         }
     }
@@ -724,7 +724,7 @@ public class ManagementPlayModeTest {
         yield return null;
         
         // Shrink building size to increase odds of two buildings not being built on top of eachother as building placement attempts are random
-        Building.BuildingRadiusSize = 1;
+        Building.ObjectRadius = 1;
 
         gameManager = GetGameManager();
         enemyFaction = gameManager.EnemyFactions[0];
@@ -753,7 +753,7 @@ public class ManagementPlayModeTest {
         yield return null;
 
         // Shrink building size to increase odds of two buildings not being built on top of eachother as building placement attempts are random
-        Building.BuildingRadiusSize = 0.1f;
+        Building.ObjectRadius = 0.1f;
 
         gameManager = GetGameManager();
         enemyFaction = gameManager.EnemyFactions[0];
@@ -781,7 +781,7 @@ public class ManagementPlayModeTest {
         InitManagementScene();
         yield return null;
         yield return null;
-        Building.BuildingRadiusSize = 0.1f;
+        Building.ObjectRadius = 0.1f;
         gameManager = GetGameManager();
         playerFaction = gameManager.PlayerFaction;
         buildingCount = playerFaction.OwnedBuildings.Count;
@@ -803,7 +803,7 @@ public class ManagementPlayModeTest {
         InitManagementScene();
         yield return null;
         yield return null;
-        Building.BuildingRadiusSize = 0.1f;
+        Building.ObjectRadius = 0.1f;
         gameManager = GetGameManager();
         playerFaction = gameManager.PlayerFaction;
         buildingCount = playerFaction.OwnedBuildings.Count;
@@ -823,14 +823,14 @@ public class ManagementPlayModeTest {
         InitManagementScene();
         yield return null;
         yield return null;
-        Building.BuildingRadiusSize = 0.1f;
+        Building.ObjectRadius = 0.1f;
         gameManager = GetGameManager();
         playerFaction = gameManager.PlayerFaction;
         currentBuilding = gameManager.PlayerVillage;
         buildingCount = playerFaction.OwnedBuildings.Count;
 
         buildingToPlace = Building.CreateRandomBuilding(playerFaction);
-        Assert.False(gameManager.GameMap.PlaceBuilding(buildingToPlace, currentBuilding.BuildingPosition));
+        Assert.False(gameManager.GameMap.PlaceBuilding(buildingToPlace, currentBuilding.ObjectPosition));
     }
 
     [UnityTest]
@@ -943,7 +943,7 @@ public class ManagementPlayModeTest {
         // 100 attempts to find a valid building placement
         for (int i = 0; i < 100; i++)
         {
-            if(gameManager.GameMap.PlaceBuilding(altarBuilding, gameManager.GameMap.CalculateRandomPosition(gameManager.PlayerFaction)))
+            if(gameManager.GameMap.PlaceBuilding(altarBuilding, gameManager.GameMap.CalculateRandomPositionForFaction(gameManager.PlayerFaction)))
             {
                 blnBuildingPlaced = true;
                 break;
@@ -967,7 +967,7 @@ public class ManagementPlayModeTest {
         // 100 attempts to find a valid building placement
         for (int i = 0; i < 100; i++)
         {
-            if (gameManager.GameMap.PlaceBuilding(mineBuilding, gameManager.GameMap.CalculateRandomPosition(gameManager.PlayerFaction)))
+            if (gameManager.GameMap.PlaceBuilding(mineBuilding, gameManager.GameMap.CalculateRandomPositionForFaction(gameManager.PlayerFaction)))
             {
                 blnBuildingPlaced = true;
                 break;
@@ -991,7 +991,7 @@ public class ManagementPlayModeTest {
         // 100 attempts to find a valid building placement
         for (int i = 0; i < 100; i++)
         {
-            if (gameManager.GameMap.PlaceBuilding(housingBuilding, gameManager.GameMap.CalculateRandomPosition(gameManager.PlayerFaction)))
+            if (gameManager.GameMap.PlaceBuilding(housingBuilding, gameManager.GameMap.CalculateRandomPositionForFaction(gameManager.PlayerFaction)))
             {
                 blnBuildingPlaced = true;
                 break;
@@ -1015,7 +1015,7 @@ public class ManagementPlayModeTest {
         // 100 attempts to find a valid building placement
         for (int i = 0; i < 100; i++)
         {
-            if (gameManager.GameMap.PlaceBuilding(blackSmithBuilding, gameManager.GameMap.CalculateRandomPosition(gameManager.PlayerFaction)))
+            if (gameManager.GameMap.PlaceBuilding(blackSmithBuilding, gameManager.GameMap.CalculateRandomPositionForFaction(gameManager.PlayerFaction)))
             {
                 blnBuildingPlaced = true;
                 break;
@@ -1061,7 +1061,7 @@ public class ManagementPlayModeTest {
         // The check is done when buffering the building to place
         for (int i = 0; i < 100; i++)
         {
-            if (gameManager.GameMap.PlaceBuilding(upgradeBuilding, gameManager.GameMap.CalculateRandomPosition(gameManager.PlayerFaction)))
+            if (gameManager.GameMap.PlaceBuilding(upgradeBuilding, gameManager.GameMap.CalculateRandomPositionForFaction(gameManager.PlayerFaction)))
             {
                 break;
             }
@@ -1083,7 +1083,7 @@ public class ManagementPlayModeTest {
         upgradeBuilding = new Building(Building.BUILDING_TYPE.UPGRADE, gameManager.PlayerFaction);
         for (int i = 0; i < 100; i++)
         {
-            if (gameManager.GameMap.PlaceBuilding(upgradeBuilding, gameManager.GameMap.CalculateRandomPosition(gameManager.PlayerFaction)))
+            if (gameManager.GameMap.PlaceBuilding(upgradeBuilding, gameManager.GameMap.CalculateRandomPositionForFaction(gameManager.PlayerFaction)))
             {
                 break;
             }
@@ -1154,7 +1154,7 @@ public class ManagementPlayModeTest {
         altarBuilding = new Building(Building.BUILDING_TYPE.ALTAR, gameManager.PlayerFaction);
         for (int i = 0; i < 100; i++)
         {
-            if (gameManager.GameMap.PlaceBuilding(altarBuilding, gameManager.GameMap.CalculateRandomPosition(gameManager.PlayerFaction)))
+            if (gameManager.GameMap.PlaceBuilding(altarBuilding, gameManager.GameMap.CalculateRandomPositionForFaction(gameManager.PlayerFaction)))
             {
                 break;
             }
@@ -1197,7 +1197,7 @@ public class ManagementPlayModeTest {
         // 100 attempts to find a valid building placement
         for (int i = 0; i < 100; i++)
         {
-            if (gameManager.GameMap.PlaceBuilding(altarBuilding, gameManager.GameMap.CalculateRandomPosition(gameManager.PlayerFaction)))
+            if (gameManager.GameMap.PlaceBuilding(altarBuilding, gameManager.GameMap.CalculateRandomPositionForFaction(gameManager.PlayerFaction)))
             {
                 blnBuildingPlaced = true;
                 break;
@@ -1219,7 +1219,7 @@ public class ManagementPlayModeTest {
         altarBuilding = new Building(Building.BUILDING_TYPE.ALTAR, gameManager.PlayerFaction);
         for (int i = 0; i < 100; i++)
         {
-            if (gameManager.GameMap.PlaceBuilding(altarBuilding, gameManager.GameMap.CalculateRandomPosition(gameManager.PlayerFaction)))
+            if (gameManager.GameMap.PlaceBuilding(altarBuilding, gameManager.GameMap.CalculateRandomPositionForFaction(gameManager.PlayerFaction)))
             {
                 break;
             }
@@ -1247,7 +1247,7 @@ public class ManagementPlayModeTest {
         mineBuilding = new Building(Building.BUILDING_TYPE.MATERIAL, gameManager.PlayerFaction);
         for (int i = 0; i < 100; i++)
         {
-            if (gameManager.GameMap.PlaceBuilding(mineBuilding, gameManager.GameMap.CalculateRandomPosition(gameManager.PlayerFaction)))
+            if (gameManager.GameMap.PlaceBuilding(mineBuilding, gameManager.GameMap.CalculateRandomPositionForFaction(gameManager.PlayerFaction)))
             {
                 break;
             }
@@ -1290,7 +1290,7 @@ public class ManagementPlayModeTest {
         // 100 attempts to find a valid building placement
         for (int i = 0; i < 100; i++)
         {
-            if (gameManager.GameMap.PlaceBuilding(mineBuilding, gameManager.GameMap.CalculateRandomPosition(gameManager.PlayerFaction)))
+            if (gameManager.GameMap.PlaceBuilding(mineBuilding, gameManager.GameMap.CalculateRandomPositionForFaction(gameManager.PlayerFaction)))
             {
                 blnBuildingPlaced = true;
                 break;
@@ -1312,7 +1312,7 @@ public class ManagementPlayModeTest {
         mineBuilding = new Building(Building.BUILDING_TYPE.MATERIAL, gameManager.PlayerFaction);
         for (int i = 0; i < 100; i++)
         {
-            if (gameManager.GameMap.PlaceBuilding(mineBuilding, gameManager.GameMap.CalculateRandomPosition(gameManager.PlayerFaction)))
+            if (gameManager.GameMap.PlaceBuilding(mineBuilding, gameManager.GameMap.CalculateRandomPositionForFaction(gameManager.PlayerFaction)))
             {
                 break;
             }
@@ -1370,7 +1370,7 @@ public class ManagementPlayModeTest {
         // 100 attempts to find a valid building placement
         for (int i = 0; i < 100; i++)
         {
-            if (gameManager.GameMap.PlaceBuilding(housingBuilding, gameManager.GameMap.CalculateRandomPosition(gameManager.PlayerFaction)))
+            if (gameManager.GameMap.PlaceBuilding(housingBuilding, gameManager.GameMap.CalculateRandomPositionForFaction(gameManager.PlayerFaction)))
             {
                 blnBuildingPlaced = true;
                 break;
@@ -1392,7 +1392,7 @@ public class ManagementPlayModeTest {
         housingBuilding = new Building(Building.BUILDING_TYPE.HOUSING, gameManager.PlayerFaction);
         for (int i = 0; i < 100; i++)
         {
-            if (gameManager.GameMap.PlaceBuilding(housingBuilding, gameManager.GameMap.CalculateRandomPosition(gameManager.PlayerFaction)))
+            if (gameManager.GameMap.PlaceBuilding(housingBuilding, gameManager.GameMap.CalculateRandomPositionForFaction(gameManager.PlayerFaction)))
             {
                 break;
             }

@@ -18,6 +18,7 @@ public class SaveData
 
     // Management mode variables for loading scene
     public GameInfo.SavedFaction[] SavedFactions;
+    public GameInfo.SavedTreasure[] SavedTreasures;
     public int CurrentTier = 0;
     public float MapRadius = 100f;
     public float PlayerMoraleCap = 1.0f;
@@ -31,4 +32,7 @@ public class SaveData
     public float[] MaterialMultipliers;
     public float[] WorshipperMultipliers;
     public InformationBoxDisplay.TutorialFlag TutorialFlag;
+    public float GodHealthMultiplier = 1f;
+    public float GodAttackMultiplier = 1f;
+    public float GodDefenseMultiplier = 1f;
 }

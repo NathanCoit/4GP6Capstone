@@ -29,6 +29,7 @@ public class SetupManager : MonoBehaviour
 
     private GameObject OverlayCanvas;
     private GameObject BottomPanel;
+    private GameObject SurrenderConfirmationPanel;
     private Text[] arrTexts;
 
 
@@ -43,7 +44,7 @@ public class SetupManager : MonoBehaviour
     public int enemyWorshiperCount;
     public float enemyMorale;
     public bool finishedBattle = false;
-    public GameInfo.BATTLESTATUS battleResult; //0 for victory, 1 for defeat, 2 for retreat
+    public GameInfo.BATTLESTATUS battleResult;
 
     private readonly double worshipperPercentage = 0.80;
 
@@ -66,7 +67,7 @@ public class SetupManager : MonoBehaviour
         OverlayCanvas = GameObject.Find("OverlayCanvas");
         arrTexts = OverlayCanvas.GetComponentsInChildren<Text>();
         BottomPanel = GameObject.Find("Panel");
-
+        SurrenderConfirmationPanel = GameObject.Find("AREYOUSUREPanel");
 
         GameObject GameInfoObject = GameObject.Find("GameInfo");
         if (GameInfoObject != null)
@@ -137,8 +138,8 @@ public class SetupManager : MonoBehaviour
     private void Start()
     {
         Camera.main.GetComponent<CombatCam>().CameraMovementEnabled = false;
-        //SplitWorshipers();
         BottomPanel.SetActive(false);
+        SurrenderConfirmationPanel.SetActive(false);
         arrGroupLabels[3].SetActive(false);
         arrGroupInputs[3].SetActive(false);
         arrGroupLabels[4].SetActive(false);
@@ -201,13 +202,13 @@ public class SetupManager : MonoBehaviour
                 // TODO: get start tiles from map information to actually load units in a formation rather than just a line
                 CreatePlayerUnit(new Vector2(4, (3+i)), tiles, arrGroupWorshippers[i], 2, 1, playerMorale);
             }
-
-            CreateGod(tiles, true, gameInfo.PlayerFaction.GodName, 3, 2, 50, 300);
+            // TODO: find appropriate health for the god
+            CreateGod(tiles, true, gameInfo.PlayerFaction.GodName, 3, 2, 50, Convert.ToInt32(playerWorshiperCount*1.5));
 
             CreateEnemyUnit(new Vector2(6, 3), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
             CreateEnemyUnit(new Vector2(6, 4), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
             CreateEnemyUnit(new Vector2(6, 5), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
-            CreateGod(tiles, false, gameInfo.EnemyFaction.GodName, 3, 2, 50, 300);
+            CreateGod(tiles, false, gameInfo.EnemyFaction.GodName, 3, 2, 50, Convert.ToInt32(enemyWorshiperCount*1.5));
 
             BoardMan.playerTurn = true;
             BoardMan.numActionsLeft = BoardMan.playerUnits.Count;
@@ -217,19 +218,6 @@ public class SetupManager : MonoBehaviour
 
             startup = false;
         }
-    }
-
-    public void SplitWorshipers()
-    {
-        //LIES ITS HAS BEEN IMPLEMENTED, but who knows where
-
-        //haha not implemented
-        //will be done in a separate scene maybe?
-        //assign worshiper count percentages in that scene to individual units
-        //can have up to five units per side
-
-        //what should be done here:
-        //enable the startup/division screen.. or at this point maybe just the animation of opening the screen?
     }
 
     private void UpdateStartup(int old)
@@ -309,18 +297,33 @@ public class SetupManager : MonoBehaviour
         // need to check the sum doesn't exceed the number of worshippers player has access to
         int worshipperSum = 0;
         bool success = true;
+        bool divideEvenly = false;
+        List<int> emptyGroupNumber = new List<int>();
         numGroupsWorshippers = int.Parse(arrTexts[8].text);
+
+        // parse through the groups to see if we have any errors or need to fill in any groups
         for (int i = 0; i < numGroupsWorshippers; i++)
         {
             worshipperSum += arrGroupWorshippers[i];
             if (arrGroupWorshippers[i] == 0)
             {
-                arrTexts[7].text = "You can't have a group of zero!";
-                success = false;
+                //arrTexts[7].text = "You can't have a group of zero!";
+                emptyGroupNumber.Add(i);
+                divideEvenly = true;
             } else if (worshipperSum > playerWorshiperCount)
             {
                 arrTexts[7].text = "You've tried to assign too many worshippers!";
                 success = false;
+            }
+        }
+        
+        // if we have some empty groups, divide the remaining worshippers to be allocated by the number of empty groups
+        if (divideEvenly)
+        {
+            int dividedWorshippers = (int)((playerWorshiperCount - worshipperSum) / emptyGroupNumber.Count);
+            for (int i = 0; i < emptyGroupNumber.Count; i++)
+            {
+                arrGroupWorshippers[emptyGroupNumber[i]] = dividedWorshippers;
             }
         }
 
@@ -359,6 +362,16 @@ public class SetupManager : MonoBehaviour
     public void Group5Worshippers(string value)
     {
         arrGroupWorshippers[4] = int.Parse(value);
+    }
+
+    public void CheckSurrender()
+    {
+        SurrenderConfirmationPanel.SetActive(true);
+    }
+
+    public void CancelSurrender()
+    {
+        SurrenderConfirmationPanel.SetActive(false);
     }
 
     public void CreateGod(Tile[,] tiles, bool isPlayer, string godName, int MaxMovement, int attackRange, int attackStregnth, int health)

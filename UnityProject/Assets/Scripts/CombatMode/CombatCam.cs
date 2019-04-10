@@ -13,9 +13,11 @@ public class CombatCam : MonoBehaviour
     private int xBoundary;
     private int zBoundary;
 
+    //Blame Elijah
     int theScreenWidth;
     int theScreenHeight;
 
+    //Bools for key presses
     public bool rightHeld;
     public bool leftHeld;
     public bool downHeld;
@@ -27,11 +29,13 @@ public class CombatCam : MonoBehaviour
     private Vector3 cameraTarget;
     public bool cameraMoving;
 
+    //Limiting for camera
     float maxFov = 60.0f;
     float minFov = 10.0f;
     public float sensitivity = 5.0f;
     public bool CameraMovementEnabled = true;
 
+    //Current fov
     public float fov;
 
     // i tried putting this here and the boundaries in start - didn't work :(
@@ -51,7 +55,7 @@ public class CombatCam : MonoBehaviour
 
     void Update()
     {
-        
+        //Set boundaries
         if (start)
         {
             xBoundary = MapMan.tiles.GetLength(0);
@@ -59,6 +63,7 @@ public class CombatCam : MonoBehaviour
             start = false;
         }
 
+        //If camera can move, allow movement with arrowkeys
         if (CameraMovementEnabled)
         {
             if (Input.GetKeyDown(KeyCode.RightArrow))
@@ -101,6 +106,7 @@ public class CombatCam : MonoBehaviour
                 downHeld = false;
             }
 
+            //Stop if we are going to move outside of boundary
             if (rightHeld && transform.position.x < xBoundary)
             {
                 transform.position += new Vector3(0.005f * fov,
@@ -143,26 +149,26 @@ public class CombatCam : MonoBehaviour
                         transform.position.y, -3.0f);
             }
 
+            //Change fov (zoom) with scroll wheel
             fov -= Input.GetAxis("Mouse ScrollWheel") * sensitivity;
             fov = Mathf.Clamp(fov, minFov, maxFov);
             Camera.main.fieldOfView = fov;
         }
 
+        //For focusing the camera on things
         if (cameraMoving)
         {
+            //If we havent got to where we're going
             if (!(System.Math.Abs(Camera.main.transform.position.x - cameraTarget.x) < targetTolerance) || !(System.Math.Abs(Camera.main.transform.position.z - cameraTarget.z) < targetTolerance))
             {
+                //Use smooth damp to move towards it
                 Camera.main.transform.position = Vector3.SmoothDamp(
                     Camera.main.transform.position, cameraTarget, ref camSmoothDampV, 0.1f);
             }
             else
+                //When we get there, stop
                 cameraMoving = false;
         }
-
-
-
-
-
 
     }
 

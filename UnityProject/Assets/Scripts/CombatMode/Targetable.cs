@@ -33,25 +33,23 @@ public class Targetable : MonoBehaviour {
     public bool valid;
     public List<Unit> targets;
 
-    // Use this for initialization
     void Start ()
     {
         autoClick = false;
 
+        //They're here
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
-
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
-
         SetupMan = GameObject.Find("SetupManager").GetComponent<SetupManager>();
-
         UIMan = GameObject.FindGameObjectWithTag("UIManager").GetComponent<UIManager>();
 
+        //Is this a valid tile (a targetable unit on it)
         valid = false;
     }
 	
-	// Update is called once per frame
 	void Update ()
     {
+        //Do the pretty animation
         if (!(System.Math.Abs(transform.position.y - target.y) < targetTolerance))
         {
             transform.position = Vector3.SmoothDamp(
@@ -64,6 +62,7 @@ public class Targetable : MonoBehaviour {
             inPlace = true;
     }
 
+    //Set where we go with the animation
     public void setTarget(Vector3 target)
     {
         this.target = target;
@@ -72,15 +71,16 @@ public class Targetable : MonoBehaviour {
 
     public void OnMouseOver()
     {
+        //If the animation is done
         if (inPlace)
         {
+            //Init our lists of targets
             targets = new List<Unit>();
-
-           // Debug.Log(ability.AbiltyType);
 
             //If it's single target we're just target the one tile
             if (ability.AbiltyType == Ability.ABILITYTYPE.SingleTarget)
             {
+                //Check who we're targeting
                 if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
                 {
                     targets = BoardMan.enemyUnits;
@@ -90,12 +90,14 @@ public class Targetable : MonoBehaviour {
                     targets = BoardMan.playerUnits;
                 }
 
+                //Check if we're a valid tile
                 foreach (Unit u in targets)
                 {
                     if (pos.x == u.getPos().x && pos.y == u.getPos().y)
                         valid = true;
                 }
 
+                //If we're valid, change material when moused over
                 if (valid)
                 {
                     GetComponent<MeshRenderer>().material = mousedOverValid;
@@ -211,6 +213,7 @@ public class Targetable : MonoBehaviour {
             }
             else if (ability.AbiltyType == Ability.ABILITYTYPE.Buff)
             {
+                //If we're a buff, we target friendly units
                 if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
                 {
                     targets = BoardMan.playerUnits;
@@ -237,6 +240,7 @@ public class Targetable : MonoBehaviour {
             }
             else if (ability.AbiltyType == Ability.ABILITYTYPE.Debuff)
             {
+                //Debuff targets enemy units
                 if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
                 {
                     targets = BoardMan.enemyUnits;
@@ -318,6 +322,7 @@ public class Targetable : MonoBehaviour {
                             target = u;
                     }
 
+                    //Add the new status effect when used
                     target.addNewStatusEffect(ability, true);
                 }
                 else if (ability.AbiltyType == Ability.ABILITYTYPE.Debuff)
@@ -329,6 +334,7 @@ public class Targetable : MonoBehaviour {
                             target = u;
                     }
 
+                    //Add the new status effect when used
                     target.addNewStatusEffect(ability, false);
 
                 }
@@ -347,7 +353,6 @@ public class Targetable : MonoBehaviour {
             if (Input.GetMouseButtonUp(0) && buttonSwitch)
             {
                 buttonSwitch = false;
-                Debug.Log("Fail");
             }
 
             //Udating direction for the line AOE

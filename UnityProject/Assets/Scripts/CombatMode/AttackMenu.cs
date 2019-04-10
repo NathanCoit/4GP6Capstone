@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//********************LEGACY***********************
+//Not used by anything
 public class AttackMenu : MonoBehaviour {
 
 	// Use this for initialization

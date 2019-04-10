@@ -119,7 +119,7 @@ public class SetupManager : MonoBehaviour
             Debug.Log(gameInfo.PlayerFaction.GodName + " reporting in, boss");
 
             gameInfo.EnemyFaction.GodName = "Nathan";
-            gameInfo.EnemyFaction.Type = Faction.GodType.Love;
+            gameInfo.EnemyFaction.Type = Faction.GodType.Lightning;
 
             abilities = Faction.GetGodAbilities(gameInfo.EnemyFaction.Type);
             sAbilites = new string[abilities.Count];

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+//Updates the health bar text
+
 public class WorshiperText : MonoBehaviour {
 
 	// Use this for initialization

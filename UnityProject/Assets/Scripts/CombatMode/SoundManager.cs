@@ -112,13 +112,13 @@ public class SoundManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
-
+        //Refernce all our audio sources (channels)
         musicSource = GetComponents<AudioSource>()[0];
         soundeffectScource = GetComponents<AudioSource>()[1];
         playerVocalSource = GetComponents<AudioSource>()[2];
         enemyVocalSource = GetComponents<AudioSource>()[3];
 
+        //Startup flag
         startup = true;
     }
 
@@ -258,6 +258,7 @@ public class SoundManager : MonoBehaviour
         }
     }
 
+    //UI sounds
     public void playUiHover()
     {
         soundeffectScource.clip = uiHover;
@@ -270,6 +271,7 @@ public class SoundManager : MonoBehaviour
         soundeffectScource.Play();
     }
 
+    //Unit sounds
     public void playUnitAttack()
     {
         soundeffectScource.clip = unitAttack;
@@ -337,6 +339,7 @@ public class SoundManager : MonoBehaviour
         playerVocalSource.Play();
     }
 
+    //Play a random voice line at the start of enemy turn
     public void playEnemyGodTurnStart()
     {
         List<int> acceptableSounds = new List<int>();
@@ -419,6 +422,7 @@ public class SoundManager : MonoBehaviour
         }  
     }
 
+    //Play voice line when a god enters battle
     public void playGodEnterBattle(Unit currentUnit)
     {
         List<int> acceptableSounds = new List<int>();

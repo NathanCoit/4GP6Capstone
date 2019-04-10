@@ -42,8 +42,11 @@ public class Movable : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        //Logic for pretty falling animation
+        //If we're not in position
         if (!(System.Math.Abs(transform.position.y - target.y) < targetTolerance))
         {
+            //Set height based on depth (distance)
             if (depth != 0)
             {
                 transform.position = Vector3.SmoothDamp(
@@ -51,13 +54,15 @@ public class Movable : MonoBehaviour {
             }
             else
             {
-                Debug.Log("Boop");
                 transform.position = Vector3.SmoothDamp(
                         transform.position, target, ref SmoothDampV, 0.1f);
             }
 
+            //Set alplha based on how clase we are
             gameObject.GetComponent<Renderer>().material.color = new Color(GetComponent<Renderer>().material.color.r, GetComponent<Renderer>().material.color.g,
                 GetComponent<Renderer>().material.color.b, Mathf.Abs(target.y / transform.position.y) * baseMaterial.color.a);
+
+            //For grid lines
             for(int i = 0; i < gameObject.transform.childCount; i++)
             {
                 gameObject.transform.GetChild(i).GetComponent<Renderer>().material.color = 
@@ -66,25 +71,29 @@ public class Movable : MonoBehaviour {
                     gameObject.transform.GetChild(i).GetComponent<Renderer>().GetComponent<Renderer>().material.color.b, Mathf.Abs(target.y / transform.position.y) / 2);
             }
         }
+        //When we arrive
         else
             inPlace = true;
     }
 
+    //Getter for tiles
     private Tile[,] getTiles()
     {
         return MapMan.GetComponent<MapManager>().tiles;
     }
 
-
-    /// <summary>
-    /// 
-    /// </summary>
+    
+    //On mouse over for actually moveing
     public void OnMouseOver()
     {
+        //Hover and change material (script enabled is a flag that is false for invalid move tiles (like the ones under friendly units))
+        //Done so we can still use the pretty animations
         if (inPlace && scriptEnabled)
         {
             gameObject.GetComponent<Renderer>().material = hoverMaterial;
         }
+
+        //When actually clicked
         if ((Input.GetMouseButtonDown(0) || autoClick) && inPlace && scriptEnabled)
         {
 
@@ -126,6 +135,7 @@ public class Movable : MonoBehaviour {
         }
     }
 
+    //Get inital height for animation
     public float getStartYvalue()
     {
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
@@ -133,12 +143,13 @@ public class Movable : MonoBehaviour {
         return Random.Range((2 * depth) + 2, (2 * depth) + 3);
     }
 
+    //Set where we want to end up for animation
     public void setTarget(Vector3 target)
     {
         this.target = target;
     }
         
-
+    //Hover material
     private void OnMouseEnter()
     {
         if (inPlace && scriptEnabled)
@@ -148,6 +159,7 @@ public class Movable : MonoBehaviour {
         }
     }
 
+    //Return to regualr
     private void OnMouseExit()
     {
         if(inPlace && scriptEnabled)

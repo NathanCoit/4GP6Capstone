@@ -49,28 +49,6 @@ public class UnitObjectScript : MonoBehaviour
         //Unity takes a few frame to find the editor reference for some reason
         if (infoPanel != null)
         {
-            /*
-            float offset = 0.01f;
-
-            RectTransform infoPanelRect = infoPanel.GetComponent<RectTransform>();
-
-            Vector2 ViewportPosition = Camera.main.WorldToViewportPoint(new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + offset, gameObject.transform.position.z - offset));
-
-            //Same as worldspacetoscreenspace in UIManager, but we need to undo the scaling
-            Vector2 WorldObject_ScreenPosition = new Vector2(
-            (((ViewportPosition.x * infoPanelRect.sizeDelta.x) - (infoPanelRect.sizeDelta.x * 0.5f)) / (gameObject.transform.localScale.x)),
-            (((ViewportPosition.y * infoPanelRect.sizeDelta.y) - (infoPanelRect.sizeDelta.y * 0.5f)) / (gameObject.transform.localScale.y)));
-
-            infoPanelRect.anchoredPosition = WorldObject_ScreenPosition;
-
-            //Update cancas plane distance based only on z (depth)
-            gameObject.transform.GetChild(0).GetComponent<Canvas>().planeDistance = Vector3.Distance(new Vector3(0, gameObject.transform.position.y, gameObject.transform.position.z - offset), 
-                new Vector3(0, UIMan.mainCamera.transform.position.y, UIMan.mainCamera.transform.position.z));
-
-            //gameObject.transform.GetChild(0).GetComponent<Canvas>().planeDistance = Vector3.Distance(gameObject.transform.position, UIMan.mainCamera.transform.position) - 0.2f;
-            */
-            //Base scale on how far away the camera is
-            //infoPanel.transform.localScale = new Vector3(0.75f,0.5f,0.75f) * 1/Vector3.Distance(gameObject.transform.position, UIMan.mainCamera.transform.position);
             infoPanel.transform.localEulerAngles = new Vector3(-Mathf.Atan2(gameObject.transform.position.y - Camera.main.transform.position.y, 
                 gameObject.transform.position.z - Camera.main.transform.position.z) * 180 / Mathf.PI, 0, 0);
         }
@@ -87,6 +65,7 @@ public class UnitObjectScript : MonoBehaviour
         relatedUnit = u;
     }
 
+    //For drawing gods enter battle tiles
     public void drawEnterBattleTiles()
     {
         List<Tile> firstHalf = new List<Tile>();
@@ -96,6 +75,7 @@ public class UnitObjectScript : MonoBehaviour
 
         MapMan.resetDepths();
 
+        //Similar to abilty tiles
         for (int i = 0; i < MapMan.tiles.GetLength(0) / 2; i++)
         {
             for (int j = 0; j < MapMan.tiles.GetLength(1); j++)
@@ -139,6 +119,7 @@ public class UnitObjectScript : MonoBehaviour
         StartCoroutine(drawEnterBattleTiles(secondHalf, 0.01f));
     }
 
+    //Cooroutine for drawing enter battle tiles
     public IEnumerator drawEnterBattleTiles(List<Tile> locationsToDraw, float delay)
     {
         foreach (Tile t in locationsToDraw)

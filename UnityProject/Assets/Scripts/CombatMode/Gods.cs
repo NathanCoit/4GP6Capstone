@@ -8,7 +8,7 @@ using UnityEngine.UI;
  * Has many godly abilities (single target, area of effect, buff, debuffs, etc.)
  * Is attached to god units
  * 
- * LEGACY (old script)
+ * ********************LEGACY******************** (old script)
  */
 
 public class Gods : MonoBehaviour {

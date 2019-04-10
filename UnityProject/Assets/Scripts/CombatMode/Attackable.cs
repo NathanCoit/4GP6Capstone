@@ -64,15 +64,15 @@ public class Attackable : MonoBehaviour
             Tile[,] tiles = GetTiles();
             Unit attackedUnit = new Unit();
 
+            //Find the correct attacked unit
             foreach (Unit u in targets)
                 if (u.getPos() == pos)
                     attackedUnit = u;
 
-            //Decreases the "HP" of the attacked unit - decreases their worshipper count
+            //Get attack strength
             int damage = (int)MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().getAttackStrength();
 
-            //Set remaining worshippers accordingly
-
+            //Deal the damage and check if we have a blind
             if(!attackedUnit.getBlindDebuff())
                 attackedUnit.dealDamage(damage);
             else
@@ -100,8 +100,10 @@ public class Attackable : MonoBehaviour
                     MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().turnToFace(1);
             }
             
+            //Play unit attack sound
             SoundMan.playUnitAttack();
 
+            //Move to lookat attacked unit
             Camera.main.GetComponent<CombatCam>().lookAt(attackedUnit.unitGameObject().transform.position);
 
             //Adjust that team's morale
@@ -114,14 +116,6 @@ public class Attackable : MonoBehaviour
             {
                 SetupMan.playerMorale = ((BoardMan.GetRemainingWorshippers(true)) * 1.0f / (SetupMan.playerWorshiperCount));
             }
-
-
-            //Did the attacked unit's HP reach 0? If so, remove them from the board AND from the appropriate unit array
-            //Done in unit.dealDamage now
-            /*
-            if (attackedUnit.getWorshiperCount() <= 0)
-                BoardMan.killUnit(attackedUnit);
-            */
 
             //End the turn of the unit who initiated the attack
             MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().EndTurnButton();
@@ -138,18 +132,20 @@ public class Attackable : MonoBehaviour
         }
     }
 
+    //On mouse enter for hover sound and highlight
     private void OnMouseEnter()
     {
         SoundMan.playUiHover();
         gameObject.GetComponent<Renderer>().material = hoverMaterial;
     }
 
+    //Reset material when mouse exit
     private void OnMouseExit()
     {
         gameObject.GetComponent<Renderer>().material = baseMaterial;
     }
 
-    //For spoofing clicks for testing
+    //For spoofing clicks for testing (also used by enemy ai)
     public void TestClick()
     {
         autoClick = true;

@@ -42,7 +42,58 @@ public class Tile
             case "02":
                 traversable = false;
                 break;
-
+            //Tree
+            case "03":
+                traversable = false;
+                break;
+            //Dirt
+            case "04":
+                traversable = true;
+                break;
+            //Rock
+            case "05":
+                traversable = false;
+                break;
+            //Lily Pad
+            case "06":
+                traversable = false;
+                break;
+           //Countertop
+            case "07":
+                traversable = true;
+                break;
+            //Pink cloud
+            case "08":
+                traversable = true;
+                break;
+            //Metal
+            case "09":
+                traversable = true;
+                break;
+            //Energy
+            case "10":
+                traversable = false;
+                break;
+            //Weapons
+            case "11":
+                traversable = false;
+                break;
+            //Lava
+            case "12":
+                traversable = false;
+                break;
+            //Darker Dirt
+            case "13":
+                traversable = true;
+                break;
+            //Passable Lily Pad Water
+            case "14":
+                traversable = true;
+                break;
+            //Cobblestone rock
+            case "15":
+                traversable = true;
+                break;
         }
     }
 

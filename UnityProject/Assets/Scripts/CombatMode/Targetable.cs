@@ -14,6 +14,7 @@ public class Targetable : MonoBehaviour {
     private MapManager MapMan;
     private BoardManager BoardMan;
     private SetupManager SetupMan;
+    private UIManager UIMan;
 
     public Ability ability;
     public Material mousedOverValid;
@@ -29,6 +30,9 @@ public class Targetable : MonoBehaviour {
     private Vector3 SmoothDampV;
     public float targetTolerance;
 
+    public bool valid;
+    public List<Unit> targets;
+
     // Use this for initialization
     void Start ()
     {
@@ -39,6 +43,10 @@ public class Targetable : MonoBehaviour {
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
 
         SetupMan = GameObject.Find("SetupManager").GetComponent<SetupManager>();
+
+        UIMan = GameObject.FindGameObjectWithTag("UIManager").GetComponent<UIManager>();
+
+        valid = false;
     }
 	
 	// Update is called once per frame
@@ -66,8 +74,7 @@ public class Targetable : MonoBehaviour {
     {
         if (inPlace)
         {
-            List<Unit> targets = new List<Unit>();
-            bool valid = false;
+            targets = new List<Unit>();
 
            // Debug.Log(ability.AbiltyType);
 
@@ -230,7 +237,6 @@ public class Targetable : MonoBehaviour {
             }
             else if (ability.AbiltyType == Ability.ABILITYTYPE.Debuff)
             {
-                Debug.Log("This is a buff");
                 if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
                 {
                     targets = BoardMan.enemyUnits;
@@ -260,6 +266,10 @@ public class Targetable : MonoBehaviour {
             if ((Input.GetMouseButtonDown(0) || autoClick) && !buttonSwitch)
             {
                 buttonSwitch = true;
+                
+                //Subtract faith cost and then update the ui
+                (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() as God).faith -= ability.FaithCost;
+                UIMan.updateFaithLabels();
 
                 //Just damage the one unit if single target
                 if (ability.AbiltyType == Ability.ABILITYTYPE.SingleTarget)

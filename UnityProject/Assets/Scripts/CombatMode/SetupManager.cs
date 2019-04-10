@@ -21,6 +21,7 @@ public class SetupManager : MonoBehaviour
 
     public BoardManager BoardMan;
     public MapManager MapMan;
+    private UIManager UIMan;
 
     private int numGroupsWorshippers;
     private GameObject[] arrGroupLabels;
@@ -46,6 +47,9 @@ public class SetupManager : MonoBehaviour
     public bool finishedBattle = false;
     public GameInfo.BATTLESTATUS battleResult;
 
+    public int playerGodAttackStrength = 50;
+    public int enemyGodAttackStrength = 50;
+
     private readonly double worshipperPercentage = 0.80;
 
 
@@ -55,6 +59,7 @@ public class SetupManager : MonoBehaviour
     {
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
+        UIMan = GameObject.FindGameObjectWithTag("UIManager").GetComponent<UIManager>();
 
         // required for startup stuff
         arrGroupLabels = new GameObject[5];
@@ -66,7 +71,7 @@ public class SetupManager : MonoBehaviour
         }
         OverlayCanvas = GameObject.Find("OverlayCanvas");
         arrTexts = OverlayCanvas.GetComponentsInChildren<Text>();
-        BottomPanel = GameObject.Find("Panel");
+        BottomPanel = GameObject.Find("BottomPanel");
         SurrenderConfirmationPanel = GameObject.Find("AREYOUSUREPanel");
 
         GameObject GameInfoObject = GameObject.Find("GameInfo");
@@ -88,6 +93,8 @@ public class SetupManager : MonoBehaviour
 
             // Let players know how many worshippers they can assign to their groups
             arrTexts[6].text = "The total amount of worshippers at your disposal : " + playerWorshiperCount;
+
+           MapMan.mapName = gameInfo.EnemyFaction.Type + "1";
         }
 #if DEBUG
         else
@@ -112,7 +119,7 @@ public class SetupManager : MonoBehaviour
             Debug.Log(gameInfo.PlayerFaction.GodName + " reporting in, boss");
 
             gameInfo.EnemyFaction.GodName = "Nathan";
-            gameInfo.EnemyFaction.Type = Faction.GodType.Water;
+            gameInfo.EnemyFaction.Type = Faction.GodType.Love;
 
             abilities = Faction.GetGodAbilities(gameInfo.EnemyFaction.Type);
             sAbilites = new string[abilities.Count];
@@ -200,21 +207,23 @@ public class SetupManager : MonoBehaviour
             for (int i = 0; i < numGroupsWorshippers; i++)
             {
                 // TODO: get start tiles from map information to actually load units in a formation rather than just a line
-                CreatePlayerUnit(new Vector2(4, (3+i)), tiles, arrGroupWorshippers[i], 2, 1, playerMorale);
+                CreatePlayerUnit(new Vector2(MapMan.playerStartTiles[i].getX(), MapMan.playerStartTiles[i].getZ()), tiles, arrGroupWorshippers[i], 2, 1, playerMorale);
             }
             // TODO: find appropriate health for the god
-            CreateGod(tiles, true, gameInfo.PlayerFaction.GodName, 3, 2, 50, Convert.ToInt32(playerWorshiperCount*1.5));
+            CreateGod(tiles, true, gameInfo.PlayerFaction.GodName, 3, 2, Convert.ToInt32(playerGodAttackStrength*gameInfo.GodAttackMultiplier), Convert.ToInt32(playerWorshiperCount*gameInfo.GodHealthMultiplier));
 
-            CreateEnemyUnit(new Vector2(6, 3), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
-            CreateEnemyUnit(new Vector2(6, 4), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
-            CreateEnemyUnit(new Vector2(6, 5), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
-            CreateGod(tiles, false, gameInfo.EnemyFaction.GodName, 3, 2, 50, Convert.ToInt32(enemyWorshiperCount*1.5));
+            CreateEnemyUnit(new Vector2(MapMan.enemyStartTiles[0].getX(), MapMan.enemyStartTiles[0].getZ()), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
+            CreateEnemyUnit(new Vector2(MapMan.enemyStartTiles[1].getX(), MapMan.enemyStartTiles[1].getZ()), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
+            CreateEnemyUnit(new Vector2(MapMan.enemyStartTiles[2].getX(), MapMan.enemyStartTiles[2].getZ()), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
+            CreateGod(tiles, false, gameInfo.EnemyFaction.GodName, 3, 2, Convert.ToInt32(enemyGodAttackStrength*0.5*(gameInfo.EnemyFaction.GodTier+1)), Convert.ToInt32(enemyWorshiperCount*(gameInfo.EnemyFaction.GodTier+1)));
 
             BoardMan.playerTurn = true;
             BoardMan.numActionsLeft = BoardMan.playerUnits.Count;
 
             Camera.main.GetComponent<CombatCam>().CameraMovementEnabled = true;
             Camera.main.GetComponent<CombatCam>().resetCamera();
+
+            UIMan.updateFaithLabels();
 
             startup = false;
         }
@@ -455,7 +464,7 @@ public class SetupManager : MonoBehaviour
             BoardMan.enemyUnits.Add(g);
             g.EndAct();
             g.isPlayer = false;
-            g.setAbilities(gameInfo.PlayerFaction.Abilities);
+            g.setAbilities(gameInfo.EnemyFaction.Abilities);
             g.MoveTo(new Vector2(-1, -1), tiles);
             g.unitGameObject().transform.position = new Vector3(MapMan.tiles.GetLength(0), MapMan.godFloatHeight, MapMan.tiles.GetLength(1) / 2);
 

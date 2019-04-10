@@ -136,8 +136,6 @@ public class Unit
             average.y /= BoardMan.playerUnits.Count;
         }
 
-        Debug.Log(average);
-
         if(Mathf.Abs(average.y) > Mathf.Abs(average.x))
         {
             if (average.y > 0)
@@ -247,27 +245,46 @@ public class Unit
         }
 
         Debug.Log(a.AbilityName);
+
+        UIMan.updateStatusEffectDisplay(this);
     }
 
     public void updateStatusEffects()
     {
+        List<StatusEffect> effectsToBeRemoved = new List<StatusEffect>();
+
         foreach(StatusEffect effect in activeStatusEffects)
         {
-            effect.decreaseDuration();
             if (effect.checkTurnsLeft() == 0)
             {
-                activeStatusEffects.Remove(effect);
+                effectsToBeRemoved.Add(effect);
             }
+            effect.decreaseDuration();
 
         }
         //appyStatusEffects();
+        foreach(StatusEffect effect in effectsToBeRemoved)
+        {
+            activeStatusEffects.Remove(effect);
+        }
+
+        UIMan.updateStatusEffectDisplay(this);
+    }
+
+    public List<StatusEffect> getActiveEffects()
+    {
+        return activeStatusEffects;
     }
 
     public void dealDamage(int damage)
     {
         //If there's no shield, damage as usual
         if (!shieldBuff)
-            setWorshiperCount(getWorshiperCount() - Mathf.Clamp((damage - getDefenseBuff()), 0, 10000000));
+        {
+            setWorshiperCount(getWorshiperCount() - Mathf.Clamp(damage - getDefenseBuff(), 0, 10000000));
+            if (WorshiperCount <= 0)
+                BoardMan.killUnit(this);
+        }
         //Otherwise, take no damage and remove one shield buff
         else
         {
@@ -350,7 +367,7 @@ public class Unit
                     damageBuff -= (Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount;
                     break;
                 case "DefenseReduction":
-                    damageBuff -= (Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount;
+                    defenseBuff -= (Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount;
                     break;
                 case "Stun":
                     stunDebuff = true;
@@ -360,14 +377,14 @@ public class Unit
                     break;
                 case "Burn":
                     //Does fixed damage
-                    WorshiperCount -= (Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount;
+                    dealDamage((Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount);
                     break;
                 case "Poison":
-                    //Does proportional damage
-                    WorshiperCount -= WorshiperCount * ((Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount / 10);
+                    //Does proportional damage (of remaining health)
+                    dealDamage(WorshiperCount * (Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount/ 100);
                     break;
                 case "Slow":
-                    damageBuff -= (Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount;
+                    speedBuff -= (Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount;
                     break;
                 case "Blind":
                     blindDebuff = true;
@@ -378,7 +395,6 @@ public class Unit
 
     public void beginTurn()
     {
-        appyStatusEffects();
         if (!stunDebuff)
         {
             AllowAct();

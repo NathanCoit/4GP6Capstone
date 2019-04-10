@@ -38,7 +38,7 @@ public class DebuffAbility : Ability{
                 SingleTarget = false;
                 Range = 3;
                 EffectDuration = 2;
-                FaithCost = 10;
+                FaithCost = 20;
                 break;
             case "forkflash":
                 AbilityDescription = "Spread the great word of the fork god, through flashy forks.";
@@ -48,7 +48,7 @@ public class DebuffAbility : Ability{
                 SingleTarget = false;
                 Range = 3;
                 EffectDuration = 2;
-                FaithCost = 10;
+                FaithCost = 20;
                 break;
             case "coloursplash":
                 AbilityDescription = "Spread the great word of the paint god, through deadly paint.";
@@ -58,7 +58,7 @@ public class DebuffAbility : Ability{
                 SingleTarget = false;
                 Range = 3;
                 EffectDuration = 2;
-                FaithCost = 10;
+                FaithCost = 20;
                 break;
             case "brokenankles":
                 AbilityDescription = "Spread the great word of the shoe god, through deadly ankle.";
@@ -68,7 +68,7 @@ public class DebuffAbility : Ability{
                 SingleTarget = false;
                 Range = 3;
                 EffectDuration = 2;
-                FaithCost = 10;
+                FaithCost = 20;
                 break;
             case "quack¿":
                 AbilityDescription = "Spread the great word of the duck god, through deadly quacks.";
@@ -78,7 +78,7 @@ public class DebuffAbility : Ability{
                 SingleTarget = true;
                 Range = 3;
                 EffectDuration = 2;
-                FaithCost = 10;
+                FaithCost = 20;
                 break;
             case "analyze":
                 AbilityDescription = "Spread the great word of the robot god, through deadly analyzing.";
@@ -88,7 +88,7 @@ public class DebuffAbility : Ability{
                 SingleTarget = false;
                 Range = 3;
                 EffectDuration = 2;
-                FaithCost = 10;
+                FaithCost = 20;
                 break;
             case "outoftunesolo":
                 AbilityDescription = "Spread the great word of the jazz god, through deadly terrible music.";
@@ -106,7 +106,7 @@ public class DebuffAbility : Ability{
                 SingleTarget = false;
                 Range = 3;
                 EffectDuration = 2;
-                FaithCost = 10;
+                FaithCost = 20;
                 break;
             case "armorbreak":
                 AbilityDescription = "Spread the great word of the smith god, through deadly broken armor.";
@@ -116,7 +116,7 @@ public class DebuffAbility : Ability{
                 SingleTarget = false;
                 Range = 3;
                 EffectDuration = 2;
-                FaithCost = 10;
+                FaithCost = 20;
                 break;
             case "burn":
                 AbilityDescription = "Spread the great word of the fire god, through deadly fire.";
@@ -126,7 +126,7 @@ public class DebuffAbility : Ability{
                 SingleTarget = false;
                 Range = 3;
                 EffectDuration = 2;
-                FaithCost = 10;
+                FaithCost = 20;
                 break;
             case "stun":
                 AbilityDescription = "Spread the great word of the thunder god, through deadly thunder.";
@@ -136,7 +136,7 @@ public class DebuffAbility : Ability{
                 SingleTarget = false;
                 Range = 3;
                 EffectDuration = 2;
-                FaithCost = 10;
+                FaithCost = 20;
                 break;
             case "root":
                 AbilityDescription = "Spread the great word of the nature god, through deadly roots.";
@@ -146,7 +146,7 @@ public class DebuffAbility : Ability{
                 SingleTarget = false;
                 Range = 3;
                 EffectDuration = 2;
-                FaithCost = 10;
+                FaithCost = 20;
                 break;
             default:
                 blnAbilityFound = false;

@@ -21,6 +21,8 @@ public class MapManager : MonoBehaviour
     public GameObject MovableTile;
     public GameObject Selected;
     public GameObject previousSelected;
+    public List<Tile> playerStartTiles;
+    public List<Tile> enemyStartTiles;
     private BoardManager BoardMan;
     public bool newSelected = false;
     public string mapName;
@@ -42,6 +44,9 @@ public class MapManager : MonoBehaviour
 
         tiles = new Tile[lines[0].Split('-').Length, lines.Length];
 
+        playerStartTiles = new List<Tile>();
+        enemyStartTiles = new List<Tile>();
+
         //Initiliaze Grid
         for (int y = 0; y < lines.Length; y++)
         {
@@ -50,6 +55,18 @@ public class MapManager : MonoBehaviour
 
             for(int x = 0; x < chars.Length; x++)
             {
+                if(chars[x].Contains("p"))
+                {
+                    chars[x] = chars[x].Remove(2);
+                    tiles[x, y] = new Tile(new Vector3(x, 0, y), chars[x]);
+                    playerStartTiles.Add(tiles[x, y]);
+                }
+                else if (chars[x].Contains("e"))
+                {
+                    chars[x]= chars[x].Remove(2);
+                    tiles[x, y] = new Tile(new Vector3(x, 0, y), chars[x]);
+                    enemyStartTiles.Add(tiles[x, y]);
+                }
                 tiles[x, y] = new Tile(new Vector3(x, 0, y), chars[x]);
             }
         }
@@ -150,6 +167,7 @@ public class MapManager : MonoBehaviour
     //For making the gameObject of a tile (the real ones)
     public void InstantiateTile(string typeID, Vector3 pos)
     {
+        Debug.Log(typeID);
         GameObject tileGameObject = Instantiate(Resources.Load("Tiles/" + typeID) as GameObject);
 
         //Cenetering

@@ -117,8 +117,11 @@ public class Attackable : MonoBehaviour
 
 
             //Did the attacked unit's HP reach 0? If so, remove them from the board AND from the appropriate unit array
+            //Done in unit.dealDamage now
+            /*
             if (attackedUnit.getWorshiperCount() <= 0)
                 BoardMan.killUnit(attackedUnit);
+            */
 
             //End the turn of the unit who initiated the attack
             MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().EndTurnButton();

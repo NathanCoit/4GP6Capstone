@@ -32,10 +32,6 @@ public class BoardManager : MonoBehaviour
     public bool endBattle = false; //used for testing purposes - to see if the battle has ended even if there are units left
     public float PlayerMorale;
     public float enemyMorale;
-    public float playerFaith;
-    public float enemyFaith;
-
-    public float faithCap;
 
     public GameObject MovableTile;
     public GameObject InMoveRangeTile;
@@ -43,6 +39,8 @@ public class BoardManager : MonoBehaviour
     public GameObject AttackableTile;
     public GameObject PreviewAttackTile;
     public GameObject TargetableTile;
+
+    private int abilityTilesDrawing;
 
     public List<GameObject> playerUiButtons;
 
@@ -73,11 +71,12 @@ public class BoardManager : MonoBehaviour
         SoundMan = GameObject.FindGameObjectWithTag("SoundManager").GetComponent<SoundManager>();
 
         abilityDirection = 0;
+        abilityTilesDrawing = 0;
     }
     
     void Update()
     {
-        //Updates Morale frequently. Involved with attack strength calculation so we need to update it frequently. Maybe. We're not really sure. But this works!
+        //Updates Morale frequently. Involved with attack strength calculation so we need to update it frequently.
         // TODO fix
         PlayerMorale = SetupMan.playerMorale;
         enemyMorale = SetupMan.enemyMorale;
@@ -132,7 +131,8 @@ public class BoardManager : MonoBehaviour
     {
         SetupMan.battleResult = GameInfo.BATTLESTATUS.Retreat;
         //TODO: does managementmode check for any changes to morale made from combat mode?
-        SetupMan.playerMorale = SetupMan.playerMorale / 2; //arbitrarily (for now) halves the morale
+        //PlayerMorale = PlayerMorale / 2; //arbitrarily (for now) halves the morale
+        SetupMan.playerMorale = SetupMan.playerMorale / 2;
         SetupMan.finishedBattle = true;
     }
 
@@ -345,8 +345,6 @@ public class BoardManager : MonoBehaviour
     //Called on the button press. Starts the target selection.
     public void useAbility(string name)
     {
-        //TODO ui things here (like hiding menu)
-
         Ability a = Ability.LoadAbilityFromName(name);
 
         List<Tile> firstHalf = new List<Tile>();
@@ -414,6 +412,7 @@ public class BoardManager : MonoBehaviour
 
     public IEnumerator drawTargetableTiles(List<Tile> locationsToDraw, float delay, Ability a)
     {
+        abilityTilesDrawing++;
         foreach (Tile t in locationsToDraw)
         {
             if (MapMan.tiles[(int)t.getX(), (int)t.getZ()].isTraversable())
@@ -431,6 +430,14 @@ public class BoardManager : MonoBehaviour
             yield return new WaitForSeconds(delay);
         }
         yield return null;
+        abilityTilesDrawing--;
+    }
+
+    public bool areAbilityTilesDrawing()
+    {
+        if (abilityTilesDrawing != 0)
+            return true;
+        return false;
     }
 
     public void killUnit(Unit killedUnit)
@@ -485,21 +492,6 @@ public class BoardManager : MonoBehaviour
         return enemyMorale;
     }
 
-    public float GetPlayerFaith()
-    {
-        return playerFaith;
-    }
-
-    public float GetEnemyFaith()
-    {
-        return enemyFaith;
-    }
-
-    public float GetFaithCap()
-    {
-        return faithCap;
-    }
-
     public void setPlayerMorale(float m)
     {
         PlayerMorale = m;
@@ -523,11 +515,30 @@ public class BoardManager : MonoBehaviour
             foreach (Unit u in enemyUnits) //allow each of enemy units to act
             {
                 u.beginTurn();
+                if (u is God)
+                {
+                    (u as God).faith += 10;
+                }
             }
+
+            //Status effects done in seperate loop (in case stuff dies)
+            for (int i = 0; i < enemyUnits.Count; i++)
+            {
+                if (i <= enemyUnits.Count)
+                {
+                    enemyUnits[i].updateStatusEffects();
+                    enemyUnits[i].appyStatusEffects();
+                }
+            
+            }
+
             numActionsLeft = enemyUnits.Count;
 
             foreach(GameObject button in playerUiButtons)
                 button.GetComponent<Button>().interactable = false;
+
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
 
             StartCoroutine(EnemyMan.EnemyActions(0.5f));
         }
@@ -536,15 +547,38 @@ public class BoardManager : MonoBehaviour
             foreach (Unit u in playerUnits) //allow each of player's units to act
             {
                 u.beginTurn();
+                if (u is God)
+                {
+                    (u as God).faith += 10;
+                }
             }
+
+            //Status effects done in seperate loop (in case stuff dies)
+            for (int i = 0; i < playerUnits.Count; i++)
+            {
+                if (i <= playerUnits.Count)
+                {
+                    playerUnits[i].updateStatusEffects();
+                    playerUnits[i].appyStatusEffects();
+                }
+            }
+
             numActionsLeft = playerUnits.Count;
 
             foreach (GameObject button in playerUiButtons)
                 button.GetComponent<Button>().interactable = true;
 
             Camera.main.GetComponent<CombatCam>().resetCamera();
+
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
         }
-        playerTurn = !playerTurn; //switch turn
+
+        //Update faith labels
+        UIMan.updateFaithLabels();
+
+        //switch turn
+        playerTurn = !playerTurn; 
         
     }
 

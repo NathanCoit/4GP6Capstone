@@ -2246,7 +2246,7 @@ GameObject:
   - component: {fileID: 611729022}
   - component: {fileID: 611729021}
   m_Layer: 5
-  m_Name: Panel
+  m_Name: BottomPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2266,6 +2266,8 @@ RectTransform:
   - {fileID: 1569492920}
   - {fileID: 7041383894785590736}
   - {fileID: 801238961}
+  - {fileID: 1881590863}
+  - {fileID: 1433834761}
   m_Father: {fileID: 602377151}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2580,9 +2582,6 @@ MonoBehaviour:
   endBattle: 0
   PlayerMorale: 0
   enemyMorale: 0
-  playerFaith: 0
-  enemyFaith: 0
-  faithCap: 0
   MovableTile: {fileID: 1671741471656716, guid: 5ea76647790eee4489bf8024aee91866,
     type: 3}
   InMoveRangeTile: {fileID: 6951534097669304281, guid: 38b41711fcf0b4b4899f7efd763aa326,
@@ -3081,6 +3080,8 @@ MonoBehaviour:
   enemyMorale: 0
   finishedBattle: 0
   battleResult: 0
+  playerGodAttackStrength: 50
+  enemyGodAttackStrength: 50
 --- !u!4 &878365385
 Transform:
   m_ObjectHideFlags: 0
@@ -4007,6 +4008,85 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1379859207}
+  m_CullTransparentMesh: 0
+--- !u!1 &1433834760
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1433834761}
+  - component: {fileID: 1433834763}
+  - component: {fileID: 1433834762}
+  m_Layer: 5
+  m_Name: EnemyFaithLabel
+  m_TagString: enemyFaithLabel
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1433834761
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1433834760}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 611729020}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -275.00003, y: -15}
+  m_SizeDelta: {x: 160, y: 30}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1433834762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1433834760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: 92387230771b6e74da26f8d5dc5b82b6, type: 3}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 3
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: 'Enemy Faith:'
+--- !u!222 &1433834763
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1433834760}
   m_CullTransparentMesh: 0
 --- !u!1 &1449628263
 GameObject:
@@ -6020,15 +6100,116 @@ MonoBehaviour:
     type: 3}
   multiTargetIcon: {fileID: 1749236587122841157, guid: 77be8ea66709c9e4b8f12aa19b283978,
     type: 3}
-  buffIcon: {fileID: 2483359451511034581, guid: 4156f5c191c235d4983f6a7e5aa8f2ba,
+  damageBuffIcon: {fileID: 4137847422555948792, guid: b6f61a15d35560b4cafc55acb4937298,
     type: 3}
-  debuffIcon: {fileID: 462836810915289439, guid: 157bace0c112c504cba2703b3f87a3e4,
+  healingBuffIcon: {fileID: 9040528091989303140, guid: 89a8189ae7105f249b31035f73150b35,
+    type: 3}
+  defenseBuffIcon: {fileID: 4162495507327413112, guid: 95dfe0472567a8f40ab322ce63dec058,
+    type: 3}
+  shieldBuffIcon: {fileID: 1133258262040735331, guid: 1ee4a38e19c80a444a5d7675f946b9e8,
+    type: 3}
+  speedBuffIcon: {fileID: 8827006780183611215, guid: b192dee68e407944385808278eb89026,
+    type: 3}
+  damageReductionDebuffIcon: {fileID: 6164157836064949698, guid: c1a01e8b5bde4914e8c90e39524e42f2,
+    type: 3}
+  defenseReductionDebuffIcon: {fileID: 4281349634830399203, guid: 6febc7b281e80ef4d8f7f3159c80602c,
+    type: 3}
+  stunDebuffIcon: {fileID: 1773909696726906358, guid: 0ecf86e30bdba6241afb8fad048526c5,
+    type: 3}
+  paralyzeDebuffIcon: {fileID: 3737910750208774974, guid: e0746e78e303ccc429f4dd509c497b9d,
+    type: 3}
+  burnDebuffIcon: {fileID: 6489449020043464781, guid: 1055a7f901048d742891c77ccfe69f0a,
+    type: 3}
+  slowDebuffIcon: {fileID: 8692385864863195178, guid: 58fe04615bdd30440943ae79f683df67,
+    type: 3}
+  blindDebuffIcon: {fileID: 7343715626048340056, guid: 3c5ef2703c7f5814a879b395353f91f3,
+    type: 3}
+  poisonDebuffIcon: {fileID: 491416422058707075, guid: 8eaa80af3853a354c9fdf9103da47f1e,
     type: 3}
   mainCamera: {fileID: 128641586}
   selectedMenu: {fileID: 0}
   UICanvas: {fileID: 65526521}
   godEnteringBattle: 0
   abilityPanelInUse: 0
+--- !u!1 &1881590862
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1881590863}
+  - component: {fileID: 1881590865}
+  - component: {fileID: 1881590864}
+  m_Layer: 5
+  m_Name: PlayerFaithLabel
+  m_TagString: playerFaithLabel
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1881590863
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1881590862}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 611729020}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -275, y: 15}
+  m_SizeDelta: {x: 160, y: 30}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1881590864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1881590862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: 92387230771b6e74da26f8d5dc5b82b6, type: 3}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 3
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: 'Player Faith:'
+--- !u!222 &1881590865
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1881590862}
+  m_CullTransparentMesh: 0
 --- !u!1 &2014206955
 GameObject:
   m_ObjectHideFlags: 0

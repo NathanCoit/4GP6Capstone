@@ -2616,11 +2616,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d248ca73cd19b2b439c9bc7e2b105225, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MushroomGodMenuBackground: {fileID: 0}
-  PaintGodMenuBackground: {fileID: 0}
-  ForkGodMenuBackground: {fileID: 0}
-  ShoeGodMenuBackground: {fileID: 0}
-  DuckGodMenuBackground: {fileID: 0}
   MineBuildingSprite: {fileID: 21300000, guid: ff21da68f1731bb44a8c3000f5700a20, type: 3}
   AltarBuildingSprite: {fileID: 21300000, guid: 7033f4add6b770e43ae6bfb514a7711f,
     type: 3}
@@ -8793,14 +8788,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25947ec498f4e403baf0b726cee9476c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rightHeld: 0
-  leftHeld: 0
-  downHeld: 0
-  upHeld: 0
-  sensitivity: 5
-  gameManagerObject: {fileID: 435552159}
   CameraMovementEnabled: 1
-  fov: 0
+  Sensitivity: 7
+  GameManagerObject: {fileID: 435552159}
+  FieldOfView: 0
+  RightHeld: 0
+  LeftHeld: 0
+  DownHeld: 0
+  UpHeld: 0
 --- !u!1 &1616835710
 GameObject:
   m_ObjectHideFlags: 0

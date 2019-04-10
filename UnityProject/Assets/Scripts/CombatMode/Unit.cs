@@ -384,7 +384,7 @@ public class Unit
                     dealDamage(WorshiperCount * (Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount/ 100);
                     break;
                 case "Slow":
-                    damageBuff -= (Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount;
+                    speedBuff -= (Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount;
                     break;
                 case "Blind":
                     blindDebuff = true;

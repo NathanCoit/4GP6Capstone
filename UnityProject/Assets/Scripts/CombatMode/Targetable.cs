@@ -30,6 +30,9 @@ public class Targetable : MonoBehaviour {
     private Vector3 SmoothDampV;
     public float targetTolerance;
 
+    public bool valid;
+    public List<Unit> targets;
+
     // Use this for initialization
     void Start ()
     {
@@ -42,6 +45,8 @@ public class Targetable : MonoBehaviour {
         SetupMan = GameObject.Find("SetupManager").GetComponent<SetupManager>();
 
         UIMan = GameObject.FindGameObjectWithTag("UIManager").GetComponent<UIManager>();
+
+        valid = false;
     }
 	
 	// Update is called once per frame
@@ -69,8 +74,7 @@ public class Targetable : MonoBehaviour {
     {
         if (inPlace)
         {
-            List<Unit> targets = new List<Unit>();
-            bool valid = false;
+            targets = new List<Unit>();
 
            // Debug.Log(ability.AbiltyType);
 
@@ -233,7 +237,6 @@ public class Targetable : MonoBehaviour {
             }
             else if (ability.AbiltyType == Ability.ABILITYTYPE.Debuff)
             {
-                Debug.Log("This is a buff");
                 if (BoardMan.playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
                 {
                     targets = BoardMan.enemyUnits;

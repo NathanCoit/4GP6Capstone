@@ -192,9 +192,153 @@ public class EnemyManager : MonoBehaviour {
                     enemyUnit.EndTurnButton();
                 }
             }
-            //TODOm logic for enemy god out of battle
+            
+            //Logic for enemy god that is not in battle (using abilities)
             else
             {
+                MapMan.Selected = enemyUnit.unitGameObject();
+
+                //Check if we can use any abilites
+                List<Ability> useableAbilities = new List<Ability>();
+
+                foreach(string ability in (enemyUnit as God).getAbilites())
+                {
+                    Debug.Log(ability);
+                    if((enemyUnit as God).faith >= Ability.LoadAbilityFromName(ability).FaithCost)
+                    {
+                        useableAbilities.Add(Ability.LoadAbilityFromName(ability));
+                    }
+                }
+
+                //Chose to use an ability or not based chance weighted by how many abilties we can use
+                float roll = Random.Range(0.0f, 100.0f);
+                Ability abilityToBeUsed = null;
+
+                if(roll < useableAbilities.Count * 25 || useableAbilities.Count == 4)
+                {
+                    //Use system.random to pick a random ability
+                    System.Random r = new System.Random();
+                    abilityToBeUsed = useableAbilities[r.Next(useableAbilities.Count)];
+                }
+
+                if(abilityToBeUsed != null)
+                {
+                    BoardMan.useAbility(abilityToBeUsed.AbilityName);
+                    List<Targetable> validTiles = new List<Targetable>();
+                    List<Unit> parallelTargets = new List<Unit>();
+
+                    //Wait for tiles to be done drawing
+                    while(BoardMan.areAbilityTilesDrawing())
+                    {
+                        yield return new WaitForSeconds(1);
+                    }
+
+                    foreach(GameObject tile in GameObject.FindGameObjectsWithTag("TargetableTile"))
+                    {
+                        Targetable tileScript = tile.GetComponent<Targetable>();
+                        tileScript.OnMouseOver();
+                        if (tileScript.valid)
+                            validTiles.Add(tileScript);
+                    }
+
+                    //Make a parallel list of units to valid tiles
+                    foreach(Targetable tile in validTiles)
+                        foreach(Unit unit in tile.targets)
+                        {
+                            if (tile.pos.x == unit.getPos().x && tile.pos.y == unit.getPos().y)
+                                parallelTargets.Add(unit);
+                        }
+
+
+                    yield return new WaitForSeconds(delay);
+
+                    Targetable target = null;
+                    int mostWorshipperCount = 0;
+                    int leastWorshipperCount = int.MaxValue;
+
+                    //Do stuff based on ability type
+                    switch (abilityToBeUsed.AbiltyType)
+                    {
+                        
+                        case Ability.ABILITYTYPE.SingleTarget:
+                            Debug.Log("Using a single target ability!");
+
+                            //Use single target on weakest unit
+                            leastWorshipperCount = int.MaxValue;
+
+                            for(int i = 0; i < parallelTargets.Count; i++)
+                            {
+                                if (parallelTargets[i].WorshiperCount < leastWorshipperCount)
+                                    target = validTiles[i];
+                            }
+
+                            if (target != null)
+                            {
+                                target.testClick();
+                                target.OnMouseOver();
+                            }
+
+                            break;
+                        case Ability.ABILITYTYPE.MultiTarget:
+                            Debug.Log("Using a multi target ability!");
+
+                            //Use multi target centered on weakest unit
+                            leastWorshipperCount = int.MaxValue;
+
+                            for (int i = 0; i < parallelTargets.Count; i++)
+                            {
+                                if (parallelTargets[i].WorshiperCount < leastWorshipperCount)
+                                    target = validTiles[i];
+                            }
+
+                            if (target != null)
+                            {
+                                target.testClick();
+                                target.OnMouseOver();
+                            }
+
+                            break;
+                        case Ability.ABILITYTYPE.Buff:
+                            Debug.Log("Using a buff ability!");
+
+                            //Use buff on healthiest unit
+                            mostWorshipperCount = 0;
+
+                            for (int i = 0; i < parallelTargets.Count; i++)
+                            {
+                                if (parallelTargets[i].WorshiperCount > mostWorshipperCount)
+                                    target = validTiles[i];
+                            }
+
+                            if (target != null)
+                            {
+                                target.testClick();
+                                target.OnMouseOver();
+                            }
+
+                            break;
+                        case Ability.ABILITYTYPE.Debuff:
+                            Debug.Log("Using a debuff ability!");
+
+                            //Use debuff on healthiest unit
+                            mostWorshipperCount = 0;
+
+                            for (int i = 0; i < parallelTargets.Count; i++)
+                            {
+                                if (parallelTargets[i].WorshiperCount > mostWorshipperCount)
+                                    target = validTiles[i];
+                            }
+
+                            if (target != null)
+                            {
+                                target.testClick();
+                                target.OnMouseOver();
+                            }
+
+                            break;
+                    }
+                }
+
                 enemyUnit.EndTurnButton();
             }
 

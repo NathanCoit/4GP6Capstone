@@ -117,7 +117,7 @@ public class SetupManager : MonoBehaviour
             Debug.Log(gameInfo.PlayerFaction.GodName + " reporting in, boss");
 
             gameInfo.EnemyFaction.GodName = "Nathan";
-            gameInfo.EnemyFaction.Type = Faction.GodType.Water;
+            gameInfo.EnemyFaction.Type = Faction.GodType.Shoes;
 
             abilities = Faction.GetGodAbilities(gameInfo.EnemyFaction.Type);
             sAbilites = new string[abilities.Count];
@@ -462,7 +462,7 @@ public class SetupManager : MonoBehaviour
             BoardMan.enemyUnits.Add(g);
             g.EndAct();
             g.isPlayer = false;
-            g.setAbilities(gameInfo.PlayerFaction.Abilities);
+            g.setAbilities(gameInfo.EnemyFaction.Abilities);
             g.MoveTo(new Vector2(-1, -1), tiles);
             g.unitGameObject().transform.position = new Vector3(MapMan.tiles.GetLength(0), MapMan.godFloatHeight, MapMan.tiles.GetLength(1) / 2);
 

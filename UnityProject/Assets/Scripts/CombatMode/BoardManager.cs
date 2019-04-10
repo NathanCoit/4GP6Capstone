@@ -40,6 +40,8 @@ public class BoardManager : MonoBehaviour
     public GameObject PreviewAttackTile;
     public GameObject TargetableTile;
 
+    private int abilityTilesDrawing;
+
     public List<GameObject> playerUiButtons;
 
     public int selectNextIndex;
@@ -69,6 +71,7 @@ public class BoardManager : MonoBehaviour
         SoundMan = GameObject.FindGameObjectWithTag("SoundManager").GetComponent<SoundManager>();
 
         abilityDirection = 0;
+        abilityTilesDrawing = 0;
     }
     
     void Update()
@@ -409,6 +412,7 @@ public class BoardManager : MonoBehaviour
 
     public IEnumerator drawTargetableTiles(List<Tile> locationsToDraw, float delay, Ability a)
     {
+        abilityTilesDrawing++;
         foreach (Tile t in locationsToDraw)
         {
             if (MapMan.tiles[(int)t.getX(), (int)t.getZ()].isTraversable())
@@ -426,6 +430,14 @@ public class BoardManager : MonoBehaviour
             yield return new WaitForSeconds(delay);
         }
         yield return null;
+        abilityTilesDrawing--;
+    }
+
+    public bool areAbilityTilesDrawing()
+    {
+        if (abilityTilesDrawing != 0)
+            return true;
+        return false;
     }
 
     public void killUnit(Unit killedUnit)

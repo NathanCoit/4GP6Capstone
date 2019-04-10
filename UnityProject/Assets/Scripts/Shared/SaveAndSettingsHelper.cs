@@ -7,6 +7,10 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+/// <summary>
+/// Helper class for serializing and deserializing data for game states.
+/// Abstracts the interactions between the game and the file system of the user
+/// </summary>
 public class SaveAndSettingsHelper
 {
     /// <summary>

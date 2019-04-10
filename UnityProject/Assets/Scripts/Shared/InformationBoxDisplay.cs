@@ -7,11 +7,13 @@ using UnityEngine.UI;
 
 /// <summary>
 /// Class for displaying infomation boxes to the player
-/// Used to display tutorial information for the player.
+/// Used to display tutorial information for the player with
+/// optional functionality on user response.
 /// See Tutorial flags list for list of tutorial flags.
 /// </summary>
 public class InformationBoxDisplay : MonoBehaviour
 {
+    // Tutorial flag to maintain tutorial progress across save states
     public enum TutorialFlag
     {
         NewGame,

@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Script to control interactions between the player and their god avatar.
+/// The player may explore the map using their god avatar.
+/// </summary>
 public class PlayerGodController : MonoBehaviour
 {
     public GameObject PlayerGod;
@@ -9,23 +13,17 @@ public class PlayerGodController : MonoBehaviour
     public TerrainMap GameMap;
     public FogOfWarScript FogOfWarController;
 
-    private Vector3 muniDestinationVector = Vector3.zero;
+    private Vector3 muniDestinationVector3 = Vector3.zero;
     private Quaternion muniDestinationRotation = Quaternion.identity;
 
     public float MovementSpeed;
     private float mfRadius = 0;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     private void FixedUpdate()
     {
-        if(muniDestinationVector != Vector3.zero)
+        if(muniDestinationVector3 != Vector3.zero)
         {
-            PlayerGod.transform.position = Vector3.Lerp(PlayerGod.transform.position, muniDestinationVector, MovementSpeed);
+            PlayerGod.transform.position = Vector3.Lerp(PlayerGod.transform.position, muniDestinationVector3, MovementSpeed);
         }
         if(muniDestinationRotation != Quaternion.identity)
         {
@@ -33,6 +31,11 @@ public class PlayerGodController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Public method to set a point for the player god avatar to move to
+    /// Called from the raycasting collision detection within game manager
+    /// </summary>
+    /// <param name="puniDestination"></param>
     public void SetPointToMoveTowards(Vector3 puniDestination)
     {
         // Check if point is within tier radius
@@ -40,24 +43,28 @@ public class PlayerGodController : MonoBehaviour
         {
             // Point is out of range, calculate the vector closest that is within range
             // Get angle of point 
-            float AngleOfPoint = Vector3.Angle(new Vector3(100f, 0.5f, 0), puniDestination) * Mathf.PI / 180;
+            float fAngleOfPoint = Vector3.Angle(new Vector3(100f, 0.5f, 0), puniDestination) * Mathf.PI / 180;
             // In third or fourth quadrant, add Pi as .angle will always return smallest vector
             if (puniDestination.z < 0)
             {
-                AngleOfPoint = 2 * Mathf.PI - AngleOfPoint;
+                fAngleOfPoint = 2 * Mathf.PI - fAngleOfPoint;
             }
-            muniDestinationVector = new Vector3(mfRadius * Mathf.Cos(AngleOfPoint), 0.5f, mfRadius * Mathf.Sin(AngleOfPoint));
+            muniDestinationVector3 = new Vector3(mfRadius * Mathf.Cos(fAngleOfPoint), 0.5f, mfRadius * Mathf.Sin(fAngleOfPoint));
         }
         else
         {
-            muniDestinationVector = puniDestination;
+            muniDestinationVector3 = puniDestination;
         }
         Quaternion uniOriginalRotation = PlayerGod.transform.localRotation;
-        PlayerGod.transform.LookAt(muniDestinationVector);
+        PlayerGod.transform.LookAt(muniDestinationVector3);
         muniDestinationRotation = PlayerGod.transform.localRotation;
         PlayerGod.transform.localRotation = uniOriginalRotation;
     }
 
+    /// <summary>
+    /// Method called to create and place the god object for the player.
+    /// Allows same script to cover all god types
+    /// </summary>
     public void CreatePlayerGod()
     {
         // Load player god and place near village
@@ -86,10 +93,15 @@ public class PlayerGodController : MonoBehaviour
         FogOfWarController.m_player = PlayerGod.transform;
     }
 
+    /// <summary>
+    /// Draw a circle around the player's god to give feedback when
+    /// the player god is selected
+    /// </summary>
+    /// <param name="pblnTurnOn"></param>
     public void TogglePlayerOutlines(bool pblnTurnOn)
     {
-        LineRenderer lineRenderer = PlayerGod.GetComponent<LineRenderer>();
-        Vector3 pos;
+        LineRenderer uniLineRenderer = PlayerGod.GetComponent<LineRenderer>();
+        Vector3 uniPositionVector3;
         // Turn on building outlines
         if (pblnTurnOn)
         {
@@ -97,17 +109,17 @@ public class PlayerGodController : MonoBehaviour
             float lineWidth = 0.2f;
             float radius = 5;
 
-            lineRenderer.useWorldSpace = false;
-            lineRenderer.widthMultiplier = lineWidth;
+            uniLineRenderer.useWorldSpace = false;
+            uniLineRenderer.widthMultiplier = lineWidth;
 
             float deltaTheta = (2f * Mathf.PI) / vertexCount;
             float theta = 0f;
 
-            lineRenderer.positionCount = vertexCount + 2;
-            for (int i = 0; i < lineRenderer.positionCount; i++)
+            uniLineRenderer.positionCount = vertexCount + 2;
+            for (int i = 0; i < uniLineRenderer.positionCount; i++)
             {
-                pos = new Vector3(radius * Mathf.Cos(theta), 0f, radius * Mathf.Sin(theta));
-                lineRenderer.SetPosition(i, pos);
+                uniPositionVector3 = new Vector3(radius * Mathf.Cos(theta), 0f, radius * Mathf.Sin(theta));
+                uniLineRenderer.SetPosition(i, uniPositionVector3);
                 theta += deltaTheta;
             }
         }
@@ -115,7 +127,7 @@ public class PlayerGodController : MonoBehaviour
         // Turn off building outlines
         else
         {
-            lineRenderer.positionCount = 0;
+            uniLineRenderer.positionCount = 0;
         }
     }
 }

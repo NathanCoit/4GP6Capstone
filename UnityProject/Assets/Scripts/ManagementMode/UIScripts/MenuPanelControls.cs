@@ -5,14 +5,13 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 
-public class MenuPanelControls : MonoBehaviour {
-
-    public Sprite MushroomGodMenuBackground;
-    public Sprite PaintGodMenuBackground;
-    public Sprite ForkGodMenuBackground;
-    public Sprite ShoeGodMenuBackground;
-    public Sprite DuckGodMenuBackground;
-
+/// <summary>
+/// Class for controlling the UI elements contained in the information menu panel at the bottom of the screen
+/// Controls button elements for menu state changes, and information on currently selected objects.
+/// </summary>
+public class MenuPanelControls : MonoBehaviour
+{
+    // Reference all UI elements to control
     public Sprite MineBuildingSprite;
     public Sprite AltarBuildingSprite;
     public Sprite UpgradeBuildingSprite;
@@ -49,9 +48,14 @@ public class MenuPanelControls : MonoBehaviour {
     public GameObject DefaultMenuPanel;
     public GameObject BuildMenuPanel;
     public GameObject SelectedBuildingMenu;
-    private HotKeyManager hotKeyManager = new HotKeyManager();
-    
 
+    private HotKeyManager mmushotKeyManager = new HotKeyManager();
+
+
+    /// <summary>
+    /// Get references from scene to needed components
+    /// Allows placement to be done in scene, and ignored in code.
+    /// </summary>
     private void Start()
     {
         SelectedBuildingImage = SelectedBuildingSpriteObject.GetComponent<Image>();
@@ -59,49 +63,59 @@ public class MenuPanelControls : MonoBehaviour {
         SelectedBuildingUpgradeLevelText = SelectedBuildingUpgradeLevelTextObject.GetComponent<TextMeshProUGUI>();
         SelectedBuildingOwnerText = SelectedBuildingOwnerTextObject.GetComponent<TextMeshProUGUI>();
         SelectedBuildingMinersText = SelectedBuildingMinersTextObject.GetComponent<TextMeshProUGUI>();
-        hotKeyManager.LoadHotkeyProfile();
+        mmushotKeyManager.LoadHotkeyProfile();
         SetButtonText();
         GoToDefaultMenu();
     }
 
+    /// <summary>
+    /// Dynamically set the text displayed on each button based on the current hotkeys of the player.
+    /// Allows for information on which keys can be pressed to be viewable by the player
+    /// </summary>
     public void SetButtonText()
     {
-        hotKeyManager.LoadHotkeyProfile();
-        // Set hotkey text to max 3 characters
-        MoveBuildingButton.GetComponentInChildren<Text>().text = hotKeyManager.HotKeys["BuildingMoveKeyCode"].
-            ToString().Substring(0, Math.Min(3, hotKeyManager.HotKeys["BuildingMoveKeyCode"].ToString().Length));
+        mmushotKeyManager.LoadHotkeyProfile();
+        // Set hotkey text to max 3 characters (e.g. escape -> esc)
+        MoveBuildingButton.GetComponentInChildren<Text>().text = mmushotKeyManager.HotKeys["BuildingMoveKeyCode"].
+            ToString().Substring(0, Math.Min(3, mmushotKeyManager.HotKeys["BuildingMoveKeyCode"].ToString().Length));
 
-        UpgradeBuildingButton.GetComponentInChildren<Text>().text = hotKeyManager.HotKeys["BuildingUpgradeKeyCode"].
-            ToString().Substring(0, Math.Min(3, hotKeyManager.HotKeys["BuildingUpgradeKeyCode"].ToString().Length));
+        UpgradeBuildingButton.GetComponentInChildren<Text>().text = mmushotKeyManager.HotKeys["BuildingUpgradeKeyCode"].
+            ToString().Substring(0, Math.Min(3, mmushotKeyManager.HotKeys["BuildingUpgradeKeyCode"].ToString().Length));
 
-        BuyMinersButton.GetComponentInChildren<Text>().text = hotKeyManager.HotKeys["BuyMinersKeyCode"].
-            ToString().Substring(0, Math.Min(3, hotKeyManager.HotKeys["BuyMinersKeyCode"].ToString().Length));
+        BuyMinersButton.GetComponentInChildren<Text>().text = mmushotKeyManager.HotKeys["BuyMinersKeyCode"].
+            ToString().Substring(0, Math.Min(3, mmushotKeyManager.HotKeys["BuyMinersKeyCode"].ToString().Length));
 
-        UpgradeUIButton.GetComponentInChildren<Text>().text = hotKeyManager.HotKeys["BlackSmithUIKeyCode"].
-            ToString().Substring(0, Math.Min(3, hotKeyManager.HotKeys["BlackSmithUIKeyCode"].ToString().Length));
+        UpgradeUIButton.GetComponentInChildren<Text>().text = mmushotKeyManager.HotKeys["BlackSmithUIKeyCode"].
+            ToString().Substring(0, Math.Min(3, mmushotKeyManager.HotKeys["BlackSmithUIKeyCode"].ToString().Length));
 
-        EnemyBattleButton.GetComponentInChildren<Text>().text = hotKeyManager.HotKeys["StartBattleKeyCode"].
-            ToString().Substring(0, Math.Min(3, hotKeyManager.HotKeys["StartBattleKeyCode"].ToString().Length));
+        EnemyBattleButton.GetComponentInChildren<Text>().text = mmushotKeyManager.HotKeys["StartBattleKeyCode"].
+            ToString().Substring(0, Math.Min(3, mmushotKeyManager.HotKeys["StartBattleKeyCode"].ToString().Length));
 
-        AltarButton.GetComponentInChildren<Text>().text = hotKeyManager.HotKeys["AltarKeyCode"].
-            ToString().Substring(0, Math.Min(3, hotKeyManager.HotKeys["AltarKeyCode"].ToString().Length));
+        AltarButton.GetComponentInChildren<Text>().text = mmushotKeyManager.HotKeys["AltarKeyCode"].
+            ToString().Substring(0, Math.Min(3, mmushotKeyManager.HotKeys["AltarKeyCode"].ToString().Length));
 
-        HousingButton.GetComponentInChildren<Text>().text = hotKeyManager.HotKeys["HouseKeyCode"].
-            ToString().Substring(0, Math.Min(3, hotKeyManager.HotKeys["HouseKeyCode"].ToString().Length));
+        HousingButton.GetComponentInChildren<Text>().text = mmushotKeyManager.HotKeys["HouseKeyCode"].
+            ToString().Substring(0, Math.Min(3, mmushotKeyManager.HotKeys["HouseKeyCode"].ToString().Length));
 
-        MineButton.GetComponentInChildren<Text>().text = hotKeyManager.HotKeys["MineKeyCode"].
-            ToString().Substring(0, Math.Min(3, hotKeyManager.HotKeys["MineKeyCode"].ToString().Length));
+        MineButton.GetComponentInChildren<Text>().text = mmushotKeyManager.HotKeys["MineKeyCode"].
+            ToString().Substring(0, Math.Min(3, mmushotKeyManager.HotKeys["MineKeyCode"].ToString().Length));
 
-        BlacksmithButton.GetComponentInChildren<Text>().text = hotKeyManager.HotKeys["BlacksmithKeyCode"].
-            ToString().Substring(0, Math.Min(3, hotKeyManager.HotKeys["BlacksmithKeyCode"].ToString().Length));
+        BlacksmithButton.GetComponentInChildren<Text>().text = mmushotKeyManager.HotKeys["BlacksmithKeyCode"].
+            ToString().Substring(0, Math.Min(3, mmushotKeyManager.HotKeys["BlacksmithKeyCode"].ToString().Length));
 
-        PauseButton.GetComponentInChildren<Text>().text = hotKeyManager.HotKeys["EscapeKeyCode"].
-            ToString().Substring(0, Math.Min(3, hotKeyManager.HotKeys["EscapeKeyCode"].ToString().Length));
+        PauseButton.GetComponentInChildren<Text>().text = mmushotKeyManager.HotKeys["EscapeKeyCode"].
+            ToString().Substring(0, Math.Min(3, mmushotKeyManager.HotKeys["EscapeKeyCode"].ToString().Length));
 
-        TierRewardButton.GetComponentInChildren<Text>().text = hotKeyManager.HotKeys["TierRewardKeyCode"].
-            ToString().Substring(0, Math.Min(3, hotKeyManager.HotKeys["TierRewardKeyCode"].ToString().Length));
+        TierRewardButton.GetComponentInChildren<Text>().text = mmushotKeyManager.HotKeys["TierRewardKeyCode"].
+            ToString().Substring(0, Math.Min(3, mmushotKeyManager.HotKeys["TierRewardKeyCode"].ToString().Length));
     }
 
+    /// <summary>
+    /// Enter the submenu for selecting buildings to buffer
+    /// Enabled/disable buttons depending on gamestate
+    /// </summary>
+    /// <param name="pblnAllowedToBuildMine"></param>
+    /// <param name="pblnAllowedToBuildUpgrade"></param>
     public void EnterBuildMenu(bool pblnAllowedToBuildMine, bool pblnAllowedToBuildUpgrade)
     {
         DisableAllMenus();
@@ -114,7 +128,7 @@ public class MenuPanelControls : MonoBehaviour {
         {
             DisableMineButton();
         }
-        if(pblnAllowedToBuildUpgrade)
+        if (pblnAllowedToBuildUpgrade)
         {
             EnableUpgradeButton();
         }
@@ -124,6 +138,9 @@ public class MenuPanelControls : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Return to default menu.
+    /// </summary>
     public void GoToDefaultMenu()
     {
         DisableAllMenus();
@@ -131,14 +148,21 @@ public class MenuPanelControls : MonoBehaviour {
         SelectedBuildingPanel.SetActive(false);
     }
 
-    public void EnterSelectedBuildingMenu(Building SelectedBuilding, bool pblnPlayerOwnedBuilding, bool pblnCanBeUpgraded)
+    /// <summary>
+    /// Update information panel with information on the currently selected building.
+    /// Allows player to see information on the building they have selected in case of confusion.
+    /// </summary>
+    /// <param name="pmusSelectedBuilding"></param>
+    /// <param name="pblnPlayerOwnedBuilding"></param>
+    /// <param name="pblnCanBeUpgraded"></param>
+    public void EnterSelectedBuildingMenu(Building pmusSelectedBuilding, bool pblnPlayerOwnedBuilding, bool pblnCanBeUpgraded)
     {
         string strBuildingType = string.Empty;
         DisableAllMenus();
         SelectedBuildingMenu.SetActive(true);
         SelectedBuildingPanel.SetActive(true);
-        SelectedBuildingOwnerText.text = string.Format("Owner: {0} God of {1}", SelectedBuilding.OwningFaction.GodName, SelectedBuilding.OwningFaction.Type.ToString());
-        switch(SelectedBuilding.BuildingType)
+        SelectedBuildingOwnerText.text = string.Format("Owner: {0} God of {1}", pmusSelectedBuilding.OwningFaction.GodName, pmusSelectedBuilding.OwningFaction.Type.ToString());
+        switch (pmusSelectedBuilding.BuildingType)
         {
             case Building.BUILDING_TYPE.ALTAR:
                 SelectedBuildingImage.sprite = AltarBuildingSprite;
@@ -162,22 +186,22 @@ public class MenuPanelControls : MonoBehaviour {
                 break;
         }
         SelectedBuildingTypeText.text = strBuildingType;
-        SelectedBuildingUpgradeLevelText.text = string.Format("Level: {0}", SelectedBuilding.UpgradeLevel);
+        SelectedBuildingUpgradeLevelText.text = string.Format("Level: {0}", pmusSelectedBuilding.UpgradeLevel);
         HideSelectedBuildingButtons();
-        if(pblnPlayerOwnedBuilding)
+        if (pblnPlayerOwnedBuilding)
         {
             // enable buttons based on building type
-            if(SelectedBuilding.BuildingType == Building.BUILDING_TYPE.MATERIAL)
+            if (pmusSelectedBuilding.BuildingType == Building.BUILDING_TYPE.MATERIAL)
             {
                 SelectedBuildingMinersTextObject.SetActive(true);
-                SelectedBuildingMinersText.text = string.Format("Miners: {0}/{1}", ((MineBuilding)SelectedBuilding).Miners, ((MineBuilding)SelectedBuilding).MinerCap);
+                SelectedBuildingMinersText.text = string.Format("Miners: {0}/{1}", ((MineBuilding)pmusSelectedBuilding).Miners, ((MineBuilding)pmusSelectedBuilding).MinerCap);
                 // Show upgrade, move, and buy miners buttons
                 UpgradeBuildingButton.SetActive(true);
                 MoveBuildingButton.SetActive(true);
                 BuyMinersButton.SetActive(true);
-                BuyMinersTextAmount.GetComponent<Text>().text = Mathf.Pow(10, SelectedBuilding.UpgradeLevel).ToString();
+                BuyMinersTextAmount.GetComponent<Text>().text = Mathf.Pow(10, pmusSelectedBuilding.UpgradeLevel).ToString();
             }
-            else if(SelectedBuilding.BuildingType == Building.BUILDING_TYPE.UPGRADE)
+            else if (pmusSelectedBuilding.BuildingType == Building.BUILDING_TYPE.UPGRADE)
             {
                 // Enable upgrade UI button, move, and buildingupgrade button
                 MoveBuildingButton.SetActive(true);
@@ -185,7 +209,7 @@ public class MenuPanelControls : MonoBehaviour {
                 UpgradeUIButton.SetActive(true);
                 SelectedBuildingMinersTextObject.SetActive(false);
             }
-            else if (SelectedBuilding.BuildingType == Building.BUILDING_TYPE.VILLAGE)
+            else if (pmusSelectedBuilding.BuildingType == Building.BUILDING_TYPE.VILLAGE)
             {
                 SelectedBuildingMinersTextObject.SetActive(false);
                 // show nothing
@@ -211,7 +235,7 @@ public class MenuPanelControls : MonoBehaviour {
         else
         {
             SelectedBuildingMinersTextObject.SetActive(false);
-            if(SelectedBuilding.BuildingType == Building.BUILDING_TYPE.VILLAGE)
+            if (pmusSelectedBuilding.BuildingType == Building.BUILDING_TYPE.VILLAGE)
             {
                 // Enable battle button
                 EnemyBattleButton.SetActive(true);
@@ -219,6 +243,12 @@ public class MenuPanelControls : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Method to display information on the currently selected god.
+    /// Allows player to visually know they have a god selected if he is not on screen.
+    /// </summary>
+    /// <param name="pmusFaction"></param>
+    /// <param name="pmusGameInfo"></param>
     public void EnterGodSelectedState(Faction pmusFaction, GameInfo pmusGameInfo)
     {
         DisableAllMenus();
@@ -227,16 +257,18 @@ public class MenuPanelControls : MonoBehaviour {
         SelectedBuildingImage.sprite = AltarBuildingSprite;
         SelectedBuildingTypeText.text = "God";
         SelectedBuildingUpgradeLevelText.text = string.Format("Level: {0}", pmusFaction.GodTier + 1);
-        SelectedBuildingOwnerText.text 
+        SelectedBuildingOwnerText.text
             = string.Format(
 @"{0} god of {1}
-Health: {2}, Attack: {3}, Defense: {4}", 
-            pmusFaction.GodName, 
-            pmusFaction.Type, 
-            pmusGameInfo.GodHealthMultiplier, 
-            pmusGameInfo.GodAttackMultiplier, 
+Health: {2}, Attack: {3}, Defense: {4}",
+            pmusFaction.GodName,
+            pmusFaction.Type,
+            pmusGameInfo.GodHealthMultiplier,
+            pmusGameInfo.GodAttackMultiplier,
             pmusGameInfo.GodDefenseMultiplier);
     }
+
+    // Methods for enabling/disabling sub menu panels or buttons
 
     private void DisableAllMenus()
     {
@@ -278,15 +310,15 @@ Health: {2}, Attack: {3}, Defense: {4}",
         EnemyBattleButton.SetActive(false);
     }
 
-    private void EnableButton(Button pbtnToEnable, Image pimgToEnable)
+    private void EnableButton(Button puniButtonToEnable, Image puniImageToEnable)
     {
-        pbtnToEnable.enabled = true;
-        pimgToEnable.color = new Color(0.4902f, 0, 0, 255);
+        puniButtonToEnable.enabled = true;
+        puniImageToEnable.color = new Color(0.4902f, 0, 0, 255);
     }
 
-    private void DisableButton(Button pbtnToDisable, Image pimgToDisable)
+    private void DisableButton(Button puniButtonToDisable, Image puniImageToDisable)
     {
-        pbtnToDisable.enabled = false;
-        pimgToDisable.color = Color.grey;
+        puniButtonToDisable.enabled = false;
+        puniImageToDisable.color = Color.grey;
     }
 }

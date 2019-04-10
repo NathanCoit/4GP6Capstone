@@ -2,7 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DebuffAbility : Ability{
+/// <summary>
+/// Child class for defining attributes on Debuff abilities
+/// for diminishing enemies stats or applying status effects.
+/// </summary>
+public class DebuffAbility : Ability
+{
     public DEBUFFTYPE DebuffType;
     public int DebuffAmount;
     public float DebuffScalingAmount;
@@ -19,8 +24,9 @@ public class DebuffAbility : Ability{
     }
 
     /// <summary>
-    /// Override function for loading debuff abilites.
-    /// Set properties of the debuff abiltiy.
+    /// Load a debuff ability. Set the properties of the ability.
+    /// Called from Debuff Ability constructor.
+    /// See Ability.LoadAbility
     /// </summary>
     /// <param name="pstrAbilityName"></param>
     /// <returns></returns>

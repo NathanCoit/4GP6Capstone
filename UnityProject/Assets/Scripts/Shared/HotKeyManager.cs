@@ -5,6 +5,7 @@ using UnityEngine;
 
 /// <summary>
 /// A class for managing hotkeys saved.
+/// Allows for custom hot key profiles for a user to be changed and read during runtime and between game sessions.
 /// Create an instance of this class and call LoadHotKeyProfile to load the current Computers hotkey profile.
 /// </summary>
 public class HotKeyManager

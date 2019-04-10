@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+/// <summary>
+/// Inherits from Worshipper upgrade. Defines attack movement increase and upgrade flavour text
+/// </summary>
 public class MovementWorshipperUpgrade : WorshipperUpgrade
 {
     public int MovementBuff;

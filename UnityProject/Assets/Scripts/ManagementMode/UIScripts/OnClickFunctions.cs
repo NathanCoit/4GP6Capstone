@@ -11,63 +11,73 @@ using UnityEngine.SceneManagement;
 public class OnClickFunctions : MonoBehaviour
 {
     public GameObject GameManagerObject;
-    private GameManager GameManagerScript;
     public InputManager InputScript;
-
     public GameObject MenuPanelObject;
-    private MenuPanelControls MenuPanelController;
-
     public GameObject PausedMenuPanel;
     public GameObject OptionsMenuPanel;
     public ConfirmationBoxController ConfirmationBoxScript;
 
+    private MenuPanelControls mmusMenuPanelController;
+    private GameManager mmusGameManagerScript;
+
     // Use this for initialization
     void Start()
     {
-        GameManagerScript = GameManagerObject.GetComponent<GameManager>();
-        MenuPanelController = MenuPanelObject.GetComponent<MenuPanelControls>();
+        mmusGameManagerScript = GameManagerObject.GetComponent<GameManager>();
+        mmusMenuPanelController = MenuPanelObject.GetComponent<MenuPanelControls>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
+    /// <summary>
+    /// Attached to game over load last save button
+    /// </summary>
     public void LoadLastSave()
     {
-        SaveAndSettingsHelper.LoadLastSave(Application.persistentDataPath + "/SaveFiles", GameManagerScript.GameInfo);
+        SaveAndSettingsHelper.LoadLastSave(Application.persistentDataPath + "/SaveFiles", mmusGameManagerScript.GameInfo);
     }
 
+    /// <summary>
+    /// Attached to Save settings button
+    /// </summary>
     public void SaveGameSettings()
     {
         SaveAndSettingsHelper.SaveSettingsFromOptionsMenu();
-        GameManagerScript.HotKeyManager.LoadHotkeyProfile();
+        mmusGameManagerScript.HotKeyManager.LoadHotkeyProfile();
         InputScript.RefreshHotkeyProfile();
-        MenuPanelController.SetButtonText();
+        mmusMenuPanelController.SetButtonText();
         SaveAndSettingsHelper.ApplyGameSettings();
-        GameManagerScript.ReturnToPauseMenu();
+        mmusGameManagerScript.ReturnToPauseMenu();
     }
 
+    /// <summary>
+    /// Attached to pause quit button
+    /// </summary>
     public void QuitToMenu()
     {
         // Destroy gameinfo object
-        Destroy(GameManagerScript.GameInfo.gameObject);
+        Destroy(mmusGameManagerScript.GameInfo.gameObject);
         SceneManager.LoadScene("MainMenu");
     }
 
+    /// <summary>
+    /// Attached to pause options button
+    /// </summary>
     public void OpenOptionsMenu()
     {
         PausedMenuPanel.SetActive(false);
         OptionsMenuPanel.SetActive(true);
-        GameManagerScript.EnterSettingsMenuState();
+        mmusGameManagerScript.EnterSettingsMenuState();
         SaveAndSettingsHelper.ApplySettingsToOptionsMenu();
     }
 
+    /// <summary>
+    /// Attached to save game button
+    /// </summary>
     public void SaveGame()
     {
-        ConfirmationBoxScript.AttachCallbackToConfirmationBox(() => GameManagerScript.SaveGame(true), "Do you want to save?");
+        mmusGameManagerScript.SaveGame(true);
     }
+
+    // Methods attached to buttons specific for buildings
 
     public void BuyMiners()
     {
@@ -75,7 +85,7 @@ public class OnClickFunctions : MonoBehaviour
         {
             return;
         }
-        GameManagerScript.BuyMinersForSelectedBuilding();
+        mmusGameManagerScript.BuyMinersForSelectedBuilding();
     }
 
     public void Upgrade()
@@ -84,7 +94,7 @@ public class OnClickFunctions : MonoBehaviour
         {
             return;
         }
-        GameManagerScript.UpgradeSelectedBuilding();
+        mmusGameManagerScript.UpgradeSelectedBuilding();
     }
 
     public void Move()
@@ -93,7 +103,7 @@ public class OnClickFunctions : MonoBehaviour
         {
             return;
         }
-        GameManagerScript.EnterMovingBuildingState();
+        mmusGameManagerScript.EnterMovingBuildingState();
     }
 
     public void ShowUpgradeShop()
@@ -102,7 +112,7 @@ public class OnClickFunctions : MonoBehaviour
         {
             return;
         }
-        GameManagerScript.SetUpgradeUIActive();
+        mmusGameManagerScript.SetUpgradeUIActive();
     }
 
     public void BufferAltar()
@@ -111,7 +121,7 @@ public class OnClickFunctions : MonoBehaviour
         {
             return;
         }
-        GameManagerScript.BufferBuilding(Building.BUILDING_TYPE.ALTAR);
+        mmusGameManagerScript.BufferBuilding(Building.BUILDING_TYPE.ALTAR);
     }
 
     public void BufferMine()
@@ -120,7 +130,7 @@ public class OnClickFunctions : MonoBehaviour
         {
             return;
         }
-        GameManagerScript.BufferBuilding(Building.BUILDING_TYPE.MATERIAL);
+        mmusGameManagerScript.BufferBuilding(Building.BUILDING_TYPE.MATERIAL);
     }
 
     public void BufferHousing()
@@ -129,7 +139,7 @@ public class OnClickFunctions : MonoBehaviour
         {
             return;
         }
-        GameManagerScript.BufferBuilding(Building.BUILDING_TYPE.HOUSING);
+        mmusGameManagerScript.BufferBuilding(Building.BUILDING_TYPE.HOUSING);
     }
 
     public void BufferUpgrade()
@@ -138,7 +148,7 @@ public class OnClickFunctions : MonoBehaviour
         {
             return;
         }
-        GameManagerScript.BufferBuilding(Building.BUILDING_TYPE.UPGRADE);
+        mmusGameManagerScript.BufferBuilding(Building.BUILDING_TYPE.UPGRADE);
     }
 
     public void EnterBuildMenu()
@@ -147,7 +157,7 @@ public class OnClickFunctions : MonoBehaviour
         {
             return;
         }
-        GameManagerScript.EnterBuildMenuState();
+        mmusGameManagerScript.EnterBuildMenuState();
     }
 
     public void OpenTierRewards()
@@ -156,16 +166,16 @@ public class OnClickFunctions : MonoBehaviour
         {
             return;
         }
-        GameManagerScript.EnterTierRewardsMenuState();
+        mmusGameManagerScript.EnterTierRewardsMenuState();
     }
-
+    
     public void PauseGame()
     {
         if (CheckIfPaused())
         {
             return;
         }
-        GameManagerScript.PauseGame();
+        mmusGameManagerScript.PauseGame();
     }
 
     public void OptionsMenuCancelButtonClicked()
@@ -173,20 +183,25 @@ public class OnClickFunctions : MonoBehaviour
         if (SaveAndSettingsHelper.CheckForChangesInOptionsMenu())
         {
             ConfirmationBoxScript.AttachCallbackToConfirmationBox(
-            GameManagerScript.ReturnToPauseMenu,
+            mmusGameManagerScript.ReturnToPauseMenu,
             "Unsaved changes will be lost. Are you sure you don't want to save?",
             "Don't Save",
             "Cancel");
         }
         else
         {
-            GameManagerScript.ReturnToPauseMenu();
+            mmusGameManagerScript.ReturnToPauseMenu();
         }
     }
 
+    /// <summary>
+    /// Check if the game is paused to disable some building buttons.
+    /// Makes sure player can't interact with buildings while paused.
+    /// </summary>
+    /// <returns></returns>
     private bool CheckIfPaused()
     {
-        return GameManagerScript.CurrentMenuState == GameManager.MENUSTATE.Paused_State
-            || GameManagerScript.CurrentMenuState == GameManager.MENUSTATE.Settings_Menu_State;
+        return mmusGameManagerScript.CurrentMenuState == GameManager.MENUSTATE.Paused_State
+            || mmusGameManagerScript.CurrentMenuState == GameManager.MENUSTATE.Settings_Menu_State;
     }
 }

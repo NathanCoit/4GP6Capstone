@@ -9,7 +9,12 @@ using System.Linq;
 using UnityEngine.EventSystems;
 using TMPro;
 
-public class MainMenu : MonoBehaviour {
+/// <summary>
+/// Contains UI functionality specific to the main menu.
+/// Controls information, UI visibility, and UI navigation
+/// </summary>
+public class MainMenu : MonoBehaviour
+{
 
     public GameObject GameInfoObjectPrefab;
     public GameObject GodTypeDropDownObject;
@@ -39,7 +44,8 @@ public class MainMenu : MonoBehaviour {
     }
 
     // Use this for initialization
-    void Start() {
+    void Start()
+    {
         // Disable all but main menu panel. Makes scene starting panel not reliant on scene settings
         DisableAllPanels();
         MainUIPanel.SetActive(true);
@@ -48,7 +54,8 @@ public class MainMenu : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update() {
+    void Update()
+    {
         // Maximum menu depth is 1, escape always returns to main menu
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -58,6 +65,7 @@ public class MainMenu : MonoBehaviour {
 
     /// <summary>
     /// Method run when the start button game is clicked in the main menu
+    /// Used to valide and start a new game
     /// </summary>
     public void StartButtonClicked()
     {
@@ -84,6 +92,7 @@ public class MainMenu : MonoBehaviour {
 
     /// <summary>
     /// Method for loading the management scene as a new game
+    /// Initializes a blank game info object to allow the game manager to create new data
     /// </summary>
     /// <param name="pstrGodName"></param>
     /// <param name="penumGodType"></param>
@@ -306,19 +315,29 @@ public class MainMenu : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Plays an animation before transitioning into management mode
+    /// Makes the jump from main menu to management mode less jarring
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator PlayLoadSaveAnimation(string pstrFilePath, GameInfo pmusGameInfo)
     {
         Animator uniAnimation = GetComponent<Animator>();
         uniAnimation.SetTrigger("Fade");
-        yield return new WaitForSeconds(uniAnimation.GetCurrentAnimatorStateInfo(0).length*2);
+        yield return new WaitForSeconds(uniAnimation.GetCurrentAnimatorStateInfo(0).length * 2);
         SaveAndSettingsHelper.LoadSceneFromFile(pstrFilePath, pmusGameInfo);
     }
 
+    /// <summary>
+    /// Plays an animation before transitioning into management mode
+    /// Makes the jump from main menu to management mode less jarring
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator PlayNewGameAnimation()
     {
         Animator uniAnimation = GetComponent<Animator>();
         uniAnimation.SetTrigger("Fade");
-        yield return new WaitForSeconds(uniAnimation.GetCurrentAnimatorStateInfo(0).length*2);
+        yield return new WaitForSeconds(uniAnimation.GetCurrentAnimatorStateInfo(0).length * 2);
         SceneManager.LoadScene("UnderGodScene");
     }
 }

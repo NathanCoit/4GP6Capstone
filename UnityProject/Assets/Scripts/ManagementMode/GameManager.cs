@@ -9,8 +9,9 @@ using UnityEngine.UI;
 
 
 /// <summary>
-/// Game manager for the Management mode. Controls intializing of level 
-/// and transitions from Combat Mode to and from Management Mode.
+/// Game manager works as the intermediary between any other scripts and the current state of the game. 
+/// Contains many checks and calculations that ensure other scripts will not break the current game state with actions. 
+/// Controls the transitions between save states and other scenes and the code required to generate a new game state.
 /// </summary>
 public class GameManager : MonoBehaviour
 {
@@ -95,6 +96,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Default function run by unity on scene start up
     /// Use this for any initializations needed by other scripts
+    /// Controls the loading of a saved state or creation of data for a new game state
     /// </summary>
     void Awake()
     {
@@ -126,8 +128,6 @@ public class GameManager : MonoBehaviour
         {
             musFaction.SetHidden(true);
         }
-        //GameMap.DrawFactionArea(PlayerFaction);
-        //GameMap.DrawMultipleFactionAreas(CurrentFactions);
         // Hide the map. Keep map object for collision detection, but does not need to be visible as individual god textures cover it
         GameMap.HideMap();
         GameMap.AddGodLandscapes(CurrentFactions);
@@ -140,7 +140,8 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Load the game info object from the scene. Game info object should be created by main menu before loading MM scene.
+    /// Load the game info object from the scene. Game info object should be created before entering management mode.
+    /// Helper method to grab game info from the scene and handle if it can not be found for testing.
     /// </summary>
     private void InitializeGameInfo()
     {
@@ -169,6 +170,7 @@ public class GameManager : MonoBehaviour
     }
     /// <summary>
     /// Function run at the beginning of a new game to generate starting map, buildings, player and enemies.
+    /// Creates god faction, creates and divides game maps, creates starter buildings and abilties
     /// </summary>
     private void StartNewGame()
     {
@@ -199,10 +201,11 @@ public class GameManager : MonoBehaviour
             MaterialCount = InitialPlayerMaterials
         };
         CurrentFactions.Add(PlayerFaction);
-        // Create factions for each tier. Higher tier increased number of starting buildings and resources.
         TreasureController.CreateNewTreasures(5, MapTierCount);
+        // Create factions for each tier. Higher tier increased number of starting buildings and resources.
         for (int intTierIndex = 0; intTierIndex < MapTierCount; intTierIndex++)
         {
+            // Randomize god placement order. Also allows for random gods if more gods are added
             if (intTierIndex == 0)
             {
                 arrGodTypes = new List<Faction.GodType>(Faction.TierOneGods);
@@ -352,6 +355,8 @@ public class GameManager : MonoBehaviour
 
     /// <summary>
     /// Load the results after returning from combat mode.
+    /// Controls the logic for the 3 scenarios when returning from battle (Victory, Defeat, Surrender)
+    /// Allows modularity in how battle results are handled
     /// </summary>
     private void LoadBattleResults()
     {
@@ -434,21 +439,22 @@ public class GameManager : MonoBehaviour
 
     /// <summary>
     /// Method for setting the gameInfo values needed to go to combat mode
+    /// A save state is needed so that the current game can be resumed when we return from combat
     /// </summary>
-    private void EnterCombatMode(Faction EnemyFaction)
+    private void EnterCombatMode(Faction musEnemyFaction)
     {
         // save player faction
         GameInfo.PlayerFaction = GameInfo.CreateSavedFaction(PlayerFaction);
 
         // save challenging faction
-        GameInfo.EnemyFaction = GameInfo.CreateSavedFaction(EnemyFaction);
+        GameInfo.EnemyFaction = GameInfo.CreateSavedFaction(musEnemyFaction);
 
         // Save the rest of the factions
         GameInfo.SavedFactions = new GameInfo.SavedFaction[EnemyFactions.Count - 1];
         int intFactionIndex = 0;
         foreach (Faction musFaction in EnemyFactions)
         {
-            if (musFaction != EnemyFaction)
+            if (musFaction != musEnemyFaction)
             {
                 GameInfo.SavedFactions[intFactionIndex] = GameInfo.CreateSavedFaction(musFaction);
                 intFactionIndex++;
@@ -500,6 +506,11 @@ public class GameManager : MonoBehaviour
         StartCoroutine(LoadCombatSceneAsync());
     }
 
+    /// <summary>
+    /// Helper method to load the combat mode scene in the background and play a loadin screen.
+    /// Added as the loading between combat and management mode has begun to take a noticeable amount of time
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator LoadCombatSceneAsync()
     {
         AsyncOperation uniAsyncLoad = SceneManager.LoadSceneAsync("CombatMode");
@@ -513,6 +524,8 @@ public class GameManager : MonoBehaviour
 
     /// <summary>
     /// Method to decide the outcome of a battle between two enemy factions
+    /// Ensures that enemy factions also increase in size when the player does
+    /// so that the player does not steam roll enemy gods as they would grow while enemies don't
     /// </summary>
     /// <param name="pmusFactionOne"></param>
     /// <param name="pmusFactionTwo"></param>
@@ -606,7 +619,8 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Method run once per frame to check if the plaer is clicking on a building
+    /// Method run once per frame to check if the player is clicking on a building
+    /// Performs raycasting and if a building is selected, logic depending on the current game state
     /// </summary>
     private void CheckForSelectedBuilding()
     {
@@ -1091,7 +1105,7 @@ public class GameManager : MonoBehaviour
                     PlayerFaction.CurrentAbilites.Add(((AbilityTierReward)pmusReward).TierAbility);
                     break;
                 case TierReward.REWARDTYPE.Resource:
-                    switch (pmusReward.ResourceType)
+                    switch (((ResourceTierReward)pmusReward).ResourceType)
                     {
                         case TierReward.RESOURCETYPE.Material:
                             PlayerFaction.MaterialCount += ((ResourceTierReward)pmusReward).Amount;
@@ -1102,7 +1116,7 @@ public class GameManager : MonoBehaviour
                     }
                     break;
                 case TierReward.REWARDTYPE.ResourceMultiplier:
-                    switch (pmusReward.ResourceType)
+                    switch (((ResourceMultiplierTierReward)pmusReward).ResourceType)
                     {
                         case TierReward.RESOURCETYPE.Material:
                             marrMaterialMultipliers.Add(((ResourceMultiplierTierReward)pmusReward).Multiplier);

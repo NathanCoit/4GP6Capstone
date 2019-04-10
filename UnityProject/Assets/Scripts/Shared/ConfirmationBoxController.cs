@@ -6,6 +6,9 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// The confirmation box controller controls a hidden confirmation box when player interaction is required in the form of a yes or no question.
+/// </summary>
 public class ConfirmationBoxController : MonoBehaviour
 {
     public GameObject ConfirmationBoxGameObject;

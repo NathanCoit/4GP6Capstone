@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// The buff ability child class.
+/// Defines attributes on all buff abilities for gods that enhance
+/// their worshippers or selves.
+/// </summary>
 public class BuffAbility : Ability
 {
     public BUFFTYPE BuffType;
@@ -11,6 +16,7 @@ public class BuffAbility : Ability
 
     /// <summary>
     /// Buff Ability constructor.
+    /// Inherits base constructor that calls LoadAbility
     /// </summary>
     /// <param name="pstrAbilityName">The ability name to load</param>
     public BuffAbility(string pstrAbilityName) :
@@ -20,6 +26,8 @@ public class BuffAbility : Ability
 
     /// <summary>
     /// Load a buff ability. Set the properties of the ability.
+    /// Called from Buff Ability constructor.
+    /// See Ability.LoadAbility
     /// </summary>
     /// <param name="pstrAbilityName"></param>
     /// <returns></returns>
@@ -27,7 +35,7 @@ public class BuffAbility : Ability
     {
         bool blnAbilityFound = true;
         AbiltyType = ABILITYTYPE.Buff;
-        switch(pstrAbilityName.ToLower().Replace(" ", string.Empty))
+        switch (pstrAbilityName.ToLower().Replace(" ", string.Empty))
         {
             case "eatmushroom":
                 AbilityDescription = "Eat one of your holy mushrooms to heal yourself, cause poisonous mushrooms are good for you!";

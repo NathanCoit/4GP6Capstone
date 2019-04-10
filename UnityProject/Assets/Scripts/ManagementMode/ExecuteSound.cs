@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// Generic sound manager class to allow abstraction of audio clip execution.
+/// </summary>
 public class ExecuteSound : MonoBehaviour
 {
     // Hack to allow adding a custom number of sounds in the unity editor
     // Used so that sounds can be imported only in the scene they are needed in
+    // while same script is reused
     [System.Serializable]
     public struct NamedSound
     {
@@ -14,16 +18,16 @@ public class ExecuteSound : MonoBehaviour
         public AudioClip Sound;
     }
     public NamedSound[] Sounds;
-    private Dictionary<string, AudioClip> sounddict = new Dictionary<string, AudioClip>();
+    private Dictionary<string, AudioClip> mdictSounds = new Dictionary<string, AudioClip>();
 
     public AudioSource musicSource;
 
     // Use this for initialization
     void Awake()
     {
-        foreach (NamedSound sound in Sounds)
+        foreach (NamedSound musSound in Sounds)
         {
-            sounddict.Add(sound.Name, sound.Sound);
+            mdictSounds.Add(musSound.Name, musSound.Sound);
         }
     }
 
@@ -32,11 +36,15 @@ public class ExecuteSound : MonoBehaviour
     {
     }
 
-    public void PlaySound(string soundName)
+    /// <summary>
+    /// Public method called from other scripts to play a certain sound
+    /// </summary>
+    /// <param name="pstrSoundName"></param>
+    public void PlaySound(string pstrSoundName)
     {
-        if (sounddict.ContainsKey(soundName))
+        if (mdictSounds.ContainsKey(pstrSoundName))
         {
-            musicSource.clip = sounddict[soundName];
+            musicSource.clip = mdictSounds[pstrSoundName];
             musicSource.Play();
         }
     }

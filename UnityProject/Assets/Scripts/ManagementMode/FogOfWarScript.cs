@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Script used to control the fog of war over the map.
+/// Used to add an exploration experience to management mode
+/// while resources are being generated over time.
+/// Referenced from https://www.youtube.com/watch?v=iGAdaZ1ICaI
+/// </summary>
 public class FogOfWarScript : MonoBehaviour
 {
 
@@ -25,7 +31,7 @@ public class FogOfWarScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Ray r = new Ray(m_player.position + new Vector3(0,50,0), new Vector3(0, -1, 0));
+        Ray r = new Ray(m_player.position + new Vector3(0, 50, 0), new Vector3(0, -1, 0));
         RaycastHit hit;
         if (Physics.Raycast(r, out hit, 1000, m_fogLayer, QueryTriggerInteraction.Collide))
         {
@@ -67,7 +73,7 @@ public class FogOfWarScript : MonoBehaviour
         float fDist;
         float fAngle;
         bool blnPointInArea = false;
-        for(int i = 0; i < m_vertices.Length; i++)
+        for (int i = 0; i < m_vertices.Length; i++)
         {
             univec3 = m_fogOfWarPlane.transform.TransformPoint(m_vertices[i]);
 
@@ -78,16 +84,16 @@ public class FogOfWarScript : MonoBehaviour
                 fAngle = 2 * Mathf.PI - fAngle;
             }
             blnPointInArea = false;
-            foreach(float[] arrFactionArea in PlayerFaction.FactionArea)
+            foreach (float[] arrFactionArea in PlayerFaction.FactionArea)
             {
                 if ((fAngle > arrFactionArea[2] && fAngle < arrFactionArea[3])
-                    && fDist > arrFactionArea[0]* arrFactionArea[0] && fDist < arrFactionArea[1] * arrFactionArea[1])
+                    && fDist > arrFactionArea[0] * arrFactionArea[0] && fDist < arrFactionArea[1] * arrFactionArea[1])
                 {
                     blnPointInArea = true;
                     break;
                 }
             }
-            if(blnPointInArea)
+            if (blnPointInArea)
             {
                 m_colors[i].a = 0;
             }

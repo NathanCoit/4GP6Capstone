@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Script that handles the creation and interactions with treasure objects on the map.
+/// Used to reward the player for exploring the map.
+/// </summary>
 public class TreasureManager : MonoBehaviour
 {
     public enum TreasureType
@@ -17,6 +21,9 @@ public class TreasureManager : MonoBehaviour
     public PlayerGodController PlayerGod;
     public InformationBoxDisplay InformationBoxController;
 
+    /// <summary>
+    /// Helper getter for all treasures on the map.
+    /// </summary>
     public List<Treasure> Treasures
     {
         get
@@ -25,15 +32,10 @@ public class TreasureManager : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
     // Update is called once per frame
     void Update()
     {
+        // Check the player god is colliding with a treasure, if so, unlock it
         if (GameManagerScript.CurrentMenuState == GameManager.MENUSTATE.God_Selected_State)
         {
             foreach (Treasure musTreasure in Treasures)
@@ -48,6 +50,11 @@ public class TreasureManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Method to add the stats from a given unlocked treasure and
+    /// provide feedback to the player.
+    /// </summary>
+    /// <param name="pmusTreasure"></param>
     private void UnlockTreasure(Treasure pmusTreasure)
     {
         switch (pmusTreasure.Type)
@@ -69,6 +76,12 @@ pmusTreasure.Type + @" treasure found!
         RemoveTreasure(pmusTreasure);
     }
 
+    /// <summary>
+    /// Method called once at the beginning of a new game by game manager to create new treasures
+    /// Creates a set number of treasure in a given number of tiers.
+    /// </summary>
+    /// <param name="pintTreasuresPerTier"></param>
+    /// <param name="pintTierCount"></param>
     public void CreateNewTreasures(int pintTreasuresPerTier, int pintTierCount)
     {
         Treasure musTreasure;
@@ -81,6 +94,7 @@ pmusTreasure.Type + @" treasure found!
                 musTreasure = new Treasure(Treasure.GetRandomTreasureType());
                 intRetryCount = 0;
 
+                // Attempt to place the treasure 100 times to avoid random position hitting other treasures
                 while (!GameMap.PlaceTreasure(musTreasure, GameMap.CalculateRandomPositionInTier(i)) && intRetryCount < 100)
                 {
                     intRetryCount++;
@@ -94,7 +108,11 @@ pmusTreasure.Type + @" treasure found!
             }
         }
     }
-
+    
+    /// <summary>
+    /// Method for loading treasures from a save state
+    /// </summary>
+    /// <param name="parrSavedTreasures"></param>
     public void LoadSavedTreasures(GameInfo.SavedTreasure[] parrSavedTreasures)
     {
         Treasure musTreasure;
@@ -110,6 +128,8 @@ pmusTreasure.Type + @" treasure found!
                     new Vector3(musSavedTreasure.x, musSavedTreasure.y, musSavedTreasure.z),
                     true);
                 fDistance = Vector3.Distance(musTreasure.ObjectPosition, uniCetreVec3);
+                // check if treasure is out of current game tier radius
+                // Assumes 3 tiers and map diameter of 500
                 if (fDistance > (GameManagerScript.CurrentTier + 1) * (250 / 3))
                 {
                     musTreasure.MapGameObject.SetActive(false);
@@ -118,6 +138,10 @@ pmusTreasure.Type + @" treasure found!
         }
     }
 
+    /// <summary>
+    /// Method for removing a treasure from the game once it has been unlocked
+    /// </summary>
+    /// <param name="pmusTreasure"></param>
     private void RemoveTreasure(Treasure pmusTreasure)
     {
         GameMap.RemoveTreasure(pmusTreasure);

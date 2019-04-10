@@ -9,7 +9,10 @@ using System.Linq;
 
 /// <summary>
 /// Game info object to be used for reading/writing and cross scene info
-/// Check for existence of this object at beginning of scene to load data
+/// Used to abstract the differences between modes by having all necessary data located in one place.
+/// Connects Main menu to management mode, management mode to combat mode, combat mode to management mode, and management mode to a save state.
+/// Check for existence of this object at beginning of scene to load data.
+/// Contains some helper methods for serializing data from different modes.
 /// </summary>
 public class GameInfo : MonoBehaviour {
     public enum BATTLESTATUS

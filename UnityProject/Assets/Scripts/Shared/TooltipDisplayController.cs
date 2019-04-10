@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 /// <summary>
 /// Script for displaying text as a tooltip for the player.
+/// Controls attaching hover events to UI elements and showing text to the player on hover.
+/// Allows information to be displayed to the user without cluttering the UI.
 /// </summary>
 public class TooltipDisplayController : MonoBehaviour
 {

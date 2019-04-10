@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-
+/// <summary>
+/// Contains properties for a resource amount to be unlocked. Inherits from TierAbility
+/// </summary>
 class ResourceTierReward : TierReward
 {
     public int Amount = 0;
+    public RESOURCETYPE ResourceType;
 
     /// <summary>
     /// Constructor for creating a resource amount reward

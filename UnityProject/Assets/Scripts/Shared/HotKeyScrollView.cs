@@ -10,6 +10,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Script attached to the hotkey scroll view
 /// Populates and gets values from objects within the scroll view
+/// Used by the options menu common across different modes for viewing/updating current hotkeys
 /// </summary>
 public class HotKeyScrollView : MonoBehaviour {
     public UnityEngine.Object HotKeySettorPrefab;

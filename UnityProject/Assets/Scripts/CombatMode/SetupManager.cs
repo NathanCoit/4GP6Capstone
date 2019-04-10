@@ -93,6 +93,8 @@ public class SetupManager : MonoBehaviour
 
             // Let players know how many worshippers they can assign to their groups
             arrTexts[6].text = "The total amount of worshippers at your disposal : " + playerWorshiperCount;
+
+           MapMan.mapName = gameInfo.EnemyFaction.Type + "1";
         }
 #if DEBUG
         else
@@ -117,7 +119,7 @@ public class SetupManager : MonoBehaviour
             Debug.Log(gameInfo.PlayerFaction.GodName + " reporting in, boss");
 
             gameInfo.EnemyFaction.GodName = "Nathan";
-            gameInfo.EnemyFaction.Type = Faction.GodType.Shoes;
+            gameInfo.EnemyFaction.Type = Faction.GodType.Mushrooms;
 
             abilities = Faction.GetGodAbilities(gameInfo.EnemyFaction.Type);
             sAbilites = new string[abilities.Count];
@@ -205,14 +207,14 @@ public class SetupManager : MonoBehaviour
             for (int i = 0; i < numGroupsWorshippers; i++)
             {
                 // TODO: get start tiles from map information to actually load units in a formation rather than just a line
-                CreatePlayerUnit(new Vector2(4, (3+i)), tiles, arrGroupWorshippers[i], 2, 1, playerMorale);
+                CreatePlayerUnit(new Vector2(MapMan.playerStartTiles[i].getX(), MapMan.playerStartTiles[i].getZ()), tiles, arrGroupWorshippers[i], 2, 1, playerMorale);
             }
             // TODO: find appropriate health for the god
             CreateGod(tiles, true, gameInfo.PlayerFaction.GodName, 3, 2, Convert.ToInt32(playerGodAttackStrength*gameInfo.GodAttackMultiplier), Convert.ToInt32(playerWorshiperCount*gameInfo.GodHealthMultiplier));
 
-            CreateEnemyUnit(new Vector2(6, 3), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
-            CreateEnemyUnit(new Vector2(6, 4), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
-            CreateEnemyUnit(new Vector2(6, 5), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
+            CreateEnemyUnit(new Vector2(MapMan.enemyStartTiles[0].getX(), MapMan.enemyStartTiles[0].getZ()), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
+            CreateEnemyUnit(new Vector2(MapMan.enemyStartTiles[1].getX(), MapMan.enemyStartTiles[1].getZ()), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
+            CreateEnemyUnit(new Vector2(MapMan.enemyStartTiles[2].getX(), MapMan.enemyStartTiles[2].getZ()), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
             CreateGod(tiles, false, gameInfo.EnemyFaction.GodName, 3, 2, Convert.ToInt32(enemyGodAttackStrength*0.5*(gameInfo.EnemyFaction.GodTier+1)), Convert.ToInt32(enemyWorshiperCount*(gameInfo.EnemyFaction.GodTier+1)));
 
             BoardMan.playerTurn = true;

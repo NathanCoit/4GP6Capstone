@@ -42,6 +42,18 @@ public class Tile
             case "02":
                 traversable = false;
                 break;
+            //Tree
+            case "03":
+                traversable = false;
+                break;
+            //Dirt
+            case "04":
+                traversable = true;
+                break;
+            //Rock
+            case "05":
+                traversable = false;
+                break;
 
         }
     }

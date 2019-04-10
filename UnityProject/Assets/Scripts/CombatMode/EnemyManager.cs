@@ -221,33 +221,53 @@ public class EnemyManager : MonoBehaviour {
                     abilityToBeUsed = useableAbilities[r.Next(useableAbilities.Count)];
                 }
 
-                if(abilityToBeUsed != null)
+                if (abilityToBeUsed != null)
                 {
                     BoardMan.useAbility(abilityToBeUsed.AbilityName);
                     List<Targetable> validTiles = new List<Targetable>();
                     List<Unit> parallelTargets = new List<Unit>();
 
                     //Wait for tiles to be done drawing
-                    while(BoardMan.areAbilityTilesDrawing())
+                    while (BoardMan.areAbilityTilesDrawing())
                     {
                         yield return new WaitForSeconds(1);
                     }
 
-                    foreach(GameObject tile in GameObject.FindGameObjectsWithTag("TargetableTile"))
+                    //If we are using something single target
+                    if (abilityToBeUsed.AbiltyType != Ability.ABILITYTYPE.MultiTarget)
                     {
-                        Targetable tileScript = tile.GetComponent<Targetable>();
-                        tileScript.OnMouseOver();
-                        if (tileScript.valid)
-                            validTiles.Add(tileScript);
+                        foreach (GameObject tile in GameObject.FindGameObjectsWithTag("TargetableTile"))
+                        {
+                            Targetable tileScript = tile.GetComponent<Targetable>();
+                            tileScript.OnMouseOver();
+                            if (tileScript.valid)
+                                validTiles.Add(tileScript);
+                        }
+
+                        //Make a parallel list of units to valid tiles
+                        foreach (Targetable tile in validTiles)
+                            foreach (Unit unit in tile.targets)
+                            {
+                                if (tile.pos.x == unit.getPos().x && tile.pos.y == unit.getPos().y)
+                                    parallelTargets.Add(unit);
+                            }
+                    }
+                    //Avoid calling OnMouseOver for multitarget, so we dont cover the map in AOE shapes
+                    else
+                    {
+                        foreach (GameObject tile in GameObject.FindGameObjectsWithTag("TargetableTile"))
+                        {
+                            foreach (Unit unit in BoardMan.playerUnits)
+                            {
+                                if (tile.GetComponent<Targetable>().pos.x == unit.getPos().x && tile.GetComponent<Targetable>().pos.y == unit.getPos().y)
+                                {
+                                    validTiles.Add(tile.GetComponent<Targetable>());
+                                    parallelTargets.Add(unit);
+                                }
+                            }
+                        }
                     }
 
-                    //Make a parallel list of units to valid tiles
-                    foreach(Targetable tile in validTiles)
-                        foreach(Unit unit in tile.targets)
-                        {
-                            if (tile.pos.x == unit.getPos().x && tile.pos.y == unit.getPos().y)
-                                parallelTargets.Add(unit);
-                        }
 
 
                     yield return new WaitForSeconds(delay);
@@ -259,14 +279,14 @@ public class EnemyManager : MonoBehaviour {
                     //Do stuff based on ability type
                     switch (abilityToBeUsed.AbiltyType)
                     {
-                        
+
                         case Ability.ABILITYTYPE.SingleTarget:
                             Debug.Log("Using a single target ability!");
 
                             //Use single target on weakest unit
                             leastWorshipperCount = int.MaxValue;
 
-                            for(int i = 0; i < parallelTargets.Count; i++)
+                            for (int i = 0; i < parallelTargets.Count; i++)
                             {
                                 if (parallelTargets[i].WorshiperCount < leastWorshipperCount)
                                     target = validTiles[i];
@@ -290,6 +310,10 @@ public class EnemyManager : MonoBehaviour {
                                 if (parallelTargets[i].WorshiperCount < leastWorshipperCount)
                                     target = validTiles[i];
                             }
+
+                            target.OnMouseOver();
+
+                            yield return new WaitForSeconds(delay);
 
                             if (target != null)
                             {
@@ -338,8 +362,10 @@ public class EnemyManager : MonoBehaviour {
                             break;
                     }
                 }
-
-                enemyUnit.EndTurnButton();
+                else
+                {
+                    enemyUnit.EndTurnButton();
+                }
             }
 
         }

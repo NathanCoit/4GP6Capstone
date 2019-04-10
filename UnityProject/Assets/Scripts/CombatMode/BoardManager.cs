@@ -537,6 +537,9 @@ public class BoardManager : MonoBehaviour
             foreach(GameObject button in playerUiButtons)
                 button.GetComponent<Button>().interactable = false;
 
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+
             StartCoroutine(EnemyMan.EnemyActions(0.5f));
         }
         else
@@ -566,6 +569,9 @@ public class BoardManager : MonoBehaviour
                 button.GetComponent<Button>().interactable = true;
 
             Camera.main.GetComponent<CombatCam>().resetCamera();
+
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
         }
 
         //Update faith labels

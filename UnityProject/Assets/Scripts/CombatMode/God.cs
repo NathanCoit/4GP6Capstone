@@ -1,17 +1,32 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+/*
+ * Goes on the god unit
+ * Handles storing abilites and entering battle 
+ * Inherits from unit
+ * */
+
 
 public class God : Unit
 {
+    //Name
     private string godName;
+
+    //If we're in battle
     public bool isInBattle;
+    
+    //List of our abilites
     private string[] Abilites;
+
+    //The men
     private SoundManager SoundMan;
     private BoardManager BoardMan;
 
+    //Faith, for using abiltiles
     public int faith;
 
+    //Adding on to the base contructor
     public God(string name) : base()
     {
         godName = name;
@@ -19,9 +34,11 @@ public class God : Unit
         SoundMan = GameObject.FindGameObjectWithTag("SoundManager").GetComponent<SoundManager>();
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
 
+        //Starting faith
         faith = 10;
     }
 
+    //Getters and setters for abilities
     public void setAbilities(string[] Abilites)
     {
         this.Abilites = Abilites;
@@ -32,20 +49,30 @@ public class God : Unit
         return Abilites;
     }
 
+    //Get our name
     public string getName()
     {
         return godName;
     }
 
+    //Enter the battle (voluntarily)
     public void enterBattle()
     {
+        //Set flag
         isInBattle = true;
+
+        //Move camera to center
         Camera.main.GetComponent<CombatCam>().resetCamera();
+
+        //Draw tiles
         unitGameObject().GetComponent<UnitObjectScript>().drawEnterBattleTiles();
         UIMan.removeMenu();
+
+        //Flag moveable tiles script (so we know not to subtract movement)
         UIMan.godEnteringBattle = true;
     }
 
+    //Enter battle, when forced to
     public void forcedEnterBattle()
     {
         isInBattle = true;
@@ -54,6 +81,7 @@ public class God : Unit
 
         List<Tile> travesableTiles = new List<Tile>();
 
+        //Get all tiles we could move to
         foreach (Tile t in MapMan.tiles)
         {
             if (t.isTraversable() && !BoardMan.findTeamTiles(BoardMan.playerUnits).Contains(t) && !BoardMan.findTeamTiles(BoardMan.enemyUnits).Contains(t))
@@ -62,12 +90,14 @@ public class God : Unit
             }
         }
 
+        //Move us to a random one
         System.Random r = new System.Random();
         Tile randomTile = travesableTiles[r.Next(0, travesableTiles.Count - 1)];
 
         MoveTo(new Vector2(randomTile.getX(), randomTile.getZ()), MapMan.tiles);
     }
 
+    //Overide draw (becuase gods are taller)
     public override void Draw(Tile[,] tiles)
     {
         if(isInBattle)
@@ -78,7 +108,7 @@ public class God : Unit
 
     public override void updateAttackStrength()
     {
-        //There a god, you can't make them hit less hard
+        //They're a god, you can't make them hit less hard
     }
 
 

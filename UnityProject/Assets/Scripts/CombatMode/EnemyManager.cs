@@ -37,20 +37,10 @@ public class EnemyManager : MonoBehaviour {
     //Puts a moveable tile on the optimal tile for an enemy unit to move to
     public void showClosestTile(Unit enemyUnit)
     {
+        //Get our tile list
         Tile[,] tiles = getTiles();
 
-        /*
-        //Setup Invalid Tiles (the one with units on)
-        List<Unit> invalidTiles = new List<Unit>();
-        foreach (Unit u in BoardMan.enemyUnits)
-        {
-            if (!(u.getPos() == Unit.getPos()))
-                invalidTiles.Add(u);
-        }
-        */
-
         Tile validTile = null;
-
 
         List<Tile> targetTiles = new List<Tile>();
 
@@ -96,16 +86,6 @@ public class EnemyManager : MonoBehaviour {
 
         foreach (Unit enemyUnit in BoardMan.enemyUnits)
         {
-            /*
-            //Setup Invalid Tiles (the one with units on)
-            List<Unit> invalidTiles = new List<Unit>();
-            foreach (Unit otherEnemyUnit in BoardMan.enemyUnits)
-            {
-                if (!(otherEnemyUnit.getPos() == enemyUnit.getPos()))
-                    invalidTiles.Add(otherEnemyUnit);
-            }
-            */
-
             List<Tile> targetTiles = new List<Tile>();
             Tile validTile = null;
 
@@ -132,6 +112,7 @@ public class EnemyManager : MonoBehaviour {
     //Fancy cooroutines because we need delays for the AI to work
     public IEnumerator EnemyActions(float delay)
     {
+        //Play the voice line at the beginning of turn (sass)
         SoundMan.playEnemyGodTurnStart();
 
         //Updates the order the enemy units move in (no move and attack goes first, followed by move + attack, followed by move no attack) also order by how far away they are
@@ -148,10 +129,12 @@ public class EnemyManager : MonoBehaviour {
             {
                 yield return new WaitForSeconds(delay);
 
+                //Show the closest movement tile
                 showClosestTile(enemyUnit);
 
                 yield return new WaitForSeconds(delay);
 
+                //Find it
                 MapMan.Selected = enemyUnit.unitGameObject();
                 GameObject closestTile = GameObject.FindGameObjectWithTag("MoveableTile");
 
@@ -167,6 +150,7 @@ public class EnemyManager : MonoBehaviour {
                     yield return new WaitForSeconds(delay);
                 }
 
+                //Set us to selected and try to show an attackable tile
                 MapMan.Selected = enemyUnit.unitGameObject();
 
                 BoardMan.showAttackable(enemyUnit);
@@ -189,6 +173,7 @@ public class EnemyManager : MonoBehaviour {
                 }
                 else
                 {
+                    //End turn if we cant attack
                     enemyUnit.EndTurnButton();
                 }
             }
@@ -204,6 +189,7 @@ public class EnemyManager : MonoBehaviour {
                 foreach(string ability in (enemyUnit as God).getAbilites())
                 {
                     Debug.Log(ability);
+                    //If we have enough faith to use and ablilty, add it to the list
                     if((enemyUnit as God).faith >= Ability.LoadAbilityFromName(ability).FaithCost)
                     {
                         useableAbilities.Add(Ability.LoadAbilityFromName(ability));
@@ -221,9 +207,13 @@ public class EnemyManager : MonoBehaviour {
                     abilityToBeUsed = useableAbilities[r.Next(useableAbilities.Count)];
                 }
 
+                //If we're going to use an abilty
                 if (abilityToBeUsed != null)
                 {
+                    //Draw the tiles
                     BoardMan.useAbility(abilityToBeUsed.AbilityName);
+
+                    //Setup lists for tiles and units
                     List<Targetable> validTiles = new List<Targetable>();
                     List<Unit> parallelTargets = new List<Unit>();
 
@@ -233,7 +223,7 @@ public class EnemyManager : MonoBehaviour {
                         yield return new WaitForSeconds(1);
                     }
 
-                    //If we are using something single target
+                    //If we are using something single target (buff and debuff included)
                     if (abilityToBeUsed.AbiltyType != Ability.ABILITYTYPE.MultiTarget)
                     {
                         foreach (GameObject tile in GameObject.FindGameObjectsWithTag("TargetableTile"))
@@ -267,9 +257,8 @@ public class EnemyManager : MonoBehaviour {
                             }
                         }
                     }
-
-
-
+                       
+                    //Pause to the player can see the targeted tiles
                     yield return new WaitForSeconds(delay);
 
                     Targetable target = null;
@@ -362,6 +351,8 @@ public class EnemyManager : MonoBehaviour {
                             break;
                     }
                 }
+
+                //If we're not going to use and ability, end turn
                 else
                 {
                     enemyUnit.EndTurnButton();

@@ -97,6 +97,7 @@ public class Tile
         }
     }
 
+    //Updates the connects (what tiles a tile is connected to)
     public void updateConnections(List<Tile> newConnections)
     {
         Connected = newConnections;
@@ -280,7 +281,7 @@ public class Tile
         }
     }
 
-
+    //Many getters
     public int getDepth()
     {
         return depth;

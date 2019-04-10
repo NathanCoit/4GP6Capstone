@@ -19,10 +19,12 @@ public class SetupManager : MonoBehaviour
     public GameObject GameInfoObjectPrefab;
     private GameInfo gameInfo;
 
+    // Managers
     public BoardManager BoardMan;
     public MapManager MapMan;
     private UIManager UIMan;
 
+    // Arrays of Labels/Text for splitting UI
     private int numGroupsWorshippers;
     private GameObject[] arrGroupLabels;
     private GameObject[] arrGroupInputs;
@@ -33,13 +35,16 @@ public class SetupManager : MonoBehaviour
     private GameObject SurrenderConfirmationPanel;
     private Text[] arrTexts;
 
-
+    // Prefabs assigned in editor
     public GameObject Unit;
     public GameObject God;
 
     private Tile[,] tiles;
+
+    // Boolean used to tell if we're first entering combat mode
     public bool startup = false;
     
+    // Variables we use to get and return to management mode through GameInfo
     public int playerWorshiperCount;
     public float playerMorale;
     public int enemyWorshiperCount;
@@ -52,16 +57,15 @@ public class SetupManager : MonoBehaviour
 
     private readonly double worshipperPercentage = 0.80;
 
-
-    //NOTE THIS CLASS IS WHERE WE WILL GET INFO FROM MANAGEMENT MODE
-
     void Awake()
     {
+        // Grab references to all the Managers
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
         MapMan = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
         UIMan = GameObject.FindGameObjectWithTag("UIManager").GetComponent<UIManager>();
 
-        // required for startup stuff
+        // Required for splitting/division of worshipper groups
+        // Grabs all the Labels and Inputs on the UI
         arrGroupLabels = new GameObject[5];
         arrGroupInputs = new GameObject[5];
         arrGroupWorshippers = new int[5];
@@ -74,6 +78,7 @@ public class SetupManager : MonoBehaviour
         BottomPanel = GameObject.Find("BottomPanel");
         SurrenderConfirmationPanel = GameObject.Find("AREYOUSUREPanel");
 
+        // Look for the GameInfo object
         GameObject GameInfoObject = GameObject.Find("GameInfo");
         if (GameInfoObject != null)
         {
@@ -119,7 +124,7 @@ public class SetupManager : MonoBehaviour
             Debug.Log(gameInfo.PlayerFaction.GodName + " reporting in, boss");
 
             gameInfo.EnemyFaction.GodName = "Nathan";
-            gameInfo.EnemyFaction.Type = Faction.GodType.Love;
+            gameInfo.EnemyFaction.Type = Faction.GodType.Lightning;
 
             abilities = Faction.GetGodAbilities(gameInfo.EnemyFaction.Type);
             sAbilites = new string[abilities.Count];
@@ -144,6 +149,8 @@ public class SetupManager : MonoBehaviour
 
     private void Start()
     {
+        // Sets all of the UI we don't want open to be inactive
+        // For some reason I couldn't just start them off false and still have references to them?
         Camera.main.GetComponent<CombatCam>().CameraMovementEnabled = false;
         BottomPanel.SetActive(false);
         SurrenderConfirmationPanel.SetActive(false);
@@ -168,7 +175,7 @@ public class SetupManager : MonoBehaviour
             battleResult = GameInfo.BATTLESTATUS.Victory;
         }
 //#endif
-        //Battle has ended, send stats to GameInfo object (the object used to communicate between management mode and combat mode)
+        //Battle has ended, send stats to GameInfo object
         if (finishedBattle)
         {
             //get remaining worshiper count for both sides
@@ -177,7 +184,7 @@ public class SetupManager : MonoBehaviour
 
             //Update all of the gameinfo variables:
 
-            //Take original amount of worshipers and add how many worshipers are left after the war
+            //Take original amount of worshipers and add how many worshipers are left after the battle
             this.gameInfo.PlayerFaction.WorshipperCount = playWorLeft + System.Convert.ToInt32(this.gameInfo.PlayerFaction.WorshipperCount * (1 - worshipperPercentage));
             this.gameInfo.EnemyFaction.WorshipperCount = eneWorLeft + System.Convert.ToInt32(this.gameInfo.EnemyFaction.WorshipperCount * (1 - worshipperPercentage));
 
@@ -188,16 +195,12 @@ public class SetupManager : MonoBehaviour
 
             gameInfo.LastBattleStatus = battleResult; //Victory, Defeat or Retreat
 
-            //Missing:
-            // Change in Player's abilities? (Do they gain them here?)
-            // TODO
-
             this.finishedBattle = false; //to avoid decrementing things FOREVER
 
             SceneManager.LoadScene("UnderGodScene"); //load back to management mode
         }
 
-        //Note this can't be done in start as tiles hasn't been made yet.
+        //Note this can't be done in Start() since tiles hasn't been made yet.
         if (startup)
         {
             tiles = MapMan.tiles;
@@ -206,12 +209,12 @@ public class SetupManager : MonoBehaviour
             numGroupsWorshippers = int.Parse(arrTexts[8].text); // need to get it again in case they never changed the # of groups
             for (int i = 0; i < numGroupsWorshippers; i++)
             {
-                // TODO: get start tiles from map information to actually load units in a formation rather than just a line
                 CreatePlayerUnit(new Vector2(MapMan.playerStartTiles[i].getX(), MapMan.playerStartTiles[i].getZ()), tiles, arrGroupWorshippers[i], 2, 1, playerMorale);
             }
-            // TODO: find appropriate health for the god
             CreateGod(tiles, true, gameInfo.PlayerFaction.GodName, 3, 2, Convert.ToInt32(playerGodAttackStrength*gameInfo.GodAttackMultiplier), Convert.ToInt32(playerWorshiperCount*gameInfo.GodHealthMultiplier));
 
+            // Place enemy units onto the board
+            // TODO: change this to for loop lol
             CreateEnemyUnit(new Vector2(MapMan.enemyStartTiles[0].getX(), MapMan.enemyStartTiles[0].getZ()), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
             CreateEnemyUnit(new Vector2(MapMan.enemyStartTiles[1].getX(), MapMan.enemyStartTiles[1].getZ()), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
             CreateEnemyUnit(new Vector2(MapMan.enemyStartTiles[2].getX(), MapMan.enemyStartTiles[2].getZ()), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
@@ -229,6 +232,7 @@ public class SetupManager : MonoBehaviour
         }
     }
 
+    // Function called when changing number of worshipper groups.
     private void UpdateStartup(int old)
     {
         switch(old)
@@ -277,7 +281,7 @@ public class SetupManager : MonoBehaviour
                 break;
         }
     }
-
+    
     public void IncreaseNumGroups()
     {
         numGroupsWorshippers = int.Parse(arrTexts[8].text);
@@ -303,7 +307,6 @@ public class SetupManager : MonoBehaviour
     public void ConfirmSplit()
     {
         // function called when startup/division screen's Confirm button is pressed
-        // need to check the sum doesn't exceed the number of worshippers player has access to
         int worshipperSum = 0;
         bool success = true;
         bool divideEvenly = false;
@@ -385,32 +388,7 @@ public class SetupManager : MonoBehaviour
 
     public void CreateGod(Tile[,] tiles, bool isPlayer, string godName, int MaxMovement, int attackRange, int attackStregnth, int health)
     {
-        /*
-        GameObject temp = Instantiate(God);
-        Units u = temp.GetComponent<Units>();
-        Gods g = temp.GetComponent<Gods>();
-
-        u.setGod();
-
-        
-
-        if (isPlayer)
-        {
-            g.setName(gameInfo.PlayerFaction.GodName);
-            g.setAbilites(gameInfo.PlayerFaction.Abilities);
-            u.isPlayer = true;
-            temp.transform.position = new Vector3(0, MapMan.godFloatHeight, MapMan.tiles.GetLength(1) / 2);
-            BoardMan.playerUnits.Add(temp);
-        }
-        else
-        {
-            g.setName(gameInfo.EnemyFaction.GodName);
-            g.setAbilites(gameInfo.EnemyFaction.Abilities);
-            u.isPlayer = false;
-            temp.transform.position = new Vector3(MapMan.tiles.GetLength(0), MapMan.godFloatHeight, MapMan.tiles.GetLength(1) / 2);
-            BoardMan.enemyUnits.Add(temp);
-        }
-        */
+        // Create and assign variables to God unit
         GameObject GodGo = Instantiate(God);
         God g = new God(godName);
 
@@ -435,6 +413,7 @@ public class SetupManager : MonoBehaviour
             g.MoveTo(new Vector2(-1, -1), tiles);
             g.unitGameObject().transform.position = new Vector3(0, MapMan.godFloatHeight, MapMan.tiles.GetLength(1) / 2);
 
+            // Load the 3D model
             GameObject godModel;
 
             try

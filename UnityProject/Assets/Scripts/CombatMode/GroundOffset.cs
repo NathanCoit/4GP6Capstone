@@ -1,7 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/*
+ * Used to correct the positioning of models
+ * Just holds values
+ * */
 public class GroundOffset : MonoBehaviour
 {
     public float groundOffset;

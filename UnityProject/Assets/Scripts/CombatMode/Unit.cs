@@ -15,9 +15,6 @@ public class Unit
     protected UIManager UIMan;
 
     protected Vector2 pos;
-    
-    private List<int> depths = new List<int>();
-    private HashSet<Tile> visited = new HashSet<Tile>();
 
     public int Movement;
     public int MaxMovement;
@@ -44,13 +41,8 @@ public class Unit
         BoardMan = GameObject.FindGameObjectWithTag("BoardManager").GetComponent<BoardManager>();
 
         UIMan = GameObject.Find("UIManager").GetComponent<UIManager>();
-        /*
-        if (isPlayer)
-            parentObject.GetComponent<MeshRenderer>().material = parentObject.GetComponent<UnitObjectScript>().playerNotAvailable;
-        else
-            parentObject.GetComponent<MeshRenderer>().material = parentObject.GetComponent<UnitObjectScript>().enemyNotAvailable;
-        */
 
+        //List for active status effect on us
         activeStatusEffects = new List<StatusEffect>();
 
         AttackStrength = WorshiperCount * 0.25f * morale;
@@ -59,36 +51,26 @@ public class Unit
         MovePriority = 0;
     }
 
+    //Set to assosiated game object
     public void assignGameObject(GameObject unitGameObject)
     {
         parentObject = unitGameObject;
     }
 
+    //Get the assosiated game object
     public GameObject unitGameObject()
     {
         return parentObject;
     }
 
-    /*
-    // Update is called once per frame
-    void Update()
-    {
-        //Updating morale every frame becuase it's very broken on occasion.
-        if (isPlayer)
-            morale = BoardMan.PlayerMorale;
-        else
-            morale = BoardMan.enemyMorale;
-
-        updateAttackStrength();
-    }
-    */
-
+    //Actually draw the unit where it should be
     public virtual void Draw(Tile[,] tiles)
     {
         //Centers Unit on tile (I know it looks ugly but it SHOULD work for any model)
         parentObject.transform.position = new Vector3(tiles[(int)pos.x, (int)pos.y].getX() + ((1 - parentObject.transform.lossyScale.x) / 2) + parentObject.transform.lossyScale.x / 2, tiles[(int)pos.x, (int)pos.y].getY() + parentObject.transform.lossyScale.y + 0.5f, tiles[(int)pos.x, (int)pos.y].getZ() + ((1 - parentObject.transform.lossyScale.z) / 2) + parentObject.transform.lossyScale.x / 2);
     }
 
+    //Change the direction
     public void turnToFace(int direction)
     {
         switch(direction)
@@ -112,6 +94,7 @@ public class Unit
         }
     }
 
+    //Set our direction based on which direction has the most enemy units in it
     public void updateDirection()
     {
         Vector2 average = new Vector2();
@@ -199,23 +182,11 @@ public class Unit
             parentObject.GetComponent<MeshRenderer>().material = parentObject.GetComponent<UnitObjectScript>().playerNotAvailable;
         else
             parentObject.GetComponent<MeshRenderer>().material = parentObject.GetComponent<UnitObjectScript>().enemyNotAvailable;
-
-        /*
-        if (!isGod)
-            parentObject.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
-        else if (parentObject.GetComponent<Gods>().isInBattle())
-            parentObject.transform.GetChild(0).GetComponent<Canvas>().gameObject.SetActive(false);
-        else if (!parentObject.GetComponent<Gods>().isInBattle())
-            parentObject.transform.GetChild(1).GetComponent<Canvas>().gameObject.SetActive(false);
-        */
-
     }
 
     //Button used by the end turn button (and many other things, like AI and gods)
     public void EndTurnButton()
     {
-        //*****TOFIX******
-        //Why the heck are we doing this here???
         //check if somebody won
         if (BoardMan.playerUnits.Count == 0)
         {
@@ -233,6 +204,7 @@ public class Unit
         BoardMan.checkIfSwitchTurn();
     }
 
+    //Add a new buff or debuff
     public void addNewStatusEffect(Ability a, bool isBuff)
     {
         if(isBuff)
@@ -249,6 +221,7 @@ public class Unit
         UIMan.updateStatusEffectDisplay(this);
     }
 
+    //Upadte the durations of status effects and remove finished ones
     public void updateStatusEffects()
     {
         List<StatusEffect> effectsToBeRemoved = new List<StatusEffect>();
@@ -262,7 +235,7 @@ public class Unit
             effect.decreaseDuration();
 
         }
-        //appyStatusEffects();
+
         foreach(StatusEffect effect in effectsToBeRemoved)
         {
             activeStatusEffects.Remove(effect);
@@ -271,11 +244,13 @@ public class Unit
         UIMan.updateStatusEffectDisplay(this);
     }
 
+    //Gett all active effects
     public List<StatusEffect> getActiveEffects()
     {
         return activeStatusEffects;
     }
 
+    //Function for dealing damage to unit
     public void dealDamage(int damage)
     {
         //If there's no shield, damage as usual
@@ -299,24 +274,17 @@ public class Unit
         }
     }
 
-    //Done
+    //Variables for buffs and debuffs
     private int damageBuff;
-    //Done
     private int defenseBuff;
-    //Done
     private int speedBuff;
-    //Done
     private bool shieldBuff;
 
-    //done
     private bool stunDebuff;
-
-    //done
     private bool paralyzeDebuff;
-
-    //done
     private bool blindDebuff;
 
+    //Getters for buffs and debuffs
     public int getSpeedBuff()
     {
         return speedBuff;
@@ -332,8 +300,10 @@ public class Unit
         return blindDebuff;
     }
 
+    //Resolve the effects of effects
     public void appyStatusEffects()
     {
+        //Reset everything
         damageBuff = 0;
         defenseBuff = 0;
         speedBuff = 0;
@@ -341,6 +311,7 @@ public class Unit
         stunDebuff = false;
         paralyzeDebuff = false;
 
+        //Calcualte what everything does
         foreach (StatusEffect effect in activeStatusEffects)
         {
             switch(effect.getType())
@@ -393,6 +364,7 @@ public class Unit
         }
     }
 
+    //Called at the beginning of turn. We don't geto our turn if we're stunned
     public void beginTurn()
     {
         if (!stunDebuff)
@@ -412,6 +384,7 @@ public class Unit
         autoClick = true;
     }
 
+    //Many getters
     public Vector2 getPos()
     {
         return pos;
@@ -459,9 +432,10 @@ public class Unit
     //For using skill, will be done later (if units ever have skills)
     public void useSkill(int number)
     {
-
+        //Still unused, but we'll leave it here (for fun)
     }
 
+    //If we're a god
     public void setGod()
     {
         isGod = true;

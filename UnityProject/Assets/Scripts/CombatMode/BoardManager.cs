@@ -19,6 +19,7 @@ public class BoardManager : MonoBehaviour
 
     public bool playerTurn;
 
+    //All the men
     private SetupManager SetupMan;
     private EnemyManager EnemyMan;
     private MapManager MapMan;
@@ -30,9 +31,12 @@ public class BoardManager : MonoBehaviour
     public int numActionsLeft;
 
     public bool endBattle = false; //used for testing purposes - to see if the battle has ended even if there are units left
+
+    //Morales
     public float PlayerMorale;
     public float enemyMorale;
 
+    //All the tile types
     public GameObject MovableTile;
     public GameObject InMoveRangeTile;
     public GameObject PreviewMoveTile;
@@ -40,12 +44,16 @@ public class BoardManager : MonoBehaviour
     public GameObject PreviewAttackTile;
     public GameObject TargetableTile;
 
+    //Used by enemy ai to check if ability tiles are drawing. Is an int becuase we have two cooroutines drawing ablility tiles at once.
     private int abilityTilesDrawing;
 
+    //List of overlay buttons (so we can set them inactive when its not our turn)
     public List<GameObject> playerUiButtons;
 
+    //Used by the select next button (to figure out what to select next)
     public int selectNextIndex;
 
+    //Which way an AOE line ability is facing
     public int abilityDirection;
 
     void Start()
@@ -53,11 +61,7 @@ public class BoardManager : MonoBehaviour
         playerUnits = new List<Unit>();
         enemyUnits = new List<Unit>();
 
-        /*
-        numActionsLeft = playerUnits.Count; //since player always starts first
-        playerTurn = true;
-        */
-        
+        //All the men
         SetupMan = GameObject.FindGameObjectWithTag("SetupManager").GetComponent<SetupManager>();
 
         //The baddest of them all, its EnemyMan
@@ -70,27 +74,21 @@ public class BoardManager : MonoBehaviour
 
         SoundMan = GameObject.FindGameObjectWithTag("SoundManager").GetComponent<SoundManager>();
 
+        //Initialize ints
         abilityDirection = 0;
         abilityTilesDrawing = 0;
     }
     
     void Update()
     {
-        //Updates Morale frequently. Involved with attack strength calculation so we need to update it frequently.
-        // TODO fix
+        //Update morale
         PlayerMorale = SetupMan.playerMorale;
         enemyMorale = SetupMan.enemyMorale;
-
-        /*
-        if(playerUnits.Count != 0 && enemyUnits.Count != 0)
-            if (!HasActionsLeft()) //any actions left to take? if not, switch turns
-                SwitchTurns();
-        */
     }
 
     public void CheckEnd()
     {
-        //check if someone won the game
+        //Check if someone won the game
         if (playerUnits.Count == 0)
         {
             Defeat();
@@ -101,6 +99,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    //Checks if the god is the only unit left, which means they should be in battle!
     public void checkIfGodShouldBeInBattle()
     {
         if (playerUnits.Count == 1)
@@ -115,27 +114,29 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    //Returns to management mode with victory
     public void Victory()
     {
         SetupMan.battleResult = GameInfo.BATTLESTATUS.Victory;
         SetupMan.finishedBattle = true;
     }
 
+    //Reutrn to management mode with defeat (for game over)
     public void Defeat()
     {
         SetupMan.battleResult = GameInfo.BATTLESTATUS.Defeat;
         SetupMan.finishedBattle = true;
     }
 
+    //Return to management mode with surrender and set morale appropriately
     public void Surrender()
     {
         SetupMan.battleResult = GameInfo.BATTLESTATUS.Retreat;
-        //TODO: does managementmode check for any changes to morale made from combat mode?
-        //PlayerMorale = PlayerMorale / 2; //arbitrarily (for now) halves the morale
         SetupMan.playerMorale = SetupMan.playerMorale / 2;
         SetupMan.finishedBattle = true;
     }
 
+    //Used when battle is over to see what each side has left
     public int GetRemainingWorshippers(bool player)
     {
         int worshippers = 0;
@@ -173,14 +174,17 @@ public class BoardManager : MonoBehaviour
     {
         HashSet<Tile> MovableTiles = new HashSet<Tile>();
 
+        //If selected is a player unit
         if (playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
         {
-            //Use our lovely tile function <3
+            //Use our lovely tile function <3 (to get all tiles within our move range)
             MovableTiles = MapMan.tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y].findAtDistance(
                 MapMan.tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y], currentUnit.Movement + currentUnit.getSpeedBuff(), findTeamTiles(playerUnits), findTeamTiles(enemyUnits), MapMan.tiles);
         }
+        //Otherwise, its an enemy unit
         else
         {
+            //Similar to above with different impassable and invalide tiles
             MovableTiles = MapMan.tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y].findAtDistance(
                 MapMan.tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y], currentUnit.Movement, findTeamTiles(enemyUnits), findTeamTiles(playerUnits), MapMan.tiles);
         }
@@ -192,12 +196,14 @@ public class BoardManager : MonoBehaviour
     }
 
     //Helper function for show attackable and similar
+    //Similar to findMoveable
     private HashSet<Tile> findAttackable(Unit currentUnit)
     {
         HashSet<Tile> AttackableTiles = new HashSet<Tile>();
 
         List<Tile> invalidTiles = new List<Tile>();
 
+        //Setup invalid tiles all tiles without a target on it
         if (playerUnits.Contains(MapMan.Selected.GetComponent<UnitObjectScript>().getUnit()))
         {
             foreach (Tile t in MapMan.tiles)
@@ -211,6 +217,7 @@ public class BoardManager : MonoBehaviour
                     invalidTiles.Add(t);  
         }
 
+        //More lovely tile function <3
         AttackableTiles = MapMan.tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y].findAtDistance(
                 MapMan.tiles[(int)currentUnit.getPos().x, (int)currentUnit.getPos().y], currentUnit.attackRange, invalidTiles, new List<Tile>(), MapMan.tiles);
 
@@ -235,7 +242,7 @@ public class BoardManager : MonoBehaviour
             return false;
     }
 
-    //Get all the tiles a unit can move to, based on their remaining movement
+    //Draw all the tiles a unit can move to, based on their remaining movement
     public void showMovable(Unit currentUnit)
     {
         //Calculate Moveable tiles
@@ -267,6 +274,7 @@ public class BoardManager : MonoBehaviour
                 t.getY() + 0.5f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2));
         }
 
+        //Draw tlies that are in range, but invalid (like ones that have a friendly unit on it)
         foreach (Tile t in inMoveRangeTiles)
         {
             GameObject temp = Instantiate(InMoveRangeTile);
@@ -323,6 +331,7 @@ public class BoardManager : MonoBehaviour
 
     }
 
+    //Used to preview attackable tiles, called when you hover over the attack button
     public void previewAttackable()
     {
         Unit currentUnit = MapMan.Selected.GetComponent<UnitObjectScript>().getUnit();
@@ -345,17 +354,23 @@ public class BoardManager : MonoBehaviour
     //Called on the button press. Starts the target selection.
     public void useAbility(string name)
     {
+        //Get the ability
         Ability a = Ability.LoadAbilityFromName(name);
 
+        //Fist and second half lists for drawing the targetable tiles
         List<Tile> firstHalf = new List<Tile>();
         List<Tile> secondHalf = new List<Tile>();
 
+        //Flip flop for direction
         bool direction = true;
 
+        //For half of the columns
         for (int i = 0; i < MapMan.tiles.GetLength(0) / 2; i++)
         {
+            //For the whole rows
             for (int j = 0; j < MapMan.tiles.GetLength(1); j++)
             {
+                //Draw with the halves going in opposing directions 
                 if (direction)
                 {
                     firstHalf.Add(MapMan.tiles[i, j]);
@@ -367,10 +382,11 @@ public class BoardManager : MonoBehaviour
                     secondHalf.Add(MapMan.tiles[MapMan.tiles.GetLength(0) - i - 1, j]);
                 }
             }
+            //Switch direction everytime we finish a column
             direction = !direction;
         }
 
-        //If we have an odd number of rows
+        //If we have an odd number of columns
         if(MapMan.tiles.GetLength(0) % 2 != 0)
         {
             for(int j = 0; j < MapMan.tiles.GetLength(1) / 2; j++)
@@ -388,39 +404,39 @@ public class BoardManager : MonoBehaviour
             }
         }
 
+        //If we have an odd number of rows
         if (MapMan.tiles.GetLength(1) % 2 != 0)
             firstHalf.Add(MapMan.tiles[MapMan.tiles.GetLength(0) / 2, MapMan.tiles.GetLength(1) / 2]);
 
+        //Actually draw them
         StartCoroutine(drawTargetableTiles(firstHalf, 0.01f, a));
         StartCoroutine(drawTargetableTiles(secondHalf, 0.01f, a));
-        /*
-        //Put targetable tiles everywhere
-        foreach (Tile t in MapMan.tiles)
-        {
-            GameObject targetTile = Instantiate(TargetableTile);
-            targetTile.GetComponent<Targetable>().ability = a;
-            targetTile.GetComponent<Targetable>().pos = new Vector2((int)t.getX(), (int)t.getZ());
-            targetTile.transform.position = new Vector3(t.getX() + ((1 - targetTile.transform.lossyScale.x) / 2) + targetTile.transform.lossyScale.x / 2, t.getY() + 0.5f, t.getZ() + ((1 - targetTile.transform.lossyScale.z) / 2) + targetTile.transform.lossyScale.x / 2);
-        }
-        */
 
+        //Call camera to center of units to easily target with ability
         Camera.main.GetComponent<CombatCam>().resetCamera();
 
+        //Get rid of menus
         UIMan.removeMenu();
         UIMan.abilityPanelInUse = false;
     }
 
     public IEnumerator drawTargetableTiles(List<Tile> locationsToDraw, float delay, Ability a)
     {
+        //Used to see if we're still drawing tiles
         abilityTilesDrawing++;
+
+        //Draw tiles at specified locations
         foreach (Tile t in locationsToDraw)
         {
+            //Make sure its somewhere a unit could be
             if (MapMan.tiles[(int)t.getX(), (int)t.getZ()].isTraversable())
             {
+                //Make tile with correct ability
                 GameObject targetTile = Instantiate(TargetableTile);
                 targetTile.GetComponent<Targetable>().ability = a;
                 targetTile.GetComponent<Targetable>().pos = new Vector2((int)t.getX(), (int)t.getZ());
 
+                //Centering
                 targetTile.transform.position = new Vector3(t.getX() + ((1 - transform.lossyScale.x) / 2) + transform.lossyScale.x / 2,
                     1f, t.getZ() + ((1 - transform.lossyScale.z) / 2) + transform.lossyScale.x / 2);
 
@@ -430,16 +446,22 @@ public class BoardManager : MonoBehaviour
             yield return new WaitForSeconds(delay);
         }
         yield return null;
+
+        //Decrease when done, to say we're done drawing
         abilityTilesDrawing--;
     }
 
+    //Check if tiles are still drawing
     public bool areAbilityTilesDrawing()
     {
+        //If either half is still drawing, then true
         if (abilityTilesDrawing != 0)
             return true;
+        //Otherwise, false
         return false;
     }
 
+    //Destroys a unit and removes it from appropriate lists
     public void killUnit(Unit killedUnit)
     {
         if (playerUnits.Contains(killedUnit))
@@ -452,12 +474,20 @@ public class BoardManager : MonoBehaviour
         else
             enemyUnits.Remove(killedUnit);
 
+        //Play death sound
         SoundMan.playUnitDeath(killedUnit);
+
+        //See if someone won
         CheckEnd();
+        
+        //Check if a god should be entering battle
         checkIfGodShouldBeInBattle();
+
+        //Destroy game object after we're done with it
         Destroy(killedUnit.unitGameObject());
     }
 
+    //Called by end all button. End all units turn.
     public void endAll()
     {
         foreach (Unit u in playerUnits)
@@ -465,6 +495,7 @@ public class BoardManager : MonoBehaviour
                 u.EndTurnButton();
     }
 
+    //Called by select next button, using the selectNextIndex
     public void selectNext()
     {
         for (int i = 0; i < playerUnits.Count; i++)
@@ -482,6 +513,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    //Getters and setters for morale
     public float GetPlayerMorale()
     {
         return PlayerMorale;
@@ -502,12 +534,14 @@ public class BoardManager : MonoBehaviour
         enemyMorale = m;
     }
 
+    //Check if we need to switch turn (all units have taken actions)
     public void checkIfSwitchTurn()
     {
         if (numActionsLeft == 0)
             SwitchTurns();
     }
 
+    //Actually swtich turn
     public void SwitchTurns()
     {
         if (playerTurn)
@@ -515,6 +549,8 @@ public class BoardManager : MonoBehaviour
             foreach (Unit u in enemyUnits) //allow each of enemy units to act
             {
                 u.beginTurn();
+
+                //Increase faith
                 if (u is God)
                 {
                     (u as God).faith += 10;
@@ -537,9 +573,11 @@ public class BoardManager : MonoBehaviour
             foreach(GameObject button in playerUiButtons)
                 button.GetComponent<Button>().interactable = false;
 
+            //Lock cursor to stop the player from using the enemy ablities (lol)
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
 
+            //Begin the enemy AI
             StartCoroutine(EnemyMan.EnemyActions(0.5f));
         }
         else
@@ -582,17 +620,20 @@ public class BoardManager : MonoBehaviour
         
     }
 
+    //Check if a side has any actions remaining
     bool HasActionsLeft()
     {
         if (numActionsLeft > 0) return true;
         else return false;
     }
 
+    //Decrase number of actions
     public void DecreaseNumActions()
     {
         numActionsLeft--;
     }
 
+    //Check if its the players turn
     public bool isPlayerTurn()
     {
         return playerTurn;

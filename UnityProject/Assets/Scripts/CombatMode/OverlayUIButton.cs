@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+//Goes on the end all, select next button and cancel. Set them active on m=player turn and inactive on enemy turn
+
 public class OverlayUIButton : MonoBehaviour
 {
     private BoardManager BoardMan;

@@ -53,6 +53,7 @@ public class UIManager : MonoBehaviour
 
     private void Awake()
     {
+        //Pause menu
         OptionsPanel = GameObject.Find("OptionsPanel");
     }
 
@@ -75,6 +76,7 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Open the pause meun
         if(Input.GetKeyDown(KeyCode.Escape))
         {
             OptionsPanelActive = !OptionsPanelActive;
@@ -272,6 +274,7 @@ public class UIManager : MonoBehaviour
                     break;
             }
 
+            //Set transform for buttons
             icon.transform.SetParent(newAbilityButton.transform);
             icon.transform.position = new Vector3(-(1/2f)*newAbilityButton.GetComponent<RectTransform>().rect.width + 10, 0, 0);
 
@@ -359,6 +362,7 @@ public class UIManager : MonoBehaviour
                     break;
             }
 
+            //Set position properly
             icon.transform.SetParent(infoPanel.transform);
             icon.GetComponent<RectTransform>().localRotation = new Quaternion(0,0,0,0);
             icon.GetComponent<RectTransform>().localScale = new Vector3(3, 3, 3);
@@ -426,6 +430,7 @@ public class UIManager : MonoBehaviour
         moveButton.tag = "moveButton";
     }
 
+    //Functions for previwing move and attack ranges and playing hover sound
     private void onAttackButtonEnter()
     {
         BoardMan.previewAttackable();
@@ -550,6 +555,7 @@ public class UIManager : MonoBehaviour
         eventTrigger.triggers.Add(entry);
     }
 
+    //Updates the text that shows how much faith player and enemy have
     public void updateFaithLabels()
     {
         GameObject playerFaithLabel = GameObject.FindGameObjectWithTag("playerFaithLabel");
@@ -573,6 +579,7 @@ public class UIManager : MonoBehaviour
         enemyFaithLabel.GetComponent<Text>().text = "Enemy Faith: " + enemyFaith.ToString() + "/100";
     }
 
+    //Hide and show menu
     public void hideMenu()
     {
         UICanvas.enabled = false;
@@ -583,6 +590,7 @@ public class UIManager : MonoBehaviour
         UICanvas.enabled = true;
     }
 
+    //Cancel any active acion (on cancel button)
     public void cancelButtonFunction()
     {
         if (MapMan.Selected != null)
@@ -597,6 +605,7 @@ public class UIManager : MonoBehaviour
         removeMenu();
     }
 
+    //Changes material and player hover sound
     public void playerUiMouseOver(GameObject button)
     {
         if (button.GetComponent<Button>().interactable)

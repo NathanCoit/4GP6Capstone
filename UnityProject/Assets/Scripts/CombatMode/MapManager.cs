@@ -12,6 +12,7 @@ using UnityEngine.UI;
  */
 public class MapManager : MonoBehaviour
 {
+    //Big important list o' tiles
     public Tile[,] tiles;
 
     private List<GameObject> Movable;
@@ -19,12 +20,20 @@ public class MapManager : MonoBehaviour
 
     public GameObject Unit;
     public GameObject MovableTile;
+
+    //THE selected (used in like literally everything)
     public GameObject Selected;
+    //Priase be to selected
+
+    //The less important preious selection, mostly used for cleanup
     public GameObject previousSelected;
+
     public List<Tile> playerStartTiles;
     public List<Tile> enemyStartTiles;
     private BoardManager BoardMan;
     public bool newSelected = false;
+
+    //Used to load map
     public string mapName;
     public float godFloatHeight;
 
@@ -44,6 +53,7 @@ public class MapManager : MonoBehaviour
 
         tiles = new Tile[lines[0].Split('-').Length, lines.Length];
 
+        //Player and enemy start tiles (where they are placed at the beginning)
         playerStartTiles = new List<Tile>();
         enemyStartTiles = new List<Tile>();
 
@@ -55,6 +65,7 @@ public class MapManager : MonoBehaviour
 
             for(int x = 0; x < chars.Length; x++)
             {
+                //p and e flags are used in the txt to indicate start tiles
                 if(chars[x].Contains("p"))
                 {
                     chars[x] = chars[x].Remove(2);

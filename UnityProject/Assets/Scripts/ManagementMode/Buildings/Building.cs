@@ -2,15 +2,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 /// <summary>
 /// Class containing methods for creating, interacting with,and deleting building objects
+/// Because each building only differs by model, and not in functionality, all but the mine building is contained here.
 /// </summary>
-public class Building : MapObject{
-    
-    static public float BuildingCostModifier = 1;
-    private static Dictionary<string, UnityEngine.Object> mdictBuildingResources = new Dictionary<string, UnityEngine.Object>();
+public class Building : MapObject
+{
+    // Constants to define the cost of each building by default
+    // Scaled by the game manager
+    protected const int mcintAltarCost = 10;
+    protected const int mcintMaterialCost = 10;
+    protected const int mcintVillageCost = 10;
+    protected const int mcintHousingCost = 10;
+    protected const int mcintUpgradeCost = 100;
 
-    
+    static public float BuildingCostModifier = 1; // Static to allow cost calculations before building is created
+
+    // Static lost of prefab objects to avoid reloading models
+    // Store models in memory for faster loading
+    private static Dictionary<string, UnityEngine.Object> mdictBuildingResources = new Dictionary<string, UnityEngine.Object>();
 
     public enum BUILDING_TYPE
     {
@@ -20,6 +31,7 @@ public class Building : MapObject{
         ALTAR,
         UPGRADE
     }
+
     public Faction OwningFaction;
 
     public BUILDING_TYPE BuildingType { get; private set; }
@@ -30,6 +42,7 @@ public class Building : MapObject{
 
     /// <summary>
     /// Building contructor for a default building of a certain type
+    /// Allows creating different types of buildings based on input parameter.
     /// </summary>
     /// <param name="penumBuildingType">The building type to create.</param>
     /// <param name="pmusFactionOwner">The owning faction of the building.</param>
@@ -44,6 +57,7 @@ public class Building : MapObject{
 
     /// <summary>
     /// Building constructor for loading a serialized building
+    /// Allows the removal of duplicate code in places where save states must be loaded
     /// </summary>
     /// <param name="pmusSavedBuilding">A serialized building.</param>
     /// <param name="pmusFactionOwner">The owning faction of the building to be loaded.</param>
@@ -59,36 +73,33 @@ public class Building : MapObject{
 
     /// <summary>
     /// Method used to create a building game object based on the type of building.
+    /// Allows one method call to decide which type of building model shall be loaded
     /// </summary>
     /// <param name="penumBuildingType"></param>
-    /// <param name="type"></param>
+    /// <param name="penumGodType"></param>
     /// <returns></returns>
-    private GameObject CreateBuildingObject(BUILDING_TYPE penumBuildingType, Faction.GodType type)
+    private GameObject CreateBuildingObject(BUILDING_TYPE penumBuildingType, Faction.GodType penumGodType)
     {
         GameObject uniBuildingGameObject = null;
-        // TODO, reduce all seperate into a single create functin and pass in building type
-        // Seperate needed while not all models are present.
-        switch (penumBuildingType)
+        string strResourceKey = "Buildings/" + penumGodType.ToString() + penumBuildingType.ToString() + UpgradeLevel.ToString();
+
+        // Load the building model from memory
+        if (mdictBuildingResources.ContainsKey(strResourceKey) && mdictBuildingResources[strResourceKey] != null)
         {
-            case BUILDING_TYPE.ALTAR:
-                uniBuildingGameObject = CreateAltarBuildingObject(type);
-                break;
-            case BUILDING_TYPE.VILLAGE:
-                uniBuildingGameObject = CreateVillageBuildingObject(type);
-                break;
-            case BUILDING_TYPE.MATERIAL:
-                uniBuildingGameObject = CreateMaterialBuildingObject(type);
-                break;
-            case BUILDING_TYPE.HOUSING:
-                uniBuildingGameObject = CreateHousingBuildingObject(type);
-                break;
-            case BUILDING_TYPE.UPGRADE:
-                uniBuildingGameObject = CreateUpgradeBuildingObject(type);
-                break;
+            uniBuildingGameObject = (GameObject)GameObject.Instantiate(
+            mdictBuildingResources[strResourceKey]);
         }
-        if(uniBuildingGameObject != null)
+        else
         {
-            // Add a linerenderer for outlining, scale based on scene parmeters
+#if DEBUG
+            // Model was not found in resources folder, this should not occur as all models have been created now
+#endif
+        }
+        // Check to ensure a game model was found when creating
+        if (uniBuildingGameObject != null)
+        {
+            // Add a linerenderer for outlining, scale based on scene parameters
+            // Allows for the outlining of buildings when selected or when building other buildings
             uniBuildingGameObject.AddComponent<LineRenderer>().positionCount = 0;
             uniBuildingGameObject.transform.localScale = new Vector3(ObjectRadius, ObjectRadius, ObjectRadius);
         }
@@ -96,150 +107,46 @@ public class Building : MapObject{
     }
 
     /// <summary>
-    /// Method for loading and creating a blacksmith building game object
-    /// </summary>
-    /// <param name="type">The god type which owns this building.</param>
-    /// <returns></returns>
-    private GameObject CreateUpgradeBuildingObject(Faction.GodType type)
-    {
-        GameObject uniUpgradeBuildingGameObject = null;
-        // Build the resource key for the building type and check if it exists
-        string strResourceKey = "Buildings/" + type.ToString() + BUILDING_TYPE.UPGRADE.ToString() + UpgradeLevel.ToString();
-        if (mdictBuildingResources.ContainsKey(strResourceKey) && mdictBuildingResources[strResourceKey] != null)
-        {
-            uniUpgradeBuildingGameObject = (GameObject)GameObject.Instantiate(
-            mdictBuildingResources[strResourceKey]);
-        }
-        else
-        {
-            // Resource doesn't exist, create a cube
-            uniUpgradeBuildingGameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            uniUpgradeBuildingGameObject.transform.localScale += new Vector3(UpgradeLevel - 1, UpgradeLevel - 1, UpgradeLevel - 1);
-        }
-        return uniUpgradeBuildingGameObject;
-    }
-
-    /// <summary>
-    /// Method for loading and creating an altar building game object
-    /// </summary>
-    /// <param name="type">The god type which owns this building.</param>
-    /// <returns></returns>
-    private GameObject CreateHousingBuildingObject(Faction.GodType type)
-    {
-        GameObject uniHousingBuildingGameObject = null;
-        string strResourceKey = "Buildings/" + type.ToString() + BUILDING_TYPE.HOUSING.ToString() + UpgradeLevel.ToString();
-        if (mdictBuildingResources.ContainsKey(strResourceKey) && mdictBuildingResources[strResourceKey] != null)
-        {
-            uniHousingBuildingGameObject = (GameObject)GameObject.Instantiate(
-            mdictBuildingResources[strResourceKey]);
-        }
-        else
-        {
-            // If resource does not exist, load a capsule game object.
-            uniHousingBuildingGameObject = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            uniHousingBuildingGameObject.transform.localScale += new Vector3(UpgradeLevel - 1, UpgradeLevel - 1, UpgradeLevel - 1);
-        }
-        return uniHousingBuildingGameObject;
-    }
-
-    /// <summary>
-    /// Method for loading or creating material building game objects
-    /// </summary>
-    /// <param name="type"></param>
-    /// <returns></returns>
-    private GameObject CreateMaterialBuildingObject(Faction.GodType type)
-    {
-        GameObject uniMaterialBuildingGameObject = null;
-        string strResourceKey = "Buildings/" + type.ToString() + BUILDING_TYPE.MATERIAL.ToString() + UpgradeLevel.ToString();
-        if(mdictBuildingResources.ContainsKey(strResourceKey) && mdictBuildingResources[strResourceKey] != null)
-        {
-            uniMaterialBuildingGameObject = (GameObject)GameObject.Instantiate(
-            mdictBuildingResources[strResourceKey]);
-        }
-        else
-        {
-            uniMaterialBuildingGameObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            uniMaterialBuildingGameObject.transform.localScale += new Vector3(UpgradeLevel - 1, UpgradeLevel - 1, UpgradeLevel - 1);
-        }
-		return uniMaterialBuildingGameObject;
-    }
-
-    /// <summary>
-    /// Method for loading or creating a village building game object
-    /// </summary>
-    /// <param name="type"></param>
-    /// <returns></returns>
-    private GameObject CreateVillageBuildingObject(Faction.GodType type)
-    {
-        GameObject uniVillageBuildingGameObject = null;
-        string strResourceKey = "Buildings/" + type.ToString() + BUILDING_TYPE.VILLAGE.ToString() + UpgradeLevel.ToString();
-        if (mdictBuildingResources.ContainsKey(strResourceKey) && mdictBuildingResources[strResourceKey] != null)
-        {
-            uniVillageBuildingGameObject = (GameObject)GameObject.Instantiate(
-            mdictBuildingResources[strResourceKey]);
-        }
-        else
-        {
-            uniVillageBuildingGameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            uniVillageBuildingGameObject.transform.localScale += new Vector3(UpgradeLevel - 1, UpgradeLevel - 1, UpgradeLevel - 1);
-        }
-        return uniVillageBuildingGameObject;
-    }
-
-    /// <summary>
-    /// Method for loading or creating an altar building game object
-    /// </summary>
-    /// <param name="type"></param>
-    /// <returns></returns>
-    private GameObject CreateAltarBuildingObject(Faction.GodType type)
-    {
-        GameObject uniAltarBuildingGameObject = null;
-        string strResourceKey = "Buildings/" + type.ToString() + BUILDING_TYPE.ALTAR.ToString() + UpgradeLevel.ToString();
-        if (mdictBuildingResources.ContainsKey(strResourceKey) && mdictBuildingResources[strResourceKey] != null)
-        {
-            uniAltarBuildingGameObject = (GameObject)GameObject.Instantiate(
-            mdictBuildingResources[strResourceKey]);
-        }
-        else
-        {
-            uniAltarBuildingGameObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            uniAltarBuildingGameObject.transform.localScale += new Vector3(UpgradeLevel - 1, UpgradeLevel - 1, UpgradeLevel - 1);
-        }
-        return uniAltarBuildingGameObject;
-    }
-
-    /// <summary>
     /// Method for upgrading the current instance of building
-    /// Updates the buildings model
+    /// Performs checks for material count and current upgrade tier
+    /// Virtual method to allow overriding for different upgrade cost calculations or functionality for future building classes.
     /// </summary>
-    /// <param name="outline"></param>
-    /// <param name="pblnNoCost"></param>
+    /// <param name="pblnOutline">specify false to not outline on upgrade. When enemies upgrade.</param>
+    /// <param name="pblnNoCost">Specify true to ignore cost calculations</param>
     /// <returns></returns>
-    public virtual bool UpgradeBuilding(bool outline = true, bool pblnNoCost = false)
+    public virtual bool UpgradeBuilding(bool pblnOutline = true, bool pblnNoCost = false)
     {
-        bool Upgraded = false;
-        int BuildingCost = CalculateBuildingUpgradeCost(BuildingType, UpgradeLevel+1);
-        if(pblnNoCost)
+        bool blnUpgraded = false;
+        int intBuildingCost = 0;
+        Vector3 uniOriginalPosVector3;
+        string strResourceKey;
+
+        if (!pblnNoCost)
         {
-            BuildingCost = 0;
+            CalculateBuildingUpgradeCost(BuildingType, UpgradeLevel + 1);
         }
-        if(OwningFaction.MaterialCount > BuildingCost && UpgradeLevel < 3 && OwningFaction.GodTier >= UpgradeLevel)
+        // Check if upgrade is allowed
+        if (OwningFaction.MaterialCount > intBuildingCost
+            && UpgradeLevel < 3 // Can't upgrade past 3 
+            && OwningFaction.GodTier >= UpgradeLevel)
         {
-            Upgraded = true;
-            OwningFaction.MaterialCount -= BuildingCost;
+            blnUpgraded = true;
+            OwningFaction.MaterialCount -= intBuildingCost;
             UpgradeLevel++;
-            Vector3 OriginalPos;
-            string strResourceKey = "Buildings/" + OwningFaction.Type.ToString() + BuildingType.ToString() + UpgradeLevel.ToString();
+
+            // Load the new model, swap the models, and move the building back into place.
+            // Allows for completely different models on upgrade
+            strResourceKey = "Buildings/" + OwningFaction.Type.ToString() + BuildingType.ToString() + UpgradeLevel.ToString();
             if (mdictBuildingResources.ContainsKey(strResourceKey) && mdictBuildingResources[strResourceKey] != null)
             {
-                OriginalPos = ObjectPosition;
+                uniOriginalPosVector3 = ObjectPosition;
                 GameObject.Destroy(MapGameObject);
                 MapGameObject = (GameObject)GameObject.Instantiate(
                     mdictBuildingResources[strResourceKey]);
                 MapGameObject.transform.localScale = new Vector3(ObjectRadius, ObjectRadius, ObjectRadius);
-                ObjectPosition = OriginalPos;
+                ObjectPosition = uniOriginalPosVector3;
                 MapGameObject.AddComponent<LineRenderer>();
-                if (outline)
+                if (pblnOutline)
                 {
                     ToggleObjectOutlines(true);
                 }
@@ -249,202 +156,194 @@ public class Building : MapObject{
                 MapGameObject.transform.localScale += new Vector3(1, 1, 1); // In case no model exists yet
             }
         }
-        return Upgraded;
+        // Return whether the upgrade was successfull to allow feedback to the player
+        return blnUpgraded;
     }
 
+    /// <summary>
+    /// Method to ensure if a building model is removed, it is also removed from it's owning faction
+    /// </summary>
     public void Destroy()
     {
         GameObject.Destroy(MapGameObject);
         OwningFaction.OwnedBuildings.Remove(this);
     }
 
+    /// <summary>
+    /// Static method to calculate the cost of a building based on the type of building.
+    /// Allows UI feedback and information before a building has been created.
+    /// </summary>
+    /// <param name="penumBuildingType"></param>
+    /// <returns></returns>
     public static int CalculateBuildingCost(Building.BUILDING_TYPE penumBuildingType)
     {
-        int BuildingCost = int.MaxValue;
+        // Set to max value in case cost calc fails, players don't get free building
+        int intBuildingCost = int.MaxValue;
         switch (penumBuildingType)
         {
             case (Building.BUILDING_TYPE.ALTAR):
-                BuildingCost = Convert.ToInt32(10 * BuildingCostModifier);
+                intBuildingCost = Convert.ToInt32(mcintAltarCost * BuildingCostModifier);
                 break;
             case (Building.BUILDING_TYPE.MATERIAL):
-                BuildingCost = Convert.ToInt32(5 * BuildingCostModifier);
+                intBuildingCost = Convert.ToInt32(mcintMaterialCost * BuildingCostModifier);
                 break;
             case (Building.BUILDING_TYPE.HOUSING):
-                BuildingCost = Convert.ToInt32(10 * BuildingCostModifier);
+                intBuildingCost = Convert.ToInt32(mcintHousingCost * BuildingCostModifier);
                 break;
             case (Building.BUILDING_TYPE.VILLAGE):
-                BuildingCost = Convert.ToInt32(10 * BuildingCostModifier);
+                intBuildingCost = Convert.ToInt32(mcintVillageCost * BuildingCostModifier);
                 break;
             case (Building.BUILDING_TYPE.UPGRADE):
-                BuildingCost = Convert.ToInt32(100 * BuildingCostModifier);
+                intBuildingCost = Convert.ToInt32(mcintUpgradeCost * BuildingCostModifier);
                 break;
         }
-        return BuildingCost;
+        return intBuildingCost;
     }
 
+    /// <summary>
+    /// Wrapper method to simplify calls to static upgrade cost calculation from within this object
+    /// </summary>
+    /// <returns></returns>
     public int CalculateBuildingUpgradeCost()
     {
-        int BuildingCost = int.MaxValue;
-        switch (BuildingType)
-        {
-            case (Building.BUILDING_TYPE.ALTAR): // 100, 1000, 10000
-                BuildingCost = Convert.ToInt32(Mathf.Pow(10, UpgradeLevel + 1) * BuildingCostModifier);
-                break;
-            case (Building.BUILDING_TYPE.MATERIAL): // 100, 1000, 10000
-                BuildingCost = Convert.ToInt32(Mathf.Pow(10, UpgradeLevel + 1) * BuildingCostModifier);
-                break;
-            case (Building.BUILDING_TYPE.HOUSING): // 100, 1000, 10000
-                BuildingCost = Convert.ToInt32(Mathf.Pow(10, UpgradeLevel + 1) * BuildingCostModifier);
-                break;
-            case (Building.BUILDING_TYPE.VILLAGE): // Upgrade done by tier unlock
-                BuildingCost = 0;
-                break;
-            case (BUILDING_TYPE.UPGRADE): // 1000, 10000, 100000
-                BuildingCost = Convert.ToInt32(Mathf.Pow(10, UpgradeLevel + 2) * BuildingCostModifier);
-                break;
-        }
-        return BuildingCost;
+        return CalculateBuildingUpgradeCost(BuildingType, UpgradeLevel);
     }
 
+    /// <summary>
+    /// Static method to calculate the cost of upgrading a building
+    /// Allows checks for whether the player can upgrade a building and display UI information on upgrade cost
+    /// </summary>
+    /// <param name="penumBuildingType"></param>
+    /// <param name="pintUpgradeLevel"></param>
+    /// <returns></returns>
     public static int CalculateBuildingUpgradeCost(Building.BUILDING_TYPE penumBuildingType, int pintUpgradeLevel = 1)
     {
-        int BuildingCost = int.MaxValue;
+        // Cost calculation is exponential to scale with extra area player is given on tier unlock
+        // Upgrading will be required to save space, so will cost more
+        int intBuildingCost = int.MaxValue;
         switch (penumBuildingType)
         {
             case (Building.BUILDING_TYPE.ALTAR): // 100, 1000, 10000
-                BuildingCost = Convert.ToInt32(Mathf.Pow(10, pintUpgradeLevel + 1) * BuildingCostModifier);
+                intBuildingCost = Convert.ToInt32(Mathf.Pow(mcintAltarCost, pintUpgradeLevel + 1) * BuildingCostModifier);
                 break;
             case (Building.BUILDING_TYPE.MATERIAL): // 100, 1000, 10000
-                BuildingCost = Convert.ToInt32(Mathf.Pow(10, pintUpgradeLevel + 1) * BuildingCostModifier);
+                intBuildingCost = Convert.ToInt32(Mathf.Pow(mcintMaterialCost, pintUpgradeLevel + 1) * BuildingCostModifier);
                 break;
             case (Building.BUILDING_TYPE.HOUSING): // 100, 1000, 10000
-                BuildingCost = Convert.ToInt32(Mathf.Pow(10, pintUpgradeLevel + 1) * BuildingCostModifier);
+                intBuildingCost = Convert.ToInt32(Mathf.Pow(mcintHousingCost, pintUpgradeLevel + 1) * BuildingCostModifier);
                 break;
             case (Building.BUILDING_TYPE.VILLAGE): // Upgrade done by tier unlock
-                BuildingCost = 0;
+                intBuildingCost = 0;
                 break;
             case (BUILDING_TYPE.UPGRADE): // 1000, 10000, 100000
-                BuildingCost = Convert.ToInt32(Mathf.Pow(10, pintUpgradeLevel + 2) * BuildingCostModifier);
+                intBuildingCost = Convert.ToInt32(Mathf.Pow(mcintUpgradeCost, pintUpgradeLevel + 1) * BuildingCostModifier);
                 break;
         }
-        return BuildingCost;
+        return intBuildingCost;
     }
 
-    public static void LoadBuildingResources(List<Faction.GodType> LoadedGodTypes)
+    /// <summary>
+    /// Static method called once at the beginning of management mode scene loading
+    /// Loads all current god building models into memory to speed up the creation of new buildings
+    /// and avoid having to load buildings on each create.
+    /// </summary>
+    /// <param name="parrLoadedGodTypes"></param>
+    public static void LoadBuildingResources(List<Faction.GodType> parrLoadedGodTypes)
     {
         string strResourcePath = string.Empty;
-        foreach(Faction.GodType type in LoadedGodTypes)
+        foreach (Faction.GodType enumGodType in parrLoadedGodTypes)
         {
-            strResourcePath = "Buildings/" + type.ToString() + BUILDING_TYPE.ALTAR.ToString();
+            strResourcePath = "Buildings/" + enumGodType.ToString() + BUILDING_TYPE.ALTAR.ToString();
             // Load all 5 building types and the upgrade levels of each
-            if(!mdictBuildingResources.ContainsKey(strResourcePath + "1"))
-            {
-                mdictBuildingResources.Add(strResourcePath + "1", Resources.Load(strResourcePath + "1"));
-            }
-            if (!mdictBuildingResources.ContainsKey(strResourcePath + "2"))
-            {
-                mdictBuildingResources.Add(strResourcePath + "2", Resources.Load(strResourcePath + "2"));
-            }
-            if (!mdictBuildingResources.ContainsKey(strResourcePath + "3"))
-            {
-                mdictBuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
-            }
+            // Only load buildings not already in memory in case this method is called again
+            LoadAllUpgradeLevelsOfBuilding(strResourcePath);
 
-            strResourcePath = "Buildings/" + type.ToString() + BUILDING_TYPE.MATERIAL.ToString();
-            if (!mdictBuildingResources.ContainsKey(strResourcePath + "1"))
-            {
-                mdictBuildingResources.Add(strResourcePath + "1", Resources.Load(strResourcePath + "1"));
-            }
-            if (!mdictBuildingResources.ContainsKey(strResourcePath + "2"))
-            {
-                mdictBuildingResources.Add(strResourcePath + "2", Resources.Load(strResourcePath + "2"));
-            }
-            if (!mdictBuildingResources.ContainsKey(strResourcePath + "3"))
-            {
-                mdictBuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
-            }
+            strResourcePath = "Buildings/" + enumGodType.ToString() + BUILDING_TYPE.MATERIAL.ToString();
+            LoadAllUpgradeLevelsOfBuilding(strResourcePath);
 
-            strResourcePath = "Buildings/" + type.ToString() + BUILDING_TYPE.VILLAGE.ToString();
-            if (!mdictBuildingResources.ContainsKey(strResourcePath + "1"))
-            {
-                mdictBuildingResources.Add(strResourcePath + "1", Resources.Load(strResourcePath + "1"));
-            }
-            if (!mdictBuildingResources.ContainsKey(strResourcePath + "2"))
-            {
-                mdictBuildingResources.Add(strResourcePath + "2", Resources.Load(strResourcePath + "2"));
-            }
-            if (!mdictBuildingResources.ContainsKey(strResourcePath + "3"))
-            {
-                mdictBuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
-            }
+            strResourcePath = "Buildings/" + enumGodType.ToString() + BUILDING_TYPE.VILLAGE.ToString();
+            LoadAllUpgradeLevelsOfBuilding(strResourcePath);
 
-            strResourcePath = "Buildings/" + type.ToString() + BUILDING_TYPE.HOUSING.ToString();
-            if (!mdictBuildingResources.ContainsKey(strResourcePath + "1"))
-            {
-                mdictBuildingResources.Add(strResourcePath + "1", Resources.Load(strResourcePath + "1"));
-            }
-            if (!mdictBuildingResources.ContainsKey(strResourcePath + "2"))
-            {
-                mdictBuildingResources.Add(strResourcePath + "2", Resources.Load(strResourcePath + "2"));
-            }
-            if (!mdictBuildingResources.ContainsKey(strResourcePath + "3"))
-            {
-                mdictBuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
-            }
+            strResourcePath = "Buildings/" + enumGodType.ToString() + BUILDING_TYPE.HOUSING.ToString();
+            LoadAllUpgradeLevelsOfBuilding(strResourcePath);
 
-            strResourcePath = "Buildings/" + type.ToString() + BUILDING_TYPE.UPGRADE.ToString();
-            if (!mdictBuildingResources.ContainsKey(strResourcePath + "1"))
-            {
-                mdictBuildingResources.Add(strResourcePath + "1", Resources.Load(strResourcePath + "1"));
-            }
-            if (!mdictBuildingResources.ContainsKey(strResourcePath + "2"))
-            {
-                mdictBuildingResources.Add(strResourcePath + "2", Resources.Load(strResourcePath + "2"));
-            }
-            if (!mdictBuildingResources.ContainsKey(strResourcePath + "3"))
-            {
-                mdictBuildingResources.Add(strResourcePath + "3", Resources.Load(strResourcePath + "3"));
-            }
+            strResourcePath = "Buildings/" + enumGodType.ToString() + BUILDING_TYPE.UPGRADE.ToString();
+            LoadAllUpgradeLevelsOfBuilding(strResourcePath);
         }
     }
 
+    /// <summary>
+    /// Helper method for loading each upgrade level of a building.
+    /// </summary>
+    /// <param name="pstrBuildingResourcePath"></param>
+    private static void LoadAllUpgradeLevelsOfBuilding(string pstrBuildingResourcePath)
+    {
+        if (!mdictBuildingResources.ContainsKey(pstrBuildingResourcePath + "1"))
+        {
+            mdictBuildingResources.Add(pstrBuildingResourcePath + "1", Resources.Load(pstrBuildingResourcePath + "1"));
+        }
+        if (!mdictBuildingResources.ContainsKey(pstrBuildingResourcePath + "2"))
+        {
+            mdictBuildingResources.Add(pstrBuildingResourcePath + "2", Resources.Load(pstrBuildingResourcePath + "2"));
+        }
+        if (!mdictBuildingResources.ContainsKey(pstrBuildingResourcePath + "3"))
+        {
+            mdictBuildingResources.Add(pstrBuildingResourcePath + "3", Resources.Load(pstrBuildingResourcePath + "3"));
+        }
+    }
+
+    /// <summary>
+    /// Method to reload the game object for this building.
+    /// Used by game manager to reload buildings in the case that the owning faction has changed
+    /// </summary>
     public void ReloadBuildingObject()
     {
-        Vector3 OriginalPos;
-        OriginalPos = ObjectPosition;
+        Vector3 uniOriginalPosVector3;
+        uniOriginalPosVector3 = ObjectPosition;
         GameObject.Destroy(MapGameObject);
         MapGameObject = CreateBuildingObject(BuildingType, OwningFaction.Type);
         MapGameObject.transform.localScale = new Vector3(ObjectRadius, ObjectRadius, ObjectRadius);
-        ObjectPosition = OriginalPos;
-        if(MapGameObject.GetComponent<LineRenderer>() == null)
+        ObjectPosition = uniOriginalPosVector3;
+        if (MapGameObject.GetComponent<LineRenderer>() == null)
         {
             MapGameObject.AddComponent<LineRenderer>();
         }
     }
 
-    public static Building CreateRandomBuilding(Faction placingFaction)
+    /// <summary>
+    /// Static method to generate a pseudo random building.
+    /// Used by game manager when creating buildings for a new game and
+    /// for enemy god new building generation.
+    /// Only generates altars and houses as villages, blacksmiths, and mines cannot 
+    /// be randomly generated as those are specifically created once per faction
+    /// </summary>
+    /// <param name="pmusPlacingFaction"></param>
+    /// <returns></returns>
+    public static Building CreateRandomBuilding(Faction pmusPlacingFaction)
     {
-        Building.BUILDING_TYPE RandomType;
-        Building RandomBuilding = null;
+        Building.BUILDING_TYPE enumRandomBuildingType;
+        Building musRandomBuilding = null;
+
+        // Increase odds of altars for worshipper/difficulty growth
         switch ((int)(UnityEngine.Random.value * 100 / 25))
         {
             case 0:
-                RandomType = Building.BUILDING_TYPE.ALTAR;
+                enumRandomBuildingType = Building.BUILDING_TYPE.ALTAR;
                 break;
             case 1:
-                RandomType = Building.BUILDING_TYPE.HOUSING;
+                enumRandomBuildingType = Building.BUILDING_TYPE.HOUSING;
                 break;
             case 2:
-                RandomType = Building.BUILDING_TYPE.HOUSING;
+                enumRandomBuildingType = Building.BUILDING_TYPE.HOUSING;
                 break;
             case 3:
-                RandomType = Building.BUILDING_TYPE.ALTAR;
+                enumRandomBuildingType = Building.BUILDING_TYPE.ALTAR;
                 break;
             default:
-                RandomType = Building.BUILDING_TYPE.ALTAR;
+                enumRandomBuildingType = Building.BUILDING_TYPE.ALTAR;
                 break;
         }
-        RandomBuilding = new Building(RandomType, placingFaction);
-        return RandomBuilding;
+        musRandomBuilding = new Building(enumRandomBuildingType, pmusPlacingFaction);
+        return musRandomBuilding;
     }
 }

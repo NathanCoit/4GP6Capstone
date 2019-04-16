@@ -40,10 +40,10 @@ public class ManagementPlayModeTest {
 
         Vector3 firstPos = testcam.transform.position;
 
-        testcam.rightHeld = true;
+        testcam.RightHeld = true;
 
         yield return null;
-        testcam.rightHeld = false;
+        testcam.RightHeld = false;
 
         Vector3 secondPos = testcam.transform.position;
 
@@ -69,10 +69,10 @@ public class ManagementPlayModeTest {
 
         Vector3 firstPos = testcam.transform.position;
 
-        testcam.leftHeld = true;
+        testcam.LeftHeld = true;
 
         yield return null;
-        testcam.leftHeld = false;
+        testcam.LeftHeld = false;
 
         Vector3 secondPos = testcam.transform.position;
 
@@ -98,10 +98,10 @@ public class ManagementPlayModeTest {
 
         Vector3 firstPos = testcam.transform.position;
 
-        testcam.upHeld = true;
+        testcam.UpHeld = true;
 
         yield return null;
-        testcam.upHeld = false;
+        testcam.UpHeld = false;
 
         Vector3 secondPos = testcam.transform.position;
 
@@ -127,10 +127,10 @@ public class ManagementPlayModeTest {
 
         Vector3 firstPos = testcam.transform.position;
 
-        testcam.downHeld = true;
+        testcam.DownHeld = true;
 
         yield return null;
-        testcam.downHeld = false;
+        testcam.DownHeld = false;
 
         Vector3 secondPos = testcam.transform.position;
 
@@ -156,7 +156,7 @@ public class ManagementPlayModeTest {
 
         Vector3 firstPos = testcam.transform.position;
 
-        testcam.transform.position += new Vector3(0.0f, 0.0f, -(Time.deltaTime * testcam.fov));
+        testcam.transform.position += new Vector3(0.0f, 0.0f, -(Time.deltaTime * testcam.FieldOfView));
 
         Vector3 secondPos = testcam.transform.position;
 
@@ -182,7 +182,7 @@ public class ManagementPlayModeTest {
 
         Vector3 firstPos = testcam.transform.position;
 
-        testcam.transform.position += new Vector3(0.0f, 0.0f, Time.deltaTime * testcam.fov);
+        testcam.transform.position += new Vector3(0.0f, 0.0f, Time.deltaTime * testcam.FieldOfView);
 
         Vector3 secondPos = testcam.transform.position;
 
@@ -208,7 +208,7 @@ public class ManagementPlayModeTest {
 
         Vector3 firstPos = testcam.transform.position;
 
-        testcam.transform.position += new Vector3(-(Time.deltaTime * testcam.fov), 0.0f, 0.0f);
+        testcam.transform.position += new Vector3(-(Time.deltaTime * testcam.FieldOfView), 0.0f, 0.0f);
 
         Vector3 secondPos = testcam.transform.position;
 
@@ -235,7 +235,7 @@ public class ManagementPlayModeTest {
 
         Vector3 firstPos = testcam.transform.position;
 
-        testcam.transform.position += new Vector3(Time.deltaTime * testcam.fov,
+        testcam.transform.position += new Vector3(Time.deltaTime * testcam.FieldOfView,
             0.0f, 0.0f);
 
         Vector3 secondPos = testcam.transform.position;

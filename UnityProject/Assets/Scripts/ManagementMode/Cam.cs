@@ -2,134 +2,159 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Cam : MonoBehaviour {
-
-	private int Boundary = 30;
-
-	private int theScreenWidth;
-	private int theScreenHeight;
-
-	public bool rightHeld;
-	public bool leftHeld;
-	public bool downHeld;
-	public bool upHeld;
-
-	private float maxFov = 80.0f;
-	private float minFov = 10.0f;
-	public float sensitivity = 7.0f;
-    public GameObject gameManagerObject;
-    private GameManager gameManagerScript;
+/// <summary>
+/// Script for controlling interactions between the player/game and the camera
+/// Allows for centralization of all camera related functionality
+/// </summary>
+public class Cam : MonoBehaviour
+{
     public bool CameraMovementEnabled = true;
+    public float Sensitivity = 7.0f;
+    public GameObject GameManagerObject;
+    public float FieldOfView;
+    public bool RightHeld;
+    public bool LeftHeld;
+    public bool DownHeld;
+    public bool UpHeld;
 
-    public float fov;
+    private readonly int mintBoundary = 30;
+    private readonly float mfMinFov = 10.0f;
 
-
-	void Start() 
-	{
-        maxFov = maxFov + maxFov * 0.1f * gameManagerScript.PlayerFaction.GodTier;
-        fov = Camera.main.fieldOfView;
-        theScreenWidth = Screen.width;
-		theScreenHeight = Screen.height;
-        // Move starting camera position to viewing player village
-        // -30 on the z coordinate points camera at starting village with current camera angle
-        transform.position = new Vector3(gameManagerScript.PlayerVillage.ObjectPosition.x, 50, gameManagerScript.PlayerVillage.ObjectPosition.z - 30f);
-	}
+    private int mintScreenWidth;
+    private int mintScreenHeight;
+    private float mfMaxFov = 80.0f;
+    private GameManager mmusGameManagerScript;
 
     private void Awake()
     {
-        gameManagerScript = gameManagerObject.GetComponent<GameManager>();
+        mmusGameManagerScript = GameManagerObject.GetComponent<GameManager>();
     }
 
-    void Update() 
-	{
-        Vector3 NewCameraPosition = transform.position;
-		if(CameraMovementEnabled)
+    void Start()
+    {
+        // Scale max fov with tier as map has increased in explorable size
+        mfMaxFov = mfMaxFov + mfMaxFov * 0.1f * mmusGameManagerScript.PlayerFaction.GodTier;
+        FieldOfView = Camera.main.fieldOfView;
+        mintScreenWidth = Screen.width;
+        mintScreenHeight = Screen.height;
+        // Move starting camera position to viewing player village
+        // -30 on the z coordinate points camera at starting village with current camera angle
+        transform.position = new Vector3(mmusGameManagerScript.PlayerVillage.ObjectPosition.x, 50, mmusGameManagerScript.PlayerVillage.ObjectPosition.z - 30f);
+    }
+
+    void Update()
+    {
+        Vector3 uniNewCameraPositionVector3 = transform.position;
+        if (CameraMovementEnabled)
         {
             if (Input.GetKeyDown(KeyCode.RightArrow))
             {
-                rightHeld = true;
+                RightHeld = true;
             }
 
             if (Input.GetKeyUp(KeyCode.RightArrow))
             {
-                rightHeld = false;
+                RightHeld = false;
             }
 
             if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                leftHeld = true;
+                LeftHeld = true;
             }
 
             if (Input.GetKeyUp(KeyCode.LeftArrow))
             {
-                leftHeld = false;
+                LeftHeld = false;
             }
 
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                upHeld = true;
+                UpHeld = true;
             }
 
             if (Input.GetKeyUp(KeyCode.UpArrow))
             {
-                upHeld = false;
+                UpHeld = false;
             }
 
             if (Input.GetKeyDown(KeyCode.DownArrow))
             {
-                downHeld = true;
+                DownHeld = true;
             }
 
             if (Input.GetKeyUp(KeyCode.DownArrow))
             {
-                downHeld = false;
+                DownHeld = false;
             }
 
-            if (Input.mousePosition.x > theScreenWidth - Boundary || rightHeld)
+            if (Input.mousePosition.x > mintScreenWidth - mintBoundary || RightHeld)
             {
-                NewCameraPosition += new Vector3(Time.deltaTime * fov,
+                uniNewCameraPositionVector3 += new Vector3(Time.deltaTime * FieldOfView,
                     0.0f, 0.0f);
             }
 
-            if (Input.mousePosition.x < 0 + Boundary || leftHeld)
+            if (Input.mousePosition.x < 0 + mintBoundary || LeftHeld)
             {
-                NewCameraPosition += new Vector3(-(Time.deltaTime * fov),
+                uniNewCameraPositionVector3 += new Vector3(-(Time.deltaTime * FieldOfView),
                     0.0f, 0.0f);
             }
 
-            if (Input.mousePosition.y > theScreenHeight - Boundary || upHeld)
+            if (Input.mousePosition.y > mintScreenHeight - mintBoundary || UpHeld)
             {
-                NewCameraPosition += new Vector3(0.0f,
-                    0.0f, Time.deltaTime * fov);
+                uniNewCameraPositionVector3 += new Vector3(0.0f,
+                    0.0f, Time.deltaTime * FieldOfView);
             }
 
-            if (Input.mousePosition.y < 0 + Boundary || downHeld)
+            if (Input.mousePosition.y < 0 + mintBoundary || DownHeld)
             {
-                NewCameraPosition += new Vector3(0.0f,
-                    0.0f, -(Time.deltaTime * fov));
+                uniNewCameraPositionVector3 += new Vector3(0.0f,
+                    0.0f, -(Time.deltaTime * FieldOfView));
             }
 
             // Camera movement occurred, validate movement
-            if(NewCameraPosition != transform.position)
+            if (uniNewCameraPositionVector3 != transform.position)
             {
                 // Check if movement will put camera out of bounding area
-                if(Vector3.Distance(NewCameraPosition, Vector3.zero - new Vector3(0, 0, 30f)) < (gameManagerScript.MapRadius / 2) / gameManagerScript.MapTierCount * (gameManagerScript.CurrentTier+1))
+                if (Vector3.Distance(uniNewCameraPositionVector3, Vector3.zero - new Vector3(0, 0, 30f)) < (mmusGameManagerScript.MapRadius / 2) / mmusGameManagerScript.MapTierCount * (mmusGameManagerScript.CurrentTier + 1))
                 {
-                    transform.position = NewCameraPosition;
+                    transform.position = uniNewCameraPositionVector3;
                 }
-                else if(Vector3.Distance(NewCameraPosition, Vector3.zero - new Vector3(0, 0, 30f)) < Vector3.Distance(transform.position, Vector3.zero - new Vector3(0, 0, 30f)))
+                else if (Vector3.Distance(uniNewCameraPositionVector3, Vector3.zero - new Vector3(0, 0, 30f)) < Vector3.Distance(transform.position, Vector3.zero - new Vector3(0, 0, 30f)))
                 {
                     // Camera is out of bounding area, check if player is trying to move back into bounding area
                     // Prevents camera from being locked if it leaves bounding area
-                    transform.position = NewCameraPosition;
+                    transform.position = uniNewCameraPositionVector3;
                 }
             }
 
-            fov -= Input.GetAxis("Mouse ScrollWheel") * sensitivity;
-            fov = Mathf.Clamp(fov, minFov, maxFov);
-            Camera.main.fieldOfView = fov;
+            FieldOfView -= Input.GetAxis("Mouse ScrollWheel") * Sensitivity;
+            FieldOfView = Mathf.Clamp(FieldOfView, mfMinFov, mfMaxFov);
+            Camera.main.fieldOfView = FieldOfView;
         }
 
-	}
+    }
+
+    /// <summary>
+    /// Make camera look at object
+    /// </summary>
+    /// <param name="puniGameObject"></param>
+    private void LookAtObject(GameObject puniGameObject)
+    {
+        if(Vector3.Distance(puniGameObject.transform.position, Vector3.zero - new Vector3(0, 0, 30f)) 
+            < (mmusGameManagerScript.MapRadius / 2) / mmusGameManagerScript.MapTierCount * (mmusGameManagerScript.CurrentTier + 1))
+        {
+            transform.position = new Vector3(puniGameObject.transform.position.x, 50, puniGameObject.transform.position.z - 30f);
+        }
+    }
+
+    public void CentreOnGod()
+    {
+        LookAtObject(mmusGameManagerScript.PlayerGod.PlayerGod);
+    }
+
+    public void CentreOnVillage()
+    {
+        LookAtObject(mmusGameManagerScript.PlayerVillage.MapGameObject);
+    }
 
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Class holding information about a tier reward for the player
+/// Base class holding information about a tier reward for the player
 /// Tier rewards can be unlocked to give the player different rewards
 /// Tier rewards will be linked to the reward tree for each god. Rewards must have unique names for lookup/identification.
 /// </summary>
@@ -30,12 +30,6 @@ public class TierReward
     public List<TierReward> ChildRewards;
     public bool Unlocked = false;
     public GameObject ButtonObject;
-
-    
-
-    public RESOURCETYPE ResourceType;
-    
-    //public Buff TierBuff
 
     /// <summary>
     /// Default Tier Reward constructor, called on creation of any tier reward type
@@ -74,6 +68,8 @@ public class TierReward
 
     /// <summary>
     /// Parse the entire tier reward tree to find a matching reward by reward name
+    /// Used to show which abilites are unlocked on return from save state
+    /// Recursive tree search
     /// </summary>
     /// <param name="pstrRewardName"></param>
     /// <param name="parrTierRewards"></param>
@@ -102,6 +98,8 @@ public class TierReward
 
     /// <summary>
     /// Create an initial tier reward tree based on the given god type.
+    /// Allows for the same tier reward tree on each play through for balancing.
+    /// Can be moved to/loaded from file for more modularity in future.
     /// </summary>
     /// <param name="penumGodType"></param>
     /// <returns></returns>
@@ -296,5 +294,11 @@ public class TierReward
         musNextPlayerTierReward = new ResourceMultiplierTierReward("MOARWorshippers", "2x worshipper growth", TierReward.RESOURCETYPE.Worshipper, 2.0f, musBasePlayerTierReward);
         musBasePlayerTierReward.ChildRewards.Add(musNextPlayerTierReward);
         return arrPlayerRewardTree;
+    }
+
+    public virtual string GetRewardDescription()
+    {
+        string strDescription = "Default reward. You shouldn't see this...";
+        return strDescription;
     }
 }

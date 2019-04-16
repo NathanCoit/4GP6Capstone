@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Single target ability class containing properties for single target abilites
+/// Single target ability class containing properties for single target abilities
 /// Single target abilities may only damage one target a time
-/// Inheritrs from Ability superclass.
+/// Inherits  from Ability superclass.
 /// </summary>
 public class SingleTargetAbility : Ability
 {
@@ -15,11 +15,13 @@ public class SingleTargetAbility : Ability
     public SingleTargetAbility(string pstrAbilityName) :
         base(pstrAbilityName)
     {
-        
+
     }
 
     /// <summary>
-    /// Load the single target ability and its properties
+    /// Load a single target ability. Set the properties of the ability.
+    /// Called from Single Target Ability constructor.
+    /// See Ability.LoadAbility
     /// </summary>
     /// <param name="pstrAbilityName"></param>
     /// <returns></returns>

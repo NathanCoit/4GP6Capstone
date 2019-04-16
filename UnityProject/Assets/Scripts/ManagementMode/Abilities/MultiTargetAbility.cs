@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Multi target ability class containing properties for multi target abilites
+/// Multi target ability class containing properties for multi target abilities
 /// Multi target abilities may target multiple units
-/// Inheritrs from Ability superclass.
+/// Inherits  from Ability superclass.
 /// </summary>
 public class MultiTargetAbility : Ability
 {
@@ -20,7 +20,9 @@ public class MultiTargetAbility : Ability
     }
 
     /// <summary>
-    /// Override method for loading multi target abilties from ability name.
+    /// Load a multi target ability. Set the properties of the ability.
+    /// Called from Multi Target Ability constructor.
+    /// See Ability.LoadAbility
     /// </summary>
     /// <param name="pstrAbilityName">Name of ability to load.</param>
     /// <returns></returns>
@@ -28,7 +30,7 @@ public class MultiTargetAbility : Ability
     {
         bool blnAbilityFound = true;
         AbiltyType = ABILITYTYPE.MultiTarget;
-        switch(pstrAbilityName.ToLower().Replace(" ", string.Empty))
+        switch (pstrAbilityName.ToLower().Replace(" ", string.Empty))
         {
             case "mushroomlaser":
                 AbilityDescription = "Shoot a godly mushroom laser to erase your foes.";

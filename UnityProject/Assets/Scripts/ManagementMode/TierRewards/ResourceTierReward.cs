@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-
+/// <summary>
+/// Contains properties for a resource amount to be unlocked. Inherits from TierAbility
+/// </summary>
 class ResourceTierReward : TierReward
 {
     public int Amount = 0;
+    public RESOURCETYPE ResourceType;
 
     /// <summary>
     /// Constructor for creating a resource amount reward
@@ -26,5 +29,17 @@ class ResourceTierReward : TierReward
         Amount = pintAmount;
         PreviousRequiredReward = pmusPreviousRequiredTierReward;
         ChildRewards = new List<TierReward>();
+    }
+
+    public override string GetRewardDescription()
+    {
+        string strDescription = 
+string.Format(
+@"{0}
+Material Type: {1}
+Amount: {2}", RewardDescription, RewardType, Amount);
+
+
+        return strDescription;
     }
 }

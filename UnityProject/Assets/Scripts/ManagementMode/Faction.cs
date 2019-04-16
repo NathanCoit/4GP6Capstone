@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 
 /// <summary>
-/// The faction class holds information about each "Faction" currently in the game (i.e. the player, and enemies) 
+/// The faction class holds information about a faction.
+/// Factions are representations of a player or enemy character including
+/// their territories, owned buildings and stats.
 /// </summary>
 public class Faction
 {
@@ -56,6 +58,12 @@ public class Faction
     public int FactionDifficulty = 0;
     public int GodTier = 0;
 
+    /// <summary>
+    /// Contructor for creating a new god
+    /// </summary>
+    /// <param name="pstrGodName"></param>
+    /// <param name="penumGodType"></param>
+    /// <param name="pintTier"></param>
     public Faction(string pstrGodName, GodType penumGodType, int pintTier)
     {
         GodName = pstrGodName;
@@ -65,6 +73,10 @@ public class Faction
         GodTier = pintTier;
     }
 
+    /// <summary>
+    /// Constructor for loading an already created god from a save state
+    /// </summary>
+    /// <param name="savedFaction"></param>
     public Faction(GameInfo.SavedFaction savedFaction)
     {
         GodName = savedFaction.GodName;
@@ -74,43 +86,51 @@ public class Faction
         Morale = savedFaction.Morale > 0.2f ? savedFaction.Morale : 0.2f;
         WorshipperCount = savedFaction.WorshipperCount;
         FactionArea = new List<float[]>();
-        foreach (GameInfo.SavedArea area in savedFaction.FactionArea)
+        foreach (GameInfo.SavedArea musSavedArea in savedFaction.FactionArea)
         {
             FactionArea.Add(
                 new float[]
                 {
-                    area.StartingRad,
-                    area.EndingRad,
-                    area.StartingAngle,
-                    area.EndingAngle
+                    musSavedArea.StartingRad,
+                    musSavedArea.EndingRad,
+                    musSavedArea.StartingAngle,
+                    musSavedArea.EndingAngle
                 });
         }
         CurrentAbilites = new List<Ability>();
         CurrentUpgrades = new List<WorshipperUpgrade>();
-        foreach (string AbilityName in savedFaction.Abilities)
+        foreach (string strAbilityName in savedFaction.Abilities)
         {
-            CurrentAbilites.Add(Ability.LoadAbilityFromName(AbilityName));
+            CurrentAbilites.Add(Ability.LoadAbilityFromName(strAbilityName));
         }
     }
 
+    /// <summary>
+    /// Helper method to hid all buildings owned by this faction.
+    /// Used to hide higher tier gods.
+    /// </summary>
+    /// <param name="pblnHide"></param>
     public void SetHidden(bool pblnHide = true)
     {
-        if(pblnHide)
+        if (pblnHide)
         {
-            foreach(Building buildingToHide in OwnedBuildings)
+            foreach (Building musBuildingToHide in OwnedBuildings)
             {
-                buildingToHide.MapGameObject.SetActive(false);
+                musBuildingToHide.MapGameObject.SetActive(false);
             }
         }
         else
         {
-            foreach(Building buildingToShow in OwnedBuildings)
+            foreach (Building musBuildingToShow in OwnedBuildings)
             {
-                buildingToShow.MapGameObject.SetActive(true);
+                musBuildingToShow.MapGameObject.SetActive(true);
             }
         }
     }
 
+    /// <summary>
+    /// List of god names randomly selected from on new game.
+    /// </summary>
     public static List<string> GodNames = new List<string>
     {
         "Jim",
@@ -163,71 +183,77 @@ public class Faction
         "Martavias"
     };
 
+    /// <summary>
+    /// Helper method to get the predefined abilities based on the given god type
+    /// Used to load the abilities of a god on new game.
+    /// </summary>
+    /// <param name="penumGodType"></param>
+    /// <returns></returns>
     public static List<Ability> GetGodAbilities(GodType penumGodType)
     {
-        List<Ability> GodAbilities = new List<Ability>();
-        switch(penumGodType)
+        List<Ability> arrGodAbilities = new List<Ability>();
+        switch (penumGodType)
         {
             case GodType.Ducks:
-                GodAbilities.Add(Ability.LoadAbilityFromName("Quack"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Quack!!"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Quack?"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Quack¿"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Quack"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Quack!!"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Quack?"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Quack¿"));
                 break;
             case GodType.Lightning:
-                GodAbilities.Add(Ability.LoadAbilityFromName("Smite"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Electric Field"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Stun"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Smite"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Electric Field"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Stun"));
                 break;
             case GodType.Fire:
-                GodAbilities.Add(Ability.LoadAbilityFromName("FireBall"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Lava River"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Ignite Weapons"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Burn"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("FireBall"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Lava River"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Ignite Weapons"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Burn"));
                 break;
             case GodType.Forks:
-                GodAbilities.Add(Ability.LoadAbilityFromName("Throw Fork"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Fork Sweep"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Eat Spaghett"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Fork Flash"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Throw Fork"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Fork Sweep"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Eat Spaghett"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Fork Flash"));
                 break;
             case GodType.Robots:
-                GodAbilities.Add(Ability.LoadAbilityFromName("Electrocute"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Eye Laser"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Analyze"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Better Programming"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Electrocute"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Eye Laser"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Analyze"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Better Programming"));
                 break;
             case GodType.Smiths:
-                GodAbilities.Add(Ability.LoadAbilityFromName("Hammer Slap"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Drop Anvil"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Sharpen Arms"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Armor Break"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Hammer Slap"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Drop Anvil"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Sharpen Arms"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Armor Break"));
                 break;
             case GodType.Love:
-                GodAbilities.Add(Ability.LoadAbilityFromName("Blow A Kiss"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Giant Heart Slap"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Slap Ass"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Charm"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Blow A Kiss"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Giant Heart Slap"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Slap Ass"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Charm"));
                 break;
             case GodType.Mushrooms:
-                GodAbilities.Add(Ability.LoadAbilityFromName("Throw Mushroom"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Eat Mushroom"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Spread Spores"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Mushroom Laser"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Throw Mushroom"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Eat Mushroom"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Spread Spores"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Mushroom Laser"));
                 break;
             case GodType.Shoes:
-                GodAbilities.Add(Ability.LoadAbilityFromName("Kick"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Yeezys"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Leg Sweep"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Broken Ankles"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Kick"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Yeezys"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Leg Sweep"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Broken Ankles"));
                 break;
             case GodType.Water:
-                GodAbilities.Add(Ability.LoadAbilityFromName("Drown"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Tsunami"));
-                GodAbilities.Add(Ability.LoadAbilityFromName("Stay Hydrated"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Drown"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Tsunami"));
+                arrGodAbilities.Add(Ability.LoadAbilityFromName("Stay Hydrated"));
                 break;
         }
-        return GodAbilities;
+        return arrGodAbilities;
     }
 }
 

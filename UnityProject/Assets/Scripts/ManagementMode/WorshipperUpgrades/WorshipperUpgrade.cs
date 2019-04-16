@@ -5,7 +5,7 @@ using System.Text;
 
 
 /// <summary>
-/// Base class to define comman attributes and methods shared among all worshipper upgrades
+/// Base class to define common attributes and methods shared among all worshipper upgrades
 /// All worshipper rewards will inherit from this
 /// </summary>
 public class WorshipperUpgrade

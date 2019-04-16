@@ -1224,6 +1224,7 @@ public class GameManager : MonoBehaviour
     {
         CurrentMenuState = MENUSTATE.Tier_Reward_State;
         SetRewardsUIActive();
+        RewardUI.GetComponentInChildren<PopulateTierIcons>().DrawAllUILines(marrPlayerRewardTree);
     }
 
     /// <summary>

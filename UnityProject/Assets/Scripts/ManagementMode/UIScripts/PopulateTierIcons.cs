@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,10 +10,49 @@ using UnityEngine.UI;
 /// </summary>
 public class PopulateTierIcons : MonoBehaviour
 {
-    private float mfXScale = 0;
-    private float mfYScale = 0;
+    [System.Serializable]
+    public struct NamedSprite
+    {
+        public string Name;
+        public Sprite sprite;
+    }
+    public Color UnlockedColor;
+    public Color AvailableColor;
+    public Color UnavailableColor;
+
+    public List<NamedSprite> ButtonSprites;
+
+    private Dictionary<string, Sprite> mdictButtonSprites;
     private int mintMaxRewardDepth = 0;
-    public Dictionary<string,GameObject> arrTierRewardButtons;
+    public Dictionary<string, GameObject> arrTierRewardButtons;
+    public TooltipDisplayController RewardTooltipController;
+    public GameObject HorizontalContainerPrefab;
+    public GameObject VerticalContainerPrefab;
+    public GameObject RewardButtonPrefab;
+    public GameObject LinePrefab;
+    private List<GameObject> marrLines;
+    private bool mblnDrawLines;
+    private List<TierReward> marrTierRewards;
+
+    private void Awake()
+    {
+        mdictButtonSprites = new Dictionary<string, Sprite>();
+        foreach (NamedSprite musSprite in ButtonSprites)
+        {
+            mdictButtonSprites.Add(musSprite.Name, musSprite.sprite);
+        }
+    }
+
+    private void Update()
+    {
+        // Forced to put this 1 frame after awakes/starts are called
+        // as buttons have not had their positions calculated until reward panel is first
+        // activated.
+        if(mblnDrawLines)
+        {
+            DrawAllUILines();
+        }
+    }
 
     /// <summary>
     /// Called from game manager at the start of a game.
@@ -22,21 +62,9 @@ public class PopulateTierIcons : MonoBehaviour
     public void InitializeButtons(List<TierReward> parrTierRewards)
     {
         arrTierRewardButtons = new Dictionary<string, GameObject>();
-        Object uniTierRewardButtonPrefab = Resources.Load("Button");
         mintMaxRewardDepth = GetTreeMaxDepth(parrTierRewards);
-        float fStartingx = 0 - (Screen.width / 2);
-        float fStartingy = 0 - (Screen.height / 2);
-        float fEndingx = Screen.width / 2;
-        float fEndingy = Screen.height / 2;
-        fEndingy = fStartingy + (fEndingy - fStartingy) / mintMaxRewardDepth;
-        // Change scale based on screen size, should be able to fit all rewards without overlap
-        mfXScale = ((parrTierRewards.Count + mintMaxRewardDepth) / 3f);
-        mfYScale = (mintMaxRewardDepth / 3f);
         // Place buttons
-        PlaceButtons(uniTierRewardButtonPrefab, parrTierRewards, fStartingx, fEndingx, fStartingy, fEndingy);
-
-        // Scale UI
-        GetComponent<RectTransform>().localScale = new Vector3(mfXScale, mfYScale, 1);
+        PlaceButtons(parrTierRewards, gameObject);
     }
 
     /// <summary>
@@ -49,43 +77,107 @@ public class PopulateTierIcons : MonoBehaviour
     /// <param name="pfEndingx"></param>
     /// <param name="pfStartingy"></param>
     /// <param name="pfEndingy"></param>
-    private void PlaceButtons(UnityEngine.Object puniRewardButtonPrefab, List<TierReward> parrTierRewards, float pfStartingx, float pfEndingx, float pfStartingy, float pfEndingy)
+    private void PlaceButtons(List<TierReward> parrTierRewards, GameObject puniParentObject)
     {
         // Place button between bounds
-        GameObject uniButtonGameObject;
-        RectTransform uniButtonRectTransform;
-        float fScreenSegment;
-        float fCurrentx;
-        if (parrTierRewards != null && parrTierRewards.Count > 0)
-        {
-            fScreenSegment = (pfEndingx - pfStartingx) / parrTierRewards.Count;
-            fCurrentx = pfStartingx;
-            foreach (TierReward Reward in parrTierRewards)
-            {
-                uniButtonGameObject = (GameObject)Instantiate(puniRewardButtonPrefab);
-                uniButtonGameObject.transform.SetParent(this.transform);
-                uniButtonGameObject.GetComponentInChildren<Text>().text = Reward.RewardName;
-                uniButtonRectTransform = uniButtonGameObject.GetComponent<RectTransform>();
-                uniButtonRectTransform.anchoredPosition = new Vector3(fCurrentx + (fScreenSegment / 2), pfStartingy + (pfEndingy - pfStartingy) / 2, 0);
-                uniButtonRectTransform.localScale = new Vector3(1 / mfXScale, 1 / mfYScale, 1);
-                uniButtonGameObject.GetComponent<Button>().onClick.AddListener(() => RewardClicked(Reward));
-                gameObject.transform.parent.gameObject.GetComponent<TooltipDisplayController>().AttachTooltipToObject(uniButtonGameObject, Reward.RewardDescription);
-                Reward.ButtonObject = uniButtonGameObject;
-                arrTierRewardButtons.Add(Reward.RewardName,uniButtonGameObject);
-                if((Reward.PreviousRequiredReward!= null && !Reward.PreviousRequiredReward.Unlocked) || Reward.Unlocked)
-                {
-                    uniButtonGameObject.GetComponent<Image>().color = Color.grey;
-                }
-                if(fScreenSegment < 2 * uniButtonRectTransform.rect.width)
-                {
-                    uniButtonRectTransform.localScale.Scale(new Vector3(0.1f, 0.1f, 1));
-                }
-                // Place child buttons
-                PlaceButtons(puniRewardButtonPrefab, Reward.ChildRewards, fCurrentx, fCurrentx + fScreenSegment, pfEndingy, pfEndingy + (pfEndingy - pfStartingy));
+        GameObject uniRewardPrefab;
+        GameObject uniHorizontalContainer;
+        GameObject uniVerticalContainer;
+        Button uniBtn;
+        GameObject uniButtonObject;
+        // Add horizontal layout group to parent
+        uniHorizontalContainer = Instantiate(HorizontalContainerPrefab);
+        uniHorizontalContainer.transform.SetParent(puniParentObject.transform, false);
+        uniHorizontalContainer.GetComponent<RectTransform>().SetAsFirstSibling();
 
-                fCurrentx += fScreenSegment;
+        foreach (TierReward musReward in parrTierRewards)
+        {
+            // Add a vertical layout group to the horizontal
+            uniVerticalContainer = Instantiate(VerticalContainerPrefab);
+            uniVerticalContainer.transform.SetParent(uniHorizontalContainer.transform, false);
+            uniVerticalContainer.GetComponent<RectTransform>().SetAsFirstSibling();
+
+            // Place button in vertical layout group
+            uniRewardPrefab = Instantiate(RewardButtonPrefab);
+            uniRewardPrefab.transform.SetParent(uniVerticalContainer.transform, false);
+
+            // Set button properties
+            uniBtn = uniRewardPrefab.GetComponentInChildren<Button>();
+            uniBtn.onClick.AddListener(() => RewardClicked(musReward));
+            uniButtonObject = uniRewardPrefab.transform.GetChild(0).gameObject;
+            uniButtonObject.transform.GetChild(0).GetComponentInChildren<Image>().sprite = GetSpriteForReward(musReward);
+            RewardTooltipController.AttachTooltipToObject(uniButtonObject, musReward.GetRewardDescription());
+            musReward.ButtonObject = uniButtonObject;
+            arrTierRewardButtons.Add(musReward.RewardName, uniButtonObject);
+
+            // Disable rewards that can't be unlocked yet or have already been unlocked
+            if ((musReward.PreviousRequiredReward != null && !musReward.PreviousRequiredReward.Unlocked))
+            {
+                uniButtonObject.GetComponent<Image>().color = UnavailableColor;
             }
+            else if (musReward.Unlocked)
+            {
+                uniButtonObject.GetComponent<Image>().color = UnlockedColor;
+            }
+            else
+            {
+                uniButtonObject.GetComponent<Image>().color = AvailableColor;
+            }
+            // Place child buttons with vertical as parent
+            PlaceButtons(musReward.ChildRewards, uniVerticalContainer);
         }
+    }
+
+    private Sprite GetSpriteForReward(TierReward pmusReward)
+    {
+        Sprite uniButtonSprite = null;
+        switch (pmusReward.RewardType)
+        {
+            case TierReward.REWARDTYPE.Ability:
+                switch (((AbilityTierReward)pmusReward).TierAbility.AbiltyType)
+                {
+                    case Ability.ABILITYTYPE.Buff:
+                        uniButtonSprite = mdictButtonSprites["Buff"];
+                        break;
+                    case Ability.ABILITYTYPE.Debuff:
+                        uniButtonSprite = mdictButtonSprites["Debuff"];
+                        break;
+                    case Ability.ABILITYTYPE.MultiTarget:
+                        uniButtonSprite = mdictButtonSprites["Multi"];
+                        break;
+                    case Ability.ABILITYTYPE.SingleTarget:
+                        uniButtonSprite = mdictButtonSprites["Single"];
+                        break;
+                }
+                break;
+            case TierReward.REWARDTYPE.Resource:
+                switch (((ResourceTierReward)pmusReward).ResourceType)
+                {
+                    case TierReward.RESOURCETYPE.Material:
+                        uniButtonSprite = mdictButtonSprites["Mat"];
+                        break;
+                    case TierReward.RESOURCETYPE.Worshipper:
+                        uniButtonSprite = mdictButtonSprites["Wor"];
+                        break;
+                }
+                break;
+            case TierReward.REWARDTYPE.ResourceMultiplier:
+                switch (((ResourceMultiplierTierReward)pmusReward).ResourceType)
+                {
+                    case TierReward.RESOURCETYPE.Material:
+                        uniButtonSprite = mdictButtonSprites["Matx"];
+                        break;
+                    case TierReward.RESOURCETYPE.Worshipper:
+                        uniButtonSprite = mdictButtonSprites["Worx"];
+                        break;
+                }
+                break;
+        }
+        if (uniButtonSprite == null)
+        {
+            uniButtonSprite = mdictButtonSprites["Default"];
+        }
+        return uniButtonSprite;
     }
 
     /// <summary>
@@ -98,11 +190,11 @@ public class PopulateTierIcons : MonoBehaviour
     {
         int intMax = 0;
         int intChildDepth = 0;
-        if(parrTierRewards == null || parrTierRewards.Count == 0)
+        if (parrTierRewards == null || parrTierRewards.Count == 0)
         {
             return 0;
         }
-        foreach(TierReward Reward in parrTierRewards)
+        foreach (TierReward Reward in parrTierRewards)
         {
             intChildDepth = GetTreeMaxDepth(Reward.ChildRewards);
             intMax = intChildDepth > intMax ? intChildDepth : intMax;
@@ -119,11 +211,78 @@ public class PopulateTierIcons : MonoBehaviour
         if (GameObject.Find("GameManager").GetComponent<GameManager>().UnlockReward(pmusTierReward))
         {
             // Grey out self, light up child buttons
-            pmusTierReward.ButtonObject.GetComponent<Image>().color = Color.grey;
-            foreach(TierReward childReward in pmusTierReward.ChildRewards)
+            pmusTierReward.ButtonObject.GetComponent<Image>().color = UnlockedColor;
+            foreach (TierReward childReward in pmusTierReward.ChildRewards)
             {
-                childReward.ButtonObject.GetComponent<Image>().color = Color.white;
+                childReward.ButtonObject.GetComponent<Image>().color = AvailableColor;
             }
         }
+    }
+    public void DrawAllUILines(List<TierReward> parrTierRewards)
+    {
+        mblnDrawLines = true;
+        marrTierRewards = parrTierRewards;
+    }
+    private void DrawAllUILines()
+    {
+        if (marrLines != null)
+        {
+            DestroyAllLines(marrLines);
+        }
+        marrLines = new List<GameObject>();
+        DrawLinesRecursive(marrTierRewards);
+        mblnDrawLines = false;
+    }
+
+    private void DestroyAllLines(List<GameObject> parrLines)
+    {
+        foreach(GameObject uniLine in parrLines)
+        {
+            Destroy(uniLine);
+        }
+    }
+
+    private void DrawLinesRecursive(List<TierReward> parrTierRewards)
+    {
+        foreach (TierReward musReward in parrTierRewards)
+        {
+            if (musReward.PreviousRequiredReward != null)
+            {
+                Vector3 a = musReward.ButtonObject.transform.parent.localPosition;
+                DrawUILine(musReward.ButtonObject, musReward.PreviousRequiredReward.ButtonObject);
+            }
+            if (musReward.ChildRewards != null && musReward.ChildRewards.Count > 0)
+            {
+                DrawLinesRecursive(musReward.ChildRewards);
+            }
+        }
+    }
+
+    private void DrawUILine(GameObject puniObjectA, GameObject puniObjectB)
+    {
+        RectTransform uniRectA = puniObjectA.GetComponent<RectTransform>();
+        RectTransform uniRectB = puniObjectB.GetComponent<RectTransform>();
+        // Get centre point
+
+        Vector3 pointA = uniRectA.position;
+        Vector3 pointB = uniRectB.position;
+
+        RectTransform lineRect = Instantiate(LinePrefab).GetComponent<RectTransform>();
+        lineRect.SetParent(transform, false);
+        lineRect.SetAsFirstSibling();
+        //PointA and PointB determined before this
+        Vector3 midpoint = (pointA + pointB) / 2; //used to position line
+        float pointDistance = Vector3.Distance(pointA, pointB); //used for height of line
+
+        //really need to figure out what all this does one of these days. Not even my first game using it...
+        float angle = Mathf.Atan2(pointB.x - pointA.x, pointA.y - pointB.y);
+        if (angle < 0.0) { angle += Mathf.PI * 2; }
+        angle *= Mathf.Rad2Deg;
+
+        float lineWidth = 5;
+        lineRect.sizeDelta = new Vector2(lineWidth, pointDistance);
+        lineRect.rotation = Quaternion.Euler(0, 0, angle); //rotate around the mid point
+        lineRect.transform.position = midpoint;
+        marrLines.Add(lineRect.gameObject);
     }
 }

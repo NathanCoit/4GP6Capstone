@@ -134,4 +134,27 @@ public class Cam : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Make camera look at object
+    /// </summary>
+    /// <param name="puniGameObject"></param>
+    private void LookAtObject(GameObject puniGameObject)
+    {
+        if(Vector3.Distance(puniGameObject.transform.position, Vector3.zero - new Vector3(0, 0, 30f)) 
+            < (mmusGameManagerScript.MapRadius / 2) / mmusGameManagerScript.MapTierCount * (mmusGameManagerScript.CurrentTier + 1))
+        {
+            transform.position = new Vector3(puniGameObject.transform.position.x, 50, puniGameObject.transform.position.z - 30f);
+        }
+    }
+
+    public void CentreOnGod()
+    {
+        LookAtObject(mmusGameManagerScript.PlayerGod.PlayerGod);
+    }
+
+    public void CentreOnVillage()
+    {
+        LookAtObject(mmusGameManagerScript.PlayerVillage.MapGameObject);
+    }
+
 }

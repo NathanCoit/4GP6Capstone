@@ -295,4 +295,10 @@ public class TierReward
         musBasePlayerTierReward.ChildRewards.Add(musNextPlayerTierReward);
         return arrPlayerRewardTree;
     }
+
+    public virtual string GetRewardDescription()
+    {
+        string strDescription = "Default reward. You shouldn't see this...";
+        return strDescription;
+    }
 }

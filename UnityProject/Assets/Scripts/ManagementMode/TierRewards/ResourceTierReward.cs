@@ -30,4 +30,16 @@ class ResourceTierReward : TierReward
         PreviousRequiredReward = pmusPreviousRequiredTierReward;
         ChildRewards = new List<TierReward>();
     }
+
+    public override string GetRewardDescription()
+    {
+        string strDescription = 
+string.Format(
+@"{0}
+Material Type: {1}
+Amount: {2}", RewardDescription, RewardType, Amount);
+
+
+        return strDescription;
+    }
 }

@@ -24,7 +24,9 @@ public class HotKeyManager
         { "BuildingMoveKeyCode", KeyCode.M },
         { "BlackSmithUIKeyCode", KeyCode.X },
         { "BuyMinersKeyCode", KeyCode.K },
-        { "StartBattleKeyCode", KeyCode.C }
+        { "StartBattleKeyCode", KeyCode.C },
+        { "CentreOnGodKeyCode", KeyCode.Space},
+        { "CentreOnVillageKeyCode", KeyCode.Z }
     };
 
     /// <summary>

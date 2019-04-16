@@ -15,12 +15,14 @@ public class InputManager : MonoBehaviour
     private GameManager mmusGameManagerScript;
     private HotKeyManager mmusHotKeyManager = new HotKeyManager();
     private KeyCode muniCurrentKeyDown = KeyCode.None;
+    private Cam mmusGameCamera;
 
     // Use this for initialization
     void Start()
     {
         mmusGameManagerScript = GameManagerObject.GetComponent<GameManager>();
         mmusHotKeyManager.LoadHotkeyProfile();
+        mmusGameCamera = Camera.main.GetComponent<Cam>();
     }
 
     // Update is called once per frame
@@ -143,6 +145,14 @@ public class InputManager : MonoBehaviour
         {
             muniCurrentKeyDown = mmusHotKeyManager.HotKeys["EscapeKeyCode"];
             mmusGameManagerScript.PauseGame();
+        }
+        else if (Input.GetKeyDown(mmusHotKeyManager.HotKeys["CentreOnGodKeyCode"]))
+        {
+            mmusGameCamera.CentreOnGod();
+        }
+        else if (Input.GetKeyDown(mmusHotKeyManager.HotKeys["CentreOnVillageKeyCode"]))
+        {
+            mmusGameCamera.CentreOnVillage();
         }
 #if DEBUG
         // Debug precompile directive to give option to unlock next tier.
@@ -285,6 +295,7 @@ public class InputManager : MonoBehaviour
         {
             mmusGameManagerScript.GoToDefaultMenuState();
             mmusGameManagerScript.SetRewardsUIActive(false);
+            mmusGameManagerScript.RewardUI.GetComponentInChildren<PopulateTierIcons>().RewardTooltipController.TooltipTextGameObject.SetActive(false);
             muniCurrentKeyDown = mmusHotKeyManager.HotKeys["EscapeKeyCode"];
         }
     }

@@ -421,6 +421,7 @@ public class GameManager : MonoBehaviour
         {
             PlayerMoraleCap = PlayerMoraleCap - 0.2f > 0.2f ? PlayerMoraleCap - 0.2f : 0.2f;
             CurrentFactions.Add(musEnemyFaction);
+            EnemyFactions.Add(musEnemyFaction);
         }
         else
         {
@@ -514,7 +515,10 @@ public class GameManager : MonoBehaviour
     private IEnumerator LoadCombatSceneAsync()
     {
         AsyncOperation uniAsyncLoad = SceneManager.LoadSceneAsync("CombatMode");
-
+        if (LoadingScreenManager.Instance != null && !LoadingScreenManager.Instance.ScreenActive)
+        {
+            LoadingScreenManager.Instance.FadeIn();
+        }
         // Wait until the asynchronous scene fully loads
         while (!uniAsyncLoad.isDone)
         {
@@ -596,6 +600,10 @@ public class GameManager : MonoBehaviour
         }
         HotKeyManager.LoadHotkeyProfile();
         InvokeRepeating("CalculateResources", 0.5f, 2.0f);
+        if (LoadingScreenManager.Instance != null && LoadingScreenManager.Instance.ScreenActive)
+        {
+            LoadingScreenManager.Instance.FadeOut();
+        }
     }
 
     /// <summary>
@@ -809,7 +817,7 @@ public class GameManager : MonoBehaviour
                     foreach (Building musAltarBuilding in arrAltarBuildings)
                     {
                         // Calculate worshipper growth
-                        intWorshippersToAdd += (1 * musAltarBuilding.UpgradeLevel);
+                        intWorshippersToAdd += (2 * musAltarBuilding.UpgradeLevel);
                     }
 
                     // Get all the village buildings
@@ -907,7 +915,7 @@ public class GameManager : MonoBehaviour
                     arrHousingBuildings = arrOwnedBuildings.FindAll(HousingBuild => HousingBuild.BuildingType == Building.BUILDING_TYPE.HOUSING);
                     foreach (Building musHousingBuilding in arrHousingBuildings)
                     {
-                        intHousingTotal += (int)(Math.Pow(10, musHousingBuilding.UpgradeLevel + 1));
+                        intHousingTotal += (int)(Math.Pow(100, musHousingBuilding.UpgradeLevel + 1));
                     }
                     //Calculate morale losses/gains
                     // Each housing/village building can hold 100 * upgrade level worshippers
@@ -1283,7 +1291,7 @@ public class GameManager : MonoBehaviour
             CurrentMenuState = MENUSTATE.Moving_Building_State;
             // Save the building position in case player cancels move.
             OriginalBuildingPosition = BufferedBuilding.ObjectPosition;
-            GameMap.GetBuildings().Remove(BufferedBuilding);
+            GameMap.RemoveBuilding(BufferedBuilding);
             foreach (Building musBuildingOnMap in GameMap.GetBuildings())
             {
                 musBuildingOnMap.ToggleObjectOutlines(true);

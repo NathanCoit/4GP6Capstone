@@ -343,7 +343,7 @@ public class Targetable : MonoBehaviour {
                 MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().EndTurnButton();
 
                 //Unslecting
-                MapMan.Selected = null;
+                //MapMan.Selected = null;
 
                 //Clean up Tiles
                 MapMan.ClearSelection();

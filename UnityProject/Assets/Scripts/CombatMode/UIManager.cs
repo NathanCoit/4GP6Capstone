@@ -534,7 +534,9 @@ public class UIManager : MonoBehaviour
             MapMan.Selected.GetComponent<UnitObjectScript>().getUnit().EndTurnButton();
 
             //Unselect, as we can act anymore
-            MapMan.Selected = null;
+
+            //This broke everything. You'd think it makes sense, but no. It breaks everything. Concerning.
+            //MapMan.Selected = null;
 
             //eh hem, clean up the menus
             removeMenu();

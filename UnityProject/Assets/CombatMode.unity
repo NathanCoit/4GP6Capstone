@@ -5301,7 +5301,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.147
+  m_Volume: 1
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -5397,7 +5397,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.03
+  m_Volume: 0.75
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -5535,10 +5535,10 @@ MonoBehaviour:
   duckUnitDeathSounds:
   - {fileID: 8300000, guid: 8388cbfa786eaff4ba6ea740e9e7bc1a, type: 3}
   - {fileID: 8300000, guid: f528ff8f7d60ae14d959ca93f327f1a9, type: 3}
-  houndsUnitDeathSounds:
-  - {fileID: 8300000, guid: d7081ee53b5e2aa42bdd6e529dfab352, type: 3}
-  - {fileID: 8300000, guid: 4bcb9c1ee68da2a4ab60cb213dfc743f, type: 3}
-  jazzUnitDeathSounds:
+  robotsUnitDeathSounds:
+  - {fileID: 8300000, guid: cf0e8ea149da18642a20f028c56e73c2, type: 3}
+  - {fileID: 8300000, guid: 8c4938921b3d4c4459b84fac0018f893, type: 3}
+  smithsUnitDeathSounds:
   - {fileID: 8300000, guid: d7081ee53b5e2aa42bdd6e529dfab352, type: 3}
   - {fileID: 8300000, guid: 4bcb9c1ee68da2a4ab60cb213dfc743f, type: 3}
   loveUnitDeathSounds:
@@ -5550,7 +5550,7 @@ MonoBehaviour:
   waterUnitDeathSounds:
   - {fileID: 8300000, guid: d7081ee53b5e2aa42bdd6e529dfab352, type: 3}
   - {fileID: 8300000, guid: 4bcb9c1ee68da2a4ab60cb213dfc743f, type: 3}
-  earthUnitDeathSounds:
+  lightningUnitDeathSounds:
   - {fileID: 8300000, guid: d7081ee53b5e2aa42bdd6e529dfab352, type: 3}
   - {fileID: 8300000, guid: 4bcb9c1ee68da2a4ab60cb213dfc743f, type: 3}
   mushroomGodSelectionSounds:
@@ -5585,30 +5585,30 @@ MonoBehaviour:
   - {fileID: 8300000, guid: d62c7eaa1963e4742bf68df29e72f784, type: 3}
   - {fileID: 8300000, guid: 3c9874c1d12728a4395104f74650def6, type: 3}
   - {fileID: 8300000, guid: 01042df792a78474ab90dfb0ba419da1, type: 3}
-  houndsGodTurnStartSounds:
-  - {fileID: 8300000, guid: 5257db188f4669d43adb43e4986393d1, type: 3}
-  - {fileID: 8300000, guid: ff957c7f7b461894f96c730c02835303, type: 3}
-  - {fileID: 8300000, guid: 41089a1441b7caa4e8ba957099f09419, type: 3}
-  jazzGodTurnStartSounds:
-  - {fileID: 8300000, guid: 2647cc9e9c07af346aa24b97f1603592, type: 3}
-  - {fileID: 8300000, guid: e278485f65054d344ac6be8adc462db3, type: 3}
-  - {fileID: 8300000, guid: 2d592a4a87858a24d93f1b05c65cc221, type: 3}
+  robotsGodTurnStartSounds:
+  - {fileID: 8300000, guid: 54e98c8b2227aba48a774cb3213c1582, type: 3}
+  - {fileID: 8300000, guid: d0ad11b55ad238d458ba15390b170b7f, type: 3}
+  - {fileID: 8300000, guid: f3b75c66be4946946ac4adbe472246f4, type: 3}
+  smithsGodTurnStartSounds:
+  - {fileID: 8300000, guid: 19ae3aa22477c16418283416fa955ca6, type: 3}
+  - {fileID: 8300000, guid: d918fe022015063469e8f9193926d6ec, type: 3}
+  - {fileID: 8300000, guid: a893c74a36308944daf4a06fc82252dc, type: 3}
   loveGodTurnStartSounds:
-  - {fileID: 8300000, guid: 6e588a8611c471c41b725f7231ed8233, type: 3}
-  - {fileID: 8300000, guid: 2d18ca65097c02a44912be1e821f0b8d, type: 3}
-  - {fileID: 8300000, guid: 077106c27c8b7c94bbe1609621ec3e05, type: 3}
+  - {fileID: 8300000, guid: 615793629fd179d44b3de4891fdf59a7, type: 3}
+  - {fileID: 8300000, guid: b20d909c8a28a1b4daaf4c4c497769f9, type: 3}
+  - {fileID: 8300000, guid: b2d9d992ee48c1d4385b5cb98cdf67fe, type: 3}
   fireGodTurnStartSounds:
   - {fileID: 8300000, guid: eb6ffe0cd8923b54abd0821b7d3ac4e0, type: 3}
   - {fileID: 8300000, guid: 9f208f7603602af45a3c0e7b84b5dbac, type: 3}
   - {fileID: 8300000, guid: a185448d653a1ff49b1e4ba496f34499, type: 3}
   waterGodTurnStartSounds:
-  - {fileID: 8300000, guid: 10e1ee17572c320419083877c3b6677a, type: 3}
-  - {fileID: 8300000, guid: b84d7dfd05c6e5749b28f75502e9b686, type: 3}
+  - {fileID: 8300000, guid: 2659f502ec9a54d418467d45d9c8645d, type: 3}
+  - {fileID: 8300000, guid: 3b92efe951456724998b2a66577b4ccf, type: 3}
   - {fileID: 8300000, guid: e6397b022ef366646ac448f1459b1a84, type: 3}
-  earthGodTurnStartSounds:
-  - {fileID: 8300000, guid: 3cae149a16d15004cbf793a359400581, type: 3}
-  - {fileID: 8300000, guid: 99b80a4665249384b915e46b7ba80346, type: 3}
-  - {fileID: 8300000, guid: ba29529a46330144c912abadf2c051bf, type: 3}
+  lightningGodTurnStartSounds:
+  - {fileID: 8300000, guid: 598cacc8a399d454dadf03f71a6d8e9d, type: 3}
+  - {fileID: 8300000, guid: d8f9559deeac00f4794e4ec7446e9730, type: 3}
+  - {fileID: 8300000, guid: 89dd6ebbd07c3d242880c6649cd06e91, type: 3}
   mushroomGodEnterBattleSounds:
   - {fileID: 8300000, guid: b48026b57eea52a4a937f42aedbd74f9, type: 3}
   - {fileID: 8300000, guid: 7be24f7ab24a78248818c1e74117bdd7, type: 3}
@@ -5625,30 +5625,30 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 7d677cccde4a7de4ea1bb0acc3239985, type: 3}
   - {fileID: 8300000, guid: 7a917e7fc93352a458478d31d99ad72d, type: 3}
   - {fileID: 8300000, guid: 0194a57a73f994e4885bc15976e57b4f, type: 3}
-  houndsGodEnterBattleSounds:
-  - {fileID: 8300000, guid: 39adf0c373cabe44c811d57aac1b3ff2, type: 3}
-  - {fileID: 8300000, guid: 4544436ec99770e40af050eae6c335b1, type: 3}
-  - {fileID: 8300000, guid: 721de5bb1f57de3449b6f420d31c5e52, type: 3}
-  jazzGodEnterBattleSounds:
-  - {fileID: 8300000, guid: c280574fa87a5674893a042e0ad572a8, type: 3}
-  - {fileID: 8300000, guid: 78c436c6e7592fd47b664bd650ab05cf, type: 3}
-  - {fileID: 8300000, guid: e228d3f6770c10145a0d860372a60230, type: 3}
+  robotsGodEnterBattleSounds:
+  - {fileID: 8300000, guid: 298e2a577809ace4db1e187b99b38429, type: 3}
+  - {fileID: 8300000, guid: 8f61612cbe9da0c48acd910f39decf4a, type: 3}
+  - {fileID: 8300000, guid: 4f15a13dc0c58e64e9bc951260ef298e, type: 3}
+  smithsGodEnterBattleSounds:
+  - {fileID: 8300000, guid: 472328415c8ac794b96106c3dad5084a, type: 3}
+  - {fileID: 8300000, guid: 729719aee188f31478ed98bcb326ebb2, type: 3}
+  - {fileID: 8300000, guid: 48271f78cbdcc8b46a4bd5dd47dd4979, type: 3}
   loveGodEnterBattleSounds:
-  - {fileID: 8300000, guid: c155ba39023709b4496fbbd6630ab42c, type: 3}
-  - {fileID: 8300000, guid: 7a81074b212566c47b5c3c2c386782cf, type: 3}
-  - {fileID: 8300000, guid: 44a1c05437e81a64ca55adc9ac450586, type: 3}
+  - {fileID: 8300000, guid: 926e496772cb59f4ea71926feb13d194, type: 3}
+  - {fileID: 8300000, guid: 017da18ae675b0648a6832cc5fe49c7c, type: 3}
+  - {fileID: 8300000, guid: 8159a1c44f5cd6a499f83b80b3ca2cc7, type: 3}
   fireGodEnterBattleSounds:
   - {fileID: 8300000, guid: a0d959e0d18963f41a9813db5769db18, type: 3}
   - {fileID: 8300000, guid: bc212f0e5665369479689c42e2c2ffd7, type: 3}
   - {fileID: 8300000, guid: 4e2555bebdd42344184f08723cb8fa71, type: 3}
   waterGodEnterBattleSounds:
-  - {fileID: 8300000, guid: 8015814077120134aaad29aebc100eaf, type: 3}
-  - {fileID: 8300000, guid: b0e8592964e824d43ba47d9b88ff42ae, type: 3}
-  - {fileID: 8300000, guid: 902931e2036b9be44997da10d5432182, type: 3}
-  earthGodEnterBattleSounds:
-  - {fileID: 8300000, guid: 52cc42782ca0fb341924d71e57b66d0b, type: 3}
-  - {fileID: 8300000, guid: 1a38d56a47f46d441b3b1bed02636b27, type: 3}
-  - {fileID: 8300000, guid: d426ca2cf94e0c74e84044e3ba2eaa98, type: 3}
+  - {fileID: 8300000, guid: c3afb91e3df532f40b8df400126372ee, type: 3}
+  - {fileID: 8300000, guid: ab54d7fee4bba224c9a9a974336cfc5e, type: 3}
+  - {fileID: 8300000, guid: 5a0973aa6daaa614c9fcdfdad2466d2e, type: 3}
+  lightningGodEnterBattleSounds:
+  - {fileID: 8300000, guid: 8e45b02e022e8ff49aeb6794e63000ca, type: 3}
+  - {fileID: 8300000, guid: 008f65831cf3e5147bc7244027366585, type: 3}
+  - {fileID: 8300000, guid: 75ec3817a43af5048966336cb8be19d4, type: 3}
   mushroomGodBGMs:
   - {fileID: 8300000, guid: 654af1c286cb2d947815f31038656815, type: 3}
   - {fileID: 8300000, guid: 906fefe793c04114eacd3239b60c0445, type: 3}
@@ -5665,18 +5665,18 @@ MonoBehaviour:
   - {fileID: 8300000, guid: afd02e4e774b68940b41c9a3414eec25, type: 3}
   - {fileID: 8300000, guid: edf537266fb3ebe45b9bdf49000c1c78, type: 3}
   - {fileID: 8300000, guid: ed13002a87d25664e9014ab5b3a77069, type: 3}
-  houndGodBGMs:
-  - {fileID: 8300000, guid: 8e202d2c8f204de4e978adf0c60fe4b9, type: 3}
-  - {fileID: 8300000, guid: 13538a0b82608c8409bbc87502d18daa, type: 3}
-  - {fileID: 8300000, guid: 7e9fc127f5f9715438a0cb609869dd2c, type: 3}
-  jazzGodBGMs:
-  - {fileID: 8300000, guid: 0a804896245404e469fa4e503abadd97, type: 3}
-  - {fileID: 8300000, guid: 9ebd193fc279154499f2aa2f07c96f1c, type: 3}
-  - {fileID: 8300000, guid: ff5572f80e55fe34480b7d778f90439d, type: 3}
+  robotsGodBGMs:
+  - {fileID: 8300000, guid: 73bf88b7a9831334a8e406296d7bab41, type: 3}
+  - {fileID: 8300000, guid: 5cfa6cd5d6357b845827602bf8a3b31e, type: 3}
+  - {fileID: 8300000, guid: 5521be7e0d5b7704f8d0307a31b1b66c, type: 3}
+  smithsGodBGMs:
+  - {fileID: 8300000, guid: 3d4d6491494079e4c86d3070b6713953, type: 3}
+  - {fileID: 8300000, guid: 5824fe560dfb5d94db99efb7b15e3259, type: 3}
+  - {fileID: 8300000, guid: d69b6f21df4ba91469733870923124a3, type: 3}
   loveGodBGMs:
-  - {fileID: 8300000, guid: c8c08eaa3fb64d74181eb4b7a971a6c9, type: 3}
-  - {fileID: 8300000, guid: 52cd544cf06f1784a8e7d23df06fba45, type: 3}
-  - {fileID: 8300000, guid: a9fcabc4242ec8a4593a6b28ca7e1b87, type: 3}
+  - {fileID: 8300000, guid: f03046344cb983a4690c04d2152de0c4, type: 3}
+  - {fileID: 8300000, guid: 35e68bd2a87ee004c8a3f40c73c0db6a, type: 3}
+  - {fileID: 8300000, guid: df9bbb8b78c8f8341bfd5a0c5bf2af16, type: 3}
   fireGodBGMs:
   - {fileID: 8300000, guid: 4eda9ee50bddae0468f446a2679acf86, type: 3}
   - {fileID: 8300000, guid: 6f5f8f7a24adaa241b0cb4befb835c46, type: 3}
@@ -5685,7 +5685,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 78af172d2e48fb14cab0df55bfdc76b6, type: 3}
   - {fileID: 8300000, guid: 87c8e70d21485c946abeebe4e3d1f54d, type: 3}
   - {fileID: 8300000, guid: 95d54b749ec5d064ba593ad5504bcb27, type: 3}
-  earthGodBGMs:
+  lightningGodBGMs:
   - {fileID: 8300000, guid: 928563e91f98ab642861f7d12e3a8594, type: 3}
   - {fileID: 8300000, guid: b6f26adf2bf16da4f9d7c28410fa61d9, type: 3}
   - {fileID: 8300000, guid: 33355d0a65f21f449af59a7924b503d7, type: 3}

@@ -125,7 +125,7 @@ public class SetupManager : MonoBehaviour
             Debug.Log(gameInfo.PlayerFaction.GodName + " reporting in, boss");
 
             gameInfo.EnemyFaction.GodName = "Nathan";
-            gameInfo.EnemyFaction.Type = Faction.GodType.Lightning;
+            gameInfo.EnemyFaction.Type = Faction.GodType.Robots;
 
             abilities = Faction.GetGodAbilities(gameInfo.EnemyFaction.Type);
             sAbilites = new string[abilities.Count];
@@ -159,6 +159,10 @@ public class SetupManager : MonoBehaviour
         arrGroupInputs[3].SetActive(false);
         arrGroupLabels[4].SetActive(false);
         arrGroupInputs[4].SetActive(false);
+        if (LoadingScreenManager.Instance != null && LoadingScreenManager.Instance.ScreenActive)
+        {
+            LoadingScreenManager.Instance.FadeOut();
+        }
     }
 
     void Update()
@@ -198,7 +202,7 @@ public class SetupManager : MonoBehaviour
 
             this.finishedBattle = false; //to avoid decrementing things FOREVER
 
-            SceneManager.LoadScene("UnderGodScene"); //load back to management mode
+            StartCoroutine(LoadManagementSceneAsync());
         }
 
         //Note this can't be done in Start() since tiles hasn't been made yet.
@@ -212,14 +216,14 @@ public class SetupManager : MonoBehaviour
             {
                 CreatePlayerUnit(new Vector2(MapMan.playerStartTiles[i].getX(), MapMan.playerStartTiles[i].getZ()), tiles, arrGroupWorshippers[i], 2, 1, playerMorale);
             }
-            CreateGod(tiles, true, gameInfo.PlayerFaction.GodName, 3, 2, Convert.ToInt32(playerGodAttackStrength*gameInfo.GodAttackMultiplier), Convert.ToInt32(playerWorshiperCount*gameInfo.GodHealthMultiplier));
+            CreateGod(tiles, true, gameInfo.PlayerFaction.GodName, 3, 2, Convert.ToInt32(playerGodAttackStrength*gameInfo.GodAttackMultiplier) * (playerWorshiperCount / 100), Convert.ToInt32(playerWorshiperCount*gameInfo.GodHealthMultiplier));
 
             // Place enemy units onto the board
             // TODO: change this to for loop lol
             CreateEnemyUnit(new Vector2(MapMan.enemyStartTiles[0].getX(), MapMan.enemyStartTiles[0].getZ()), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
             CreateEnemyUnit(new Vector2(MapMan.enemyStartTiles[1].getX(), MapMan.enemyStartTiles[1].getZ()), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
             CreateEnemyUnit(new Vector2(MapMan.enemyStartTiles[2].getX(), MapMan.enemyStartTiles[2].getZ()), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
-            CreateGod(tiles, false, gameInfo.EnemyFaction.GodName, 3, 2, Convert.ToInt32(enemyGodAttackStrength*0.5*(gameInfo.EnemyFaction.GodTier+1)), Convert.ToInt32(enemyWorshiperCount*(gameInfo.EnemyFaction.GodTier+1)));
+            CreateGod(tiles, false, gameInfo.EnemyFaction.GodName, 3, 2, Convert.ToInt32(enemyGodAttackStrength*0.5*(gameInfo.EnemyFaction.GodTier+1)) * (enemyWorshiperCount / 100), Convert.ToInt32(enemyWorshiperCount*(gameInfo.EnemyFaction.GodTier+1)));
 
             BoardMan.playerTurn = true;
             BoardMan.numActionsLeft = BoardMan.playerUnits.Count;
@@ -560,6 +564,20 @@ public class SetupManager : MonoBehaviour
     public void EndBattle()
     {
         finishedBattle = true;
+    }
+
+    private IEnumerator LoadManagementSceneAsync()
+    {
+        if (LoadingScreenManager.Instance != null && !LoadingScreenManager.Instance.ScreenActive)
+        {
+            LoadingScreenManager.Instance.FadeIn();
+        }
+        AsyncOperation uniAsyncLoad = SceneManager.LoadSceneAsync("UnderGodScene"); //load back to management mode
+        // Wait until the asynchronous scene fully loads
+        while (!uniAsyncLoad.isDone)
+        {
+            yield return null;
+        }
     }
 
 }

@@ -20,12 +20,12 @@ public class SoundManager : MonoBehaviour
     public List<AudioClip> forkUnitDeathSounds;
     public List<AudioClip> shoeUnitDeathSounds;
     public List<AudioClip> duckUnitDeathSounds;
-    public List<AudioClip> houndsUnitDeathSounds;
-    public List<AudioClip> jazzUnitDeathSounds;
+    public List<AudioClip> robotsUnitDeathSounds;
+    public List<AudioClip> smithsUnitDeathSounds;
     public List<AudioClip> loveUnitDeathSounds;
     public List<AudioClip> fireUnitDeathSounds;
     public List<AudioClip> waterUnitDeathSounds;
-    public List<AudioClip> earthUnitDeathSounds;
+    public List<AudioClip> lightningUnitDeathSounds;
 
     private List<AudioClip> playerUnitDeathSounds;
     private List<AudioClip> enemyUnitDeathSounds;
@@ -44,12 +44,12 @@ public class SoundManager : MonoBehaviour
     public List<AudioClip> forkGodTurnStartSounds;
     public List<AudioClip> shoeGodTurnStartSounds;
     public List<AudioClip> duckGodTurnStartSounds;
-    public List<AudioClip> houndsGodTurnStartSounds;
-    public List<AudioClip> jazzGodTurnStartSounds;
+    public List<AudioClip> robotsGodTurnStartSounds;
+    public List<AudioClip> smithsGodTurnStartSounds;
     public List<AudioClip> loveGodTurnStartSounds;
     public List<AudioClip> fireGodTurnStartSounds;
     public List<AudioClip> waterGodTurnStartSounds;
-    public List<AudioClip> earthGodTurnStartSounds;
+    public List<AudioClip> lightningGodTurnStartSounds;
 
     private List<AudioClip> enemyGodTurnStartSounds;
 
@@ -58,12 +58,12 @@ public class SoundManager : MonoBehaviour
     public List<AudioClip> forkGodEnterBattleSounds;
     public List<AudioClip> shoeGodEnterBattleSounds;
     public List<AudioClip> duckGodEnterBattleSounds;
-    public List<AudioClip> houndsGodEnterBattleSounds;
-    public List<AudioClip> jazzGodEnterBattleSounds;
+    public List<AudioClip> robotsGodEnterBattleSounds;
+    public List<AudioClip> smithsGodEnterBattleSounds;
     public List<AudioClip> loveGodEnterBattleSounds;
     public List<AudioClip> fireGodEnterBattleSounds;
     public List<AudioClip> waterGodEnterBattleSounds;
-    public List<AudioClip> earthGodEnterBattleSounds;
+    public List<AudioClip> lightningGodEnterBattleSounds;
 
     private List<AudioClip> playerGodEnterBattleSounds;
     private List<AudioClip> enemyGodEnterBattleSounds;
@@ -74,12 +74,12 @@ public class SoundManager : MonoBehaviour
     public List<AudioClip> forkGodBGMs;
     public List<AudioClip> shoeGodBGMs;
     public List<AudioClip> duckGodBGMs;
-    public List<AudioClip> houndGodBGMs;
-    public List<AudioClip> jazzGodBGMs;
+    public List<AudioClip> robotsGodBGMs;
+    public List<AudioClip> smithsGodBGMs;
     public List<AudioClip> loveGodBGMs;
     public List<AudioClip> fireGodBGMs;
     public List<AudioClip> waterGodBGMs;
-    public List<AudioClip> earthGodBGMs;
+    public List<AudioClip> lightningGodBGMs;
 
     private List<AudioClip> activeBGMList;
 
@@ -162,16 +162,16 @@ public class SoundManager : MonoBehaviour
 
                 //Tier 2
                 case Faction.GodType.Robots:
-                    activeBGMList = houndGodBGMs;
-                    enemyGodTurnStartSounds = houndsGodTurnStartSounds;
-                    enemyUnitDeathSounds = houndsUnitDeathSounds;
-                    enemyGodEnterBattleSounds = houndsGodEnterBattleSounds;
+                    activeBGMList = robotsGodBGMs;
+                    enemyGodTurnStartSounds = robotsGodTurnStartSounds;
+                    enemyUnitDeathSounds = robotsUnitDeathSounds;
+                    enemyGodEnterBattleSounds = robotsGodEnterBattleSounds;
                     break;
                 case Faction.GodType.Smiths:
-                    activeBGMList = jazzGodBGMs;
-                    enemyGodTurnStartSounds = jazzGodTurnStartSounds;
-                    enemyUnitDeathSounds = jazzUnitDeathSounds;
-                    enemyGodEnterBattleSounds = jazzGodEnterBattleSounds;
+                    activeBGMList = smithsGodBGMs;
+                    enemyGodTurnStartSounds = smithsGodTurnStartSounds;
+                    enemyUnitDeathSounds = smithsUnitDeathSounds;
+                    enemyGodEnterBattleSounds = smithsGodEnterBattleSounds;
                     break;
                 case Faction.GodType.Love:
                     activeBGMList = loveGodBGMs;
@@ -195,10 +195,10 @@ public class SoundManager : MonoBehaviour
                     enemyGodEnterBattleSounds = waterGodEnterBattleSounds;
                     break;
                 case Faction.GodType.Lightning:
-                    activeBGMList = earthGodBGMs;
-                    enemyGodTurnStartSounds = earthGodTurnStartSounds;
-                    enemyUnitDeathSounds = earthUnitDeathSounds;
-                    enemyGodEnterBattleSounds = earthGodEnterBattleSounds;
+                    activeBGMList = lightningGodBGMs;
+                    enemyGodTurnStartSounds = lightningGodTurnStartSounds;
+                    enemyUnitDeathSounds = lightningUnitDeathSounds;
+                    enemyGodEnterBattleSounds = lightningGodEnterBattleSounds;
                     break;
             }
 

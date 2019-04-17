@@ -283,6 +283,7 @@ public class PopulateTierIcons : MonoBehaviour
         lineRect.sizeDelta = new Vector2(lineWidth, pointDistance);
         lineRect.rotation = Quaternion.Euler(0, 0, angle); //rotate around the mid point
         lineRect.transform.position = midpoint;
+        lineRect.transform.localScale = new Vector2(1 / uniRectA.lossyScale.x, 1 / uniRectA.lossyScale.y);
         marrLines.Add(lineRect.gameObject);
     }
 }

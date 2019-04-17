@@ -31,7 +31,7 @@ public class ResourceUIScript : MonoBehaviour
         TooltipControllerScript.AttachTooltipToObject(MaterialTextObject.transform.parent.gameObject, "Materials");
         TooltipControllerScript.AttachTooltipToObject(WorshipperTextObject.transform.parent.gameObject, "Worshippers");
         TooltipControllerScript.AttachTooltipToObject(MoraleTextObject.transform.parent.gameObject, "Morale");
-        TooltipControllerScript.AttachTooltipToObject(RewardsDisplayObject, "Tier Rewards");
+        TooltipControllerScript.AttachTooltipToObject(RewardsDisplayObject, "God Bucks");
     }
 
     /// <summary>

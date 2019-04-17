@@ -11,11 +11,11 @@ public class Building : MapObject
 {
     // Constants to define the cost of each building by default
     // Scaled by the game manager
-    protected const int mcintAltarCost = 10;
+    protected const int mcintAltarCost = 50;
     protected const int mcintMaterialCost = 10;
     protected const int mcintVillageCost = 10;
-    protected const int mcintHousingCost = 10;
-    protected const int mcintUpgradeCost = 100;
+    protected const int mcintHousingCost = 100;
+    protected const int mcintUpgradeCost = 1000;
 
     static public float BuildingCostModifier = 1; // Static to allow cost calculations before building is created
 
@@ -123,7 +123,7 @@ public class Building : MapObject
 
         if (!pblnNoCost)
         {
-            CalculateBuildingUpgradeCost(BuildingType, UpgradeLevel + 1);
+            intBuildingCost = CalculateBuildingUpgradeCost(BuildingType, UpgradeLevel + 1);
         }
         // Check if upgrade is allowed
         if (OwningFaction.MaterialCount > intBuildingCost

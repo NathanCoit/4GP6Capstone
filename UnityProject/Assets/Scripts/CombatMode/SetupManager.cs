@@ -158,6 +158,10 @@ public class SetupManager : MonoBehaviour
         arrGroupInputs[3].SetActive(false);
         arrGroupLabels[4].SetActive(false);
         arrGroupInputs[4].SetActive(false);
+        if (LoadingScreenManager.Instance != null && LoadingScreenManager.Instance.ScreenActive)
+        {
+            LoadingScreenManager.Instance.FadeOut();
+        }
     }
 
     void Update()
@@ -197,7 +201,7 @@ public class SetupManager : MonoBehaviour
 
             this.finishedBattle = false; //to avoid decrementing things FOREVER
 
-            SceneManager.LoadScene("UnderGodScene"); //load back to management mode
+            StartCoroutine(LoadManagementSceneAsync());
         }
 
         //Note this can't be done in Start() since tiles hasn't been made yet.
@@ -559,6 +563,20 @@ public class SetupManager : MonoBehaviour
     public void EndBattle()
     {
         finishedBattle = true;
+    }
+
+    private IEnumerator LoadManagementSceneAsync()
+    {
+        if (LoadingScreenManager.Instance != null && !LoadingScreenManager.Instance.ScreenActive)
+        {
+            LoadingScreenManager.Instance.FadeIn();
+        }
+        AsyncOperation uniAsyncLoad = SceneManager.LoadSceneAsync("UnderGodScene"); //load back to management mode
+        // Wait until the asynchronous scene fully loads
+        while (!uniAsyncLoad.isDone)
+        {
+            yield return null;
+        }
     }
 
 }

@@ -73,7 +73,7 @@ public class SaveAndSettingsHelper
     /// </summary>
     /// <param name="pstrSaveFilePath"></param>
     /// <param name="pmusGameInfo"></param>
-    public static void LoadSceneFromFile(string pstrSaveFilePath, GameInfo pmusGameInfo)
+    public static void LoadSceneFromFile(string pstrSaveFilePath, GameInfo pmusGameInfo, bool pblnAsync = false)
     {
         SaveData musLoadedSaveData = LoadSaveData(pstrSaveFilePath);
         if (musLoadedSaveData != null)
@@ -97,7 +97,14 @@ public class SaveAndSettingsHelper
             pmusGameInfo.SavedTreasures = musLoadedSaveData.SavedTreasures;
             pmusGameInfo.FromSave = true;
             pmusGameInfo.NewGame = false;
-            SceneManager.LoadScene("UnderGodScene");
+            if (pblnAsync)
+            {
+                SceneManager.LoadSceneAsync("UnderGodScene");
+            }
+            else
+            {
+                SceneManager.LoadScene("UnderGodScene");
+            }
         }
     }
 

@@ -99,7 +99,8 @@ public class SetupManager : MonoBehaviour
             // Let players know how many worshippers they can assign to their groups
             arrTexts[6].text = "The total amount of worshippers at your disposal : " + playerWorshiperCount;
 
-           MapMan.mapName = gameInfo.EnemyFaction.Type + "1";
+            //MapMan.mapName = "smiths1";
+            MapMan.mapName = gameInfo.EnemyFaction.Type + "1";
         }
 #if DEBUG
         else

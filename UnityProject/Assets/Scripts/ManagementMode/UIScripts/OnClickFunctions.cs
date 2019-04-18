@@ -202,6 +202,7 @@ public class OnClickFunctions : MonoBehaviour
     private bool CheckIfPaused()
     {
         return mmusGameManagerScript.CurrentMenuState == GameManager.MENUSTATE.Paused_State
-            || mmusGameManagerScript.CurrentMenuState == GameManager.MENUSTATE.Settings_Menu_State;
+            || mmusGameManagerScript.CurrentMenuState == GameManager.MENUSTATE.Settings_Menu_State
+            || mmusGameManagerScript.CurrentMenuState == GameManager.MENUSTATE.End_Game_State;
     }
 }

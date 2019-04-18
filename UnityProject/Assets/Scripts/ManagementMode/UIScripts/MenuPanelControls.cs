@@ -74,40 +74,45 @@ public class MenuPanelControls : MonoBehaviour
     /// </summary>
     public void SetButtonText()
     {
+        Text[] arrButtonText;
         mmushotKeyManager.LoadHotkeyProfile();
         // Set hotkey text to max 3 characters (e.g. escape -> esc)
-        MoveBuildingButton.GetComponentInChildren<Text>().text = mmushotKeyManager.HotKeys["BuildingMoveKeyCode"].
-            ToString().Substring(0, Math.Min(3, mmushotKeyManager.HotKeys["BuildingMoveKeyCode"].ToString().Length));
+        arrButtonText = MoveBuildingButton.GetComponentsInChildren<Text>(); 
+        arrButtonText[0].text = mmushotKeyManager.GetUserFriendlyKeyCode("BuildingMoveKeyCode");
 
-        UpgradeBuildingButton.GetComponentInChildren<Text>().text = mmushotKeyManager.HotKeys["BuildingUpgradeKeyCode"].
-            ToString().Substring(0, Math.Min(3, mmushotKeyManager.HotKeys["BuildingUpgradeKeyCode"].ToString().Length));
+        arrButtonText = UpgradeBuildingButton.GetComponentsInChildren<Text>();
+        arrButtonText[0].text = mmushotKeyManager.GetUserFriendlyKeyCode("BuildingUpgradeKeyCode");
 
-        BuyMinersButton.GetComponentInChildren<Text>().text = mmushotKeyManager.HotKeys["BuyMinersKeyCode"].
-            ToString().Substring(0, Math.Min(3, mmushotKeyManager.HotKeys["BuyMinersKeyCode"].ToString().Length));
+        arrButtonText = BuyMinersButton.GetComponentsInChildren<Text>();
+        arrButtonText[0].text = mmushotKeyManager.GetUserFriendlyKeyCode("BuyMinersKeyCode");
 
-        UpgradeUIButton.GetComponentInChildren<Text>().text = mmushotKeyManager.HotKeys["BlackSmithUIKeyCode"].
-            ToString().Substring(0, Math.Min(3, mmushotKeyManager.HotKeys["BlackSmithUIKeyCode"].ToString().Length));
+        arrButtonText = UpgradeUIButton.GetComponentsInChildren<Text>();
+        arrButtonText[0].text = mmushotKeyManager.GetUserFriendlyKeyCode("BlackSmithUIKeyCode");
 
-        EnemyBattleButton.GetComponentInChildren<Text>().text = mmushotKeyManager.HotKeys["StartBattleKeyCode"].
-            ToString().Substring(0, Math.Min(3, mmushotKeyManager.HotKeys["StartBattleKeyCode"].ToString().Length));
+        arrButtonText = EnemyBattleButton.GetComponentsInChildren<Text>();
+        arrButtonText[0].text = mmushotKeyManager.GetUserFriendlyKeyCode("StartBattleKeyCode");
 
-        AltarButton.GetComponentInChildren<Text>().text = mmushotKeyManager.HotKeys["AltarKeyCode"].
-            ToString().Substring(0, Math.Min(3, mmushotKeyManager.HotKeys["AltarKeyCode"].ToString().Length));
+        arrButtonText = AltarButton.GetComponentsInChildren<Text>();
+        arrButtonText[0].text = mmushotKeyManager.GetUserFriendlyKeyCode("AltarKeyCode");
+        arrButtonText[1].text = Building.CalculateBuildingCost(Building.BUILDING_TYPE.ALTAR).ToString();
 
-        HousingButton.GetComponentInChildren<Text>().text = mmushotKeyManager.HotKeys["HouseKeyCode"].
-            ToString().Substring(0, Math.Min(3, mmushotKeyManager.HotKeys["HouseKeyCode"].ToString().Length));
+        arrButtonText = HousingButton.GetComponentsInChildren<Text>();
+        arrButtonText[0].text = mmushotKeyManager.GetUserFriendlyKeyCode("HouseKeyCode");
+        arrButtonText[1].text = Building.CalculateBuildingCost(Building.BUILDING_TYPE.HOUSING).ToString();
 
-        MineButton.GetComponentInChildren<Text>().text = mmushotKeyManager.HotKeys["MineKeyCode"].
-            ToString().Substring(0, Math.Min(3, mmushotKeyManager.HotKeys["MineKeyCode"].ToString().Length));
+        arrButtonText = MineButton.GetComponentsInChildren<Text>();
+        arrButtonText[0].text = mmushotKeyManager.GetUserFriendlyKeyCode("MineKeyCode");
+        arrButtonText[1].text = Building.CalculateBuildingCost(Building.BUILDING_TYPE.MATERIAL).ToString();
 
-        BlacksmithButton.GetComponentInChildren<Text>().text = mmushotKeyManager.HotKeys["BlacksmithKeyCode"].
-            ToString().Substring(0, Math.Min(3, mmushotKeyManager.HotKeys["BlacksmithKeyCode"].ToString().Length));
+        arrButtonText = BlacksmithButton.GetComponentsInChildren<Text>();
+        arrButtonText[0].text = mmushotKeyManager.GetUserFriendlyKeyCode("BlacksmithKeyCode");
+        arrButtonText[1].text = Building.CalculateBuildingCost(Building.BUILDING_TYPE.UPGRADE).ToString();
 
-        PauseButton.GetComponentInChildren<Text>().text = mmushotKeyManager.HotKeys["EscapeKeyCode"].
-            ToString().Substring(0, Math.Min(3, mmushotKeyManager.HotKeys["EscapeKeyCode"].ToString().Length));
+        arrButtonText = PauseButton.GetComponentsInChildren<Text>();
+        arrButtonText[0].text = mmushotKeyManager.GetUserFriendlyKeyCode("EscapeKeyCode");
 
-        TierRewardButton.GetComponentInChildren<Text>().text = mmushotKeyManager.HotKeys["TierRewardKeyCode"].
-            ToString().Substring(0, Math.Min(3, mmushotKeyManager.HotKeys["TierRewardKeyCode"].ToString().Length));
+        arrButtonText = TierRewardButton.GetComponentsInChildren<Text>();
+        arrButtonText[0].text = mmushotKeyManager.GetUserFriendlyKeyCode("TierRewardKeyCode");
     }
 
     /// <summary>

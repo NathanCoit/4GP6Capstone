@@ -572,6 +572,7 @@ public class SetupManager : MonoBehaviour
         {
             LoadingScreenManager.Instance.FadeIn();
         }
+        yield return new WaitForSeconds(4 - gameInfo.CurrentTier);
         AsyncOperation uniAsyncLoad = SceneManager.LoadSceneAsync("UnderGodScene"); //load back to management mode
         // Wait until the asynchronous scene fully loads
         while (!uniAsyncLoad.isDone)

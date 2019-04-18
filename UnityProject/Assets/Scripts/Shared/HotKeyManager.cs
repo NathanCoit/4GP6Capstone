@@ -69,4 +69,10 @@ public class HotKeyManager
             PlayerPrefs.SetInt(kvalHtoKey.Key, (int)kvalHtoKey.Value);
         }
     }
+
+    public string GetUserFriendlyKeyCode(string pstrHotKey)
+    {
+        return HotKeys[pstrHotKey].
+            ToString().Substring(0, Math.Min(3, HotKeys[pstrHotKey].ToString().Length));
+    }
 }

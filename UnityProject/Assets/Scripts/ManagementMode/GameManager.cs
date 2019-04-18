@@ -594,8 +594,7 @@ public class GameManager : MonoBehaviour
         }
         if (mblnVictory || mblnGameOver)
         {
-            PauseGame();
-            PausedMenuPanel.SetActive(false);
+            Camera.main.GetComponent<Cam>().CameraMovementEnabled = false;
             CurrentMenuState = MENUSTATE.End_Game_State;
         }
         HotKeyManager.LoadHotkeyProfile();
@@ -915,7 +914,7 @@ public class GameManager : MonoBehaviour
                     arrHousingBuildings = arrOwnedBuildings.FindAll(HousingBuild => HousingBuild.BuildingType == Building.BUILDING_TYPE.HOUSING);
                     foreach (Building musHousingBuilding in arrHousingBuildings)
                     {
-                        intHousingTotal += (int)(Math.Pow(100, musHousingBuilding.UpgradeLevel + 1));
+                        intHousingTotal += (int)(Math.Pow(10, musHousingBuilding.UpgradeLevel + 2));
                     }
                     //Calculate morale losses/gains
                     // Each housing/village building can hold 100 * upgrade level worshippers
@@ -953,21 +952,20 @@ public class GameManager : MonoBehaviour
                 PlayerFaction.TierRewardPoints++;
                 TierUnlockPoint *= TierUnlockPointMultiplier;
             }
+            ResourceTicks++;
+            mintCurrentTimer += 2;
+            // If set time has elapsed, enemy god will challenge the player
+            if (mintCurrentTimer > EnemyChallengeTimer)
+            {
+                musChallengingFaction = CurrentFactions.Find(MatchingFaction => MatchingFaction != PlayerFaction && MatchingFaction.GodTier == CurrentTier);
+                Time.timeScale = 0;
+                CurrentMenuState = MENUSTATE.End_Game_State;
+                InformationBoxController.DisplayInformationBox(
+                    musChallengingFaction.GodName + " has challenged you! Prepare to battle.",
+                    () => EnterCombatMode(musChallengingFaction),
+                    "Fight");
+            }
         }
-        ResourceTicks++;
-        mintCurrentTimer += 2;
-        // If set time has elapsed, enemy god will challenge the player
-        if (mintCurrentTimer > EnemyChallengeTimer)
-        {
-            musChallengingFaction = CurrentFactions.Find(MatchingFaction => MatchingFaction != PlayerFaction && MatchingFaction.GodTier == CurrentTier);
-            Time.timeScale = 0;
-            CurrentMenuState = MENUSTATE.End_Game_State;
-            InformationBoxController.DisplayInformationBox(
-                musChallengingFaction.GodName + " has challenged you! Prepare to battle.",
-                () => EnterCombatMode(musChallengingFaction),
-                "Fight");
-        }
-
     }
 
     /// <summary>

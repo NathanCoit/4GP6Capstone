@@ -28,38 +28,41 @@ public class InputManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Check for keybaord inputs depending on current gamestate
-        switch (mmusGameManagerScript.CurrentMenuState)
+        if(mmusGameManagerScript.CurrentMenuState != GameManager.MENUSTATE.End_Game_State)
         {
-            case GameManager.MENUSTATE.Default_State:
-                CheckDefaultMenuStateInputs();
-                break;
-            case GameManager.MENUSTATE.Building_State:
-                CheckBuildingStateInputs();
-                break;
-            case GameManager.MENUSTATE.Moving_Building_State:
-                CheckMovingBuildingStateInputs();
-                break;
-            case GameManager.MENUSTATE.Building_Selected_State:
-                CheckSelectedBuildingStateInputs();
-                break;
-            case GameManager.MENUSTATE.Tier_Reward_State:
-                CheckTierRewardStateInputs();
-                break;
-            case GameManager.MENUSTATE.Upgrade_State:
-                CheckUpgradeStateInput();
-                break;
-            case GameManager.MENUSTATE.Paused_State:
-                CheckPausedMenuStateInputs();
-                break;
-            case GameManager.MENUSTATE.Settings_Menu_State:
-                CheckSettingsMenuStateInputs();
-                break;
-            case GameManager.MENUSTATE.God_Selected_State:
-                CheckGodSelectedMenuState();
-                break;
+            // Check for keybaord inputs depending on current gamestate
+            switch (mmusGameManagerScript.CurrentMenuState)
+            {
+                case GameManager.MENUSTATE.Default_State:
+                    CheckDefaultMenuStateInputs();
+                    break;
+                case GameManager.MENUSTATE.Building_State:
+                    CheckBuildingStateInputs();
+                    break;
+                case GameManager.MENUSTATE.Moving_Building_State:
+                    CheckMovingBuildingStateInputs();
+                    break;
+                case GameManager.MENUSTATE.Building_Selected_State:
+                    CheckSelectedBuildingStateInputs();
+                    break;
+                case GameManager.MENUSTATE.Tier_Reward_State:
+                    CheckTierRewardStateInputs();
+                    break;
+                case GameManager.MENUSTATE.Upgrade_State:
+                    CheckUpgradeStateInput();
+                    break;
+                case GameManager.MENUSTATE.Paused_State:
+                    CheckPausedMenuStateInputs();
+                    break;
+                case GameManager.MENUSTATE.Settings_Menu_State:
+                    CheckSettingsMenuStateInputs();
+                    break;
+                case GameManager.MENUSTATE.God_Selected_State:
+                    CheckGodSelectedMenuState();
+                    break;
+            }
         }
-
+        
         // Check to ensure a single keystroke does not count as two menu inputs.
         // Fixes issue where pressing escape closes multiple menus
         if (muniCurrentKeyDown != KeyCode.None && Input.GetKeyUp(muniCurrentKeyDown))
@@ -79,6 +82,10 @@ public class InputManager : MonoBehaviour
             muniCurrentKeyDown = mmusHotKeyManager.HotKeys["EscapeKeyCode"];
             mmusGameManagerScript.GoToDefaultMenuState();
             mmusGameManagerScript.PlayerGod.TogglePlayerOutlines(false);
+        }
+        else if (Input.GetKeyDown(mmusHotKeyManager.HotKeys["CentreOnGodKeyCode"]))
+        {
+            mmusGameCamera.CentreOnGod();
         }
     }
 

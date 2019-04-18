@@ -15,7 +15,7 @@ public class Building : MapObject
     protected const int mcintMaterialCost = 10;
     protected const int mcintVillageCost = 10;
     protected const int mcintHousingCost = 100;
-    protected const int mcintUpgradeCost = 1000;
+    protected const int mcintUpgradeCost = 100;
 
     static public float BuildingCostModifier = 1; // Static to allow cost calculations before building is created
 
@@ -223,20 +223,20 @@ public class Building : MapObject
         int intBuildingCost = int.MaxValue;
         switch (penumBuildingType)
         {
-            case (Building.BUILDING_TYPE.ALTAR): // 100, 1000, 10000
-                intBuildingCost = Convert.ToInt32(Mathf.Pow(mcintAltarCost, pintUpgradeLevel + 1) * BuildingCostModifier);
+            case (Building.BUILDING_TYPE.ALTAR): // 10,100,1000
+                intBuildingCost = mcintAltarCost * Convert.ToInt32(Mathf.Pow(10, pintUpgradeLevel) * BuildingCostModifier);
                 break;
             case (Building.BUILDING_TYPE.MATERIAL): // 100, 1000, 10000
-                intBuildingCost = Convert.ToInt32(Mathf.Pow(mcintMaterialCost, pintUpgradeLevel + 1) * BuildingCostModifier);
+                intBuildingCost = mcintMaterialCost * Convert.ToInt32(Mathf.Pow(10, pintUpgradeLevel) * BuildingCostModifier);
                 break;
             case (Building.BUILDING_TYPE.HOUSING): // 100, 1000, 10000
-                intBuildingCost = Convert.ToInt32(Mathf.Pow(mcintHousingCost, pintUpgradeLevel + 1) * BuildingCostModifier);
+                intBuildingCost = mcintHousingCost * Convert.ToInt32(Mathf.Pow(10, pintUpgradeLevel) * BuildingCostModifier);
                 break;
             case (Building.BUILDING_TYPE.VILLAGE): // Upgrade done by tier unlock
                 intBuildingCost = 0;
                 break;
             case (BUILDING_TYPE.UPGRADE): // 1000, 10000, 100000
-                intBuildingCost = Convert.ToInt32(Mathf.Pow(mcintUpgradeCost, pintUpgradeLevel + 1) * BuildingCostModifier);
+                intBuildingCost = mcintUpgradeCost * Convert.ToInt32(Mathf.Pow(10, pintUpgradeLevel) * BuildingCostModifier);
                 break;
         }
         return intBuildingCost;

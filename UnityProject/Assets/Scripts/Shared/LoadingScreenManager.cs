@@ -19,12 +19,7 @@ public class LoadingScreenManager : MonoBehaviour
 
     public bool ScreenActive { get { return mblnActive; } }
 
-    private List<string> marrLoadingScreenLines = new List<string>
-    {
-        "Thing",
-        "Stuff"
-    };
-
+    public string[] LoadingScreenLines;
 
     private void Awake()
     {
@@ -85,21 +80,21 @@ public class LoadingScreenManager : MonoBehaviour
         }
     }
 
-    private string GetrandomText()
+    private string Getext(int pintRand)
     {
-        int intRand = UnityEngine.Random.Range(0, marrLoadingScreenLines.Count);
-        return marrLoadingScreenLines[intRand];
+        
+        return LoadingScreenLines[pintRand];
     }
 
-    private Sprite GetRandomSprite()
+    private Sprite GetSprite(int pintRand)
     {
-        int intRand = UnityEngine.Random.Range(0, LoadingImages.Length);
-        return LoadingImages[intRand];
+        return LoadingImages[pintRand];
     }
 
     public void ReplaceLoadingUI()
     {
-        LoadingScreenImage.sprite = GetRandomSprite();
-        LoadingScreenText.text = GetrandomText();
+        int intRand = UnityEngine.Random.Range(0, LoadingScreenLines.Length);
+        LoadingScreenImage.sprite = GetSprite(intRand);
+        LoadingScreenText.text = Getext(intRand);
     }
 }

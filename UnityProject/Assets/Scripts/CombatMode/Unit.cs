@@ -311,6 +311,10 @@ public class Unit
         stunDebuff = false;
         paralyzeDebuff = false;
 
+        //Grab gameInfo for scaling
+        GameObject GameInfoObject = GameObject.Find("GameInfo");
+        GameInfo gameInfo = GameInfoObject.GetComponent<GameInfo>();
+
         //Calcualte what everything does
         foreach (StatusEffect effect in activeStatusEffects)
         {
@@ -341,7 +345,8 @@ public class Unit
                     defenseBuff -= (Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount;
                     break;
                 case "Stun":
-                    stunDebuff = true;
+                    //Stun is borked, so its just a move debuff now
+                    speedBuff -= (Ability.LoadAbilityFromName(effect.getAbility()) as DebuffAbility).DebuffAmount;
                     break;
                 case "Paralyze":
                     paralyzeDebuff = true;
@@ -367,6 +372,7 @@ public class Unit
     //Called at the beginning of turn. We don't geto our turn if we're stunned
     public void beginTurn()
     {
+        //Currently should never be set to true
         if (!stunDebuff)
         {
             AllowAct();

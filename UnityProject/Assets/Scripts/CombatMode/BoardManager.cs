@@ -573,10 +573,6 @@ public class BoardManager : MonoBehaviour
             foreach(GameObject button in playerUiButtons)
                 button.GetComponent<Button>().interactable = false;
 
-            //Lock cursor to stop the player from using the enemy ablities (lol)
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-
             //Begin the enemy AI
             StartCoroutine(EnemyMan.EnemyActions(0.5f));
         }
@@ -608,8 +604,6 @@ public class BoardManager : MonoBehaviour
 
             Camera.main.GetComponent<CombatCam>().resetCamera();
 
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
         }
 
         //Update faith labels

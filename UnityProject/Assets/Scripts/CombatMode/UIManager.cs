@@ -595,16 +595,19 @@ public class UIManager : MonoBehaviour
     //Cancel any active acion (on cancel button)
     public void cancelButtonFunction()
     {
-        if (MapMan.Selected != null)
+        if (BoardMan.isPlayerTurn())
         {
-            if ((MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() is God) && godEnteringBattle)
-                (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() as God).isInBattle = false;
+            if (MapMan.Selected != null)
+            {
+                if ((MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() is God) && godEnteringBattle)
+                    (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() as God).isInBattle = false;
+            }
+            MapMan.ClearSelection();
+            godEnteringBattle = false;
+            abilityPanelInUse = false;
+            MapMan.Selected = null;
+            removeMenu();
         }
-        MapMan.ClearSelection();
-        godEnteringBattle = false;
-        abilityPanelInUse = false;
-        MapMan.Selected = null;
-        removeMenu();
     }
 
     //Changes material and player hover sound

@@ -114,6 +114,7 @@ public class SetupManager : MonoBehaviour
             //Setup some test values (feel free to change)
             gameInfo.PlayerFaction.GodName = "JIMOTHY THEE GREAT";
             gameInfo.PlayerFaction.Type = Faction.GodType.Mushrooms;
+            gameInfo.PlayerFaction.GodTier = 2;
 
             List<Ability> abilities = Faction.GetGodAbilities(gameInfo.PlayerFaction.Type);
             string[] sAbilites = new string[abilities.Count];
@@ -125,7 +126,7 @@ public class SetupManager : MonoBehaviour
             Debug.Log(gameInfo.PlayerFaction.GodName + " reporting in, boss");
 
             gameInfo.EnemyFaction.GodName = "Nathan";
-            gameInfo.EnemyFaction.Type = Faction.GodType.Robots;
+            gameInfo.EnemyFaction.Type = Faction.GodType.Fire;
 
             abilities = Faction.GetGodAbilities(gameInfo.EnemyFaction.Type);
             sAbilites = new string[abilities.Count];
@@ -210,29 +211,36 @@ public class SetupManager : MonoBehaviour
         {
             tiles = MapMan.tiles;
 
-            // Create and place units onto map
+            // Create and place player units onto map
             numGroupsWorshippers = int.Parse(arrTexts[8].text); // need to get it again in case they never changed the # of groups
+
             for (int i = 0; i < numGroupsWorshippers; i++)
             {
                 CreatePlayerUnit(new Vector2(MapMan.playerStartTiles[i].getX(), MapMan.playerStartTiles[i].getZ()), tiles, arrGroupWorshippers[i], 2, 1, playerMorale);
             }
+            //Place player god
             CreateGod(tiles, true, gameInfo.PlayerFaction.GodName, 3, 2, Convert.ToInt32(playerGodAttackStrength*gameInfo.GodAttackMultiplier) * (playerWorshiperCount / 100), Convert.ToInt32(playerWorshiperCount*gameInfo.GodHealthMultiplier));
 
-            // Place enemy units onto the board
-            // TODO: change this to for loop lol
-            CreateEnemyUnit(new Vector2(MapMan.enemyStartTiles[0].getX(), MapMan.enemyStartTiles[0].getZ()), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
-            CreateEnemyUnit(new Vector2(MapMan.enemyStartTiles[1].getX(), MapMan.enemyStartTiles[1].getZ()), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
-            CreateEnemyUnit(new Vector2(MapMan.enemyStartTiles[2].getX(), MapMan.enemyStartTiles[2].getZ()), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
+            // Place enemy units 
+            for (int i = 0; i <= gameInfo.EnemyFaction.GodTier + 2; i++)
+            {
+                CreateEnemyUnit(new Vector2(MapMan.enemyStartTiles[i].getX(), MapMan.enemyStartTiles[i].getZ()), tiles, enemyWorshiperCount / 3, 2, 2, enemyMorale);
+            }
+            //Place enemy god
             CreateGod(tiles, false, gameInfo.EnemyFaction.GodName, 3, 2, Convert.ToInt32(enemyGodAttackStrength*0.5*(gameInfo.EnemyFaction.GodTier+1)) * (enemyWorshiperCount / 100), Convert.ToInt32(enemyWorshiperCount*(gameInfo.EnemyFaction.GodTier+1)));
 
+            //Start as player turn
             BoardMan.playerTurn = true;
             BoardMan.numActionsLeft = BoardMan.playerUnits.Count;
 
+            //Setup Camera
             Camera.main.GetComponent<CombatCam>().CameraMovementEnabled = true;
             Camera.main.GetComponent<CombatCam>().resetCamera();
 
+            //Update faith
             UIMan.updateFaithLabels();
 
+            //We done setup bois
             startup = false;
         }
     }
@@ -492,15 +500,25 @@ public class SetupManager : MonoBehaviour
         u.isPlayer = true;
         u.MoveTo(new Vector2(pos.x, pos.y), tiles);
 
-        GameObject unitModel;
-
+        GameObject unitModel = new GameObject();
+        
         try
         {
-            unitModel = Instantiate(Resources.Load("Units/" + gameInfo.PlayerFaction.Type.ToString(), typeof(GameObject))) as GameObject;
+            if(gameInfo.PlayerFaction.Type == Faction.GodType.Mushrooms)
+            {
+                if (gameInfo.PlayerFaction.GodTier == 0)
+                    unitModel = Instantiate(Resources.Load("Units/" + gameInfo.PlayerFaction.Type.ToString() + "1", typeof(GameObject))) as GameObject;
+                else if(gameInfo.PlayerFaction.GodTier == 1)
+                    unitModel = Instantiate(Resources.Load("Units/" + gameInfo.PlayerFaction.Type.ToString() + "2", typeof(GameObject))) as GameObject;
+                else if(gameInfo.PlayerFaction.GodTier == 2)
+                    unitModel = Instantiate(Resources.Load("Units/" + gameInfo.PlayerFaction.Type.ToString() + "3", typeof(GameObject))) as GameObject;
+            }
+            else
+                unitModel = Instantiate(Resources.Load("Units/" + gameInfo.PlayerFaction.Type.ToString(), typeof(GameObject))) as GameObject;
         }
         catch (Exception e)
         {
-            unitModel = Instantiate(Resources.Load("Units/Mushrooms", typeof(GameObject))) as GameObject;
+            unitModel = Instantiate(Resources.Load("Units/Shoes", typeof(GameObject))) as GameObject;
         }
         unitModel.transform.SetParent(u.unitGameObject().transform);
         unitModel.transform.position = new Vector3(unitGo.transform.position.x, unitGo.transform.position.y + unitModel.GetComponent<GroundOffset>().groundOffset, 
@@ -531,8 +549,6 @@ public class SetupManager : MonoBehaviour
         u.updateAttackStrength();
         u.isPlayer = false;
         u.MoveTo(new Vector2(pos.x, pos.y), tiles);
-
-        Debug.Log(gameInfo.EnemyFaction.Type.ToString());
 
         GameObject unitModel;
 

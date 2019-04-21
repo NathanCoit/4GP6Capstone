@@ -120,7 +120,12 @@ public class EnemyManager : MonoBehaviour {
 
         //Sort by priority
         BoardMan.enemyUnits.Sort((x, y) => x.MovePriority.CompareTo(y.MovePriority));
-        
+
+        //Make sure things dont break
+        if (BoardMan.enemyUnits.Count == 1 && !(BoardMan.enemyUnits[0] as God).isInBattle)
+            (BoardMan.enemyUnits[0] as God).forcedEnterBattle();
+
+
         foreach (Unit enemyUnit in BoardMan.enemyUnits)
         {
             Camera.main.GetComponent<CombatCam>().lookAt(enemyUnit.unitGameObject().transform.position);
@@ -181,7 +186,7 @@ public class EnemyManager : MonoBehaviour {
             //Logic for enemy god that is not in battle (using abilities)
             else
             {
-                MapMan.Selected = enemyUnit.unitGameObject();
+                MapMan.Selected = enemyUnit.unitGameObject();                
 
                 //Check if we can use any abilites
                 List<Ability> useableAbilities = new List<Ability>();
@@ -281,11 +286,13 @@ public class EnemyManager : MonoBehaviour {
                                     target = validTiles[i];
                             }
 
-                            if (target != null)
+                            if (target != null && MapMan.Selected != null)
                             {
                                 target.testClick();
                                 target.OnMouseOver();
                             }
+                            else
+                                enemyUnit.EndTurnButton();
 
                             break;
                         case Ability.ABILITYTYPE.MultiTarget:
@@ -304,11 +311,13 @@ public class EnemyManager : MonoBehaviour {
 
                             yield return new WaitForSeconds(delay);
 
-                            if (target != null)
+                            if (target != null && MapMan.Selected != null)
                             {
                                 target.testClick();
                                 target.OnMouseOver();
                             }
+                            else
+                                enemyUnit.EndTurnButton();
 
                             break;
                         case Ability.ABILITYTYPE.Buff:
@@ -323,11 +332,13 @@ public class EnemyManager : MonoBehaviour {
                                     target = validTiles[i];
                             }
 
-                            if (target != null)
+                            if (target != null && MapMan.Selected != null)
                             {
                                 target.testClick();
                                 target.OnMouseOver();
                             }
+                            else
+                                enemyUnit.EndTurnButton();
 
                             break;
                         case Ability.ABILITYTYPE.Debuff:
@@ -342,11 +353,13 @@ public class EnemyManager : MonoBehaviour {
                                     target = validTiles[i];
                             }
 
-                            if (target != null)
+                            if (target != null && MapMan.Selected != null)
                             {
                                 target.testClick();
                                 target.OnMouseOver();
                             }
+                            else
+                                enemyUnit.EndTurnButton();
 
                             break;
                     }

@@ -72,7 +72,7 @@ public class Targetable : MonoBehaviour {
     public void OnMouseOver()
     {
         //If the animation is done
-        if (inPlace)
+        if (inPlace && MapMan.Selected != null)
         {
             //Init our lists of targets
             targets = new List<Unit>();
@@ -270,7 +270,11 @@ public class Targetable : MonoBehaviour {
             if ((Input.GetMouseButtonDown(0) || autoClick) && !buttonSwitch)
             {
                 buttonSwitch = true;
-                
+
+                //Grab gameInfo for scaling
+                GameObject GameInfoObject = GameObject.Find("GameInfo");
+                GameInfo gameInfo = GameInfoObject.GetComponent<GameInfo>();
+
                 //Subtract faith cost and then update the ui
                 (MapMan.Selected.GetComponent<UnitObjectScript>().getUnit() as God).faith -= ability.FaithCost;
                 UIMan.updateFaithLabels();
@@ -286,7 +290,10 @@ public class Targetable : MonoBehaviour {
                             target = u;
                     }
 
-                    target.dealDamage(aSi.AbilityDamage);
+                    if(BoardMan.playerUnits.Contains(target))
+                        target.dealDamage((int)((aSi.AbilityDamage + (gameInfo.PlayerFaction.WorshipperCount / 100)) * gameInfo.GodAttackMultiplier));
+                    else
+                        target.dealDamage((int)((aSi.AbilityDamage + (gameInfo.PlayerFaction.WorshipperCount / 100)) * (gameInfo.EnemyFaction.GodTier + 1)));
 
                     //Kill target if it died
                     if (target.WorshiperCount <= 0)
@@ -300,7 +307,11 @@ public class Targetable : MonoBehaviour {
                     MultiTargetAbility aMi = (MultiTargetAbility)MultiTargetAbility.LoadAbilityFromName(ability.AbilityName);
                     foreach (Unit u in targets)
                     {
-                        u.dealDamage(aMi.AbilityDamage);
+                        if (BoardMan.playerUnits.Contains(u))
+                            u.dealDamage((int)((aMi.AbilityDamage + (gameInfo.PlayerFaction.WorshipperCount / 100)) * gameInfo.GodAttackMultiplier));
+                        else
+                            u.dealDamage((int)((aMi.AbilityDamage + (gameInfo.PlayerFaction.WorshipperCount / 100)) * (gameInfo.EnemyFaction.GodTier + 1)));
+
                         if (u.WorshiperCount <= 0)
                         {
                             BoardMan.killUnit(u);
